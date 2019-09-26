@@ -1,0 +1,1724 @@
+swagger: '2.0'
+info:
+  title: Conseil API
+  version: 0.0.1
+paths:
+  '/v2/data/{platform}/{network}/info':
+    get:
+      operationId: getInfo
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+          enum: [tezos]
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+          enum: [mainnet]
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application info endpoint
+          schema:
+            $ref: '#/definitions/Info'
+        '500':
+          description: Internal error
+      tags:
+        - App Info
+  '/v2/data/{platform}/{network}/accounts':
+    get:
+      operationId: getAccountsList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+        - in: query
+          name: after_id
+          type: string
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: integer
+            format: int64
+          name: block_level
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_netid
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_protocol
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_id
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_source
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_destination
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_participant
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_kind
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_id
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_manager
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_delegate
+          description: Not used
+          type: array
+        - in: query
+          name: sort_by
+          description: Not used
+          type: string
+        - in: query
+          name: order
+          description: Not used
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for accounts
+          schema:
+            items:
+              $ref: '#/definitions/AccountsRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/bakers':
+    get:
+      operationId: getBakersList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query Endpoint for getting list of baker accounts ordered by staking balance.
+          schema:
+            items:
+              $ref: '#/definitions/BakersRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/{accountId}':
+    get:
+      operationId: getAccount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account
+          schema:
+            $ref: >-
+              #/definitions/AccountsRow
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/{accountId}/delegators':
+    get:
+      operationId: getAccountDelegators
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Endpoint for account delegators
+          schema:
+            items:
+              $ref: '#/definitions/AccountsRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/blocks':
+    get:
+      operationId: getBlocksList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_id
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: integer
+          name: block_level
+          description: Not used
+          type: array
+        - in: query
+          name: before_level
+          type: integer
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_netid
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_protocol
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_id
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_source
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_destination
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_participant
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_kind
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_id
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_manager
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_delegate
+          description: Not used
+          type: array
+        - in: query
+          name: sort_by
+          description: Not used
+          type: string
+        - in: query
+          name: order
+          description: Not used
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for blocks
+          schema:
+            items:
+              $ref: '#/definitions/BlocksRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '404':
+          description: Not Found
+      tags:
+        - Blocks
+  '/v2/data/{platform}/{network}/blocks/head':
+    get:
+      operationId: getBlocksHead
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for blocks head
+          schema:
+            $ref: '#/definitions/BlocksRow'
+        '500':
+          description: Not initialized
+      tags:
+        - Blocks
+  '/v2/data/{platform}/{network}/blocks/{hash}':
+    get:
+      operationId: getBlock
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: hash
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for block by hash
+          schema:
+            $ref: >-
+              #/definitions/BlockResult
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Blocks
+  '/v2/data/{platform}/{network}/blocks/{hash}/endorsements':
+    get:
+      operationId: getBlockEndorsements
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: hash
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Endpoint for endorsements of a block by hash or level
+          schema:
+            items:
+              $ref: '#/definitions/OperationsRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Blocks
+  '/v2/data/{platform}/{network}/operation_groups':
+    get:
+      operationId: getOperationGroups
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: integer
+          name: block_level
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_netid
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_protocol
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_source
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_destination
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_participant
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_kind
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_manager
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_delegate
+          type: array
+        - in: query
+          name: sort_by
+          type: string
+        - in: query
+          name: order
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for operation groups
+          schema:
+            items:
+              type: string # Any - not yet supported
+            type: array
+        '404':
+          description: Not Found
+      tags:
+        - Operation groups
+  '/v2/data/{platform}/{network}/operation_groups/{operationGroupId}':
+    get:
+      operationId: getOperationGroup
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: operationGroupId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for operation group
+          schema:
+            $ref: >-
+              #/definitions/OperationGroupResult
+        '404':
+          description: Not Found
+      tags:
+        - Operation groups
+  '/v2/data/{platform}/{network}/operations':
+    get:
+      operationId: getOperationsList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+        - in: query
+          name: before_id
+          type: integer
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: integer
+          name: block_level
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_netid
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_protocol
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_id
+          description: Operation hash
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_source
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_destination
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_participant
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+            enum: [endorsement, proposals, seed_nonce_revelation, delegation, transaction, activate_account, ballot, origination, reveal, double_baking_evidence]
+          name: operation_kind
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_manager
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_delegate
+          description: Not used
+          type: array
+        - in: query
+          name: sort_by
+          description: Not used
+          type: string
+        - in: query
+          name: order
+          description: Not used
+          type: string
+          enum: [asc, desc]
+      responses:
+        '200':
+          description: Query compatibility endpoint for operations
+          schema:
+            items:
+              $ref: '#/definitions/OperationsRow'
+              #type: string # Any - not yet supported
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '404':
+          description: Not Found
+      tags:
+        - OperationsList
+  '/v2/data/{platform}/{network}/operations/avgFees':
+    get:
+      operationId: getAvgFees
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: integer
+          name: block_level
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_netid
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_protocol
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_source
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_destination
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_participant
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_kind
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_manager
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_delegate
+          type: array
+        - in: query
+          name: sort_by
+          type: string
+        - in: query
+          name: order
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for average fees
+          schema:
+            type: string # Any - not yet supported
+        '404':
+          description: Not Found
+      tags:
+        - Fees
+  '/v2/data/{platform}/{network}/{entity}':
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+        - text/csv
+        - text/plain
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: entity
+          required: true
+          type: string
+        - in: body
+          name: body
+          schema:
+            $ref: >-
+              #/definitions/DataTypes.ApiQuery
+      responses:
+        '200':
+          description: Can't query - invalid entity!
+        '400':
+          description: Can't query - invalid entity!
+          schema:
+            items:
+              type: string
+            type: array
+        '404':
+          description: Not found
+      tags:
+        - Query
+  /v2/metadata/platforms:
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Metadata endpoint for listing available platforms
+          schema:
+            items:
+              $ref: >-
+                #/definitions/PlatformDiscoveryTypes.Platform
+            type: array
+      tags:
+        - Metadata
+  '/v2/metadata/{platform}/networks':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Metadata endpoint for listing available networks
+          schema:
+            items:
+              $ref: >-
+                #/definitions/PlatformDiscoveryTypes.Network
+            type: array
+        '404':
+          description: Not found
+      tags:
+        - Metadata
+  '/v2/metadata/{platform}/{network}/entities':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Metadata endpoint for listing available entities
+          schema:
+            items:
+              $ref: >-
+                #/definitions/PlatformDiscoveryTypes.Entity
+            type: array
+        '404':
+          description: Not found
+      tags:
+        - Metadata
+  '/v2/metadata/{platform}/{network}/{entity}/attributes':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: entity
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Metadata endpoint for listing available attributes
+          schema:
+            items:
+              $ref: >-
+                #/definitions/PlatformDiscoveryTypes.Attribute
+            type: array
+        '404':
+          description: Not found
+      tags:
+        - Metadata
+  '/v2/metadata/{platform}/{network}/{entity}/{attribute}':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: entity
+          required: true
+          type: string
+        - in: path
+          name: attribute
+          required: true
+          type: string
+      responses:
+        '200':
+          description: >-
+            Metadata endpoint for listing available distinct values for given
+            attribute
+          schema:
+            items:
+              type: string
+            type: array
+        '400':
+          description: Cannot get the attributes!
+          schema:
+            items:
+              type: string
+            type: array
+        '404':
+          description: Not found
+      tags:
+        - Metadata
+  '/v2/metadata/{platform}/{network}/{entity}/{attribute}/{filter}':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: entity
+          required: true
+          type: string
+        - in: path
+          name: attribute
+          required: true
+          type: string
+        - in: path
+          name: filter
+          required: true
+          type: string
+      responses:
+        '200':
+          description: >-
+            Metadata endpoint for listing available distinct values for given
+            attribute filtered
+          schema:
+            items:
+              type: string
+            type: array
+        '400':
+          description: Cannot get the attributes!
+          schema:
+            items:
+              type: string
+            type: array
+        '404':
+          description: Not found
+      tags:
+        - Metadata
+definitions:
+  DataTypes.ApiAggregation:
+    properties:
+      field:
+        type: string
+      function:
+        enum:
+          - sum
+          - count
+          - max
+          - min
+          - avg
+        type: string
+      predicate:
+        $ref: >-
+          #/definitions/DataTypes.ApiAggregationPredicate
+    required:
+      - field
+      - function
+    type: object
+  DataTypes.ApiAggregationPredicate:
+    properties:
+      inverse:
+        type: boolean
+      operation:
+        enum:
+          - in
+          - between
+          - like
+          - lt
+          - gt
+          - eq
+          - startsWith
+          - endsWith
+          - before
+          - after
+          - isnull
+        type: string
+      precision:
+        format: int64
+        type: integer
+      set:
+        items:
+          type: string # Any - not yet supported
+        type: array
+    required:
+      - operation
+    type: object
+  DataTypes.ApiPredicate:
+    properties:
+      field:
+        type: string
+      inverse:
+        type: boolean
+      operation:
+        enum:
+          - in
+          - between
+          - like
+          - lt
+          - gt
+          - eq
+          - startsWith
+          - endsWith
+          - before
+          - after
+          - isnull
+        type: string
+      precision:
+        format: int64
+        type: integer
+      set:
+        items:
+          type: string # Any - not yet supported
+        type: array
+    required:
+      - field
+      - operation
+    type: object
+  DataTypes.ApiQuery:
+    properties:
+      aggregation:
+        items:
+          $ref: >-
+            #/definitions/DataTypes.ApiAggregation
+        type: array
+      fields:
+        items:
+          type: string
+        type: array
+      limit:
+        format: int64
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 500
+      orderBy:
+        items:
+          $ref: >-
+            #/definitions/DataTypes.QueryOrdering
+        type: array
+      output:
+        enum:
+          - json
+          - csv
+          - sql
+        type: string
+      predicates:
+        items:
+          $ref: >-
+            #/definitions/DataTypes.ApiPredicate
+        type: array
+    type: object
+  DataTypes.QueryOrdering:
+    properties:
+      direction:
+        enum:
+          - asc
+          - desc
+        type: string
+      field:
+        type: string
+    required:
+      - field
+      - direction
+    type: object
+  PlatformDiscoveryTypes.Attribute:
+    properties:
+      cardinality:
+        format: int64
+        type: integer
+      currencySymbol:
+        type: string
+      currencySymbolCode:
+        format: int64
+        type: integer
+      dataFormat:
+        type: string
+      dataType:
+        enum:
+          - Enum
+          - Hex
+          - Binary
+          - Date
+          - DateTime
+          - String
+          - Hash
+          - AccountAddress
+          - Int
+          - LargeInt
+          - Decimal
+          - Currency
+          - Boolean
+        type: string
+      description:
+        type: string
+      displayName:
+        type: string
+      displayOrder:
+        format: int64
+        type: integer
+      displayPriority:
+        format: int64
+        type: integer
+      entity:
+        type: string
+      keyType:
+        enum:
+          - NonKey
+          - UniqueKey
+        type: string
+      name:
+        type: string
+      placeholder:
+        type: string
+      reference:
+        additionalProperties:
+          type: string
+        properties: {}
+        type: object
+      scale:
+        format: int64
+        type: integer
+      sufficientForQuery:
+        type: boolean
+      valueMap:
+        additionalProperties:
+          type: string
+        properties: {}
+        type: object
+    required:
+      - displayName
+      - keyType
+      - name
+      - entity
+      - dataType
+    type: object
+  PlatformDiscoveryTypes.Entity:
+    properties:
+      count:
+        format: int64
+        type: integer
+      description:
+        type: string
+      displayName:
+        type: string
+      displayNamePlural:
+        type: string
+      limitedQuery:
+        type: boolean
+      name:
+        type: string
+    required:
+      - name
+      - displayName
+      - count
+    type: object
+  PlatformDiscoveryTypes.Network:
+    properties:
+      description:
+        type: string
+      displayName:
+        type: string
+      name:
+        type: string
+      network:
+        type: string
+      platform:
+        type: string
+    required:
+      - name
+      - displayName
+      - platform
+      - network
+    type: object
+  PlatformDiscoveryTypes.Platform:
+    properties:
+      description:
+        type: string
+      displayName:
+        type: string
+      name:
+        type: string
+    required:
+      - name
+      - displayName
+    type: object
+  Info:
+    properties:
+      price:
+        type: number
+      price_24h_change:
+        type: number
+      staking_ratio:
+        description: Staking ratio in percents (0-100).
+        type: number
+        minimum: 0
+        maximum: 100
+      annual_yield:
+        type: number
+        description: Expected annual return in percents.
+    required:
+      - price
+      - price_24h_change
+    type: object
+  AccountResult:
+    properties:
+      account:
+        $ref: '#/definitions/AccountsRow'
+    required:
+      - account
+    type: object
+  BlockResult:
+    properties:
+      block:
+        $ref: '#/definitions/BlocksRow'
+      operation_groups:
+        items:
+          $ref: >-
+            #/definitions/OperationGroupsRow
+        type: array
+    required:
+      - block
+      - operation_groups
+    type: object
+  OperationGroupResult:
+    properties:
+      operation_group:
+        $ref: '#/definitions/OperationGroupsRow'
+      operations:
+        items:
+          $ref: '#/definitions/OperationsRow'
+        type: array
+    required:
+      - operation_group
+      - operations
+    type: object
+  AccountsRow:
+    properties:
+      accountId:
+        type: string
+      balance:
+        format: int64
+        type: integer
+      blockId:
+        type: string
+      blockLevel:
+        type: integer
+        format: int64
+      counter:
+        format: int64
+        type: integer
+      delegateSetable:
+        type: boolean
+      delegateValue:
+        type: string
+      manager:
+        type: string
+      script:
+        type: string
+      spendable:
+        type: boolean
+      storage:
+        type: string
+      bakerInfo:
+        $ref: '#/definitions/BakerInfo'
+    required:
+      - balance
+      - accountId
+      - delegateSetable
+      - spendable
+      - manager
+      - counter
+      - blockLevel
+      - blockId
+    type: object
+  BakersRow:
+    properties:
+      accountId:
+        type: string
+      stakingBalance:
+        format: int64
+        type: integer
+      blocks:
+        type: integer
+        format: int64
+      endorsements:
+        format: int64
+        type: integer
+      fees:
+        format: int64
+        type: integer
+    required:
+      - stakingBalance
+      - accountId
+      - blocks
+      - endorsements
+      - fees
+    type: object
+  BakerInfo:
+    properties:
+      stakingBalance:
+        format: int64
+        type: integer
+      evaluatedBalance:
+        type: integer
+        format: int64
+      endorsementDeposits:
+        format: int64
+        type: integer
+      bakingDeposits:
+        format: int64
+        type: integer
+      endorsementRewards:
+        format: int64
+        type: integer
+      bakingRewards:
+        format: int64
+        type: integer
+    type: object
+  BlocksRow:
+    properties:
+      activeProposal:
+        type: string
+      baker:
+        type: string
+      chainId:
+        type: string
+      consumedGas:
+        type: integer
+        format: int64
+      context:
+        type: string
+      currentExpectedQuorum:
+        format: int64
+        type: integer
+      expectedCommitment:
+        type: boolean
+      fitness:
+        type: string
+      hash:
+        type: string
+      level:
+        format: int64
+        type: integer
+      metaCycle:
+        format: int64
+        type: integer
+      metaCyclePosition:
+        format: int64
+        type: integer
+      metaLevel:
+        format: int64
+        type: integer
+      metaLevelPosition:
+        format: int64
+        type: integer
+      metaVotingPeriod:
+        format: int64
+        type: integer
+      metaVotingPeriodPosition:
+        format: int64
+        type: integer
+      nonceHash:
+        type: string
+      operationsHash:
+        type: string
+      periodKind:
+        type: string
+      predecessor:
+        type: string
+      proto:
+        format: int64
+        type: integer
+      protocol:
+        type: string
+      signature:
+        type: string
+      timestamp:
+        format: int64
+        type: integer
+      validationPass:
+        format: int64
+        type: integer
+      volume:
+        format: int64
+        type: integer
+      fees:
+        format: int64
+        type: integer
+      endorsements:
+        format: int64
+        type: integer
+      proposals:
+        format: int64
+        type: integer
+      seed_nonce_revelations:
+        format: int64
+        type: integer
+      delegations:
+        format: int64
+        type: integer
+      transactions:
+        format: int64
+        type: integer
+      activate_accounts:
+        format: int64
+        type: integer
+      ballots:
+        format: int64
+        type: integer
+      originations:
+        format: int64
+        type: integer
+      reveals:
+        format: int64
+        type: integer
+      double_baking_evidence:
+        format: int64
+        type: integer
+    required:
+      - timestamp
+      - proto
+      - validationPass
+      - hash
+      - fitness
+      - protocol
+      - predecessor
+      - level
+    type: object
+  OperationGroupsRow:
+    properties:
+      blockId:
+        type: string
+      branch:
+        type: string
+      chainId:
+        type: string
+      hash:
+        type: string
+      protocol:
+        type: string
+      signature:
+        type: string
+    required:
+      - protocol
+      - hash
+      - branch
+      - blockId
+    type: object
+  OperationsRow:
+    properties:
+      parameters:
+        type: string
+      amount:
+        type: integer
+        format: int64
+      balance:
+        format: int64
+        type: integer
+      blockHash:
+        type: string
+      blockLevel:
+        format: int64
+        type: integer
+      consumedGas:
+        type: integer
+        format: int64
+      counter:
+        type: integer
+        format: int64
+      delegatable:
+        type: boolean
+      delegate:
+        type: string
+      destination:
+        type: string
+      fee:
+        type: integer
+        format: int64
+      gasLimit:
+        type: integer
+        format: int64
+      kind:
+        type: string
+      level:
+        format: int64
+        type: integer
+      managerPubkey:
+        type: string
+      nonce:
+        type: string
+      operationGroupHash:
+        type: string
+      operationId:
+        format: int64
+        type: integer
+      originatedContracts:
+        type: string
+      paidStorageSizeDiff:
+        type: integer
+        format: int64
+      pkh:
+        type: string
+      publicKey:
+        type: string
+      script:
+        type: string
+      secret:
+        type: string
+      slots:
+        type: string
+      source:
+        type: string
+      spendable:
+        type: boolean
+      status:
+        type: string
+      storage:
+        type: string
+      storageLimit:
+        type: integer
+        format: int64
+      storageSize:
+        type: integer
+        format: int64
+      timestamp:
+        format: int64
+        type: integer
+    required:
+      - blockHash
+      - timestamp
+      - operationId
+      - operationGroupHash
+      - kind
+      - blockLevel
+    type: object
