@@ -6,17 +6,25 @@ import (
 	"github.com/bullblock-io/tezTracker/repos"
 	"github.com/bullblock-io/tezTracker/services"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 )
 
 type getOperationListHandler struct {
-	db *gorm.DB
+	provider DbProvider
 }
 
 // Handle serves the Get Operations List request.
 func (h *getOperationListHandler) Handle(params ops.GetOperationsListParams) middleware.Responder {
-	service := services.New(repos.New(h.db))
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return ops.NewGetOperationsListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return ops.NewGetOperationsListNotFound()
+	}
+	service := services.New(repos.New(db), net)
+
 	limiter := NewLimiter(params.Limit, params.Offset)
 	before := int64(0)
 	if params.BeforeID != nil {

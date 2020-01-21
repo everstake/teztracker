@@ -4,7 +4,6 @@ package restapi
 
 import (
 	"crypto/tls"
-	"io"
 	"net/http"
 
 	"github.com/rs/cors"
@@ -18,10 +17,8 @@ import (
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/app_info"
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/blocks"
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/fees"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/metadata"
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/operation_groups"
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/operations_list"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/query"
 )
 
 //go:generate swagger generate server --target ../../gen --name TezTracker --spec ../../swagger/swagger.yml --exclude-main
@@ -44,46 +41,6 @@ func configureAPI(api *operations.TezTrackerAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.CsvProducer = runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
-		return errors.NotImplemented("csv producer has not yet been implemented")
-	})
-	api.TxtProducer = runtime.TextProducer()
-
-	if api.MetadataGetV2MetadataPlatformNetworkEntitiesHandler == nil {
-		api.MetadataGetV2MetadataPlatformNetworkEntitiesHandler = metadata.GetV2MetadataPlatformNetworkEntitiesHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworkEntitiesParams) middleware.Responder {
-			return middleware.NotImplemented("operation metadata.GetV2MetadataPlatformNetworkEntities has not yet been implemented")
-		})
-	}
-	if api.MetadataGetV2MetadataPlatformNetworkEntityAttributeHandler == nil {
-		api.MetadataGetV2MetadataPlatformNetworkEntityAttributeHandler = metadata.GetV2MetadataPlatformNetworkEntityAttributeHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworkEntityAttributeParams) middleware.Responder {
-			return middleware.NotImplemented("operation metadata.GetV2MetadataPlatformNetworkEntityAttribute has not yet been implemented")
-		})
-	}
-	if api.MetadataGetV2MetadataPlatformNetworkEntityAttributeFilterHandler == nil {
-		api.MetadataGetV2MetadataPlatformNetworkEntityAttributeFilterHandler = metadata.GetV2MetadataPlatformNetworkEntityAttributeFilterHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworkEntityAttributeFilterParams) middleware.Responder {
-			return middleware.NotImplemented("operation metadata.GetV2MetadataPlatformNetworkEntityAttributeFilter has not yet been implemented")
-		})
-	}
-	if api.MetadataGetV2MetadataPlatformNetworkEntityAttributesHandler == nil {
-		api.MetadataGetV2MetadataPlatformNetworkEntityAttributesHandler = metadata.GetV2MetadataPlatformNetworkEntityAttributesHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworkEntityAttributesParams) middleware.Responder {
-			return middleware.NotImplemented("operation metadata.GetV2MetadataPlatformNetworkEntityAttributes has not yet been implemented")
-		})
-	}
-	if api.MetadataGetV2MetadataPlatformNetworksHandler == nil {
-		api.MetadataGetV2MetadataPlatformNetworksHandler = metadata.GetV2MetadataPlatformNetworksHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworksParams) middleware.Responder {
-			return middleware.NotImplemented("operation metadata.GetV2MetadataPlatformNetworks has not yet been implemented")
-		})
-	}
-	if api.MetadataGetV2MetadataPlatformsHandler == nil {
-		api.MetadataGetV2MetadataPlatformsHandler = metadata.GetV2MetadataPlatformsHandlerFunc(func(params metadata.GetV2MetadataPlatformsParams) middleware.Responder {
-			return middleware.NotImplemented("operation metadata.GetV2MetadataPlatforms has not yet been implemented")
-		})
-	}
-	if api.QueryPostV2DataPlatformNetworkEntityHandler == nil {
-		api.QueryPostV2DataPlatformNetworkEntityHandler = query.PostV2DataPlatformNetworkEntityHandlerFunc(func(params query.PostV2DataPlatformNetworkEntityParams) middleware.Responder {
-			return middleware.NotImplemented("operation query.PostV2DataPlatformNetworkEntity has not yet been implemented")
-		})
-	}
 	if api.AccountsGetAccountHandler == nil {
 		api.AccountsGetAccountHandler = accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation accounts.GetAccount has not yet been implemented")

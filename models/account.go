@@ -20,4 +20,19 @@ type Account struct {
 	AccountsCheckpoint []*AccountsCheckpoint `json:"accounts_checkpoint"` // This line is infered from other tables.
 	DelegatedContracts []*DelegatedContract  `json:"delegated_contracts"` // This line is infered from other tables.
 	BakerInfo          *BakerInfo            `json:"baker_info"`
+	IsBaker            bool                  `json:"is_baker"`
+}
+
+type AccountType int
+
+const (
+	AccountTypeBoth AccountType = iota
+	AccountTypeAccount
+	AccountTypeContract
+)
+
+type AccountFilter struct {
+	Type     AccountType
+	Delegate string
+	After    string
 }

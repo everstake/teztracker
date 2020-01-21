@@ -83,6 +83,30 @@ func (o *GetAccountDelegatorsOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
+// GetAccountDelegatorsBadRequestCode is the HTTP code returned for type GetAccountDelegatorsBadRequest
+const GetAccountDelegatorsBadRequestCode int = 400
+
+/*GetAccountDelegatorsBadRequest Bad request
+
+swagger:response getAccountDelegatorsBadRequest
+*/
+type GetAccountDelegatorsBadRequest struct {
+}
+
+// NewGetAccountDelegatorsBadRequest creates GetAccountDelegatorsBadRequest with default headers values
+func NewGetAccountDelegatorsBadRequest() *GetAccountDelegatorsBadRequest {
+
+	return &GetAccountDelegatorsBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetAccountDelegatorsBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetAccountDelegatorsInternalServerErrorCode is the HTTP code returned for type GetAccountDelegatorsInternalServerError
 const GetAccountDelegatorsInternalServerErrorCode int = 500
 

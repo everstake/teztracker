@@ -6,17 +6,25 @@ import (
 	"github.com/bullblock-io/tezTracker/repos"
 	"github.com/bullblock-io/tezTracker/services"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 )
 
 type getHeadBlockHandler struct {
-	db *gorm.DB
+	provider DbProvider
 }
 
 // Handle serves the Get Head Block request.
 func (h *getHeadBlockHandler) Handle(params blocks.GetBlocksHeadParams) middleware.Responder {
-	service := services.New(repos.New(h.db))
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return blocks.NewGetBlocksHeadBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return blocks.NewGetBlocksHeadInternalServerError()
+	}
+
+	service := services.New(repos.New(db), net)
 	block, err := service.HeadBlock()
 	if err != nil {
 		logrus.Errorf("failed to get Head block: %s", err.Error())

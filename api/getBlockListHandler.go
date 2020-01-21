@@ -6,17 +6,25 @@ import (
 	"github.com/bullblock-io/tezTracker/repos"
 	"github.com/bullblock-io/tezTracker/services"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 )
 
 type getBlockListHandler struct {
-	db *gorm.DB
+	provider DbProvider
 }
 
 // Handle serves the Get Block List request.
 func (h *getBlockListHandler) Handle(params blocks.GetBlocksListParams) middleware.Responder {
-	service := services.New(repos.New(h.db))
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return blocks.NewGetBlocksListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return blocks.NewGetBlocksListNotFound()
+	}
+	service := services.New(repos.New(db), net)
+
 	limiter := NewLimiter(params.Limit, params.Offset)
 	before := uint64(0)
 	if params.BeforeLevel != nil {

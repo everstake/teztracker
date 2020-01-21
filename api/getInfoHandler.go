@@ -7,7 +7,6 @@ import (
 	"github.com/bullblock-io/tezTracker/repos"
 	"github.com/bullblock-io/tezTracker/services"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +16,8 @@ type MarketDataProvider interface {
 }
 
 type getInfoHandler struct {
-	provider MarketDataProvider
-	db       *gorm.DB
+	provider   MarketDataProvider
+	dbProvider DbProvider
 }
 
 // Handle serves the Get Info request.
@@ -28,10 +27,19 @@ func (h *getInfoHandler) Handle(params info.GetInfoParams) middleware.Responder 
 		logrus.Errorf("failed to get market data: %s", err.Error())
 		return info.NewGetInfoInternalServerError()
 	}
-	service := services.New(repos.New(h.db))
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return info.NewGetInfoBadRequest()
+	}
+	db, err := h.dbProvider.GetDb(net)
+	if err != nil {
+		return info.NewGetInfoInternalServerError()
+	}
+	service := services.New(repos.New(db), net)
+
 	ratio, err := service.GetStakingRatio()
 	if err != nil {
 		logrus.Errorf("failed to get staking ratio: %s", err.Error())
 	}
-	return info.NewGetInfoOK().WithPayload(render.Info(md, ratio))
+	return info.NewGetInfoOK().WithPayload(render.Info(md, ratio, service.BlocksInCycle()))
 }

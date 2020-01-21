@@ -83,6 +83,30 @@ func (o *GetBakersListOK) WriteResponse(rw http.ResponseWriter, producer runtime
 	}
 }
 
+// GetBakersListBadRequestCode is the HTTP code returned for type GetBakersListBadRequest
+const GetBakersListBadRequestCode int = 400
+
+/*GetBakersListBadRequest Bad request
+
+swagger:response getBakersListBadRequest
+*/
+type GetBakersListBadRequest struct {
+}
+
+// NewGetBakersListBadRequest creates GetBakersListBadRequest with default headers values
+func NewGetBakersListBadRequest() *GetBakersListBadRequest {
+
+	return &GetBakersListBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetBakersListBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetBakersListNotFoundCode is the HTTP code returned for type GetBakersListNotFound
 const GetBakersListNotFoundCode int = 404
 

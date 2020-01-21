@@ -46,6 +46,9 @@ type OperationsRow struct {
 	// destination
 	Destination string `json:"destination,omitempty"`
 
+	// double bake
+	DoubleBake *DoubleBakingDetails `json:"doubleBake,omitempty"`
+
 	// fee
 	Fee int64 `json:"fee,omitempty"`
 
@@ -132,6 +135,10 @@ func (m *OperationsRow) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDoubleBake(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateKind(formats); err != nil {
 		res = append(res, err)
 	}
@@ -167,6 +174,24 @@ func (m *OperationsRow) validateBlockLevel(formats strfmt.Registry) error {
 
 	if err := validate.Required("blockLevel", "body", m.BlockLevel); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *OperationsRow) validateDoubleBake(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.DoubleBake) { // not required
+		return nil
+	}
+
+	if m.DoubleBake != nil {
+		if err := m.DoubleBake.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("doubleBake")
+			}
+			return err
+		}
 	}
 
 	return nil

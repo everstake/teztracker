@@ -57,6 +57,30 @@ func (o *GetBlocksHeadOK) WriteResponse(rw http.ResponseWriter, producer runtime
 	}
 }
 
+// GetBlocksHeadBadRequestCode is the HTTP code returned for type GetBlocksHeadBadRequest
+const GetBlocksHeadBadRequestCode int = 400
+
+/*GetBlocksHeadBadRequest Bad request
+
+swagger:response getBlocksHeadBadRequest
+*/
+type GetBlocksHeadBadRequest struct {
+}
+
+// NewGetBlocksHeadBadRequest creates GetBlocksHeadBadRequest with default headers values
+func NewGetBlocksHeadBadRequest() *GetBlocksHeadBadRequest {
+
+	return &GetBlocksHeadBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetBlocksHeadBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetBlocksHeadInternalServerErrorCode is the HTTP code returned for type GetBlocksHeadInternalServerError
 const GetBlocksHeadInternalServerErrorCode int = 500
 

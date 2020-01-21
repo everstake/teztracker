@@ -83,6 +83,30 @@ func (o *GetBlockEndorsementsOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
+// GetBlockEndorsementsBadRequestCode is the HTTP code returned for type GetBlockEndorsementsBadRequest
+const GetBlockEndorsementsBadRequestCode int = 400
+
+/*GetBlockEndorsementsBadRequest Bad request
+
+swagger:response getBlockEndorsementsBadRequest
+*/
+type GetBlockEndorsementsBadRequest struct {
+}
+
+// NewGetBlockEndorsementsBadRequest creates GetBlockEndorsementsBadRequest with default headers values
+func NewGetBlockEndorsementsBadRequest() *GetBlockEndorsementsBadRequest {
+
+	return &GetBlockEndorsementsBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetBlockEndorsementsBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetBlockEndorsementsNotFoundCode is the HTTP code returned for type GetBlockEndorsementsNotFound
 const GetBlockEndorsementsNotFoundCode int = 404
 

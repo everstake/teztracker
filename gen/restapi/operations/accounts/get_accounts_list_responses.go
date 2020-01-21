@@ -83,6 +83,30 @@ func (o *GetAccountsListOK) WriteResponse(rw http.ResponseWriter, producer runti
 	}
 }
 
+// GetAccountsListBadRequestCode is the HTTP code returned for type GetAccountsListBadRequest
+const GetAccountsListBadRequestCode int = 400
+
+/*GetAccountsListBadRequest Bad request
+
+swagger:response getAccountsListBadRequest
+*/
+type GetAccountsListBadRequest struct {
+}
+
+// NewGetAccountsListBadRequest creates GetAccountsListBadRequest with default headers values
+func NewGetAccountsListBadRequest() *GetAccountsListBadRequest {
+
+	return &GetAccountsListBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetAccountsListBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetAccountsListNotFoundCode is the HTTP code returned for type GetAccountsListNotFound
 const GetAccountsListNotFoundCode int = 404
 

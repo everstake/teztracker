@@ -8,11 +8,22 @@ import (
 // AccountList retrives up to limit of account before the specified id.
 func (t *TezTracker) AccountList(before string, limits Limiter) (accs []models.Account, count int64, err error) {
 	r := t.repoProvider.GetAccount()
-	count, err = r.Count(models.Account{})
-	if err != nil {
-		return nil, 0, err
+	filter := models.AccountFilter{
+		Type:  models.AccountTypeAccount,
+		After: before,
 	}
-	accs, err = r.List(limits.Limit(), limits.Offset(), before)
+	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
+	return accs, count, err
+}
+
+// ContractList retrives up to limit of contract before the specified id.
+func (t *TezTracker) ContractList(before string, limits Limiter) (accs []models.Account, count int64, err error) {
+	r := t.repoProvider.GetAccount()
+	filter := models.AccountFilter{
+		Type:  models.AccountTypeContract,
+		After: before,
+	}
+	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
 	return accs, count, err
 }
 

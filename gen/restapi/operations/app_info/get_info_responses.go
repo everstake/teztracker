@@ -57,6 +57,30 @@ func (o *GetInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produ
 	}
 }
 
+// GetInfoBadRequestCode is the HTTP code returned for type GetInfoBadRequest
+const GetInfoBadRequestCode int = 400
+
+/*GetInfoBadRequest Bad request
+
+swagger:response getInfoBadRequest
+*/
+type GetInfoBadRequest struct {
+}
+
+// NewGetInfoBadRequest creates GetInfoBadRequest with default headers values
+func NewGetInfoBadRequest() *GetInfoBadRequest {
+
+	return &GetInfoBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetInfoBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetInfoInternalServerErrorCode is the HTTP code returned for type GetInfoInternalServerError
 const GetInfoInternalServerErrorCode int = 500
 

@@ -10,7 +10,7 @@ import (
 // GetOperations gets the operations filtering by operation kinds and blocks wiht pagination.
 func (t *TezTracker) GetOperations(ids, kinds, inBlocks, accountIDs []string, limits Limiter, before int64) (operations []models.Operation, count int64, err error) {
 	r := t.repoProvider.GetOperation()
-	count, err = r.Count(ids, kinds, inBlocks, accountIDs)
+	count, err = r.Count(ids, kinds, inBlocks, accountIDs, 0)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -37,4 +37,18 @@ func (t *TezTracker) GetBlockEndorsements(hashOrLevel string) (operations []mode
 	or := t.repoProvider.GetOperation()
 	operations, err = or.EndorsementsFor(block.Level.Int64)
 	return operations, int64(len(operations)), err
+}
+
+// GetOperations gets the operations filtering by operation kinds and blocks wiht pagination.
+func (t *TezTracker) GetDoubleBakings(ids, inBlocks []string, limits Limiter) (operations []models.DoubleBakingEvidence, count int64, err error) {
+	r := t.repoProvider.GetDoubleBaking()
+	options := models.DoubleBakingEvidenceQueryOptions{
+		BlockIDs:        inBlocks,
+		OperationHashes: ids,
+		LoadOperation:   true,
+		Limit:           limits.Limit(),
+		Offset:          limits.Offset(),
+	}
+	count, operations, err = r.List(options)
+	return operations, count, err
 }

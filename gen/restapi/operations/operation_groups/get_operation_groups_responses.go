@@ -58,6 +58,30 @@ func (o *GetOperationGroupsOK) WriteResponse(rw http.ResponseWriter, producer ru
 	}
 }
 
+// GetOperationGroupsBadRequestCode is the HTTP code returned for type GetOperationGroupsBadRequest
+const GetOperationGroupsBadRequestCode int = 400
+
+/*GetOperationGroupsBadRequest Bad request
+
+swagger:response getOperationGroupsBadRequest
+*/
+type GetOperationGroupsBadRequest struct {
+}
+
+// NewGetOperationGroupsBadRequest creates GetOperationGroupsBadRequest with default headers values
+func NewGetOperationGroupsBadRequest() *GetOperationGroupsBadRequest {
+
+	return &GetOperationGroupsBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetOperationGroupsBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetOperationGroupsNotFoundCode is the HTTP code returned for type GetOperationGroupsNotFound
 const GetOperationGroupsNotFoundCode int = 404
 

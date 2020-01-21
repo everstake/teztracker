@@ -8,4 +8,6 @@ type Fee struct {
 	High      uint      `json:"high"`
 	Timestamp time.Time `json:"timestamp"`
 	Kind      string    `json:"kind"`
+	Level     int64     `json:"level"`
+	Cycle     int64     `json:"cycle"`
 }

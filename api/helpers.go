@@ -1,5 +1,11 @@
 package api
 
+import "github.com/bullblock-io/tezTracker/models"
+
+import "strings"
+
+import "fmt"
+
 type Limits struct {
 	limit  uint
 	offset uint
@@ -21,4 +27,14 @@ func NewLimiter(limit, offset *int64) *Limits {
 		o = uint(*offset)
 	}
 	return &Limits{limit: l, offset: o}
+}
+
+func ToNetwork(net string) (models.Network, error) {
+	switch strings.ToLower(net) {
+	case "main", "mainnet":
+		return models.NetworkMain, nil
+	case "babylon", "babylonnet":
+		return models.NetworkBabylon, nil
+	}
+	return "", fmt.Errorf("not supported network")
 }

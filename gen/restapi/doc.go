@@ -14,8 +14,6 @@ Package restapi Conseil API
 
     Produces:
     - application/json
-    - text/csv
-    - text/plain
 
 swagger:meta
 */

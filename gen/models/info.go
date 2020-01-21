@@ -20,6 +20,15 @@ type Info struct {
 	// Expected annual return in percents.
 	AnnualYield float64 `json:"annual_yield,omitempty"`
 
+	// blocks in cycle
+	BlocksInCycle int64 `json:"blocks_in_cycle,omitempty"`
+
+	// circulating supply
+	CirculatingSupply float64 `json:"circulating_supply,omitempty"`
+
+	// market cap
+	MarketCap float64 `json:"market_cap,omitempty"`
+
 	// price
 	// Required: true
 	Price *float64 `json:"price"`
@@ -32,6 +41,9 @@ type Info struct {
 	// Maximum: 100
 	// Minimum: 0
 	StakingRatio *float64 `json:"staking_ratio,omitempty"`
+
+	// volume 24h
+	Volume24h float64 `json:"volume_24h,omitempty"`
 }
 
 // Validate validates this info

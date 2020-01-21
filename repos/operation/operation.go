@@ -14,8 +14,12 @@ type (
 
 	Repo interface {
 		List(ids, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64) (operations []models.Operation, err error)
-		Count(ids, kinds, inBlocks, accountIDs []string) (count int64, err error)
+		ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error)
+		Count(ids, kinds, inBlocks, accountIDs []string, maxOperationID int64) (count int64, err error)
 		EndorsementsFor(blockLevel int64) (operations []models.Operation, err error)
+		Last() (operation models.Operation, err error)
+		ListDoubleEndorsementsWithoutLevel(limit, offset uint) (operations []models.Operation, err error)
+		UpdateLevel(operation models.Operation) error
 	}
 )
 
@@ -29,10 +33,23 @@ func New(db *gorm.DB) *Repository {
 }
 
 // Count counts a number of operations sutisfying the filter.
-func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string) (count int64, err error) {
+func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperationID int64) (count int64, err error) {
 	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs)
+	if maxOperationID > 0 {
+		db = db.Where("operation_id <= ?", maxOperationID)
+	}
+	snapshotCount := int64(0)
+	if len(ids) == 0 && len(inBlocks) == 0 && len(accountIDs) == 0 && len(kinds) == 1 {
+		counter := models.OperationCounter{}
+		lastCounterDb := r.db.Model(&counter).Where("cnt_operation_type = ?", kinds[0])
+		if err := lastCounterDb.Last(&counter).Error; err == nil {
+			db = db.Where("operation_id > ?", counter.LastOperationID)
+			snapshotCount = counter.Count
+		}
+
+	}
 	err = db.Count(&count).Error
-	return count, err
+	return count + snapshotCount, err
 }
 
 func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string) *gorm.DB {
@@ -47,7 +64,11 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 		db = db.Where("block_hash IN (?)", inBlocks)
 	}
 	if len(accountIDs) > 0 {
-		db = db.Where("delegate IN (?) OR pkh IN (?) OR source IN (?) OR public_key IN (?) OR destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
+		if len(kinds) == 1 && kinds[0] == "transaction" {
+			db = db.Where("source IN (?) OR destination IN (?)", accountIDs, accountIDs)
+		} else {
+			db = db.Where("delegate IN (?) OR pkh IN (?) OR source IN (?) OR public_key IN (?) OR destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
+		}
 	}
 	return db
 }
@@ -69,6 +90,32 @@ func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, li
 	return operations, err
 }
 
+func (r *Repository) ListDoubleEndorsementsWithoutLevel(limit, offset uint) (operations []models.Operation, err error) {
+	db := r.db.Model(&models.Operation{}).Where("kind IN (?)", []string{"double_endorsement_evidence"}).Where("level is null")
+	err = db.Order("operation_id asc").
+		Limit(limit).
+		Offset(offset).
+		Find(&operations).Error
+	return operations, err
+}
+
+func (r *Repository) UpdateLevel(operation models.Operation) error {
+	return r.db.Select("level").Save(&operation).Error
+}
+
+func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error) {
+	db := r.getFilteredDB(nil, kinds, nil, nil)
+
+	if after > 0 {
+		db = db.Where("operation_id > ?", after)
+	}
+	err = db.Order("operation_id asc").
+		Limit(limit).
+		Offset(offset).
+		Find(&operations).Error
+	return operations, err
+}
+
 // EndorsementsFor returns a list of endorsement operations for the provided block level.
 func (r *Repository) EndorsementsFor(blockLevel int64) (operations []models.Operation, err error) {
 	err = r.db.Model(&models.Operation{}).
@@ -78,4 +125,11 @@ func (r *Repository) EndorsementsFor(blockLevel int64) (operations []models.Oper
 		Order("operation_id DESC").
 		Find(&operations).Error
 	return operations, err
+}
+
+// Last returns the last known operation.
+func (r *Repository) Last() (operation models.Operation, err error) {
+	db := r.db.Model(&operation)
+	err = db.Last(&operation).Error
+	return operation, err
 }

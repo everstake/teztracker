@@ -6,17 +6,24 @@ import (
 	"github.com/bullblock-io/tezTracker/repos"
 	"github.com/bullblock-io/tezTracker/services"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 )
 
 type getAccountListHandler struct {
-	db *gorm.DB
+	provider DbProvider
 }
 
 // Handle serves the Get Account List request.
 func (h *getAccountListHandler) Handle(params accounts.GetAccountsListParams) middleware.Responder {
-	service := services.New(repos.New(h.db))
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountsListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountsListNotFound()
+	}
+	service := services.New(repos.New(db), net)
 	limiter := NewLimiter(params.Limit, params.Offset)
 	before := ""
 	if params.AfterID != nil {

@@ -17,12 +17,12 @@ type Operation struct {
 	Pkh                 string      `json:"pkh"`
 	Secret              string      `json:"secret"`
 	Source              string      `json:"source"`
-	Fee                 int64     `json:"fee"`
-	Counter             int64     `json:"counter"`
-	GasLimit            int64     `json:"gas_limit"`
-	StorageLimit        int64     `json:"storage_limit"`
+	Fee                 int64       `json:"fee"`
+	Counter             int64       `json:"counter"`
+	GasLimit            int64       `json:"gas_limit"`
+	StorageLimit        int64       `json:"storage_limit"`
 	PublicKey           string      `json:"public_key"`
-	Amount              int64     `json:"amount"`
+	Amount              int64       `json:"amount"`
 	Destination         string      `json:"destination"`
 	Parameters          string      `json:"parameters"`
 	ManagerPubkey       string      `json:"manager_pubkey"`
@@ -32,11 +32,18 @@ type Operation struct {
 	Script              string      `json:"script"`
 	Storage             string      `json:"storage"`
 	Status              string      `json:"status"`
-	ConsumedGas         int64     `json:"consumed_gas"`
-	StorageSize         int64     `json:"storage_size"`
-	PaidStorageSizeDiff int64     `json:"paid_storage_size_diff"`
+	ConsumedGas         int64       `json:"consumed_gas"`
+	StorageSize         int64       `json:"storage_size"`
+	PaidStorageSizeDiff int64       `json:"paid_storage_size_diff"`
 	OriginatedContracts string      `json:"originated_contracts"`
 	BlockHash           null.String `json:"block_hash"`
 	BlockLevel          null.Int    `json:"block_level"`
 	Timestamp           time.Time   `json:"timestamp"`
+	Branch              string      `json:"branch" gorm:"column:branch"`
+	NumberOfSlots       int64       `json:"number_of_slots" gorm:"column:number_of_slots"`
+	Cycle               int64       `json:"cycle" gorm:"column:cycle"`
+	Proposal            string      `json:"proposal" gorm:"column:proposal"`
+	Ballot              string      `json:"ballot" gorm:"column:ballot"`
+	Internal            bool        `json:"internal" gorm:"column:internal"`
+	Period              int64       `json:"period" gorm:"column:period"`
 }

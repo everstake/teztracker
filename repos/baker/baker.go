@@ -141,7 +141,7 @@ func (r *Repository) BlocksCountBakedBy(ids []string, startingLevel int64) (coun
 
 // BlocksCountBakedBy returns a slice of block counters with the number of endorsements made by each baker among ids.
 func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error) {
-	db := r.db.Table("endorsements_view").
+	db := r.db.Table("tezos.endorsements_view").
 		Where("baker IN (?)", ids)
 	if startingLevel > 0 {
 		db = db.Where("block_level >= ?", startingLevel)
@@ -179,7 +179,7 @@ func (r *Repository) TotalStakingBalance() (b int64, err error) {
 	bal := struct {
 		Balance int64
 	}{}
-	err = r.db.Table("delegates").Select("SUM(staking_balance) balance").Find(&bal).Error
+	err = r.db.Table("tezos.delegates").Select("SUM(staking_balance) balance").Find(&bal).Error
 	if err != nil {
 		return 0, err
 	}

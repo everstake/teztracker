@@ -1,0 +1,113 @@
+swagger: '2.0'
+info:
+  title: Conseil API
+  version: 0.0.1
+paths:
+  /chains/{network}/blocks/{block}/helpers/baking_rights:
+    get:
+      operationId: getBakingRights
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: block
+          required: true
+          type: string
+        - in: query
+          type: array
+          items:
+            type: string
+          name: level
+          collectionFormat: multi
+        - in: query
+          type: boolean
+          name: all
+      responses:
+        '200':
+          description: Query compatibility endpoint for account
+          schema:
+            items:
+              $ref: '#/definitions/BakingRight'
+            type: array
+        '500':
+          description: Internal error
+      tags:
+        - BakingRights
+  /chains/{network}/blocks/{block}/context/raw/json/cycle/{cycle}/roll_snapshot:
+    get:
+      operationId: getRollSnapshot
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: block
+          required: true
+          type: string
+        - in: path
+          type: integer
+          name: cycle
+          required: true
+      responses:
+        '200':
+          description: Endpoint for snapshot number
+          schema:
+            type: integer
+        '500':
+          description: Internal error
+      tags:
+        - Snapshots
+  /chains/{network}/blocks/{block}/context/raw/json/rolls/owner/snapshot/{cycle}/{snap}:
+    get:
+      operationId: getRolls
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: block
+          required: true
+          type: string
+        - in: path
+          type: integer
+          name: cycle
+          required: true
+        - in: path
+          type: integer
+          name: snap
+          required: true
+      responses:
+        '200':
+          description: Endpoint for rolls 
+          schema:
+            type: array
+            items: 
+              type: integer
+        '500':
+          description: Internal error
+      tags:
+        - Snapshots
+definitions:
+  BakingRight:
+    properties:
+      level:
+        type: integer
+        format: int64
+      delegate:
+        type: string
+      priority:
+        type: integer
+        format: int
+      estimated_time:
+        type: string
+        format: date-time

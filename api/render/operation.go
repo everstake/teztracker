@@ -6,10 +6,10 @@ import (
 )
 
 // Operation renders an app level model to a gennerated OpenAPI model.
-func Operation(b models.Operation) *genModels.OperationsRow {
+func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.OperationsRow {
 	ts := b.Timestamp.Unix()
 
-	return &genModels.OperationsRow{
+	row := genModels.OperationsRow{
 		OperationID:         b.OperationID.Ptr(),
 		OperationGroupHash:  b.OperationGroupHash.Ptr(),
 		Kind:                b.Kind.Ptr(),
@@ -43,13 +43,34 @@ func Operation(b models.Operation) *genModels.OperationsRow {
 		BlockLevel:          b.BlockLevel.Ptr(),
 		Timestamp:           &ts,
 	}
+	if dbe != nil {
+		row.DoubleBake = &genModels.DoubleBakingDetails{
+			BakerReward:    dbe.BakerReward,
+			DenouncedLevel: dbe.DenouncedLevel,
+			EvidenceBaker:  dbe.EvidenceBaker,
+			LostDeposits:   dbe.LostDeposits,
+			LostFees:       dbe.LostFees,
+			LostRewards:    dbe.LostRewards,
+			Offender:       dbe.Offender,
+			Priority:       int64(dbe.Priority),
+		}
+	}
+	return &row
 }
 
 // Operations renders a slice of app level Operations into a slice of OpenAPI models.
 func Operations(bs []models.Operation) []*genModels.OperationsRow {
 	operations := make([]*genModels.OperationsRow, len(bs))
 	for i := range bs {
-		operations[i] = Operation(bs[i])
+		operations[i] = Operation(bs[i], nil)
+	}
+	return operations
+}
+
+func DoubleBakings(bs []models.DoubleBakingEvidence) []*genModels.OperationsRow {
+	operations := make([]*genModels.OperationsRow, len(bs))
+	for i := range bs {
+		operations[i] = Operation(bs[i].Operation, &bs[i])
 	}
 	return operations
 }

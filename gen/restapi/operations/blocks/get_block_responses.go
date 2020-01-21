@@ -57,6 +57,30 @@ func (o *GetBlockOK) WriteResponse(rw http.ResponseWriter, producer runtime.Prod
 	}
 }
 
+// GetBlockBadRequestCode is the HTTP code returned for type GetBlockBadRequest
+const GetBlockBadRequestCode int = 400
+
+/*GetBlockBadRequest Bad request
+
+swagger:response getBlockBadRequest
+*/
+type GetBlockBadRequest struct {
+}
+
+// NewGetBlockBadRequest creates GetBlockBadRequest with default headers values
+func NewGetBlockBadRequest() *GetBlockBadRequest {
+
+	return &GetBlockBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetBlockBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetBlockNotFoundCode is the HTTP code returned for type GetBlockNotFound
 const GetBlockNotFoundCode int = 404
 

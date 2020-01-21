@@ -179,20 +179,20 @@ func (o *GetOperationGroupsURL) Build() (*url.URL, error) {
 		qs.Add("block_protocol", qsv)
 	}
 
-	var limit string
+	var limitQ string
 	if o.Limit != nil {
-		limit = swag.FormatInt64(*o.Limit)
+		limitQ = swag.FormatInt64(*o.Limit)
 	}
-	if limit != "" {
-		qs.Set("limit", limit)
+	if limitQ != "" {
+		qs.Set("limit", limitQ)
 	}
 
-	var offset string
+	var offsetQ string
 	if o.Offset != nil {
-		offset = swag.FormatInt64(*o.Offset)
+		offsetQ = swag.FormatInt64(*o.Offset)
 	}
-	if offset != "" {
-		qs.Set("offset", offset)
+	if offsetQ != "" {
+		qs.Set("offset", offsetQ)
 	}
 
 	var operationDestinationIR []string
@@ -265,20 +265,20 @@ func (o *GetOperationGroupsURL) Build() (*url.URL, error) {
 		qs.Add("operation_source", qsv)
 	}
 
-	var order string
+	var orderQ string
 	if o.Order != nil {
-		order = *o.Order
+		orderQ = *o.Order
 	}
-	if order != "" {
-		qs.Set("order", order)
+	if orderQ != "" {
+		qs.Set("order", orderQ)
 	}
 
-	var sortBy string
+	var sortByQ string
 	if o.SortBy != nil {
-		sortBy = *o.SortBy
+		sortByQ = *o.SortBy
 	}
-	if sortBy != "" {
-		qs.Set("sort_by", sortBy)
+	if sortByQ != "" {
+		qs.Set("sort_by", sortByQ)
 	}
 
 	_result.RawQuery = qs.Encode()

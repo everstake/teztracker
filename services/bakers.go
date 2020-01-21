@@ -5,7 +5,6 @@ import (
 )
 
 const (
-	BlocksInCycle              = 4096
 	PreservedCycles            = 5
 	XTZ                        = 1000000
 	BlockSecurityDeposit       = 512 * XTZ
@@ -37,11 +36,11 @@ func (t *TezTracker) GetCurrentCycle() (int64, error) {
 	return lastBlock.MetaCycle, nil
 }
 
-func getFirstPreservedBlock(currentCycle int64) (fpb int64) {
+func getFirstPreservedBlock(currentCycle, blocksInCycle int64) (fpb int64) {
 	fpc := currentCycle - PreservedCycles
 
 	if fpc > 0 {
-		fpb = fpc*BlocksInCycle + 1
+		fpb = fpc*blocksInCycle + 1
 	}
 	return fpb
 }
@@ -60,7 +59,8 @@ func (t *TezTracker) GetBakerInfo(accountID string) (bi *models.BakerInfo, err e
 	if err != nil {
 		return bi, err
 	}
-	fpb := getFirstPreservedBlock(curCycle)
+
+	fpb := getFirstPreservedBlock(curCycle, t.BlocksInCycle())
 	counter, err := r.BlocksCountBakedBy([]string{accountID}, fpb)
 	if err != nil {
 		return bi, err
@@ -95,7 +95,7 @@ func (t *TezTracker) getLockedBalance() (int64, error) {
 		return 0, err
 	}
 	curCycle := lastBlock.MetaCycle
-	fpb := getFirstPreservedBlock(curCycle)
+	fpb := getFirstPreservedBlock(curCycle, t.BlocksInCycle())
 	lockedBlocks := lastBlock.Level.Int64 - fpb
 	lockedBalanceEstimate := lockedBlocks * BlockLockEstimate
 

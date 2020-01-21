@@ -57,6 +57,30 @@ func (o *GetAccountOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
+// GetAccountBadRequestCode is the HTTP code returned for type GetAccountBadRequest
+const GetAccountBadRequestCode int = 400
+
+/*GetAccountBadRequest Bad request
+
+swagger:response getAccountBadRequest
+*/
+type GetAccountBadRequest struct {
+}
+
+// NewGetAccountBadRequest creates GetAccountBadRequest with default headers values
+func NewGetAccountBadRequest() *GetAccountBadRequest {
+
+	return &GetAccountBadRequest{}
+}
+
+// WriteResponse to the client
+func (o *GetAccountBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(400)
+}
+
 // GetAccountNotFoundCode is the HTTP code returned for type GetAccountNotFound
 const GetAccountNotFoundCode int = 404
 

@@ -6,17 +6,24 @@ import (
 	"github.com/bullblock-io/tezTracker/repos"
 	"github.com/bullblock-io/tezTracker/services"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 )
 
 type getBakerListHandler struct {
-	db *gorm.DB
+	provider DbProvider
 }
 
 // Handle serves the Get Baker List request.
 func (h *getBakerListHandler) Handle(params accounts.GetBakersListParams) middleware.Responder {
-	service := services.New(repos.New(h.db))
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetBakersListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetBakersListNotFound()
+	}
+	service := services.New(repos.New(db), net)
 	limiter := NewLimiter(params.Limit, params.Offset)
 
 	accs, count, err := service.BakerList(limiter)

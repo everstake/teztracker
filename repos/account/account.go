@@ -13,7 +13,7 @@ type (
 	}
 
 	Repo interface {
-		List(limit uint, offset uint, after string) ([]models.Account, error)
+		List(limit uint, offset uint, filter models.AccountFilter) (int64, []models.Account, error)
 		Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error)
 		Count(filter models.Account) (int64, error)
 		Find(filter models.Account) (found bool, acc models.Account, err error)
@@ -28,19 +28,32 @@ func New(db *gorm.DB) *Repository {
 	}
 }
 
+func (r *Repository) getDb(filter models.AccountFilter) *gorm.DB {
+	db := r.db.Model(&models.Account{})
+	if filter.After != "" {
+		db = db.Where("account_id > ?", filter.After)
+	}
+	if filter.Type == models.AccountTypeAccount {
+		db = db.Where("account_id like 'tz%'")
+	} else if filter.Type == models.AccountTypeContract {
+		db = db.Where("account_id like 'KT1%'")
+	}
+	return db
+}
+
 // List returns a list of accounts from the newest to oldest.
 // limit defines the limit for the maximum number of accounts returned.
 // before is used to paginate results based on the level. As the result is ordered descendingly the accounts with level < before will be returned.
-func (r *Repository) List(limit, offset uint, after string) (accounts []models.Account, err error) {
-	db := r.db.Model(&models.Account{})
-	if after != "" {
-		db = db.Where("account_id > ?", after)
+func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (count int64, accounts []models.Account, err error) {
+	db := r.getDb(filter)
+	if err := db.Count(&count).Error; err != nil {
+		return 0, nil, err
 	}
 	err = db.Order("account_id asc").
 		Limit(limit).
 		Offset(offset).
 		Find(&accounts).Error
-	return accounts, err
+	return count, accounts, err
 }
 
 // Count counts a number of accounts sutisfying the filter.
@@ -77,7 +90,7 @@ func (r *Repository) TotalBalance() (b int64, err error) {
 	bal := struct {
 		Balance int64 `json:"balance"`
 	}{}
-	err = r.db.Table("accounts").Select("SUM(balance) balance").First(&bal).Error
+	err = r.db.Table("tezos.accounts").Select("SUM(balance) balance").First(&bal).Error
 	if err != nil {
 		return 0, err
 	}

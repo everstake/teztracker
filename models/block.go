@@ -32,6 +32,7 @@ type Block struct {
 	MetaVotingPeriod         int64                  `json:"meta_voting_period"`
 	MetaVotingPeriodPosition int64                  `json:"meta_voting_period_position"`
 	ExpectedCommitment       bool                   `json:"expected_commitment"`
+	Priority                 int64                  `json:"priority" gorm:"column:priority"`
 	BlockAggregation         *BlockAggregationView  `json:"-"`
 	Delegates                []*Delegate            `json:"delegates"`            // This line is infered from other tables.
 	Proposals                []*Proposal            `json:"proposals"`            // This line is infered from other tables.
@@ -41,5 +42,10 @@ type Block struct {
 	OperationGroups          []*OperationGroup      `json:"operation_groups"`     // This line is infered from other tables.
 	DelegatesCheckpoint      []*DelegatesCheckpoint `json:"delegates_checkpoint"` // This line is infered from other tables.
 	Accounts                 []*Account             `json:"accounts"`             // This line is infered from other tables.
+	BakingRights             []FutureBakingRight    `json:"baking_rights,omitempty"`
+}
 
+type BlockFilter struct {
+	BlockLevels []int64
+	BlockHashes []string
 }

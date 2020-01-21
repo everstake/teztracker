@@ -67,20 +67,20 @@ func (o *GetBakersListURL) Build() (*url.URL, error) {
 
 	qs := make(url.Values)
 
-	var limit string
+	var limitQ string
 	if o.Limit != nil {
-		limit = swag.FormatInt64(*o.Limit)
+		limitQ = swag.FormatInt64(*o.Limit)
 	}
-	if limit != "" {
-		qs.Set("limit", limit)
+	if limitQ != "" {
+		qs.Set("limit", limitQ)
 	}
 
-	var offset string
+	var offsetQ string
 	if o.Offset != nil {
-		offset = swag.FormatInt64(*o.Offset)
+		offsetQ = swag.FormatInt64(*o.Offset)
 	}
-	if offset != "" {
-		qs.Set("offset", offset)
+	if offsetQ != "" {
+		qs.Set("offset", offsetQ)
 	}
 
 	_result.RawQuery = qs.Encode()

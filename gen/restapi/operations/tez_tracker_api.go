@@ -7,7 +7,6 @@ package operations
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
@@ -24,10 +23,8 @@ import (
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/app_info"
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/blocks"
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/fees"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/metadata"
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/operation_groups"
 	"github.com/bullblock-io/tezTracker/gen/restapi/operations/operations_list"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/query"
 )
 
 // NewTezTrackerAPI creates a new TezTracker instance
@@ -47,31 +44,6 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		CsvProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
-			return errors.NotImplemented("csv producer has not yet been implemented")
-		}),
-		TxtProducer: runtime.TextProducer(),
-		MetadataGetV2MetadataPlatformNetworkEntitiesHandler: metadata.GetV2MetadataPlatformNetworkEntitiesHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworkEntitiesParams) middleware.Responder {
-			return middleware.NotImplemented("operation MetadataGetV2MetadataPlatformNetworkEntities has not yet been implemented")
-		}),
-		MetadataGetV2MetadataPlatformNetworkEntityAttributeHandler: metadata.GetV2MetadataPlatformNetworkEntityAttributeHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworkEntityAttributeParams) middleware.Responder {
-			return middleware.NotImplemented("operation MetadataGetV2MetadataPlatformNetworkEntityAttribute has not yet been implemented")
-		}),
-		MetadataGetV2MetadataPlatformNetworkEntityAttributeFilterHandler: metadata.GetV2MetadataPlatformNetworkEntityAttributeFilterHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworkEntityAttributeFilterParams) middleware.Responder {
-			return middleware.NotImplemented("operation MetadataGetV2MetadataPlatformNetworkEntityAttributeFilter has not yet been implemented")
-		}),
-		MetadataGetV2MetadataPlatformNetworkEntityAttributesHandler: metadata.GetV2MetadataPlatformNetworkEntityAttributesHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworkEntityAttributesParams) middleware.Responder {
-			return middleware.NotImplemented("operation MetadataGetV2MetadataPlatformNetworkEntityAttributes has not yet been implemented")
-		}),
-		MetadataGetV2MetadataPlatformNetworksHandler: metadata.GetV2MetadataPlatformNetworksHandlerFunc(func(params metadata.GetV2MetadataPlatformNetworksParams) middleware.Responder {
-			return middleware.NotImplemented("operation MetadataGetV2MetadataPlatformNetworks has not yet been implemented")
-		}),
-		MetadataGetV2MetadataPlatformsHandler: metadata.GetV2MetadataPlatformsHandlerFunc(func(params metadata.GetV2MetadataPlatformsParams) middleware.Responder {
-			return middleware.NotImplemented("operation MetadataGetV2MetadataPlatforms has not yet been implemented")
-		}),
-		QueryPostV2DataPlatformNetworkEntityHandler: query.PostV2DataPlatformNetworkEntityHandlerFunc(func(params query.PostV2DataPlatformNetworkEntityParams) middleware.Responder {
-			return middleware.NotImplemented("operation QueryPostV2DataPlatformNetworkEntity has not yet been implemented")
-		}),
 		AccountsGetAccountHandler: accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccount has not yet been implemented")
 		}),
@@ -87,8 +59,14 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetBakersListHandler: accounts.GetBakersListHandlerFunc(func(params accounts.GetBakersListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetBakersList has not yet been implemented")
 		}),
+		BlocksGetBakingRightsHandler: blocks.GetBakingRightsHandlerFunc(func(params blocks.GetBakingRightsParams) middleware.Responder {
+			return middleware.NotImplemented("operation BlocksGetBakingRights has not yet been implemented")
+		}),
 		BlocksGetBlockHandler: blocks.GetBlockHandlerFunc(func(params blocks.GetBlockParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBlock has not yet been implemented")
+		}),
+		BlocksGetBlockBakingRightsHandler: blocks.GetBlockBakingRightsHandlerFunc(func(params blocks.GetBlockBakingRightsParams) middleware.Responder {
+			return middleware.NotImplemented("operation BlocksGetBlockBakingRights has not yet been implemented")
 		}),
 		BlocksGetBlockEndorsementsHandler: blocks.GetBlockEndorsementsHandlerFunc(func(params blocks.GetBlockEndorsementsParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBlockEndorsements has not yet been implemented")
@@ -98,6 +76,15 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		BlocksGetBlocksListHandler: blocks.GetBlocksListHandlerFunc(func(params blocks.GetBlocksListParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBlocksList has not yet been implemented")
+		}),
+		AccountsGetContractsListHandler: accounts.GetContractsListHandlerFunc(func(params accounts.GetContractsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetContractsList has not yet been implemented")
+		}),
+		OperationsListGetDoubleBakingsListHandler: operations_list.GetDoubleBakingsListHandlerFunc(func(params operations_list.GetDoubleBakingsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation OperationsListGetDoubleBakingsList has not yet been implemented")
+		}),
+		BlocksGetFutureBakingRightsHandler: blocks.GetFutureBakingRightsHandlerFunc(func(params blocks.GetFutureBakingRightsParams) middleware.Responder {
+			return middleware.NotImplemented("operation BlocksGetFutureBakingRights has not yet been implemented")
 		}),
 		AppInfoGetInfoHandler: app_info.GetInfoHandlerFunc(func(params app_info.GetInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetInfo has not yet been implemented")
@@ -110,6 +97,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		OperationsListGetOperationsListHandler: operations_list.GetOperationsListHandlerFunc(func(params operations_list.GetOperationsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation OperationsListGetOperationsList has not yet been implemented")
+		}),
+		GetSnapshotsHandler: GetSnapshotsHandlerFunc(func(params GetSnapshotsParams) middleware.Responder {
+			return middleware.NotImplemented("operation GetSnapshots has not yet been implemented")
 		}),
 	}
 }
@@ -141,25 +131,7 @@ type TezTrackerAPI struct {
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
-	// CsvProducer registers a producer for a "text/csv" mime type
-	CsvProducer runtime.Producer
-	// TxtProducer registers a producer for a "text/plain" mime type
-	TxtProducer runtime.Producer
 
-	// MetadataGetV2MetadataPlatformNetworkEntitiesHandler sets the operation handler for the get v2 metadata platform network entities operation
-	MetadataGetV2MetadataPlatformNetworkEntitiesHandler metadata.GetV2MetadataPlatformNetworkEntitiesHandler
-	// MetadataGetV2MetadataPlatformNetworkEntityAttributeHandler sets the operation handler for the get v2 metadata platform network entity attribute operation
-	MetadataGetV2MetadataPlatformNetworkEntityAttributeHandler metadata.GetV2MetadataPlatformNetworkEntityAttributeHandler
-	// MetadataGetV2MetadataPlatformNetworkEntityAttributeFilterHandler sets the operation handler for the get v2 metadata platform network entity attribute filter operation
-	MetadataGetV2MetadataPlatformNetworkEntityAttributeFilterHandler metadata.GetV2MetadataPlatformNetworkEntityAttributeFilterHandler
-	// MetadataGetV2MetadataPlatformNetworkEntityAttributesHandler sets the operation handler for the get v2 metadata platform network entity attributes operation
-	MetadataGetV2MetadataPlatformNetworkEntityAttributesHandler metadata.GetV2MetadataPlatformNetworkEntityAttributesHandler
-	// MetadataGetV2MetadataPlatformNetworksHandler sets the operation handler for the get v2 metadata platform networks operation
-	MetadataGetV2MetadataPlatformNetworksHandler metadata.GetV2MetadataPlatformNetworksHandler
-	// MetadataGetV2MetadataPlatformsHandler sets the operation handler for the get v2 metadata platforms operation
-	MetadataGetV2MetadataPlatformsHandler metadata.GetV2MetadataPlatformsHandler
-	// QueryPostV2DataPlatformNetworkEntityHandler sets the operation handler for the post v2 data platform network entity operation
-	QueryPostV2DataPlatformNetworkEntityHandler query.PostV2DataPlatformNetworkEntityHandler
 	// AccountsGetAccountHandler sets the operation handler for the get account operation
 	AccountsGetAccountHandler accounts.GetAccountHandler
 	// AccountsGetAccountDelegatorsHandler sets the operation handler for the get account delegators operation
@@ -170,14 +142,24 @@ type TezTrackerAPI struct {
 	FeesGetAvgFeesHandler fees.GetAvgFeesHandler
 	// AccountsGetBakersListHandler sets the operation handler for the get bakers list operation
 	AccountsGetBakersListHandler accounts.GetBakersListHandler
+	// BlocksGetBakingRightsHandler sets the operation handler for the get baking rights operation
+	BlocksGetBakingRightsHandler blocks.GetBakingRightsHandler
 	// BlocksGetBlockHandler sets the operation handler for the get block operation
 	BlocksGetBlockHandler blocks.GetBlockHandler
+	// BlocksGetBlockBakingRightsHandler sets the operation handler for the get block baking rights operation
+	BlocksGetBlockBakingRightsHandler blocks.GetBlockBakingRightsHandler
 	// BlocksGetBlockEndorsementsHandler sets the operation handler for the get block endorsements operation
 	BlocksGetBlockEndorsementsHandler blocks.GetBlockEndorsementsHandler
 	// BlocksGetBlocksHeadHandler sets the operation handler for the get blocks head operation
 	BlocksGetBlocksHeadHandler blocks.GetBlocksHeadHandler
 	// BlocksGetBlocksListHandler sets the operation handler for the get blocks list operation
 	BlocksGetBlocksListHandler blocks.GetBlocksListHandler
+	// AccountsGetContractsListHandler sets the operation handler for the get contracts list operation
+	AccountsGetContractsListHandler accounts.GetContractsListHandler
+	// OperationsListGetDoubleBakingsListHandler sets the operation handler for the get double bakings list operation
+	OperationsListGetDoubleBakingsListHandler operations_list.GetDoubleBakingsListHandler
+	// BlocksGetFutureBakingRightsHandler sets the operation handler for the get future baking rights operation
+	BlocksGetFutureBakingRightsHandler blocks.GetFutureBakingRightsHandler
 	// AppInfoGetInfoHandler sets the operation handler for the get info operation
 	AppInfoGetInfoHandler app_info.GetInfoHandler
 	// OperationGroupsGetOperationGroupHandler sets the operation handler for the get operation group operation
@@ -186,6 +168,8 @@ type TezTrackerAPI struct {
 	OperationGroupsGetOperationGroupsHandler operation_groups.GetOperationGroupsHandler
 	// OperationsListGetOperationsListHandler sets the operation handler for the get operations list operation
 	OperationsListGetOperationsListHandler operations_list.GetOperationsListHandler
+	// GetSnapshotsHandler sets the operation handler for the get snapshots operation
+	GetSnapshotsHandler GetSnapshotsHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -249,42 +233,6 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.CsvProducer == nil {
-		unregistered = append(unregistered, "CsvProducer")
-	}
-
-	if o.TxtProducer == nil {
-		unregistered = append(unregistered, "TxtProducer")
-	}
-
-	if o.MetadataGetV2MetadataPlatformNetworkEntitiesHandler == nil {
-		unregistered = append(unregistered, "metadata.GetV2MetadataPlatformNetworkEntitiesHandler")
-	}
-
-	if o.MetadataGetV2MetadataPlatformNetworkEntityAttributeHandler == nil {
-		unregistered = append(unregistered, "metadata.GetV2MetadataPlatformNetworkEntityAttributeHandler")
-	}
-
-	if o.MetadataGetV2MetadataPlatformNetworkEntityAttributeFilterHandler == nil {
-		unregistered = append(unregistered, "metadata.GetV2MetadataPlatformNetworkEntityAttributeFilterHandler")
-	}
-
-	if o.MetadataGetV2MetadataPlatformNetworkEntityAttributesHandler == nil {
-		unregistered = append(unregistered, "metadata.GetV2MetadataPlatformNetworkEntityAttributesHandler")
-	}
-
-	if o.MetadataGetV2MetadataPlatformNetworksHandler == nil {
-		unregistered = append(unregistered, "metadata.GetV2MetadataPlatformNetworksHandler")
-	}
-
-	if o.MetadataGetV2MetadataPlatformsHandler == nil {
-		unregistered = append(unregistered, "metadata.GetV2MetadataPlatformsHandler")
-	}
-
-	if o.QueryPostV2DataPlatformNetworkEntityHandler == nil {
-		unregistered = append(unregistered, "query.PostV2DataPlatformNetworkEntityHandler")
-	}
-
 	if o.AccountsGetAccountHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountHandler")
 	}
@@ -305,8 +253,16 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "accounts.GetBakersListHandler")
 	}
 
+	if o.BlocksGetBakingRightsHandler == nil {
+		unregistered = append(unregistered, "blocks.GetBakingRightsHandler")
+	}
+
 	if o.BlocksGetBlockHandler == nil {
 		unregistered = append(unregistered, "blocks.GetBlockHandler")
+	}
+
+	if o.BlocksGetBlockBakingRightsHandler == nil {
+		unregistered = append(unregistered, "blocks.GetBlockBakingRightsHandler")
 	}
 
 	if o.BlocksGetBlockEndorsementsHandler == nil {
@@ -319,6 +275,18 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.BlocksGetBlocksListHandler == nil {
 		unregistered = append(unregistered, "blocks.GetBlocksListHandler")
+	}
+
+	if o.AccountsGetContractsListHandler == nil {
+		unregistered = append(unregistered, "accounts.GetContractsListHandler")
+	}
+
+	if o.OperationsListGetDoubleBakingsListHandler == nil {
+		unregistered = append(unregistered, "operations_list.GetDoubleBakingsListHandler")
+	}
+
+	if o.BlocksGetFutureBakingRightsHandler == nil {
+		unregistered = append(unregistered, "blocks.GetFutureBakingRightsHandler")
 	}
 
 	if o.AppInfoGetInfoHandler == nil {
@@ -335,6 +303,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.OperationsListGetOperationsListHandler == nil {
 		unregistered = append(unregistered, "operations_list.GetOperationsListHandler")
+	}
+
+	if o.GetSnapshotsHandler == nil {
+		unregistered = append(unregistered, "GetSnapshotsHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -393,12 +365,6 @@ func (o *TezTrackerAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pro
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 
-		case "text/csv":
-			result["text/csv"] = o.CsvProducer
-
-		case "text/plain":
-			result["text/plain"] = o.TxtProducer
-
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -444,41 +410,6 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/metadata/{platform}/{network}/entities"] = metadata.NewGetV2MetadataPlatformNetworkEntities(o.context, o.MetadataGetV2MetadataPlatformNetworkEntitiesHandler)
-
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/v2/metadata/{platform}/{network}/{entity}/{attribute}"] = metadata.NewGetV2MetadataPlatformNetworkEntityAttribute(o.context, o.MetadataGetV2MetadataPlatformNetworkEntityAttributeHandler)
-
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/v2/metadata/{platform}/{network}/{entity}/{attribute}/{filter}"] = metadata.NewGetV2MetadataPlatformNetworkEntityAttributeFilter(o.context, o.MetadataGetV2MetadataPlatformNetworkEntityAttributeFilterHandler)
-
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/v2/metadata/{platform}/{network}/{entity}/attributes"] = metadata.NewGetV2MetadataPlatformNetworkEntityAttributes(o.context, o.MetadataGetV2MetadataPlatformNetworkEntityAttributesHandler)
-
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/v2/metadata/{platform}/networks"] = metadata.NewGetV2MetadataPlatformNetworks(o.context, o.MetadataGetV2MetadataPlatformNetworksHandler)
-
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/v2/metadata/platforms"] = metadata.NewGetV2MetadataPlatforms(o.context, o.MetadataGetV2MetadataPlatformsHandler)
-
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/v2/data/{platform}/{network}/{entity}"] = query.NewPostV2DataPlatformNetworkEntity(o.context, o.QueryPostV2DataPlatformNetworkEntityHandler)
-
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}"] = accounts.NewGetAccount(o.context, o.AccountsGetAccountHandler)
 
 	if o.handlers["GET"] == nil {
@@ -504,7 +435,17 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/baking_rights"] = blocks.NewGetBakingRights(o.context, o.BlocksGetBakingRightsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/blocks/{hash}"] = blocks.NewGetBlock(o.context, o.BlocksGetBlockHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/blocks/{hash}/baking_rights"] = blocks.NewGetBlockBakingRights(o.context, o.BlocksGetBlockBakingRightsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -520,6 +461,21 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/blocks"] = blocks.NewGetBlocksList(o.context, o.BlocksGetBlocksListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/contracts"] = accounts.NewGetContractsList(o.context, o.AccountsGetContractsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/double_bakings"] = operations_list.NewGetDoubleBakingsList(o.context, o.OperationsListGetDoubleBakingsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/future_baking_rights"] = blocks.NewGetFutureBakingRights(o.context, o.BlocksGetFutureBakingRightsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -540,6 +496,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/operations"] = operations_list.NewGetOperationsList(o.context, o.OperationsListGetOperationsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/snapshots"] = NewGetSnapshots(o.context, o.GetSnapshotsHandler)
 
 }
 

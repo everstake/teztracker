@@ -216,6 +216,9 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "404": {
             "description": "Not Found"
           }
@@ -259,6 +262,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/AccountsRow"
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -331,6 +337,9 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "500": {
             "description": "Internal error"
           }
@@ -392,6 +401,90 @@ func init() {
                 "description": "The total number of data entries."
               }
             }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/baking_rights": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getBakingRights",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 64,
+            "type": "integer",
+            "default": 10,
+            "name": "priorities_to",
+            "in": "query"
+          },
+          {
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "block_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint for baking rights",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakingRightsPerBlock"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -592,6 +685,9 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "404": {
             "description": "Not Found"
           }
@@ -629,6 +725,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/BlocksRow"
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "500": {
             "description": "Not initialized"
@@ -673,6 +772,65 @@ func init() {
             "schema": {
               "$ref": "#/definitions/BlockResult"
             }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/blocks/{hash}/baking_rights": {
+      "get": {
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getBlockBakingRights",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "hash",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint for baking rights of a block by hash or level",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakingRightsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -727,11 +885,302 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "404": {
             "description": "Not Found"
           },
           "500": {
             "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/contracts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getContractsList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "after_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "account_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "account_manager",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "account_delegate",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "order",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for contract accounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/double_bakings": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "OperationsList"
+        ],
+        "operationId": "getDoubleBakingsList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "block_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "block_level",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Operation hash",
+            "name": "operation_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "account_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/future_baking_rights": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getFutureBakingRights",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 64,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "priorities_to",
+            "in": "query"
+          },
+          {
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint for future baking rights",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FutureBakingRightsPerBlock"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -758,7 +1207,8 @@ func init() {
           },
           {
             "enum": [
-              "mainnet"
+              "mainnet",
+              "babylonnet"
             ],
             "type": "string",
             "description": "Not used",
@@ -773,6 +1223,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Info"
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "500": {
             "description": "Internal error"
@@ -946,6 +1399,9 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "404": {
             "description": "Not Found"
           }
@@ -987,6 +1443,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/OperationGroupResult"
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -1130,7 +1589,8 @@ func init() {
                 "ballot",
                 "origination",
                 "reveal",
-                "double_baking_evidence"
+                "double_baking_evidence",
+                "double_endorsement_evidence"
               ],
               "type": "string"
             },
@@ -1199,6 +1659,9 @@ func init() {
                 "description": "The total number of data entries."
               }
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -1375,320 +1838,64 @@ func init() {
         }
       }
     },
-    "/v2/data/{platform}/{network}/{entity}": {
-      "post": {
-        "consumes": [
+    "/v2/data/{platform}/{network}/snapshots": {
+      "get": {
+        "produces": [
           "application/json"
         ],
-        "produces": [
-          "application/json",
-          "text/csv",
-          "text/plain"
-        ],
-        "tags": [
-          "Query"
-        ],
+        "operationId": "getSnapshots",
         "parameters": [
           {
             "type": "string",
+            "description": "Not used",
             "name": "platform",
             "in": "path",
             "required": true
           },
           {
             "type": "string",
+            "description": "Not used",
             "name": "network",
             "in": "path",
             "required": true
           },
           {
-            "type": "string",
-            "name": "entity",
-            "in": "path",
-            "required": true
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/DataTypes.ApiQuery"
-            }
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "Can't query - invalid entity!"
-          },
-          "400": {
-            "description": "Can't query - invalid entity!",
+            "description": "Endpoint for snapshots",
             "schema": {
               "type": "array",
               "items": {
-                "type": "string"
+                "$ref": "#/definitions/Snapshots"
               }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/platforms": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available platforms",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/PlatformDiscoveryTypes.Platform"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/networks": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available networks",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/PlatformDiscoveryTypes.Network"
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/{network}/entities": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available entities",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/PlatformDiscoveryTypes.Entity"
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/{network}/{entity}/attributes": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "entity",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available attributes",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/PlatformDiscoveryTypes.Attribute"
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/{network}/{entity}/{attribute}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "entity",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "attribute",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available distinct values for given attribute",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
           "400": {
-            "description": "Cannot get the attributes!",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": "Bad request"
           },
           "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/{network}/{entity}/{attribute}/{filter}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "entity",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "attribute",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "filter",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available distinct values for given attribute filtered",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "400": {
-            "description": "Cannot get the attributes!",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
+            "description": "Not Found"
           }
         }
       }
@@ -1815,6 +2022,50 @@ func init() {
           "format": "int64"
         },
         "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "BakingRightsPerBlock": {
+      "required": [
+        "baker_priority"
+      ],
+      "properties": {
+        "baker": {
+          "type": "string"
+        },
+        "baker_priority": {
+          "type": "integer"
+        },
+        "block_hash": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BakingRightsRow"
+          }
+        }
+      }
+    },
+    "BakingRightsRow": {
+      "required": [
+        "priority"
+      ],
+      "properties": {
+        "delegate": {
+          "type": "string"
+        },
+        "estimated_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "priority": {
           "type": "integer",
           "format": "int64"
         }
@@ -1988,169 +2239,51 @@ func init() {
         }
       }
     },
-    "DataTypes.ApiAggregation": {
-      "type": "object",
-      "required": [
-        "field",
-        "function"
-      ],
+    "DoubleBakingDetails": {
       "properties": {
-        "field": {
-          "type": "string"
-        },
-        "function": {
-          "type": "string",
-          "enum": [
-            "sum",
-            "count",
-            "max",
-            "min",
-            "avg"
-          ]
-        },
-        "predicate": {
-          "$ref": "#/definitions/DataTypes.ApiAggregationPredicate"
-        }
-      }
-    },
-    "DataTypes.ApiAggregationPredicate": {
-      "type": "object",
-      "required": [
-        "operation"
-      ],
-      "properties": {
-        "inverse": {
-          "type": "boolean"
-        },
-        "operation": {
-          "type": "string",
-          "enum": [
-            "in",
-            "between",
-            "like",
-            "lt",
-            "gt",
-            "eq",
-            "startsWith",
-            "endsWith",
-            "before",
-            "after",
-            "isnull"
-          ]
-        },
-        "precision": {
+        "baker_reward": {
           "type": "integer",
           "format": "int64"
         },
-        "set": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "DataTypes.ApiPredicate": {
-      "type": "object",
-      "required": [
-        "field",
-        "operation"
-      ],
-      "properties": {
-        "field": {
-          "type": "string"
-        },
-        "inverse": {
-          "type": "boolean"
-        },
-        "operation": {
-          "type": "string",
-          "enum": [
-            "in",
-            "between",
-            "like",
-            "lt",
-            "gt",
-            "eq",
-            "startsWith",
-            "endsWith",
-            "before",
-            "after",
-            "isnull"
-          ]
-        },
-        "precision": {
+        "denounced_level": {
           "type": "integer",
           "format": "int64"
         },
-        "set": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "DataTypes.ApiQuery": {
-      "type": "object",
-      "properties": {
-        "aggregation": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataTypes.ApiAggregation"
-          }
-        },
-        "fields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int64",
-          "default": 20,
-          "maximum": 500,
-          "minimum": 1
-        },
-        "orderBy": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataTypes.QueryOrdering"
-          }
-        },
-        "output": {
-          "type": "string",
-          "enum": [
-            "json",
-            "csv",
-            "sql"
-          ]
-        },
-        "predicates": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataTypes.ApiPredicate"
-          }
-        }
-      }
-    },
-    "DataTypes.QueryOrdering": {
-      "type": "object",
-      "required": [
-        "field",
-        "direction"
-      ],
-      "properties": {
-        "direction": {
-          "type": "string",
-          "enum": [
-            "asc",
-            "desc"
-          ]
-        },
-        "field": {
+        "evidence_baker": {
           "type": "string"
+        },
+        "lost_deposits": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lost_fees": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lost_rewards": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "offender": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "FutureBakingRightsPerBlock": {
+      "properties": {
+        "level": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BakingRightsRow"
+          }
         }
       }
     },
@@ -2165,6 +2298,15 @@ func init() {
           "description": "Expected annual return in percents.",
           "type": "number"
         },
+        "blocks_in_cycle": {
+          "type": "integer"
+        },
+        "circulating_supply": {
+          "type": "number"
+        },
+        "market_cap": {
+          "type": "number"
+        },
         "price": {
           "type": "number"
         },
@@ -2175,6 +2317,9 @@ func init() {
           "description": "Staking ratio in percents (0-100).",
           "type": "number",
           "maximum": 100
+        },
+        "volume_24h": {
+          "type": "number"
         }
       }
     },
@@ -2268,6 +2413,9 @@ func init() {
         "destination": {
           "type": "string"
         },
+        "doubleBake": {
+          "$ref": "#/definitions/DoubleBakingDetails"
+        },
         "fee": {
           "type": "integer",
           "format": "int64"
@@ -2347,169 +2495,16 @@ func init() {
         }
       }
     },
-    "PlatformDiscoveryTypes.Attribute": {
-      "type": "object",
-      "required": [
-        "displayName",
-        "keyType",
-        "name",
-        "entity",
-        "dataType"
-      ],
+    "Snapshots": {
       "properties": {
-        "cardinality": {
-          "type": "integer",
-          "format": "int64"
+        "cycle": {
+          "type": "integer"
         },
-        "currencySymbol": {
-          "type": "string"
+        "rolls": {
+          "type": "integer"
         },
-        "currencySymbolCode": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "dataFormat": {
-          "type": "string"
-        },
-        "dataType": {
-          "type": "string",
-          "enum": [
-            "Enum",
-            "Hex",
-            "Binary",
-            "Date",
-            "DateTime",
-            "String",
-            "Hash",
-            "AccountAddress",
-            "Int",
-            "LargeInt",
-            "Decimal",
-            "Currency",
-            "Boolean"
-          ]
-        },
-        "description": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "displayOrder": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "displayPriority": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "entity": {
-          "type": "string"
-        },
-        "keyType": {
-          "type": "string",
-          "enum": [
-            "NonKey",
-            "UniqueKey"
-          ]
-        },
-        "name": {
-          "type": "string"
-        },
-        "placeholder": {
-          "type": "string"
-        },
-        "reference": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "scale": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "sufficientForQuery": {
-          "type": "boolean"
-        },
-        "valueMap": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "PlatformDiscoveryTypes.Entity": {
-      "type": "object",
-      "required": [
-        "name",
-        "displayName",
-        "count"
-      ],
-      "properties": {
-        "count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "description": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "displayNamePlural": {
-          "type": "string"
-        },
-        "limitedQuery": {
-          "type": "boolean"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "PlatformDiscoveryTypes.Network": {
-      "type": "object",
-      "required": [
-        "name",
-        "displayName",
-        "platform",
-        "network"
-      ],
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "network": {
-          "type": "string"
-        },
-        "platform": {
-          "type": "string"
-        }
-      }
-    },
-    "PlatformDiscoveryTypes.Platform": {
-      "type": "object",
-      "required": [
-        "name",
-        "displayName"
-      ],
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
+        "snapshot_block": {
+          "type": "integer"
         }
       }
     }
@@ -2715,6 +2710,9 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "404": {
             "description": "Not Found"
           }
@@ -2758,6 +2756,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/AccountsRow"
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -2831,6 +2832,9 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "500": {
             "description": "Internal error"
           }
@@ -2893,6 +2897,92 @@ func init() {
                 "description": "The total number of data entries."
               }
             }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/baking_rights": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getBakingRights",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 64,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "priorities_to",
+            "in": "query"
+          },
+          {
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "block_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint for baking rights",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakingRightsPerBlock"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -3094,6 +3184,9 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "404": {
             "description": "Not Found"
           }
@@ -3131,6 +3224,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/BlocksRow"
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "500": {
             "description": "Not initialized"
@@ -3175,6 +3271,65 @@ func init() {
             "schema": {
               "$ref": "#/definitions/BlockResult"
             }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/blocks/{hash}/baking_rights": {
+      "get": {
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getBlockBakingRights",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "hash",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint for baking rights of a block by hash or level",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakingRightsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -3229,11 +3384,305 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "404": {
             "description": "Not Found"
           },
           "500": {
             "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/contracts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getContractsList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "after_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "account_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "account_manager",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "account_delegate",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "order",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for contract accounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/double_bakings": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "OperationsList"
+        ],
+        "operationId": "getDoubleBakingsList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "block_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "block_level",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Operation hash",
+            "name": "operation_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "account_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/future_baking_rights": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getFutureBakingRights",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 64,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "priorities_to",
+            "in": "query"
+          },
+          {
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint for future baking rights",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FutureBakingRightsPerBlock"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -3260,7 +3709,8 @@ func init() {
           },
           {
             "enum": [
-              "mainnet"
+              "mainnet",
+              "babylonnet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3275,6 +3725,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Info"
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "500": {
             "description": "Internal error"
@@ -3449,6 +3902,9 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "404": {
             "description": "Not Found"
           }
@@ -3490,6 +3946,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/OperationGroupResult"
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -3634,7 +4093,8 @@ func init() {
                 "ballot",
                 "origination",
                 "reveal",
-                "double_baking_evidence"
+                "double_baking_evidence",
+                "double_endorsement_evidence"
               ],
               "type": "string"
             },
@@ -3703,6 +4163,9 @@ func init() {
                 "description": "The total number of data entries."
               }
             }
+          },
+          "400": {
+            "description": "Bad request"
           },
           "404": {
             "description": "Not Found"
@@ -3880,320 +4343,65 @@ func init() {
         }
       }
     },
-    "/v2/data/{platform}/{network}/{entity}": {
-      "post": {
-        "consumes": [
+    "/v2/data/{platform}/{network}/snapshots": {
+      "get": {
+        "produces": [
           "application/json"
         ],
-        "produces": [
-          "application/json",
-          "text/csv",
-          "text/plain"
-        ],
-        "tags": [
-          "Query"
-        ],
+        "operationId": "getSnapshots",
         "parameters": [
           {
             "type": "string",
+            "description": "Not used",
             "name": "platform",
             "in": "path",
             "required": true
           },
           {
             "type": "string",
+            "description": "Not used",
             "name": "network",
             "in": "path",
             "required": true
           },
           {
-            "type": "string",
-            "name": "entity",
-            "in": "path",
-            "required": true
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/DataTypes.ApiQuery"
-            }
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "Can't query - invalid entity!"
-          },
-          "400": {
-            "description": "Can't query - invalid entity!",
+            "description": "Endpoint for snapshots",
             "schema": {
               "type": "array",
               "items": {
-                "type": "string"
+                "$ref": "#/definitions/Snapshots"
               }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/platforms": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available platforms",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/PlatformDiscoveryTypes.Platform"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/networks": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available networks",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/PlatformDiscoveryTypes.Network"
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/{network}/entities": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available entities",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/PlatformDiscoveryTypes.Entity"
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/{network}/{entity}/attributes": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "entity",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available attributes",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/PlatformDiscoveryTypes.Attribute"
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/{network}/{entity}/{attribute}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "entity",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "attribute",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available distinct values for given attribute",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
           "400": {
-            "description": "Cannot get the attributes!",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "description": "Bad request"
           },
           "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/v2/metadata/{platform}/{network}/{entity}/{attribute}/{filter}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metadata"
-        ],
-        "parameters": [
-          {
-            "type": "string",
-            "name": "platform",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "entity",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "attribute",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "filter",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metadata endpoint for listing available distinct values for given attribute filtered",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "400": {
-            "description": "Cannot get the attributes!",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
+            "description": "Not Found"
           }
         }
       }
@@ -4320,6 +4528,50 @@ func init() {
           "format": "int64"
         },
         "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "BakingRightsPerBlock": {
+      "required": [
+        "baker_priority"
+      ],
+      "properties": {
+        "baker": {
+          "type": "string"
+        },
+        "baker_priority": {
+          "type": "integer"
+        },
+        "block_hash": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BakingRightsRow"
+          }
+        }
+      }
+    },
+    "BakingRightsRow": {
+      "required": [
+        "priority"
+      ],
+      "properties": {
+        "delegate": {
+          "type": "string"
+        },
+        "estimated_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "priority": {
           "type": "integer",
           "format": "int64"
         }
@@ -4493,169 +4745,51 @@ func init() {
         }
       }
     },
-    "DataTypes.ApiAggregation": {
-      "type": "object",
-      "required": [
-        "field",
-        "function"
-      ],
+    "DoubleBakingDetails": {
       "properties": {
-        "field": {
-          "type": "string"
-        },
-        "function": {
-          "type": "string",
-          "enum": [
-            "sum",
-            "count",
-            "max",
-            "min",
-            "avg"
-          ]
-        },
-        "predicate": {
-          "$ref": "#/definitions/DataTypes.ApiAggregationPredicate"
-        }
-      }
-    },
-    "DataTypes.ApiAggregationPredicate": {
-      "type": "object",
-      "required": [
-        "operation"
-      ],
-      "properties": {
-        "inverse": {
-          "type": "boolean"
-        },
-        "operation": {
-          "type": "string",
-          "enum": [
-            "in",
-            "between",
-            "like",
-            "lt",
-            "gt",
-            "eq",
-            "startsWith",
-            "endsWith",
-            "before",
-            "after",
-            "isnull"
-          ]
-        },
-        "precision": {
+        "baker_reward": {
           "type": "integer",
           "format": "int64"
         },
-        "set": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "DataTypes.ApiPredicate": {
-      "type": "object",
-      "required": [
-        "field",
-        "operation"
-      ],
-      "properties": {
-        "field": {
-          "type": "string"
-        },
-        "inverse": {
-          "type": "boolean"
-        },
-        "operation": {
-          "type": "string",
-          "enum": [
-            "in",
-            "between",
-            "like",
-            "lt",
-            "gt",
-            "eq",
-            "startsWith",
-            "endsWith",
-            "before",
-            "after",
-            "isnull"
-          ]
-        },
-        "precision": {
+        "denounced_level": {
           "type": "integer",
           "format": "int64"
         },
-        "set": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "DataTypes.ApiQuery": {
-      "type": "object",
-      "properties": {
-        "aggregation": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataTypes.ApiAggregation"
-          }
-        },
-        "fields": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int64",
-          "default": 20,
-          "maximum": 500,
-          "minimum": 1
-        },
-        "orderBy": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataTypes.QueryOrdering"
-          }
-        },
-        "output": {
-          "type": "string",
-          "enum": [
-            "json",
-            "csv",
-            "sql"
-          ]
-        },
-        "predicates": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataTypes.ApiPredicate"
-          }
-        }
-      }
-    },
-    "DataTypes.QueryOrdering": {
-      "type": "object",
-      "required": [
-        "field",
-        "direction"
-      ],
-      "properties": {
-        "direction": {
-          "type": "string",
-          "enum": [
-            "asc",
-            "desc"
-          ]
-        },
-        "field": {
+        "evidence_baker": {
           "type": "string"
+        },
+        "lost_deposits": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lost_fees": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lost_rewards": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "offender": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "FutureBakingRightsPerBlock": {
+      "properties": {
+        "level": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BakingRightsRow"
+          }
         }
       }
     },
@@ -4670,6 +4804,15 @@ func init() {
           "description": "Expected annual return in percents.",
           "type": "number"
         },
+        "blocks_in_cycle": {
+          "type": "integer"
+        },
+        "circulating_supply": {
+          "type": "number"
+        },
+        "market_cap": {
+          "type": "number"
+        },
         "price": {
           "type": "number"
         },
@@ -4681,6 +4824,9 @@ func init() {
           "type": "number",
           "maximum": 100,
           "minimum": 0
+        },
+        "volume_24h": {
+          "type": "number"
         }
       }
     },
@@ -4774,6 +4920,9 @@ func init() {
         "destination": {
           "type": "string"
         },
+        "doubleBake": {
+          "$ref": "#/definitions/DoubleBakingDetails"
+        },
         "fee": {
           "type": "integer",
           "format": "int64"
@@ -4853,169 +5002,16 @@ func init() {
         }
       }
     },
-    "PlatformDiscoveryTypes.Attribute": {
-      "type": "object",
-      "required": [
-        "displayName",
-        "keyType",
-        "name",
-        "entity",
-        "dataType"
-      ],
+    "Snapshots": {
       "properties": {
-        "cardinality": {
-          "type": "integer",
-          "format": "int64"
+        "cycle": {
+          "type": "integer"
         },
-        "currencySymbol": {
-          "type": "string"
+        "rolls": {
+          "type": "integer"
         },
-        "currencySymbolCode": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "dataFormat": {
-          "type": "string"
-        },
-        "dataType": {
-          "type": "string",
-          "enum": [
-            "Enum",
-            "Hex",
-            "Binary",
-            "Date",
-            "DateTime",
-            "String",
-            "Hash",
-            "AccountAddress",
-            "Int",
-            "LargeInt",
-            "Decimal",
-            "Currency",
-            "Boolean"
-          ]
-        },
-        "description": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "displayOrder": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "displayPriority": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "entity": {
-          "type": "string"
-        },
-        "keyType": {
-          "type": "string",
-          "enum": [
-            "NonKey",
-            "UniqueKey"
-          ]
-        },
-        "name": {
-          "type": "string"
-        },
-        "placeholder": {
-          "type": "string"
-        },
-        "reference": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "scale": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "sufficientForQuery": {
-          "type": "boolean"
-        },
-        "valueMap": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "PlatformDiscoveryTypes.Entity": {
-      "type": "object",
-      "required": [
-        "name",
-        "displayName",
-        "count"
-      ],
-      "properties": {
-        "count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "description": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "displayNamePlural": {
-          "type": "string"
-        },
-        "limitedQuery": {
-          "type": "boolean"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "PlatformDiscoveryTypes.Network": {
-      "type": "object",
-      "required": [
-        "name",
-        "displayName",
-        "platform",
-        "network"
-      ],
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "network": {
-          "type": "string"
-        },
-        "platform": {
-          "type": "string"
-        }
-      }
-    },
-    "PlatformDiscoveryTypes.Platform": {
-      "type": "object",
-      "required": [
-        "name",
-        "displayName"
-      ],
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
+        "snapshot_block": {
+          "type": "integer"
         }
       }
     }

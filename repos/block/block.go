@@ -17,6 +17,7 @@ type (
 	Repo interface {
 		Last() (block models.Block, err error)
 		List(limit, offset uint, since uint64) (blocks []models.Block, err error)
+		Filter(filter models.BlockFilter) (blocks []models.Block, err error)
 		Find(filter models.Block) (found bool, block models.Block, err error)
 		FindExtended(filter models.Block) (found bool, block models.Block, err error)
 		ListExtended(limit, offset uint, since uint64) (blocks []models.Block, err error)
@@ -116,5 +117,12 @@ func (r *Repository) ExtendBlocks(blocks []models.Block) (extended []models.Bloc
 			b.BlockAggregation = &aggInfo[i]
 		}
 	}
+	return blocks, err
+}
+
+func (r *Repository) Filter(filter models.BlockFilter) (blocks []models.Block, err error) {
+	db := r.db.Model(&models.Block{})
+	db = db.Or("level in (?)", filter.BlockLevels).Or("hash in (?)", filter.BlockHashes)
+	err = db.Find(&blocks).Error
 	return blocks, err
 }
