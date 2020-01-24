@@ -1,11 +1,11 @@
 package api
 
 import (
-	"github.com/bullblock-io/tezTracker/api/render"
-	info "github.com/bullblock-io/tezTracker/gen/restapi/operations/app_info"
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/repos"
-	"github.com/bullblock-io/tezTracker/services"
+	"github.com/everstake/teztracker/api/render"
+	info "github.com/everstake/teztracker/gen/restapi/operations/app_info"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos"
+	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sirupsen/logrus"
 )

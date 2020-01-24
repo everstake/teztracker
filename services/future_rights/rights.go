@@ -3,9 +3,9 @@ package future_rights
 import (
 	"context"
 
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/repos/block"
-	"github.com/bullblock-io/tezTracker/repos/future_baking_rights"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos/block"
+	"github.com/everstake/teztracker/repos/future_baking_rights"
 )
 
 type BlocksRepo interface {

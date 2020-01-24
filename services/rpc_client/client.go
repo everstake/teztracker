@@ -9,11 +9,11 @@ import (
 
 	tzblock "github.com/bullblock-io/go-tezos/v2/block"
 	tzc "github.com/bullblock-io/go-tezos/v2/client"
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/services/rpc_client/client"
-	"github.com/bullblock-io/tezTracker/services/rpc_client/client/baking_rights"
-	"github.com/bullblock-io/tezTracker/services/rpc_client/client/snapshots"
-	genmodels "github.com/bullblock-io/tezTracker/services/rpc_client/models"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/services/rpc_client/client"
+	"github.com/everstake/teztracker/services/rpc_client/client/baking_rights"
+	"github.com/everstake/teztracker/services/rpc_client/client/snapshots"
+	genmodels "github.com/everstake/teztracker/services/rpc_client/models"
 )
 
 const headBlock = "head"

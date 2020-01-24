@@ -1,7 +1,7 @@
 package future_baking_rights
 
 import (
-	"github.com/bullblock-io/tezTracker/models"
+	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 	gormbulk "github.com/t-tiger/gorm-bulk-insert"
 )

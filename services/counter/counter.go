@@ -1,7 +1,7 @@
 package counter
 
 import (
-	"github.com/bullblock-io/tezTracker/models"
+	"github.com/everstake/teztracker/models"
 	"github.com/sirupsen/logrus"
 )
 

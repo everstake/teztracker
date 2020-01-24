@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/bullblock-io/tezTracker/services/rpc_client/client"
+	"github.com/everstake/teztracker/services/rpc_client/client"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/joho/godotenv"

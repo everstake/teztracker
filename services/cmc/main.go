@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/bullblock-io/tezTracker/models"
+	"github.com/everstake/teztracker/models"
 	coingecko "github.com/superoo7/go-gecko/v3"
 )
 

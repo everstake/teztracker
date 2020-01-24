@@ -1,15 +1,15 @@
 package services
 
 import (
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/repos/account"
-	"github.com/bullblock-io/tezTracker/repos/baker"
-	"github.com/bullblock-io/tezTracker/repos/block"
-	"github.com/bullblock-io/tezTracker/repos/double_baking"
-	"github.com/bullblock-io/tezTracker/repos/future_baking_rights"
-	"github.com/bullblock-io/tezTracker/repos/operation"
-	"github.com/bullblock-io/tezTracker/repos/operation_groups"
-	"github.com/bullblock-io/tezTracker/repos/snapshots"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos/account"
+	"github.com/everstake/teztracker/repos/baker"
+	"github.com/everstake/teztracker/repos/block"
+	"github.com/everstake/teztracker/repos/double_baking"
+	"github.com/everstake/teztracker/repos/future_baking_rights"
+	"github.com/everstake/teztracker/repos/operation"
+	"github.com/everstake/teztracker/repos/operation_groups"
+	"github.com/everstake/teztracker/repos/snapshots"
 )
 
 //go:generate mockgen -source ./main.go -destination ./mock_service/main.go Provider

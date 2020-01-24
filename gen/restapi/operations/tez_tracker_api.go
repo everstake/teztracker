@@ -19,12 +19,12 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/accounts"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/app_info"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/blocks"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/fees"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/operation_groups"
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations/operations_list"
+	"github.com/everstake/teztracker/gen/restapi/operations/accounts"
+	"github.com/everstake/teztracker/gen/restapi/operations/app_info"
+	"github.com/everstake/teztracker/gen/restapi/operations/blocks"
+	"github.com/everstake/teztracker/gen/restapi/operations/fees"
+	"github.com/everstake/teztracker/gen/restapi/operations/operation_groups"
+	"github.com/everstake/teztracker/gen/restapi/operations/operations_list"
 )
 
 // NewTezTrackerAPI creates a new TezTracker instance

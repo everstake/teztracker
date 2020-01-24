@@ -3,8 +3,8 @@ package double_endorsement
 import (
 	"context"
 
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/repos/operation"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos/operation"
 )
 
 type BakesProvider interface {

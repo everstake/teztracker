@@ -1,6 +1,6 @@
-module github.com/bullblock-io/tezTracker
+module github.com/everstake/teztracker
 
-go 1.12
+go 1.13.6
 
 require (
 	github.com/bullblock-io/go-tezos/v2 v2.0.5

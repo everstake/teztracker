@@ -1,9 +1,9 @@
 package api
 
 import (
-	"github.com/bullblock-io/tezTracker/gen/restapi/operations"
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/services/cmc"
+	"github.com/everstake/teztracker/gen/restapi/operations"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/services/cmc"
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 )

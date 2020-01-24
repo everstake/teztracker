@@ -1,7 +1,7 @@
 package operation_groups
 
 import (
-	"github.com/bullblock-io/tezTracker/models"
+	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
 

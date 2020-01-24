@@ -8,10 +8,10 @@ type Baker struct {
 	Fees           int64  `json:"fees"`
 }
 
-type BakerInfo struct{
-	Delegate 
-	BakingDeposits int64
+type BakerInfo struct {
+	Delegate
+	BakingDeposits      int64
 	EndorsementDeposits int64
-	BakingRewards int64
-	EndorsementRewards int64
+	BakingRewards       int64
+	EndorsementRewards  int64
 }

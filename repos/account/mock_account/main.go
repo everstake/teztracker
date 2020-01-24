@@ -5,7 +5,7 @@
 package mock_account
 
 import (
-	models "github.com/bullblock-io/tezTracker/models"
+	models "github.com/everstake/teztracker/models"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	models "github.com/bullblock-io/tezTracker/gen/models"
+	models "github.com/everstake/teztracker/gen/models"
 )
 
 // GetBlockOKCode is the HTTP code returned for type GetBlockOK

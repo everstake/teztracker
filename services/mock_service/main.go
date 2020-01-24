@@ -5,11 +5,11 @@
 package mock_services
 
 import (
-	account "github.com/bullblock-io/tezTracker/repos/account"
-	baker "github.com/bullblock-io/tezTracker/repos/baker"
-	block "github.com/bullblock-io/tezTracker/repos/block"
-	operation "github.com/bullblock-io/tezTracker/repos/operation"
-	operation_groups "github.com/bullblock-io/tezTracker/repos/operation_groups"
+	account "github.com/everstake/teztracker/repos/account"
+	baker "github.com/everstake/teztracker/repos/baker"
+	block "github.com/everstake/teztracker/repos/block"
+	operation "github.com/everstake/teztracker/repos/operation"
+	operation_groups "github.com/everstake/teztracker/repos/operation_groups"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

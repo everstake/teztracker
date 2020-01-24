@@ -17,9 +17,6 @@ github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf/go.mod h1:l
 github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a h1:idn718Q4B6AGu/h5Sxe66HYVdqdGu2l9Iebqhi/AEoA=
 github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
-github.com/bullblock-io/go-tezos v1.0.9 h1:4wi5JmlPiN7Ks+/uC8Lt2xZQ2/QkIUpC5V/y18zND3g=
-github.com/bullblock-io/go-tezos/v2 v2.0.4 h1:6iYY0p9VSCgb5rmV7mnaCsxTrzmSIwO8srZV4FyMh7I=
-github.com/bullblock-io/go-tezos/v2 v2.0.4/go.mod h1:9z99LPUZ/Cy1vAKsDM7tSawGqpKYg7+oPFMjIvw1nC8=
 github.com/bullblock-io/go-tezos/v2 v2.0.5 h1:2MNjPtysk+PrNwj6i70U03rnhFtuhzxPaWY7V/zF6lI=
 github.com/bullblock-io/go-tezos/v2 v2.0.5/go.mod h1:9z99LPUZ/Cy1vAKsDM7tSawGqpKYg7+oPFMjIvw1nC8=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=

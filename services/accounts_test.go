@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/repos/account/mock_account"
-	mock_services "github.com/bullblock-io/tezTracker/services/mock_service"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos/account/mock_account"
+	mock_services "github.com/everstake/teztracker/services/mock_service"
 	"github.com/golang/mock/gomock"
 	"github.com/guregu/null"
 )

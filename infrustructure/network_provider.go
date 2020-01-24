@@ -2,9 +2,9 @@ package infrustructure
 
 import (
 	"fmt"
-	"github.com/bullblock-io/tezTracker/config"
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/services/rpc_client/client"
+	"github.com/everstake/teztracker/config"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/jinzhu/gorm"
 )
 

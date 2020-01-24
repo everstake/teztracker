@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/bullblock-io/tezTracker/models"
+	"github.com/everstake/teztracker/models"
 )
 
 const (

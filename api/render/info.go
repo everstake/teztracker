@@ -1,8 +1,8 @@
 package render
 
 import (
-	genModels "github.com/bullblock-io/tezTracker/gen/models"
-	"github.com/bullblock-io/tezTracker/models"
+	genModels "github.com/everstake/teztracker/gen/models"
+	"github.com/everstake/teztracker/models"
 )
 
 const annualYield = 7.12

@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
 
-	models "github.com/bullblock-io/tezTracker/gen/models"
+	models "github.com/everstake/teztracker/gen/models"
 )
 
 // GetBlocksListOKCode is the HTTP code returned for type GetBlocksListOK

@@ -3,9 +3,9 @@ package snapshots
 import (
 	"context"
 
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/repos/block"
-	"github.com/bullblock-io/tezTracker/repos/snapshots"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos/block"
+	"github.com/everstake/teztracker/repos/snapshots"
 )
 
 type BlocksRepo interface {

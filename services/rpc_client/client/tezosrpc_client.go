@@ -11,8 +11,8 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/bullblock-io/tezTracker/services/rpc_client/client/baking_rights"
-	"github.com/bullblock-io/tezTracker/services/rpc_client/client/snapshots"
+	"github.com/everstake/teztracker/services/rpc_client/client/baking_rights"
+	"github.com/everstake/teztracker/services/rpc_client/client/snapshots"
 )
 
 // Default tezosrpc HTTP client.

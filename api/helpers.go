@@ -1,6 +1,6 @@
 package api
 
-import "github.com/bullblock-io/tezTracker/models"
+import "github.com/everstake/teztracker/models"
 
 import "strings"
 

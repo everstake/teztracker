@@ -13,7 +13,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	models "github.com/bullblock-io/tezTracker/services/rpc_client/models"
+	models "github.com/everstake/teztracker/services/rpc_client/models"
 )
 
 // GetBakingRightsReader is a Reader for the GetBakingRights structure.

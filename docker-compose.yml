@@ -39,7 +39,8 @@ services:
         delay: 5s
   fe-server:
     build:
-      context: https://github.com/bullblock-io/tezos-tracker-vue.git
+      context: https://github.com/everstake/teztracker-front.git
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     restart: on-failure

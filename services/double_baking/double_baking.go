@@ -3,9 +3,9 @@ package double_baking
 import (
 	"context"
 
-	"github.com/bullblock-io/tezTracker/models"
-	"github.com/bullblock-io/tezTracker/repos/double_baking"
-	"github.com/bullblock-io/tezTracker/repos/operation"
+	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos/double_baking"
+	"github.com/everstake/teztracker/repos/operation"
 )
 
 type EvidenceRepo interface {
