@@ -37,6 +37,24 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+  conseil-carthagenet-lorre:
+    build:
+      context: .
+      dockerfile: Dockerfile-conseil
+      command: lorre
+    environment:
+      DB_Host: ${DB_HOST}
+      DB_User: ${DB_USER}
+      DB_Password: ${DB_PASSWORD}
+      DB_Database: ${CARTHAGENET_DB_DATABASE}
+      XTZ_Host: ${CARTHAGENET_XTZ_HOST}
+    # If using localhost db you may want to use the host network
+    network_mode: "host"
+    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
   fe-server:
     build:
       context: https://github.com/everstake/teztracker-front.git

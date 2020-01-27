@@ -35,6 +35,9 @@ func ToNetwork(net string) (models.Network, error) {
 		return models.NetworkMain, nil
 	case "babylon", "babylonnet":
 		return models.NetworkBabylon, nil
+	case "carthage", "carthagenet":
+		return models.NetworkCathage, nil
 	}
+
 	return "", fmt.Errorf("not supported network")
 }
