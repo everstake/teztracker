@@ -41,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-conseil
-      command: lorre
+    command: lorre
     environment:
       DB_Host: ${DB_HOST}
       DB_User: ${DB_USER}
