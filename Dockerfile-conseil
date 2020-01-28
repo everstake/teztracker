@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y git apt-transport-https && echo "deb ht
     apt-get install -y sbt
 RUN git clone https://github.com/Cryptonomic/Conseil /src
 WORKDIR /src
+RUN git checkout 153d71d
 RUN rm -rf /src/src/test
 RUN adduser --disabled-password --gecos '' builduser && su builduser
 RUN sbt clean assembly -J-Xss32m
