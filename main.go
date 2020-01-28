@@ -30,7 +30,7 @@ func main() {
 		networks[models.NetworkBabylon] = cfg.Babylonnet
 	}
 	if cfg.Carthagenet.SqlConnectionString != "" {
-		networks[models.NetworkCathage] = cfg.Carthagenet
+		networks[models.NetworkCarthage] = cfg.Carthagenet
 	}
 	if len(networks) == 0 {
 		log.Fatalln("no networks are configured")
@@ -75,7 +75,7 @@ func main() {
 		}
 		// Using models.NetworkMain instead of k due to stupid nodes configuration for babylonnet.
 		// todo: if something is not workign for testnets, check this one.
-		services.AddToCron(cron, cfg, db, rpc, models.NetworkMain, k == models.NetworkBabylon || k == models.NetworkCathage)
+		services.AddToCron(cron, cfg, db, rpc, models.NetworkMain, k == models.NetworkBabylon || k == models.NetworkCarthage)
 	}
 
 	cron.Start()

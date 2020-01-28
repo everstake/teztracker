@@ -3,7 +3,7 @@ package models
 type Network string
 
 const (
-	NetworkMain    Network = "main"
-	NetworkBabylon Network = "babylon"
-	NetworkCathage Network = "carthage"
+	NetworkMain     Network = "main"
+	NetworkBabylon  Network = "babylon"
+	NetworkCarthage Network = "carthage"
 )
