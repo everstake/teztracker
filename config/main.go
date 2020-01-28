@@ -13,6 +13,7 @@ type Config struct {
 	Port                                  int
 	Mainnet                               NetworkConfig
 	Babylonnet                            NetworkConfig
+	Carthagenet                           NetworkConfig
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
 	CounterIntervalHours                  int
 	FutureRightsIntervalMinutes           int
