@@ -132,41 +132,6 @@ func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (cou
 	return counter, nil
 }
 
-// EndorsementsOperationsCountBy returns a slice of block counters with the number of endorsements made by each baker among ids.
-func (r *Repository) EndorsementsOperationsCountByNew(startingLevel int64) (counter []BakerCounter, err error) {
-	db := r.db.Model(&models.Operation{}).
-		Where("kind = ?", endorsementKind)
-	if startingLevel > 0 {
-		db = db.Where("block_level >= ?", startingLevel)
-	}
-
-	err = db.Select("count(1) as count, delegate as baker").
-		Group("delegate").Scan(&counter).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return counter, nil
-}
-
-// EndorsementsOperationsCountBy returns a slice of block counters with the number of endorsements made by each baker among ids.
-func (r *Repository) EndorsementsOperationsCountBy(ids []string, startingLevel int64) (counter []BakerCounter, err error) {
-	db := r.db.Model(&models.Operation{}).
-		Where("delegate IN (?)", ids).
-		Where("kind = ?", endorsementKind)
-	if startingLevel > 0 {
-		db = db.Where("block_level >= ?", startingLevel)
-	}
-
-	err = db.Select("count(1) as count, delegate as baker").
-		Group("delegate").Scan(&counter).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return counter, nil
-}
-
 // TotalStakingBalance gets the total staked balance of all delegates.
 func (r *Repository) TotalStakingBalance() (b int64, err error) {
 	bal := struct {
