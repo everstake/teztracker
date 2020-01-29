@@ -19,6 +19,7 @@ type (
 		BlocksCountBakedBy(ids []string, startingLevel int64) (counter []BakerCounter, err error)
 		EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error)
 		TotalStakingBalance() (int64, error)
+		RefreshView() error
 	}
 
 	BakerCounter struct {
@@ -54,41 +55,24 @@ func (r *Repository) Find(accountID string) (found bool, delegate models.Delegat
 	return true, delegate, nil
 }
 
-// List returns a list of bakers ordered by their staking balance.
+// List returns a list of bakers(accounts which have at least 1 endorsement operation) ordered by their staking balance.
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
 func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error) {
-	var delegates []models.Delegate
-	db := r.db.Model(&models.Delegate{})
-
-	err = db.Order("staking_balance desc").
+	err = r.db.Table("tezos.baker_view").Order("staking_balance desc").
 		Limit(limit).
 		Offset(offset).
-		Find(&delegates).Error
+		Find(&bakers).Error
 	if err != nil {
 		return nil, err
 	}
 
-	bakers = ConvertToBakers(delegates)
 	bakers, err = r.ExtendBakers(bakers)
 	if err != nil {
 		return nil, err
 	}
 
 	return bakers, err
-}
-
-func ConvertToBaker(delegate *models.Delegate) models.Baker {
-	return models.Baker{AccountID: delegate.Pkh, StakingBalance: delegate.StakingBalance}
-}
-
-func ConvertToBakers(delegates []models.Delegate) []models.Baker {
-	count := len(delegates)
-	bakers := make([]models.Baker, count)
-	for i := range delegates {
-		bakers[i] = ConvertToBaker(&delegates[i])
-	}
-	return bakers
 }
 
 func (r *Repository) ExtendBakers(bakers []models.Baker) (extended []models.Baker, err error) {
@@ -100,6 +84,7 @@ func (r *Repository) ExtendBakers(bakers []models.Baker) (extended []models.Bake
 		ids[i] = pkh
 		m[pkh] = &bakers[i]
 	}
+
 	aggInfo, err := r.BlocksCountBakedBy(ids, firstBlock)
 	if err != nil {
 		return bakers, err
@@ -110,16 +95,7 @@ func (r *Repository) ExtendBakers(bakers []models.Baker) (extended []models.Bake
 			b.Blocks = aggInfo[i].Count
 		}
 	}
-	aggInfo, err = r.EndorsementsOperationsCountBy(ids, firstBlock)
-	if err != nil {
-		return bakers, err
-	}
-	for i := range aggInfo {
-		baker := aggInfo[i].Baker
-		if b, ok := m[baker]; ok {
-			b.Endorsements = aggInfo[i].Count
-		}
-	}
+
 	return bakers, nil
 }
 
@@ -149,6 +125,23 @@ func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (cou
 
 	err = db.Select("SUM(count) as count, SUM(count*trunc(1/priority,6)) as weight, baker").
 		Group("baker").Scan(&counter).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return counter, nil
+}
+
+// EndorsementsOperationsCountBy returns a slice of block counters with the number of endorsements made by each baker among ids.
+func (r *Repository) EndorsementsOperationsCountByNew(startingLevel int64) (counter []BakerCounter, err error) {
+	db := r.db.Model(&models.Operation{}).
+		Where("kind = ?", endorsementKind)
+	if startingLevel > 0 {
+		db = db.Where("block_level >= ?", startingLevel)
+	}
+
+	err = db.Select("count(1) as count, delegate as baker").
+		Group("delegate").Scan(&counter).Error
 	if err != nil {
 		return nil, err
 	}
@@ -191,4 +184,14 @@ func (r *Repository) Count(filter models.Delegate) (count int64, err error) {
 	err = r.db.Model(&filter).
 		Where(&filter).Count(&count).Error
 	return count, err
+}
+
+// RefreshView execute baker materialized view refresh
+func (r *Repository) RefreshView() (err error) {
+
+	err = r.db.Exec("REFRESH MATERIALIZED VIEW CONCURRENTLY tezos.baker_view").Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
