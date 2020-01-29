@@ -1,6 +1,7 @@
 package baker
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
@@ -15,7 +16,7 @@ type (
 	Repo interface {
 		Find(accountID string) (bool, models.Delegate, error)
 		List(limit, offset uint) ([]models.Baker, error)
-		Count(filter models.Delegate) (int64, error)
+		Count(filter models.Baker) (int64, error)
 		BlocksCountBakedBy(ids []string, startingLevel int64) (counter []BakerCounter, err error)
 		EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error)
 		TotalStakingBalance() (int64, error)
@@ -33,8 +34,9 @@ type (
 )
 
 const (
-	endorsementKind = "endorsement"
-	firstBlock      = 0
+	endorsementKind       = "endorsement"
+	bakerMaterializedView = "tezos.baker_view"
+	firstBlock            = 0
 )
 
 // New creates an instance of repository using the provided db.
@@ -59,7 +61,7 @@ func (r *Repository) Find(accountID string) (found bool, delegate models.Delegat
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
 func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error) {
-	err = r.db.Table("tezos.baker_view").Order("staking_balance desc").
+	err = r.db.Table(bakerMaterializedView).Order("staking_balance desc").
 		Limit(limit).
 		Offset(offset).
 		Find(&bakers).Error
@@ -145,16 +147,18 @@ func (r *Repository) TotalStakingBalance() (b int64, err error) {
 }
 
 // Count counts a number of bakers sutisfying the filter.
-func (r *Repository) Count(filter models.Delegate) (count int64, err error) {
-	err = r.db.Model(&filter).
-		Where(&filter).Count(&count).Error
-	return count, err
+func (r *Repository) Count(filter models.Baker) (count int64, err error) {
+	err = r.db.Table(bakerMaterializedView).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 // RefreshView execute baker materialized view refresh
 func (r *Repository) RefreshView() (err error) {
 
-	err = r.db.Exec("REFRESH MATERIALIZED VIEW CONCURRENTLY tezos.baker_view").Error
+	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW CONCURRENTLY ", bakerMaterializedView)).Error
 	if err != nil {
 		return err
 	}
