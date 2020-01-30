@@ -61,10 +61,12 @@ func (r *Repository) Find(accountID string) (found bool, delegate models.Delegat
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
 func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error) {
-	err = r.db.Table(bakerMaterializedView).Order("staking_balance desc").
+	err = r.db.Select("tezos.baker_view.*, name").Table(bakerMaterializedView).
+		Joins("left join tezos.baker_alias on baker_view.account_id = baker_alias.address").
+		Order("staking_balance desc").
 		Limit(limit).
 		Offset(offset).
-		Find(&bakers).Error
+		Find(&bakers).Debug().Error
 	if err != nil {
 		return nil, err
 	}

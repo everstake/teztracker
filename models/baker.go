@@ -2,6 +2,7 @@ package models
 
 type Baker struct {
 	AccountID      string `json:"pkh"`
+	Name           string `json:"name,omitempty"`
 	StakingBalance int64  `json:"staking_balance"`
 	Blocks         int64  `json:"blocks"`
 	Endorsements   int64  `json:"endorsements"`
