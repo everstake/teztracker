@@ -33,6 +33,9 @@ type BakersRow struct {
 	// Required: true
 	Fees *int64 `json:"fees"`
 
+	// name
+	Name string `json:"name,omitempty"`
+
 	// staking balance
 	// Required: true
 	StakingBalance *int64 `json:"stakingBalance"`

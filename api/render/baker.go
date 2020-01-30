@@ -9,6 +9,7 @@ import (
 func Baker(a models.Baker) *genModels.BakersRow {
 	return &genModels.BakersRow{
 		AccountID:      &a.AccountID,
+		Name:           a.Name,
 		Blocks:         &a.Blocks,
 		Endorsements:   &a.Endorsements,
 		StakingBalance: &a.StakingBalance,

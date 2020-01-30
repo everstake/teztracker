@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  title: Conseil API
+  title: TezTracker API
   version: 0.0.1
 paths:
   '/v2/data/{platform}/{network}/baking_rights':
@@ -802,7 +802,7 @@ paths:
           description: Internal error
       tags:
         - Blocks
-  
+
   '/v2/data/{platform}/{network}/operation_groups':
     get:
       operationId: getOperationGroups
@@ -1376,6 +1376,8 @@ definitions:
     properties:
       accountId:
         type: string
+      name:
+        type: string
       stakingBalance:
         format: int64
         type: integer
@@ -1675,7 +1677,7 @@ definitions:
         items:
           $ref: '#/definitions/BakingRightsRow'
     required:
-        - baker_priority
+      - baker_priority
   FutureBakingRightsPerBlock:
     properties:
       level:
