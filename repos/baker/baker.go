@@ -66,7 +66,7 @@ func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error)
 		Order("staking_balance desc").
 		Limit(limit).
 		Offset(offset).
-		Find(&bakers).Debug().Error
+		Find(&bakers).Error
 	if err != nil {
 		return nil, err
 	}
