@@ -69,36 +69,7 @@ func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error)
 		return nil, err
 	}
 
-	bakers, err = r.ExtendBakers(bakers)
-	if err != nil {
-		return nil, err
-	}
-
 	return bakers, err
-}
-
-func (r *Repository) ExtendBakers(bakers []models.Baker) (extended []models.Baker, err error) {
-	count := len(bakers)
-	ids := make([]string, count)
-	m := make(map[string]*models.Baker, count)
-	for i := range bakers {
-		pkh := bakers[i].AccountID
-		ids[i] = pkh
-		m[pkh] = &bakers[i]
-	}
-
-	aggInfo, err := r.BlocksCountBakedBy(ids, firstBlock)
-	if err != nil {
-		return bakers, err
-	}
-	for i := range aggInfo {
-		baker := aggInfo[i].Baker
-		if b, ok := m[baker]; ok {
-			b.Blocks = aggInfo[i].Count
-		}
-	}
-
-	return bakers, nil
 }
 
 // BlocksCountBakedBy returns a slice of block counters with the number of blocks baked by each baker among ids.
