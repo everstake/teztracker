@@ -2,7 +2,6 @@ package snapshots
 
 import (
 	"context"
-
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/block"
 	"github.com/everstake/teztracker/repos/snapshots"
@@ -54,14 +53,15 @@ func SaveNewSnapshots(ctx context.Context, unit UnitOfWork, provider SnapshotPro
 		nextCycleToScan = list[0].Cycle + 1
 	}
 
-	for ; nextCycleToScan <= lastCycle; nextCycleToScan++ {
+	//Last cycle not finished yet so will be selected later
+	for ; nextCycleToScan < lastCycle; nextCycleToScan++ {
 		err := SaveSnapshotForCycle(ctx, nextCycleToScan, unit, provider, nextCycleToScan >= lastBlock.MetaCycle)
 		if err != nil {
 			return 0, err
 		}
 		count++
-
 	}
+
 	return count, nil
 }
 
