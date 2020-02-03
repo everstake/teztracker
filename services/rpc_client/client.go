@@ -53,6 +53,7 @@ func (t *Tezos) RightsFor(ctx context.Context, blockFrom, blockTo, currentHead i
 		WithNetwork(t.network).
 		WithBlock(blockToUse).
 		WithAll(&all)
+
 	levels := []string{}
 	for b := blockFrom; b <= blockTo; b++ {
 		levels = append(levels, strconv.FormatInt(b, 10))
