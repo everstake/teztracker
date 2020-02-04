@@ -19,6 +19,7 @@ func (h *getDoubleBakingsListHandler) Handle(params ops.GetDoubleBakingsListPara
 	if err != nil {
 		return ops.NewGetDoubleBakingsListBadRequest()
 	}
+
 	db, err := h.provider.GetDb(net)
 	if err != nil {
 		return ops.NewGetDoubleBakingsListNotFound()
@@ -28,7 +29,6 @@ func (h *getDoubleBakingsListHandler) Handle(params ops.GetDoubleBakingsListPara
 	limiter := NewLimiter(params.Limit, params.Offset)
 
 	operations, count, err := service.GetDoubleBakings(params.OperationID, params.BlockID, limiter)
-
 	if err != nil {
 		logrus.Errorf("failed to get operations: %s", err.Error())
 		return ops.NewGetDoubleBakingsListNotFound()

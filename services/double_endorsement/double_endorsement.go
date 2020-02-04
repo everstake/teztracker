@@ -8,7 +8,7 @@ import (
 )
 
 type BakesProvider interface {
-	DoubleEndrsementEvidenceLevel(ctx context.Context, blockLevel int, operationHash string) (int64, error)
+	DoubleEndorsementEvidenceLevel(ctx context.Context, blockLevel int, operationHash string) (int64, error)
 }
 
 type UnitOfWork interface {
@@ -36,7 +36,7 @@ func SaveUnprocessedDoubleEndorsementEvidences(ctx context.Context, unit UnitOfW
 }
 
 func SaveDoubleEndorsementEvidenceLevelFor(ctx context.Context, op models.Operation, repo LevelUpdater, provider BakesProvider) error {
-	level, err := provider.DoubleEndrsementEvidenceLevel(ctx, int(op.BlockLevel.Int64), op.OperationGroupHash.String)
+	level, err := provider.DoubleEndorsementEvidenceLevel(ctx, int(op.BlockLevel.Int64), op.OperationGroupHash.String)
 	if err != nil {
 		return err
 	}

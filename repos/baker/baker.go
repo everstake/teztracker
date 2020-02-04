@@ -1,6 +1,7 @@
 package baker
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
@@ -15,10 +16,11 @@ type (
 	Repo interface {
 		Find(accountID string) (bool, models.Delegate, error)
 		List(limit, offset uint) ([]models.Baker, error)
-		Count(filter models.Delegate) (int64, error)
+		Count() (int64, error)
 		BlocksCountBakedBy(ids []string, startingLevel int64) (counter []BakerCounter, err error)
 		EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error)
 		TotalStakingBalance() (int64, error)
+		RefreshView() error
 	}
 
 	BakerCounter struct {
@@ -32,8 +34,9 @@ type (
 )
 
 const (
-	endorsementKind = "endorsement"
-	firstBlock      = 0
+	endorsementKind       = "endorsement"
+	bakerMaterializedView = "tezos.baker_view"
+	firstBlock            = 0
 )
 
 // New creates an instance of repository using the provided db.
@@ -54,73 +57,21 @@ func (r *Repository) Find(accountID string) (found bool, delegate models.Delegat
 	return true, delegate, nil
 }
 
-// List returns a list of bakers ordered by their staking balance.
+// List returns a list of bakers(accounts which have at least 1 endorsement operation) ordered by their staking balance.
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
 func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error) {
-	var delegates []models.Delegate
-	db := r.db.Model(&models.Delegate{})
-
-	err = db.Order("staking_balance desc").
+	err = r.db.Select("tezos.baker_view.*, name").Table(bakerMaterializedView).
+		Joins("left join tezos.baker_alias on baker_view.account_id = baker_alias.address").
+		Order("staking_balance desc").
 		Limit(limit).
 		Offset(offset).
-		Find(&delegates).Error
-	if err != nil {
-		return nil, err
-	}
-
-	bakers = ConvertToBakers(delegates)
-	bakers, err = r.ExtendBakers(bakers)
+		Find(&bakers).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return bakers, err
-}
-
-func ConvertToBaker(delegate *models.Delegate) models.Baker {
-	return models.Baker{AccountID: delegate.Pkh, StakingBalance: delegate.StakingBalance}
-}
-
-func ConvertToBakers(delegates []models.Delegate) []models.Baker {
-	count := len(delegates)
-	bakers := make([]models.Baker, count)
-	for i := range delegates {
-		bakers[i] = ConvertToBaker(&delegates[i])
-	}
-	return bakers
-}
-
-func (r *Repository) ExtendBakers(bakers []models.Baker) (extended []models.Baker, err error) {
-	count := len(bakers)
-	ids := make([]string, count)
-	m := make(map[string]*models.Baker, count)
-	for i := range bakers {
-		pkh := bakers[i].AccountID
-		ids[i] = pkh
-		m[pkh] = &bakers[i]
-	}
-	aggInfo, err := r.BlocksCountBakedBy(ids, firstBlock)
-	if err != nil {
-		return bakers, err
-	}
-	for i := range aggInfo {
-		baker := aggInfo[i].Baker
-		if b, ok := m[baker]; ok {
-			b.Blocks = aggInfo[i].Count
-		}
-	}
-	aggInfo, err = r.EndorsementsOperationsCountBy(ids, firstBlock)
-	if err != nil {
-		return bakers, err
-	}
-	for i := range aggInfo {
-		baker := aggInfo[i].Baker
-		if b, ok := m[baker]; ok {
-			b.Endorsements = aggInfo[i].Count
-		}
-	}
-	return bakers, nil
 }
 
 // BlocksCountBakedBy returns a slice of block counters with the number of blocks baked by each baker among ids.
@@ -156,24 +107,6 @@ func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (cou
 	return counter, nil
 }
 
-// EndorsementsOperationsCountBy returns a slice of block counters with the number of endorsements made by each baker among ids.
-func (r *Repository) EndorsementsOperationsCountBy(ids []string, startingLevel int64) (counter []BakerCounter, err error) {
-	db := r.db.Model(&models.Operation{}).
-		Where("delegate IN (?)", ids).
-		Where("kind = ?", endorsementKind)
-	if startingLevel > 0 {
-		db = db.Where("block_level >= ?", startingLevel)
-	}
-
-	err = db.Select("count(1) as count, delegate as baker").
-		Group("delegate").Scan(&counter).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return counter, nil
-}
-
 // TotalStakingBalance gets the total staked balance of all delegates.
 func (r *Repository) TotalStakingBalance() (b int64, err error) {
 	bal := struct {
@@ -187,8 +120,20 @@ func (r *Repository) TotalStakingBalance() (b int64, err error) {
 }
 
 // Count counts a number of bakers sutisfying the filter.
-func (r *Repository) Count(filter models.Delegate) (count int64, err error) {
-	err = r.db.Model(&filter).
-		Where(&filter).Count(&count).Error
-	return count, err
+func (r *Repository) Count() (count int64, err error) {
+	err = r.db.Table(bakerMaterializedView).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// RefreshView execute baker materialized view refresh
+func (r *Repository) RefreshView() (err error) {
+
+	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW CONCURRENTLY ", bakerMaterializedView)).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }

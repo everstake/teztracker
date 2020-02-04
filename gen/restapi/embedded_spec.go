@@ -20,7 +20,7 @@ func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "swagger": "2.0",
   "info": {
-    "title": "Conseil API",
+    "title": "TezTracker API",
     "version": "0.0.1"
   },
   "paths": {
@@ -2020,6 +2020,9 @@ func init() {
         "fees": {
           "type": "integer",
           "format": "int64"
+        },
+        "name": {
+          "type": "string"
         },
         "stakingBalance": {
           "type": "integer",
@@ -2513,7 +2516,7 @@ func init() {
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
   "swagger": "2.0",
   "info": {
-    "title": "Conseil API",
+    "title": "TezTracker API",
     "version": "0.0.1"
   },
   "paths": {
@@ -4526,6 +4529,9 @@ func init() {
         "fees": {
           "type": "integer",
           "format": "int64"
+        },
+        "name": {
+          "type": "string"
         },
         "stakingBalance": {
           "type": "integer",

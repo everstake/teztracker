@@ -53,6 +53,7 @@ func (t *Tezos) RightsFor(ctx context.Context, blockFrom, blockTo, currentHead i
 		WithNetwork(t.network).
 		WithBlock(blockToUse).
 		WithAll(&all)
+
 	levels := []string{}
 	for b := blockFrom; b <= blockTo; b++ {
 		levels = append(levels, strconv.FormatInt(b, 10))
@@ -174,7 +175,7 @@ func ToDoubleBakingEvidence(op tzblock.Operations) (dee models.DoubleBakingEvide
 
 }
 
-func (t *Tezos) DoubleEndrsementEvidenceLevel(ctx context.Context, blockLevel int, operationHash string) (int64, error) {
+func (t *Tezos) DoubleEndorsementEvidenceLevel(ctx context.Context, blockLevel int, operationHash string) (int64, error) {
 	block, err := t.tzcClient.Get(blockLevel)
 	if err != nil {
 		return 0, err
@@ -182,14 +183,14 @@ func (t *Tezos) DoubleEndrsementEvidenceLevel(ctx context.Context, blockLevel in
 	for i := range block.Operations {
 		for _, op := range block.Operations[i] {
 			if strings.EqualFold(op.Hash, operationHash) {
-				return GetDoubleEndrsementEvidenceLevel(op)
+				return GetDoubleEndorsementEvidenceLevel(op)
 			}
 		}
 	}
 	return 0, fmt.Errorf("not found")
 }
 
-func GetDoubleEndrsementEvidenceLevel(op tzblock.Operations) (int64, error) {
+func GetDoubleEndorsementEvidenceLevel(op tzblock.Operations) (int64, error) {
 	for i := range op.Contents {
 		if op.Contents[i].Op1 != nil {
 			return int64(op.Contents[i].Op1.Operations.Level), nil
