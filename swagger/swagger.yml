@@ -1274,6 +1274,111 @@ paths:
           description: Not Found
       tags:
         - Fees
+  '/v2/{network}/period':
+    get:
+      operationId: getPeriod
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: id
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for periods
+          schema:
+            $ref: >-
+              #/definitions/PeriodInfo
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Voting
+  '/v2/proposals/{id}':
+    get:
+      operationId: getProposalsByPeriodID
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 20
+      responses:
+        '200':
+          description: Query compatibility endpoint for proposals
+          schema:
+            items:
+              $ref: '#/definitions/Proposal'
+            type: array
+        '404':
+          description: Not Found
+      tags:
+        - Voting
+  '/v2/proposal_votes/{id}':
+    get:
+      operationId: getProposalVotesList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 20
+      responses:
+        '200':
+          description: Query compatibility endpoint for proposal votes
+          schema:
+            items:
+              $ref: '#/definitions/Voter'
+            type: array # Any - not yet supported
+        '404':
+          description: Not Found
+      tags:
+        - Voting
+  '/v2/ballots/{id}':
+    get:
+      operationId: getBallotsByPeriodID
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 20
+      responses:
+        '200':
+          description: Query compatibility endpoint for ballots
+          schema:
+            type: string # Any - not yet supported
+        '404':
+          description: Not Found
+      tags:
+        - Voting
 definitions:
   Info:
     properties:
@@ -1707,3 +1812,102 @@ definitions:
         type: integer
       rolls:
         type: integer
+  Period:
+    properties:
+      id:
+        type: integer
+      curLevel:
+        type: integer
+      startLevel:
+        type: integer
+      endLevel:
+        type: integer
+      startTime:
+        type: string
+        format: date-time
+      endTime:
+        type: string
+        format: date-time
+      cycle:
+        type: integer
+  PeriodInfo:
+    properties:
+      periodType:
+        type: string
+      period:
+        $ref: '#/definitions/Period'
+      totalPeriods:
+        type: integer
+      periodTimes:
+        type: array
+        items:
+          $ref: '#/definitions/PeriodTime'
+      proposal:
+        $ref: '#/definitions/Proposal'
+      winner:
+        $ref: '#/definitions/Proposal'
+      voteStats:
+        $ref: '#/definitions/VoteStats'
+      ballots:
+        $ref: '#/definitions/Ballots'
+  PeriodTime:
+    properties:
+      startTime:
+        type: string
+        format: date-time
+      endTime:
+        type: string
+        format: date-time
+      periodType:
+        type: string
+  VoteStats:
+    properties:
+      votesCast:
+        type: integer
+      votesAvailable:
+        type: integer
+      numVoters:
+        type: integer
+      numVotersTotal:
+        type: integer
+  Proposal:
+    properties:
+      period:
+        type: integer
+      hash:
+        type: string
+      votesCasted:
+        type: integer
+      votesNum:
+        type: integer
+      minQuorum:
+        type: integer
+  Voter:
+    properties:
+      name:
+        type: string
+      pkh:
+        type: string
+      rolls:
+        type: integer
+      proposal:
+        type: string
+      blockLevel:
+        type: integer
+      operation:
+        type: string
+      timestamp:
+        type: string
+        format: date-time
+  Ballots:
+    properties:
+      yay:
+        type: integer
+      nay:
+        type: integer
+      pass:
+        type: integer
+      quorum:
+        type: number
+      supermajority:
+        type: number

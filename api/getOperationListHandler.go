@@ -32,7 +32,6 @@ func (h *getOperationListHandler) Handle(params ops.GetOperationsListParams) mid
 	}
 
 	operations, count, err := service.GetOperations(params.OperationID, params.OperationKind, params.BlockID, params.AccountID, limiter, before)
-
 	if err != nil {
 		logrus.Errorf("failed to get operations: %s", err.Error())
 		return ops.NewGetOperationsListNotFound()

@@ -24,6 +24,44 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/ballots/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getBallotsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for ballots",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts": {
       "get": {
         "produces": [
@@ -1899,6 +1937,126 @@ func init() {
           }
         }
       }
+    },
+    "/v2/proposal_votes/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalVotesList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposal votes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Voter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/proposals/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposals",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Proposal"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/{network}/period": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getPeriod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for periods",
+            "schema": {
+              "$ref": "#/definitions/PeriodInfo"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -2071,6 +2229,25 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "Ballots": {
+      "properties": {
+        "nay": {
+          "type": "integer"
+        },
+        "pass": {
+          "type": "integer"
+        },
+        "quorum": {
+          "type": "number"
+        },
+        "supermajority": {
+          "type": "number"
+        },
+        "yay": {
+          "type": "integer"
         }
       }
     },
@@ -2498,6 +2675,98 @@ func init() {
         }
       }
     },
+    "Period": {
+      "properties": {
+        "curLevel": {
+          "type": "integer"
+        },
+        "cycle": {
+          "type": "integer"
+        },
+        "endLevel": {
+          "type": "integer"
+        },
+        "endTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "startLevel": {
+          "type": "integer"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "PeriodInfo": {
+      "properties": {
+        "ballots": {
+          "$ref": "#/definitions/Ballots"
+        },
+        "period": {
+          "$ref": "#/definitions/Period"
+        },
+        "periodTimes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PeriodTime"
+          }
+        },
+        "periodType": {
+          "type": "string"
+        },
+        "proposal": {
+          "$ref": "#/definitions/Proposal"
+        },
+        "totalPeriods": {
+          "type": "integer"
+        },
+        "voteStats": {
+          "$ref": "#/definitions/VoteStats"
+        },
+        "winner": {
+          "$ref": "#/definitions/Proposal"
+        }
+      }
+    },
+    "PeriodTime": {
+      "properties": {
+        "endTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "periodType": {
+          "type": "string"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Proposal": {
+      "properties": {
+        "hash": {
+          "type": "string"
+        },
+        "minQuorum": {
+          "type": "integer"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "votesCasted": {
+          "type": "integer"
+        },
+        "votesNum": {
+          "type": "integer"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -2510,6 +2779,48 @@ func init() {
           "type": "integer"
         }
       }
+    },
+    "VoteStats": {
+      "properties": {
+        "numVoters": {
+          "type": "integer"
+        },
+        "numVotersTotal": {
+          "type": "integer"
+        },
+        "votesAvailable": {
+          "type": "integer"
+        },
+        "votesCast": {
+          "type": "integer"
+        }
+      }
+    },
+    "Voter": {
+      "properties": {
+        "blockLevel": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "pkh": {
+          "type": "string"
+        },
+        "proposal": {
+          "type": "string"
+        },
+        "rolls": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
     }
   }
 }`))
@@ -2520,6 +2831,44 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/ballots/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getBallotsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for ballots",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts": {
       "get": {
         "produces": [
@@ -4408,6 +4757,126 @@ func init() {
           }
         }
       }
+    },
+    "/v2/proposal_votes/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalVotesList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposal votes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Voter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/proposals/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposals",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Proposal"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/{network}/period": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getPeriod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for periods",
+            "schema": {
+              "$ref": "#/definitions/PeriodInfo"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -4580,6 +5049,25 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "Ballots": {
+      "properties": {
+        "nay": {
+          "type": "integer"
+        },
+        "pass": {
+          "type": "integer"
+        },
+        "quorum": {
+          "type": "number"
+        },
+        "supermajority": {
+          "type": "number"
+        },
+        "yay": {
+          "type": "integer"
         }
       }
     },
@@ -5008,6 +5496,98 @@ func init() {
         }
       }
     },
+    "Period": {
+      "properties": {
+        "curLevel": {
+          "type": "integer"
+        },
+        "cycle": {
+          "type": "integer"
+        },
+        "endLevel": {
+          "type": "integer"
+        },
+        "endTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "startLevel": {
+          "type": "integer"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "PeriodInfo": {
+      "properties": {
+        "ballots": {
+          "$ref": "#/definitions/Ballots"
+        },
+        "period": {
+          "$ref": "#/definitions/Period"
+        },
+        "periodTimes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PeriodTime"
+          }
+        },
+        "periodType": {
+          "type": "string"
+        },
+        "proposal": {
+          "$ref": "#/definitions/Proposal"
+        },
+        "totalPeriods": {
+          "type": "integer"
+        },
+        "voteStats": {
+          "$ref": "#/definitions/VoteStats"
+        },
+        "winner": {
+          "$ref": "#/definitions/Proposal"
+        }
+      }
+    },
+    "PeriodTime": {
+      "properties": {
+        "endTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "periodType": {
+          "type": "string"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Proposal": {
+      "properties": {
+        "hash": {
+          "type": "string"
+        },
+        "minQuorum": {
+          "type": "integer"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "votesCasted": {
+          "type": "integer"
+        },
+        "votesNum": {
+          "type": "integer"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -5018,6 +5598,48 @@ func init() {
         },
         "snapshot_block": {
           "type": "integer"
+        }
+      }
+    },
+    "VoteStats": {
+      "properties": {
+        "numVoters": {
+          "type": "integer"
+        },
+        "numVotersTotal": {
+          "type": "integer"
+        },
+        "votesAvailable": {
+          "type": "integer"
+        },
+        "votesCast": {
+          "type": "integer"
+        }
+      }
+    },
+    "Voter": {
+      "properties": {
+        "blockLevel": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "pkh": {
+          "type": "string"
+        },
+        "proposal": {
+          "type": "string"
+        },
+        "rolls": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     }

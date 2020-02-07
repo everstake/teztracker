@@ -25,6 +25,7 @@ import (
 	"github.com/everstake/teztracker/gen/restapi/operations/fees"
 	"github.com/everstake/teztracker/gen/restapi/operations/operation_groups"
 	"github.com/everstake/teztracker/gen/restapi/operations/operations_list"
+	"github.com/everstake/teztracker/gen/restapi/operations/voting"
 )
 
 // NewTezTrackerAPI creates a new TezTracker instance
@@ -62,6 +63,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		BlocksGetBakingRightsHandler: blocks.GetBakingRightsHandlerFunc(func(params blocks.GetBakingRightsParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBakingRights has not yet been implemented")
 		}),
+		VotingGetBallotsByPeriodIDHandler: voting.GetBallotsByPeriodIDHandlerFunc(func(params voting.GetBallotsByPeriodIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation VotingGetBallotsByPeriodID has not yet been implemented")
+		}),
 		BlocksGetBlockHandler: blocks.GetBlockHandlerFunc(func(params blocks.GetBlockParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBlock has not yet been implemented")
 		}),
@@ -97,6 +101,15 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		OperationsListGetOperationsListHandler: operations_list.GetOperationsListHandlerFunc(func(params operations_list.GetOperationsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation OperationsListGetOperationsList has not yet been implemented")
+		}),
+		VotingGetPeriodHandler: voting.GetPeriodHandlerFunc(func(params voting.GetPeriodParams) middleware.Responder {
+			return middleware.NotImplemented("operation VotingGetPeriod has not yet been implemented")
+		}),
+		VotingGetProposalVotesListHandler: voting.GetProposalVotesListHandlerFunc(func(params voting.GetProposalVotesListParams) middleware.Responder {
+			return middleware.NotImplemented("operation VotingGetProposalVotesList has not yet been implemented")
+		}),
+		VotingGetProposalsByPeriodIDHandler: voting.GetProposalsByPeriodIDHandlerFunc(func(params voting.GetProposalsByPeriodIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation VotingGetProposalsByPeriodID has not yet been implemented")
 		}),
 		GetSnapshotsHandler: GetSnapshotsHandlerFunc(func(params GetSnapshotsParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetSnapshots has not yet been implemented")
@@ -144,6 +157,8 @@ type TezTrackerAPI struct {
 	AccountsGetBakersListHandler accounts.GetBakersListHandler
 	// BlocksGetBakingRightsHandler sets the operation handler for the get baking rights operation
 	BlocksGetBakingRightsHandler blocks.GetBakingRightsHandler
+	// VotingGetBallotsByPeriodIDHandler sets the operation handler for the get ballots by period ID operation
+	VotingGetBallotsByPeriodIDHandler voting.GetBallotsByPeriodIDHandler
 	// BlocksGetBlockHandler sets the operation handler for the get block operation
 	BlocksGetBlockHandler blocks.GetBlockHandler
 	// BlocksGetBlockBakingRightsHandler sets the operation handler for the get block baking rights operation
@@ -168,6 +183,12 @@ type TezTrackerAPI struct {
 	OperationGroupsGetOperationGroupsHandler operation_groups.GetOperationGroupsHandler
 	// OperationsListGetOperationsListHandler sets the operation handler for the get operations list operation
 	OperationsListGetOperationsListHandler operations_list.GetOperationsListHandler
+	// VotingGetPeriodHandler sets the operation handler for the get period operation
+	VotingGetPeriodHandler voting.GetPeriodHandler
+	// VotingGetProposalVotesListHandler sets the operation handler for the get proposal votes list operation
+	VotingGetProposalVotesListHandler voting.GetProposalVotesListHandler
+	// VotingGetProposalsByPeriodIDHandler sets the operation handler for the get proposals by period ID operation
+	VotingGetProposalsByPeriodIDHandler voting.GetProposalsByPeriodIDHandler
 	// GetSnapshotsHandler sets the operation handler for the get snapshots operation
 	GetSnapshotsHandler GetSnapshotsHandler
 
@@ -257,6 +278,10 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "blocks.GetBakingRightsHandler")
 	}
 
+	if o.VotingGetBallotsByPeriodIDHandler == nil {
+		unregistered = append(unregistered, "voting.GetBallotsByPeriodIDHandler")
+	}
+
 	if o.BlocksGetBlockHandler == nil {
 		unregistered = append(unregistered, "blocks.GetBlockHandler")
 	}
@@ -303,6 +328,18 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.OperationsListGetOperationsListHandler == nil {
 		unregistered = append(unregistered, "operations_list.GetOperationsListHandler")
+	}
+
+	if o.VotingGetPeriodHandler == nil {
+		unregistered = append(unregistered, "voting.GetPeriodHandler")
+	}
+
+	if o.VotingGetProposalVotesListHandler == nil {
+		unregistered = append(unregistered, "voting.GetProposalVotesListHandler")
+	}
+
+	if o.VotingGetProposalsByPeriodIDHandler == nil {
+		unregistered = append(unregistered, "voting.GetProposalsByPeriodIDHandler")
 	}
 
 	if o.GetSnapshotsHandler == nil {
@@ -440,6 +477,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/ballots/{id}"] = voting.NewGetBallotsByPeriodID(o.context, o.VotingGetBallotsByPeriodIDHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/blocks/{hash}"] = blocks.NewGetBlock(o.context, o.BlocksGetBlockHandler)
 
 	if o.handlers["GET"] == nil {
@@ -496,6 +538,21 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/operations"] = operations_list.NewGetOperationsList(o.context, o.OperationsListGetOperationsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/{network}/period"] = voting.NewGetPeriod(o.context, o.VotingGetPeriodHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/proposal_votes/{id}"] = voting.NewGetProposalVotesList(o.context, o.VotingGetProposalVotesListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/proposals/{id}"] = voting.NewGetProposalsByPeriodID(o.context, o.VotingGetProposalsByPeriodIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

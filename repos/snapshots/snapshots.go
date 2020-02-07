@@ -14,7 +14,7 @@ type (
 
 	Repo interface {
 		List(limit, offset uint) (count int64, snapshots []models.Snapshot, err error)
-		RollsInBlock(block int64) (int64, error)
+		RollsAndBakersInBlock(block int64) (int64, int64, error)
 		Create(snapshot models.Snapshot) error
 		CreateBulk(snapshots []models.Snapshot) error
 	}
@@ -49,15 +49,16 @@ func (r *Repository) List(limit, offset uint) (count int64, snapshots []models.S
 }
 
 // RollsInBlock returns the total number of rolls in a block.
-func (r *Repository) RollsInBlock(block int64) (int64, error) {
+func (r *Repository) RollsAndBakersInBlock(block int64) (int64, int64, error) {
 	result := struct {
 		S int64
+		C int64
 	}{}
 
 	err := r.db.Model(&models.Roll{}).
 		Where("block_level = ?", block).
-		Select("sum(rolls) as s").Scan(&result).Error
-	return result.S, err
+		Select("sum(rolls) as s, count(1) as c").Scan(&result).Error
+	return result.S, result.C, err
 }
 
 // Create creates a Snapshot.

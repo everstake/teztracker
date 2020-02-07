@@ -74,7 +74,7 @@ func SaveSnapshotForCycle(ctx context.Context, cycle int64, unit UnitOfWork, pro
 	snapRepo := unit.GetSnapshots()
 	if snap.Rolls == 0 {
 
-		rolls, err := snapRepo.RollsInBlock(snap.BlockLevel)
+		rolls, _, err := snapRepo.RollsAndBakersInBlock(snap.BlockLevel)
 		if err != nil {
 			return err
 		}

@@ -8,8 +8,12 @@ import (
 	account "github.com/everstake/teztracker/repos/account"
 	baker "github.com/everstake/teztracker/repos/baker"
 	block "github.com/everstake/teztracker/repos/block"
+	double_baking "github.com/everstake/teztracker/repos/double_baking"
+	future_baking_rights "github.com/everstake/teztracker/repos/future_baking_rights"
 	operation "github.com/everstake/teztracker/repos/operation"
 	operation_groups "github.com/everstake/teztracker/repos/operation_groups"
+	snapshots "github.com/everstake/teztracker/repos/snapshots"
+	voting_periods "github.com/everstake/teztracker/repos/voting_periods"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -39,7 +43,6 @@ func (m *MockProvider) EXPECT() *MockProviderMockRecorder {
 
 // GetBlock mocks base method
 func (m *MockProvider) GetBlock() block.Repo {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBlock")
 	ret0, _ := ret[0].(block.Repo)
 	return ret0
@@ -47,13 +50,11 @@ func (m *MockProvider) GetBlock() block.Repo {
 
 // GetBlock indicates an expected call of GetBlock
 func (mr *MockProviderMockRecorder) GetBlock() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBlock", reflect.TypeOf((*MockProvider)(nil).GetBlock))
 }
 
 // GetOperationGroup mocks base method
 func (m *MockProvider) GetOperationGroup() operation_groups.Repo {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOperationGroup")
 	ret0, _ := ret[0].(operation_groups.Repo)
 	return ret0
@@ -61,13 +62,11 @@ func (m *MockProvider) GetOperationGroup() operation_groups.Repo {
 
 // GetOperationGroup indicates an expected call of GetOperationGroup
 func (mr *MockProviderMockRecorder) GetOperationGroup() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperationGroup", reflect.TypeOf((*MockProvider)(nil).GetOperationGroup))
 }
 
 // GetOperation mocks base method
 func (m *MockProvider) GetOperation() operation.Repo {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOperation")
 	ret0, _ := ret[0].(operation.Repo)
 	return ret0
@@ -75,13 +74,11 @@ func (m *MockProvider) GetOperation() operation.Repo {
 
 // GetOperation indicates an expected call of GetOperation
 func (mr *MockProviderMockRecorder) GetOperation() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperation", reflect.TypeOf((*MockProvider)(nil).GetOperation))
 }
 
 // GetAccount mocks base method
 func (m *MockProvider) GetAccount() account.Repo {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccount")
 	ret0, _ := ret[0].(account.Repo)
 	return ret0
@@ -89,13 +86,11 @@ func (m *MockProvider) GetAccount() account.Repo {
 
 // GetAccount indicates an expected call of GetAccount
 func (mr *MockProviderMockRecorder) GetAccount() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccount", reflect.TypeOf((*MockProvider)(nil).GetAccount))
 }
 
 // GetBaker mocks base method
 func (m *MockProvider) GetBaker() baker.Repo {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBaker")
 	ret0, _ := ret[0].(baker.Repo)
 	return ret0
@@ -103,8 +98,55 @@ func (m *MockProvider) GetBaker() baker.Repo {
 
 // GetBaker indicates an expected call of GetBaker
 func (mr *MockProviderMockRecorder) GetBaker() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBaker", reflect.TypeOf((*MockProvider)(nil).GetBaker))
+}
+
+// GetFutureBakingRight mocks base method
+func (m *MockProvider) GetFutureBakingRight() future_baking_rights.Repo {
+	ret := m.ctrl.Call(m, "GetFutureBakingRight")
+	ret0, _ := ret[0].(future_baking_rights.Repo)
+	return ret0
+}
+
+// GetFutureBakingRight indicates an expected call of GetFutureBakingRight
+func (mr *MockProviderMockRecorder) GetFutureBakingRight() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFutureBakingRight", reflect.TypeOf((*MockProvider)(nil).GetFutureBakingRight))
+}
+
+// GetSnapshots mocks base method
+func (m *MockProvider) GetSnapshots() snapshots.Repo {
+	ret := m.ctrl.Call(m, "GetSnapshots")
+	ret0, _ := ret[0].(snapshots.Repo)
+	return ret0
+}
+
+// GetSnapshots indicates an expected call of GetSnapshots
+func (mr *MockProviderMockRecorder) GetSnapshots() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSnapshots", reflect.TypeOf((*MockProvider)(nil).GetSnapshots))
+}
+
+// GetDoubleBaking mocks base method
+func (m *MockProvider) GetDoubleBaking() double_baking.Repo {
+	ret := m.ctrl.Call(m, "GetDoubleBaking")
+	ret0, _ := ret[0].(double_baking.Repo)
+	return ret0
+}
+
+// GetDoubleBaking indicates an expected call of GetDoubleBaking
+func (mr *MockProviderMockRecorder) GetDoubleBaking() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDoubleBaking", reflect.TypeOf((*MockProvider)(nil).GetDoubleBaking))
+}
+
+// GetVotingPeriod mocks base method
+func (m *MockProvider) GetVotingPeriod() voting_periods.Repo {
+	ret := m.ctrl.Call(m, "GetVotingPeriod")
+	ret0, _ := ret[0].(voting_periods.Repo)
+	return ret0
+}
+
+// GetVotingPeriod indicates an expected call of GetVotingPeriod
+func (mr *MockProviderMockRecorder) GetVotingPeriod() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVotingPeriod", reflect.TypeOf((*MockProvider)(nil).GetVotingPeriod))
 }
 
 // MockLimiter is a mock of Limiter interface
@@ -132,7 +174,6 @@ func (m *MockLimiter) EXPECT() *MockLimiterMockRecorder {
 
 // Limit mocks base method
 func (m *MockLimiter) Limit() uint {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Limit")
 	ret0, _ := ret[0].(uint)
 	return ret0
@@ -140,13 +181,11 @@ func (m *MockLimiter) Limit() uint {
 
 // Limit indicates an expected call of Limit
 func (mr *MockLimiterMockRecorder) Limit() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Limit", reflect.TypeOf((*MockLimiter)(nil).Limit))
 }
 
 // Offset mocks base method
 func (m *MockLimiter) Offset() uint {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Offset")
 	ret0, _ := ret[0].(uint)
 	return ret0
@@ -154,6 +193,5 @@ func (m *MockLimiter) Offset() uint {
 
 // Offset indicates an expected call of Offset
 func (mr *MockLimiterMockRecorder) Offset() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Offset", reflect.TypeOf((*MockLimiter)(nil).Offset))
 }
