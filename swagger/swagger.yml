@@ -169,7 +169,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, babylonnet]
+          enum: [mainnet, babylonnet, carthagenet]
       produces:
         - application/json
       responses:

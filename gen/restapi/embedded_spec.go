@@ -1208,7 +1208,8 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet"
+              "babylonnet",
+              "carthagenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3713,7 +3714,8 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet"
+              "babylonnet",
+              "carthagenet"
             ],
             "type": "string",
             "description": "Not used",
