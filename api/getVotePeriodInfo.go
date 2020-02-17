@@ -7,6 +7,7 @@ import (
 	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 type getPeriodInfoHandler struct {
@@ -24,8 +25,15 @@ func (h *getPeriodInfoHandler) Handle(params voting.GetPeriodParams) middleware.
 		return voting.NewGetPeriodNotFound()
 	}
 	service := services.New(repos.New(db), net)
+	var id *int64
+	if params.ID != nil {
+		parseID, err := strconv.ParseInt(*params.ID, 10, 64)
+		if err == nil {
+			id = &parseID
+		}
+	}
 
-	period, err := service.VotingPeriod(*params.ID)
+	period, err := service.VotingPeriod(id)
 	if err != nil {
 		logrus.Errorf("failed to get voting period: %s", err.Error())
 		return voting.NewGetPeriodNotFound()
