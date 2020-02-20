@@ -1274,7 +1274,7 @@ paths:
           description: Not Found
       tags:
         - Fees
-  '/v2/{network}/period':
+  '/v2/data/{network}/period':
     get:
       operationId: getPeriod
       produces:
@@ -1300,7 +1300,7 @@ paths:
           description: Not Found
       tags:
         - Voting
-  '/v2/{network}/proposals/{id}':
+  '/v2/data/{network}/proposals/{id}':
     get:
       operationId: getProposalsByPeriodID
       produces:
@@ -1340,7 +1340,7 @@ paths:
           description: Not Found
       tags:
         - Voting
-  '/v2/{network}/proposal_votes/{id}':
+  '/v2/data/{network}/proposal_votes/{id}':
     get:
       operationId: getProposalVotesList
       produces:
@@ -1376,7 +1376,7 @@ paths:
           description: Not Found
       tags:
         - Voting
-  '/v2/{network}/ballots/{id}':
+  '/v2/data/{network}/ballots/{id}':
     get:
       operationId: getBallotsByPeriodID
       produces:
@@ -1406,14 +1406,14 @@ paths:
           description: Query compatibility endpoint for ballots
           schema:
             items:
-             $ref: >-
-               #/definitions/BallotVoter
+              $ref: >-
+                #/definitions/BallotVoter
             type: array
         '404':
           description: Not Found
       tags:
         - Voting
-  '/v2/{network}/non_voters/{id}':
+  '/v2/data/{network}/non_voters/{id}':
     get:
       operationId: getNonVotersByPeriodID
       produces:

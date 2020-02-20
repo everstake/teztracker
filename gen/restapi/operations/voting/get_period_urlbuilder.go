@@ -42,7 +42,7 @@ func (o *GetPeriodURL) SetBasePath(bp string) {
 func (o *GetPeriodURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/{network}/period"
+	var _path = "/v2/data/{network}/period"
 
 	network := o.Network
 	if network != "" {

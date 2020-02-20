@@ -486,7 +486,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/{network}/ballots/{id}"] = voting.NewGetBallotsByPeriodID(o.context, o.VotingGetBallotsByPeriodIDHandler)
+	o.handlers["GET"]["/v2/data/{network}/ballots/{id}"] = voting.NewGetBallotsByPeriodID(o.context, o.VotingGetBallotsByPeriodIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -536,7 +536,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/{network}/non_voters/{id}"] = voting.NewGetNonVotersByPeriodID(o.context, o.VotingGetNonVotersByPeriodIDHandler)
+	o.handlers["GET"]["/v2/data/{network}/non_voters/{id}"] = voting.NewGetNonVotersByPeriodID(o.context, o.VotingGetNonVotersByPeriodIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -556,17 +556,17 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/{network}/period"] = voting.NewGetPeriod(o.context, o.VotingGetPeriodHandler)
+	o.handlers["GET"]["/v2/data/{network}/period"] = voting.NewGetPeriod(o.context, o.VotingGetPeriodHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/{network}/proposal_votes/{id}"] = voting.NewGetProposalVotesList(o.context, o.VotingGetProposalVotesListHandler)
+	o.handlers["GET"]["/v2/data/{network}/proposal_votes/{id}"] = voting.NewGetProposalVotesList(o.context, o.VotingGetProposalVotesListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/{network}/proposals/{id}"] = voting.NewGetProposalsByPeriodID(o.context, o.VotingGetProposalsByPeriodIDHandler)
+	o.handlers["GET"]["/v2/data/{network}/proposals/{id}"] = voting.NewGetProposalsByPeriodID(o.context, o.VotingGetProposalsByPeriodIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

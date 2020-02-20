@@ -46,7 +46,7 @@ func (o *GetProposalsByPeriodIDURL) SetBasePath(bp string) {
 func (o *GetProposalsByPeriodIDURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/{network}/proposals/{id}"
+	var _path = "/v2/data/{network}/proposals/{id}"
 
 	id := o.ID
 	if id != "" {

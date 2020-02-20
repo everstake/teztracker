@@ -24,6 +24,262 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/{network}/ballots/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getBallotsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for ballots",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BallotVoter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/non_voters/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getNonVotersByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for ballots",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NonVoter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/period": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getPeriod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for periods",
+            "schema": {
+              "$ref": "#/definitions/PeriodInfo"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/proposal_votes/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalVotesList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposal votes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProposalVoter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/proposals/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposals",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Proposal"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts": {
       "get": {
         "produces": [
@@ -1894,262 +2150,6 @@ func init() {
           },
           "400": {
             "description": "Bad request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/ballots/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getBallotsByPeriodID",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 300,
-            "minimum": 1,
-            "type": "integer",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for ballots",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/BallotVoter"
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/non_voters/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getNonVotersByPeriodID",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 300,
-            "minimum": 1,
-            "type": "integer",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for ballots",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/NonVoter"
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/period": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getPeriod",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "id",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for periods",
-            "schema": {
-              "$ref": "#/definitions/PeriodInfo"
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/proposal_votes/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getProposalVotesList",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 300,
-            "minimum": 1,
-            "type": "integer",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for proposal votes",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ProposalVoter"
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/proposals/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getProposalsByPeriodID",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 20,
-            "minimum": 1,
-            "type": "integer",
-            "default": 10,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for proposals",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Proposal"
-              }
-            },
-            "headers": {
-              "X-Total-Count": {
-                "type": "integer",
-                "description": "The total number of data entries."
-              }
-            }
           },
           "404": {
             "description": "Not Found"
@@ -2969,6 +2969,266 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/{network}/ballots/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getBallotsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for ballots",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BallotVoter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/non_voters/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getNonVotersByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for ballots",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NonVoter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/period": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getPeriod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for periods",
+            "schema": {
+              "$ref": "#/definitions/PeriodInfo"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/proposal_votes/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalVotesList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposal votes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProposalVoter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/proposals/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposals",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Proposal"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts": {
       "get": {
         "produces": [
@@ -4852,266 +5112,6 @@ func init() {
           },
           "400": {
             "description": "Bad request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/ballots/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getBallotsByPeriodID",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 300,
-            "minimum": 1,
-            "type": "integer",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "minimum": 0,
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for ballots",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/BallotVoter"
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/non_voters/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getNonVotersByPeriodID",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 300,
-            "minimum": 1,
-            "type": "integer",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "minimum": 0,
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for ballots",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/NonVoter"
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/period": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getPeriod",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "id",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for periods",
-            "schema": {
-              "$ref": "#/definitions/PeriodInfo"
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/proposal_votes/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getProposalVotesList",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 300,
-            "minimum": 1,
-            "type": "integer",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "minimum": 0,
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for proposal votes",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ProposalVoter"
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/v2/{network}/proposals/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getProposalsByPeriodID",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 20,
-            "minimum": 1,
-            "type": "integer",
-            "default": 10,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "minimum": 0,
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for proposals",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Proposal"
-              }
-            },
-            "headers": {
-              "X-Total-Count": {
-                "type": "integer",
-                "description": "The total number of data entries."
-              }
-            }
           },
           "404": {
             "description": "Not Found"

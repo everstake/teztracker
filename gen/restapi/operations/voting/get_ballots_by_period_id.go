@@ -29,7 +29,7 @@ func NewGetBallotsByPeriodID(ctx *middleware.Context, handler GetBallotsByPeriod
 	return &GetBallotsByPeriodID{Context: ctx, Handler: handler}
 }
 
-/*GetBallotsByPeriodID swagger:route GET /v2/{network}/ballots/{id} Voting getBallotsByPeriodId
+/*GetBallotsByPeriodID swagger:route GET /v2/data/{network}/ballots/{id} Voting getBallotsByPeriodId
 
 GetBallotsByPeriodID get ballots by period ID API
 

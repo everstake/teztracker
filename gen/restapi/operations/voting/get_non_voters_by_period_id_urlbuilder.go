@@ -46,7 +46,7 @@ func (o *GetNonVotersByPeriodIDURL) SetBasePath(bp string) {
 func (o *GetNonVotersByPeriodIDURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/{network}/non_voters/{id}"
+	var _path = "/v2/data/{network}/non_voters/{id}"
 
 	id := o.ID
 	if id != "" {

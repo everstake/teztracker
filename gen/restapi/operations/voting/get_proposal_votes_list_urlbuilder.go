@@ -46,7 +46,7 @@ func (o *GetProposalVotesListURL) SetBasePath(bp string) {
 func (o *GetProposalVotesListURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/{network}/proposal_votes/{id}"
+	var _path = "/v2/data/{network}/proposal_votes/{id}"
 
 	id := o.ID
 	if id != "" {

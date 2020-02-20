@@ -29,7 +29,7 @@ func NewGetNonVotersByPeriodID(ctx *middleware.Context, handler GetNonVotersByPe
 	return &GetNonVotersByPeriodID{Context: ctx, Handler: handler}
 }
 
-/*GetNonVotersByPeriodID swagger:route GET /v2/{network}/non_voters/{id} Voting getNonVotersByPeriodId
+/*GetNonVotersByPeriodID swagger:route GET /v2/data/{network}/non_voters/{id} Voting getNonVotersByPeriodId
 
 GetNonVotersByPeriodID get non voters by period ID API
 

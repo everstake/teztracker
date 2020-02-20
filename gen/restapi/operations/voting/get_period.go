@@ -29,7 +29,7 @@ func NewGetPeriod(ctx *middleware.Context, handler GetPeriodHandler) *GetPeriod 
 	return &GetPeriod{Context: ctx, Handler: handler}
 }
 
-/*GetPeriod swagger:route GET /v2/{network}/period Voting getPeriod
+/*GetPeriod swagger:route GET /v2/data/{network}/period Voting getPeriod
 
 GetPeriod get period API
 
