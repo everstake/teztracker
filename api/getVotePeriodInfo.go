@@ -14,7 +14,7 @@ type getPeriodInfoHandler struct {
 	provider DbProvider
 }
 
-// Handle serves the Get Block List request.
+// Handle serves the Get Period Info request.
 func (h *getPeriodInfoHandler) Handle(params voting.GetPeriodParams) middleware.Responder {
 	net, err := ToNetwork(params.Network)
 	if err != nil {

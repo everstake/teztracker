@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	models "github.com/everstake/teztracker/gen/models"
 )
 
 // GetBallotsByPeriodIDOKCode is the HTTP code returned for type GetBallotsByPeriodIDOK
@@ -23,7 +25,7 @@ type GetBallotsByPeriodIDOK struct {
 	/*
 	  In: Body
 	*/
-	Payload string `json:"body,omitempty"`
+	Payload []*models.BallotVoter `json:"body,omitempty"`
 }
 
 // NewGetBallotsByPeriodIDOK creates GetBallotsByPeriodIDOK with default headers values
@@ -33,13 +35,13 @@ func NewGetBallotsByPeriodIDOK() *GetBallotsByPeriodIDOK {
 }
 
 // WithPayload adds the payload to the get ballots by period Id o k response
-func (o *GetBallotsByPeriodIDOK) WithPayload(payload string) *GetBallotsByPeriodIDOK {
+func (o *GetBallotsByPeriodIDOK) WithPayload(payload []*models.BallotVoter) *GetBallotsByPeriodIDOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get ballots by period Id o k response
-func (o *GetBallotsByPeriodIDOK) SetPayload(payload string) {
+func (o *GetBallotsByPeriodIDOK) SetPayload(payload []*models.BallotVoter) {
 	o.Payload = payload
 }
 
@@ -48,6 +50,11 @@ func (o *GetBallotsByPeriodIDOK) WriteResponse(rw http.ResponseWriter, producer 
 
 	rw.WriteHeader(200)
 	payload := o.Payload
+	if payload == nil {
+		// return empty array
+		payload = make([]*models.BallotVoter, 0, 50)
+	}
+
 	if err := producer.Produce(rw, payload); err != nil {
 		panic(err) // let the recovery middleware deal with this
 	}

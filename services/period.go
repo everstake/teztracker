@@ -8,6 +8,8 @@ import (
 
 const (
 	cyclesOnVotingPeriod      = 8
+	firstPeriodStartBlock     = 1
+	periodKindProposal        = "proposals"
 	periodKindBallot          = "ballot"
 	quorumFormulaChangePeriod = 19
 	supermajority             = 80
@@ -21,7 +23,7 @@ func (t *TezTracker) VotingPeriod(id *int64) (info models.PeriodInfo, err error)
 	if id == nil {
 		info.Period, err = repo.GetCurrentPeriodId()
 		if err != nil {
-
+			return
 		}
 	} else {
 		info.Period = *id
@@ -34,7 +36,7 @@ func (t *TezTracker) VotingPeriod(id *int64) (info models.PeriodInfo, err error)
 
 	if info.Kind == periodKindBallot {
 
-		ballots, err := repo.Ballots(info.Period)
+		ballots, err := repo.BallotsList(info.Period)
 		if err != nil {
 			return info, err
 		}
@@ -109,4 +111,57 @@ func QuorumOldFormula(prevAverPart, actualPart float64) (q float64, avP float64)
 func QuorumNewFormula(prevAverPart, actualPart float64) (q float64, avP float64) {
 	_, avP = QuorumOldFormula(prevAverPart, actualPart)
 	return minQuorum + avP*(maxQuorum-minQuorum), avP
+}
+
+func (t *TezTracker) ProposalsByPeriodID(id int64, limits Limiter) (proposals []models.VotingProposal, count int64, err error) {
+	proposals, err = t.repoProvider.GetVotingPeriod().ProposalsList(id, limits.Limit())
+	if err != nil {
+		return proposals, 0, err
+	}
+
+	return proposals, 0, nil
+}
+
+func (t *TezTracker) GetProposalVoters(id int64, limits Limiter) (votes []models.ProposalVoter, count int64, err error) {
+	votes, err = t.repoProvider.GetVotingPeriod().VotersList(id, periodKindProposal, limits.Limit(), limits.Offset())
+	if err != nil {
+		return votes, 0, err
+	}
+	return votes, 0, err
+}
+
+func (t *TezTracker) GetBallotVoters(id int64, limits Limiter) (votes []models.ProposalVoter, count int64, err error) {
+
+	votes, err = t.repoProvider.GetVotingPeriod().VotersList(id, periodKindBallot, limits.Limit(), limits.Offset())
+	if err != nil {
+		return votes, 0, err
+	}
+	return votes, 0, err
+}
+
+func (t *TezTracker) GetPeriodNonVoters(id int64, limits Limiter) (proposals []models.Voter, count int64, err error) {
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return proposals, count, err
+	}
+
+	blockLevel := lastBlock.MetaLevel
+
+	_, endBlock := t.calcVotingPeriod(id)
+	if endBlock < blockLevel {
+		blockLevel = endBlock
+	}
+
+	proposals, err = t.repoProvider.GetVotingPeriod().ProposalNonVotersList(id, blockLevel, limits.Limit(), limits.Offset())
+	if err != nil {
+		return proposals, 0, err
+	}
+
+	return proposals, 0, err
+}
+
+func (t *TezTracker) calcVotingPeriod(id int64) (startBlock, endBlock int64) {
+	blocksInPeriod := t.BlocksInCycle() * cyclesOnVotingPeriod
+	startBlock = blocksInPeriod*id + firstPeriodStartBlock
+	return startBlock, startBlock + blocksInPeriod - 1
 }

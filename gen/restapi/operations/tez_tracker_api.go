@@ -93,6 +93,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AppInfoGetInfoHandler: app_info.GetInfoHandlerFunc(func(params app_info.GetInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetInfo has not yet been implemented")
 		}),
+		VotingGetNonVotersByPeriodIDHandler: voting.GetNonVotersByPeriodIDHandlerFunc(func(params voting.GetNonVotersByPeriodIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation VotingGetNonVotersByPeriodID has not yet been implemented")
+		}),
 		OperationGroupsGetOperationGroupHandler: operation_groups.GetOperationGroupHandlerFunc(func(params operation_groups.GetOperationGroupParams) middleware.Responder {
 			return middleware.NotImplemented("operation OperationGroupsGetOperationGroup has not yet been implemented")
 		}),
@@ -177,6 +180,8 @@ type TezTrackerAPI struct {
 	BlocksGetFutureBakingRightsHandler blocks.GetFutureBakingRightsHandler
 	// AppInfoGetInfoHandler sets the operation handler for the get info operation
 	AppInfoGetInfoHandler app_info.GetInfoHandler
+	// VotingGetNonVotersByPeriodIDHandler sets the operation handler for the get non voters by period ID operation
+	VotingGetNonVotersByPeriodIDHandler voting.GetNonVotersByPeriodIDHandler
 	// OperationGroupsGetOperationGroupHandler sets the operation handler for the get operation group operation
 	OperationGroupsGetOperationGroupHandler operation_groups.GetOperationGroupHandler
 	// OperationGroupsGetOperationGroupsHandler sets the operation handler for the get operation groups operation
@@ -316,6 +321,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AppInfoGetInfoHandler == nil {
 		unregistered = append(unregistered, "app_info.GetInfoHandler")
+	}
+
+	if o.VotingGetNonVotersByPeriodIDHandler == nil {
+		unregistered = append(unregistered, "voting.GetNonVotersByPeriodIDHandler")
 	}
 
 	if o.OperationGroupsGetOperationGroupHandler == nil {
@@ -477,7 +486,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/ballots/{id}"] = voting.NewGetBallotsByPeriodID(o.context, o.VotingGetBallotsByPeriodIDHandler)
+	o.handlers["GET"]["/v2/{network}/ballots/{id}"] = voting.NewGetBallotsByPeriodID(o.context, o.VotingGetBallotsByPeriodIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -527,6 +536,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/{network}/non_voters/{id}"] = voting.NewGetNonVotersByPeriodID(o.context, o.VotingGetNonVotersByPeriodIDHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/operation_groups/{operationGroupId}"] = operation_groups.NewGetOperationGroup(o.context, o.OperationGroupsGetOperationGroupHandler)
 
 	if o.handlers["GET"] == nil {
@@ -547,12 +561,12 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/proposal_votes/{id}"] = voting.NewGetProposalVotesList(o.context, o.VotingGetProposalVotesListHandler)
+	o.handlers["GET"]["/v2/{network}/proposal_votes/{id}"] = voting.NewGetProposalVotesList(o.context, o.VotingGetProposalVotesListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/proposals/{id}"] = voting.NewGetProposalsByPeriodID(o.context, o.VotingGetProposalsByPeriodIDHandler)
+	o.handlers["GET"]["/v2/{network}/proposals/{id}"] = voting.NewGetProposalsByPeriodID(o.context, o.VotingGetProposalsByPeriodIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

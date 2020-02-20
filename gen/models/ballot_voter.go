@@ -13,12 +13,15 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Voter voter
-// swagger:model Voter
-type Voter struct {
+// BallotVoter ballot voter
+// swagger:model BallotVoter
+type BallotVoter struct {
 
 	// block level
 	BlockLevel int64 `json:"blockLevel,omitempty"`
+
+	// decision
+	Decision string `json:"decision,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
@@ -29,9 +32,6 @@ type Voter struct {
 	// pkh
 	Pkh string `json:"pkh,omitempty"`
 
-	// proposal
-	Proposal string `json:"proposal,omitempty"`
-
 	// rolls
 	Rolls int64 `json:"rolls,omitempty"`
 
@@ -40,8 +40,8 @@ type Voter struct {
 	Timestamp strfmt.DateTime `json:"timestamp,omitempty"`
 }
 
-// Validate validates this voter
-func (m *Voter) Validate(formats strfmt.Registry) error {
+// Validate validates this ballot voter
+func (m *BallotVoter) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateTimestamp(formats); err != nil {
@@ -54,7 +54,7 @@ func (m *Voter) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Voter) validateTimestamp(formats strfmt.Registry) error {
+func (m *BallotVoter) validateTimestamp(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Timestamp) { // not required
 		return nil
@@ -68,7 +68,7 @@ func (m *Voter) validateTimestamp(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *Voter) MarshalBinary() ([]byte, error) {
+func (m *BallotVoter) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -76,8 +76,8 @@ func (m *Voter) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Voter) UnmarshalBinary(b []byte) error {
-	var res Voter
+func (m *BallotVoter) UnmarshalBinary(b []byte) error {
+	var res BallotVoter
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

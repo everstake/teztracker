@@ -17,30 +17,30 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetProposalVotesListParams creates a new GetProposalVotesListParams object
+// NewGetNonVotersByPeriodIDParams creates a new GetNonVotersByPeriodIDParams object
 // with the default values initialized.
-func NewGetProposalVotesListParams() GetProposalVotesListParams {
+func NewGetNonVotersByPeriodIDParams() GetNonVotersByPeriodIDParams {
 
 	var (
 		// initialize parameters with default values
 
-		limitDefault = int64(20)
+		limitDefault = int64(10)
 
 		offsetDefault = int64(0)
 	)
 
-	return GetProposalVotesListParams{
+	return GetNonVotersByPeriodIDParams{
 		Limit: &limitDefault,
 
 		Offset: &offsetDefault,
 	}
 }
 
-// GetProposalVotesListParams contains all the bound params for the get proposal votes list operation
+// GetNonVotersByPeriodIDParams contains all the bound params for the get non voters by period ID operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters getProposalVotesList
-type GetProposalVotesListParams struct {
+// swagger:parameters getNonVotersByPeriodID
+type GetNonVotersByPeriodIDParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -51,10 +51,10 @@ type GetProposalVotesListParams struct {
 	*/
 	ID string
 	/*
-	  Maximum: 500
+	  Maximum: 20
 	  Minimum: 1
 	  In: query
-	  Default: 20
+	  Default: 10
 	*/
 	Limit *int64
 	/*
@@ -73,8 +73,8 @@ type GetProposalVotesListParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewGetProposalVotesListParams() beforehand.
-func (o *GetProposalVotesListParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewGetNonVotersByPeriodIDParams() beforehand.
+func (o *GetNonVotersByPeriodIDParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -108,7 +108,7 @@ func (o *GetProposalVotesListParams) BindRequest(r *http.Request, route *middlew
 }
 
 // bindID binds and validates parameter ID from path.
-func (o *GetProposalVotesListParams) bindID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetNonVotersByPeriodIDParams) bindID(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -123,7 +123,7 @@ func (o *GetProposalVotesListParams) bindID(rawData []string, hasKey bool, forma
 }
 
 // bindLimit binds and validates parameter Limit from query.
-func (o *GetProposalVotesListParams) bindLimit(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetNonVotersByPeriodIDParams) bindLimit(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -132,7 +132,7 @@ func (o *GetProposalVotesListParams) bindLimit(rawData []string, hasKey bool, fo
 	// Required: false
 	// AllowEmptyValue: false
 	if raw == "" { // empty values pass all other validations
-		// Default values have been previously initialized by NewGetProposalVotesListParams()
+		// Default values have been previously initialized by NewGetNonVotersByPeriodIDParams()
 		return nil
 	}
 
@@ -150,13 +150,13 @@ func (o *GetProposalVotesListParams) bindLimit(rawData []string, hasKey bool, fo
 }
 
 // validateLimit carries on validations for parameter Limit
-func (o *GetProposalVotesListParams) validateLimit(formats strfmt.Registry) error {
+func (o *GetNonVotersByPeriodIDParams) validateLimit(formats strfmt.Registry) error {
 
 	if err := validate.MinimumInt("limit", "query", int64(*o.Limit), 1, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumInt("limit", "query", int64(*o.Limit), 500, false); err != nil {
+	if err := validate.MaximumInt("limit", "query", int64(*o.Limit), 20, false); err != nil {
 		return err
 	}
 
@@ -164,7 +164,7 @@ func (o *GetProposalVotesListParams) validateLimit(formats strfmt.Registry) erro
 }
 
 // bindNetwork binds and validates parameter Network from path.
-func (o *GetProposalVotesListParams) bindNetwork(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetNonVotersByPeriodIDParams) bindNetwork(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -179,7 +179,7 @@ func (o *GetProposalVotesListParams) bindNetwork(rawData []string, hasKey bool, 
 }
 
 // bindOffset binds and validates parameter Offset from query.
-func (o *GetProposalVotesListParams) bindOffset(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetNonVotersByPeriodIDParams) bindOffset(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -188,7 +188,7 @@ func (o *GetProposalVotesListParams) bindOffset(rawData []string, hasKey bool, f
 	// Required: false
 	// AllowEmptyValue: false
 	if raw == "" { // empty values pass all other validations
-		// Default values have been previously initialized by NewGetProposalVotesListParams()
+		// Default values have been previously initialized by NewGetNonVotersByPeriodIDParams()
 		return nil
 	}
 
@@ -206,7 +206,7 @@ func (o *GetProposalVotesListParams) bindOffset(rawData []string, hasKey bool, f
 }
 
 // validateOffset carries on validations for parameter Offset
-func (o *GetProposalVotesListParams) validateOffset(formats strfmt.Registry) error {
+func (o *GetNonVotersByPeriodIDParams) validateOffset(formats strfmt.Registry) error {
 
 	if err := validate.MinimumInt("offset", "query", int64(*o.Offset), 0, false); err != nil {
 		return err

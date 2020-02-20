@@ -14,8 +14,8 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// GetProposalVotesListURL generates an URL for the get proposal votes list operation
-type GetProposalVotesListURL struct {
+// GetNonVotersByPeriodIDURL generates an URL for the get non voters by period ID operation
+type GetNonVotersByPeriodIDURL struct {
 	ID      string
 	Network string
 
@@ -30,7 +30,7 @@ type GetProposalVotesListURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetProposalVotesListURL) WithBasePath(bp string) *GetProposalVotesListURL {
+func (o *GetNonVotersByPeriodIDURL) WithBasePath(bp string) *GetNonVotersByPeriodIDURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -38,28 +38,28 @@ func (o *GetProposalVotesListURL) WithBasePath(bp string) *GetProposalVotesListU
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetProposalVotesListURL) SetBasePath(bp string) {
+func (o *GetNonVotersByPeriodIDURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *GetProposalVotesListURL) Build() (*url.URL, error) {
+func (o *GetNonVotersByPeriodIDURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/{network}/proposal_votes/{id}"
+	var _path = "/v2/{network}/non_voters/{id}"
 
 	id := o.ID
 	if id != "" {
 		_path = strings.Replace(_path, "{id}", id, -1)
 	} else {
-		return nil, errors.New("id is required on GetProposalVotesListURL")
+		return nil, errors.New("id is required on GetNonVotersByPeriodIDURL")
 	}
 
 	network := o.Network
 	if network != "" {
 		_path = strings.Replace(_path, "{network}", network, -1)
 	} else {
-		return nil, errors.New("network is required on GetProposalVotesListURL")
+		return nil, errors.New("network is required on GetNonVotersByPeriodIDURL")
 	}
 
 	_basePath := o._basePath
@@ -89,7 +89,7 @@ func (o *GetProposalVotesListURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *GetProposalVotesListURL) Must(u *url.URL, err error) *url.URL {
+func (o *GetNonVotersByPeriodIDURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -100,17 +100,17 @@ func (o *GetProposalVotesListURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *GetProposalVotesListURL) String() string {
+func (o *GetNonVotersByPeriodIDURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *GetProposalVotesListURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *GetNonVotersByPeriodIDURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on GetProposalVotesListURL")
+		return nil, errors.New("scheme is required for a full url on GetNonVotersByPeriodIDURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on GetProposalVotesListURL")
+		return nil, errors.New("host is required for a full url on GetNonVotersByPeriodIDURL")
 	}
 
 	base, err := o.Build()
@@ -124,6 +124,6 @@ func (o *GetProposalVotesListURL) BuildFull(scheme, host string) (*url.URL, erro
 }
 
 // StringFull returns the string representation of a complete url
-func (o *GetProposalVotesListURL) StringFull(scheme, host string) string {
+func (o *GetNonVotersByPeriodIDURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

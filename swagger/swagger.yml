@@ -1300,7 +1300,7 @@ paths:
           description: Not Found
       tags:
         - Voting
-  '/v2/proposals/{id}':
+  '/v2/{network}/proposals/{id}':
     get:
       operationId: getProposalsByPeriodID
       produces:
@@ -1310,12 +1310,21 @@ paths:
           name: id
           required: true
           type: string
+        - in: path
+          name: network
+          required: true
+          type: string
         - in: query
           name: limit
           type: integer
           default: 10
           minimum: 1
           maximum: 20
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
       responses:
         '200':
           description: Query compatibility endpoint for proposals
@@ -1323,11 +1332,15 @@ paths:
             items:
               $ref: '#/definitions/Proposal'
             type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '404':
           description: Not Found
       tags:
         - Voting
-  '/v2/proposal_votes/{id}':
+  '/v2/{network}/proposal_votes/{id}':
     get:
       operationId: getProposalVotesList
       produces:
@@ -1337,24 +1350,33 @@ paths:
           name: id
           required: true
           type: string
+        - in: path
+          name: network
+          required: true
+          type: string
         - in: query
           name: limit
           type: integer
-          default: 10
+          default: 20
           minimum: 1
-          maximum: 20
+          maximum: 500
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
       responses:
         '200':
           description: Query compatibility endpoint for proposal votes
           schema:
             items:
-              $ref: '#/definitions/Voter'
-            type: array # Any - not yet supported
+              $ref: '#/definitions/ProposalVoter'
+            type: array
         '404':
           description: Not Found
       tags:
         - Voting
-  '/v2/ballots/{id}':
+  '/v2/{network}/ballots/{id}':
     get:
       operationId: getBallotsByPeriodID
       produces:
@@ -1364,17 +1386,66 @@ paths:
           name: id
           required: true
           type: string
+        - in: path
+          name: network
+          required: true
+          type: string
         - in: query
           name: limit
           type: integer
           default: 10
           minimum: 1
           maximum: 20
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
       responses:
         '200':
           description: Query compatibility endpoint for ballots
           schema:
-            type: string # Any - not yet supported
+            items:
+             $ref: >-
+               #/definitions/BallotVoter
+            type: array
+        '404':
+          description: Not Found
+      tags:
+        - Voting
+  '/v2/{network}/non_voters/{id}':
+    get:
+      operationId: getNonVotersByPeriodID
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 20
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for ballots
+          schema:
+            items:
+              $ref: >-
+                #/definitions/NonVoter
+            type: array
         '404':
           description: Not Found
       tags:
@@ -1882,7 +1953,7 @@ definitions:
         type: integer
       minQuorum:
         type: integer
-  Voter:
+  ProposalVoter:
     properties:
       name:
         type: string
@@ -1899,6 +1970,31 @@ definitions:
       timestamp:
         type: string
         format: date-time
+  BallotVoter:
+    properties:
+      name:
+        type: string
+      pkh:
+        type: string
+      rolls:
+        type: integer
+      decision:
+        type: string
+      blockLevel:
+        type: integer
+      operation:
+        type: string
+      timestamp:
+        type: string
+        format: date-time
+  NonVoter:
+    properties:
+      name:
+        type: string
+      pkh:
+        type: string
+      rolls:
+        type: integer
   Ballots:
     properties:
       yay:

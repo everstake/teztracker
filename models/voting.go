@@ -34,3 +34,26 @@ type PeriodBallot struct {
 	Ballot   string
 	Proposal string
 }
+
+type ProposalVoter struct {
+	Proposal   string
+	BlockLevel int64
+	Operation  string
+	Timestamp  time.Time
+	Ballot     string
+	Voter
+}
+
+type Voter struct {
+	Pkh   string
+	Rolls int64
+	Alias string
+}
+
+type VotingProposal struct {
+	PeriodBallot
+	Bakers     int64
+	BlockLevel int64
+	Period     int64
+	Kind       string
+}

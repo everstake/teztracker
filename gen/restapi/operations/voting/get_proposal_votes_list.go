@@ -29,7 +29,7 @@ func NewGetProposalVotesList(ctx *middleware.Context, handler GetProposalVotesLi
 	return &GetProposalVotesList{Context: ctx, Handler: handler}
 }
 
-/*GetProposalVotesList swagger:route GET /v2/proposal_votes/{id} Voting getProposalVotesList
+/*GetProposalVotesList swagger:route GET /v2/{network}/proposal_votes/{id} Voting getProposalVotesList
 
 GetProposalVotesList get proposal votes list API
 

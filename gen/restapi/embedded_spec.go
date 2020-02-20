@@ -24,44 +24,6 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
-    "/v2/ballots/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getBallotsByPeriodID",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 20,
-            "minimum": 1,
-            "type": "integer",
-            "default": 10,
-            "name": "limit",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for ballots",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
     "/v2/data/{platform}/{network}/accounts": {
       "get": {
         "produces": [
@@ -1938,7 +1900,7 @@ func init() {
         }
       }
     },
-    "/v2/proposal_votes/{id}": {
+    "/v2/{network}/ballots/{id}": {
       "get": {
         "produces": [
           "application/json"
@@ -1946,11 +1908,17 @@ func init() {
         "tags": [
           "Voting"
         ],
-        "operationId": "getProposalVotesList",
+        "operationId": "getBallotsByPeriodID",
         "parameters": [
           {
             "type": "string",
             "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
             "in": "path",
             "required": true
           },
@@ -1961,15 +1929,21 @@ func init() {
             "default": 10,
             "name": "limit",
             "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "Query compatibility endpoint for proposal votes",
+            "description": "Query compatibility endpoint for ballots",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Voter"
+                "$ref": "#/definitions/BallotVoter"
               }
             }
           },
@@ -1979,7 +1953,7 @@ func init() {
         }
       }
     },
-    "/v2/proposals/{id}": {
+    "/v2/{network}/non_voters/{id}": {
       "get": {
         "produces": [
           "application/json"
@@ -1987,11 +1961,17 @@ func init() {
         "tags": [
           "Voting"
         ],
-        "operationId": "getProposalsByPeriodID",
+        "operationId": "getNonVotersByPeriodID",
         "parameters": [
           {
             "type": "string",
             "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
             "in": "path",
             "required": true
           },
@@ -2002,15 +1982,21 @@ func init() {
             "default": 10,
             "name": "limit",
             "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "Query compatibility endpoint for proposals",
+            "description": "Query compatibility endpoint for ballots",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Proposal"
+                "$ref": "#/definitions/NonVoter"
               }
             }
           },
@@ -2051,6 +2037,118 @@ func init() {
           },
           "400": {
             "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/{network}/proposal_votes/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalVotesList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposal votes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProposalVoter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/{network}/proposals/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposals",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Proposal"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
           },
           "404": {
             "description": "Not Found"
@@ -2229,6 +2327,32 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "BallotVoter": {
+      "properties": {
+        "blockLevel": {
+          "type": "integer"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "pkh": {
+          "type": "string"
+        },
+        "rolls": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -2503,6 +2627,19 @@ func init() {
         }
       }
     },
+    "NonVoter": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "pkh": {
+          "type": "string"
+        },
+        "rolls": {
+          "type": "integer"
+        }
+      }
+    },
     "OperationGroupResult": {
       "type": "object",
       "required": [
@@ -2767,6 +2904,32 @@ func init() {
         }
       }
     },
+    "ProposalVoter": {
+      "properties": {
+        "blockLevel": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "pkh": {
+          "type": "string"
+        },
+        "proposal": {
+          "type": "string"
+        },
+        "rolls": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -2795,32 +2958,6 @@ func init() {
           "type": "integer"
         }
       }
-    },
-    "Voter": {
-      "properties": {
-        "blockLevel": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
-        },
-        "operation": {
-          "type": "string"
-        },
-        "pkh": {
-          "type": "string"
-        },
-        "proposal": {
-          "type": "string"
-        },
-        "rolls": {
-          "type": "integer"
-        },
-        "timestamp": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
     }
   }
 }`))
@@ -2831,44 +2968,6 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
-    "/v2/ballots/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Voting"
-        ],
-        "operationId": "getBallotsByPeriodID",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 20,
-            "minimum": 1,
-            "type": "integer",
-            "default": 10,
-            "name": "limit",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for ballots",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
     "/v2/data/{platform}/{network}/accounts": {
       "get": {
         "produces": [
@@ -4758,7 +4857,7 @@ func init() {
         }
       }
     },
-    "/v2/proposal_votes/{id}": {
+    "/v2/{network}/ballots/{id}": {
       "get": {
         "produces": [
           "application/json"
@@ -4766,11 +4865,17 @@ func init() {
         "tags": [
           "Voting"
         ],
-        "operationId": "getProposalVotesList",
+        "operationId": "getBallotsByPeriodID",
         "parameters": [
           {
             "type": "string",
             "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
             "in": "path",
             "required": true
           },
@@ -4781,15 +4886,22 @@ func init() {
             "default": 10,
             "name": "limit",
             "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "Query compatibility endpoint for proposal votes",
+            "description": "Query compatibility endpoint for ballots",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Voter"
+                "$ref": "#/definitions/BallotVoter"
               }
             }
           },
@@ -4799,7 +4911,7 @@ func init() {
         }
       }
     },
-    "/v2/proposals/{id}": {
+    "/v2/{network}/non_voters/{id}": {
       "get": {
         "produces": [
           "application/json"
@@ -4807,11 +4919,17 @@ func init() {
         "tags": [
           "Voting"
         ],
-        "operationId": "getProposalsByPeriodID",
+        "operationId": "getNonVotersByPeriodID",
         "parameters": [
           {
             "type": "string",
             "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
             "in": "path",
             "required": true
           },
@@ -4822,15 +4940,22 @@ func init() {
             "default": 10,
             "name": "limit",
             "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "Query compatibility endpoint for proposals",
+            "description": "Query compatibility endpoint for ballots",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Proposal"
+                "$ref": "#/definitions/NonVoter"
               }
             }
           },
@@ -4871,6 +4996,120 @@ func init() {
           },
           "400": {
             "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/{network}/proposal_votes/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalVotesList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposal votes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProposalVoter"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/{network}/proposals/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProposalsByPeriodID",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for proposals",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Proposal"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
           },
           "404": {
             "description": "Not Found"
@@ -5049,6 +5288,32 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "BallotVoter": {
+      "properties": {
+        "blockLevel": {
+          "type": "integer"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "pkh": {
+          "type": "string"
+        },
+        "rolls": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -5324,6 +5589,19 @@ func init() {
         }
       }
     },
+    "NonVoter": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "pkh": {
+          "type": "string"
+        },
+        "rolls": {
+          "type": "integer"
+        }
+      }
+    },
     "OperationGroupResult": {
       "type": "object",
       "required": [
@@ -5588,6 +5866,32 @@ func init() {
         }
       }
     },
+    "ProposalVoter": {
+      "properties": {
+        "blockLevel": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "pkh": {
+          "type": "string"
+        },
+        "proposal": {
+          "type": "string"
+        },
+        "rolls": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -5614,32 +5918,6 @@ func init() {
         },
         "votesCast": {
           "type": "integer"
-        }
-      }
-    },
-    "Voter": {
-      "properties": {
-        "blockLevel": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
-        },
-        "operation": {
-          "type": "string"
-        },
-        "pkh": {
-          "type": "string"
-        },
-        "proposal": {
-          "type": "string"
-        },
-        "rolls": {
-          "type": "integer"
-        },
-        "timestamp": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     }

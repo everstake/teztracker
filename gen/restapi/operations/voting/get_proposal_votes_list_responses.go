@@ -25,7 +25,7 @@ type GetProposalVotesListOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []*models.Voter `json:"body,omitempty"`
+	Payload []*models.ProposalVoter `json:"body,omitempty"`
 }
 
 // NewGetProposalVotesListOK creates GetProposalVotesListOK with default headers values
@@ -35,13 +35,13 @@ func NewGetProposalVotesListOK() *GetProposalVotesListOK {
 }
 
 // WithPayload adds the payload to the get proposal votes list o k response
-func (o *GetProposalVotesListOK) WithPayload(payload []*models.Voter) *GetProposalVotesListOK {
+func (o *GetProposalVotesListOK) WithPayload(payload []*models.ProposalVoter) *GetProposalVotesListOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get proposal votes list o k response
-func (o *GetProposalVotesListOK) SetPayload(payload []*models.Voter) {
+func (o *GetProposalVotesListOK) SetPayload(payload []*models.ProposalVoter) {
 	o.Payload = payload
 }
 
@@ -52,7 +52,7 @@ func (o *GetProposalVotesListOK) WriteResponse(rw http.ResponseWriter, producer 
 	payload := o.Payload
 	if payload == nil {
 		// return empty array
-		payload = make([]*models.Voter, 0, 50)
+		payload = make([]*models.ProposalVoter, 0, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

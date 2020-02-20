@@ -16,9 +16,11 @@ import (
 
 // GetProposalsByPeriodIDURL generates an URL for the get proposals by period ID operation
 type GetProposalsByPeriodIDURL struct {
-	ID string
+	ID      string
+	Network string
 
-	Limit *int64
+	Limit  *int64
+	Offset *int64
 
 	_basePath string
 	// avoid unkeyed usage
@@ -44,13 +46,20 @@ func (o *GetProposalsByPeriodIDURL) SetBasePath(bp string) {
 func (o *GetProposalsByPeriodIDURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/proposals/{id}"
+	var _path = "/v2/{network}/proposals/{id}"
 
 	id := o.ID
 	if id != "" {
 		_path = strings.Replace(_path, "{id}", id, -1)
 	} else {
 		return nil, errors.New("id is required on GetProposalsByPeriodIDURL")
+	}
+
+	network := o.Network
+	if network != "" {
+		_path = strings.Replace(_path, "{network}", network, -1)
+	} else {
+		return nil, errors.New("network is required on GetProposalsByPeriodIDURL")
 	}
 
 	_basePath := o._basePath
@@ -64,6 +73,14 @@ func (o *GetProposalsByPeriodIDURL) Build() (*url.URL, error) {
 	}
 	if limitQ != "" {
 		qs.Set("limit", limitQ)
+	}
+
+	var offsetQ string
+	if o.Offset != nil {
+		offsetQ = swag.FormatInt64(*o.Offset)
+	}
+	if offsetQ != "" {
+		qs.Set("offset", offsetQ)
 	}
 
 	_result.RawQuery = qs.Encode()
