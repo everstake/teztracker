@@ -35,10 +35,17 @@ func (t *Tezos) BlocksInCycle() int64 {
 
 func New(cfg client.TransportConfig, network string, isTestNetwork bool) *Tezos {
 	cli := client.NewHTTPClientWithConfig(nil, &cfg)
+
+	//If scheme provided in config add it for library
+	url := cfg.Host
+	if len(cfg.Schemes) != 0 {
+		url = fmt.Sprintf("%s://%s", cfg.Schemes[0], cfg.Host)
+	}
+
 	return &Tezos{
 		client:        cli,
 		network:       network,
-		tzcClient:     tzblock.NewBlockService(tzc.NewClient(cfg.Host)),
+		tzcClient:     tzblock.NewBlockService(tzc.NewClient(url)),
 		isTestNetwork: isTestNetwork,
 	}
 }
