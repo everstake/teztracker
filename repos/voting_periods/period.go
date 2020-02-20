@@ -81,7 +81,7 @@ func (r *Repository) BallotsList(id int64) (periodBallots []models.PeriodBallot,
 
 func (r *Repository) ProposalsList(id int64, limit uint) (periodProposals []models.VotingProposal, err error) {
 	err = r.db.Select("*").Table("tezos.proposal_stat_view").
-		Where("period = ?", id).
+		Where("period = ? and kind = 'proposals'", id).
 		Limit(limit).Scan(&periodProposals).Error
 	if err != nil {
 		return periodProposals, err
@@ -112,6 +112,7 @@ func (r *Repository) ProposalNonVotersList(id, blockLevel int64, limit uint, off
 		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
 		Joins("left join tezos.baker_alias on pkh = address").
 		Where("r.block_level = ? and period is null", blockLevel).
+		Order("r.rolls desc").
 		Limit(limit).
 		Offset(offset).
 		Scan(&periodProposals).Error
