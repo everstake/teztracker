@@ -94,7 +94,7 @@ func (r *Repository) VotersList(id int64, kind string, limit uint, offset uint) 
 	err = r.db.Select("v.*, v.source as pkh, operation_group_hash as operation, timestamp, name as alias").Table("tezos.voting_view as v").
 		Joins("left join tezos.operations as o on o.block_level = v.block_level and v.source = o.source and v.kind = o.kind").
 		Joins("left join tezos.baker_alias as ba on ba.address = v.source").
-		Where("v.period = ? and  v.kind = '?'", id, kind).
+		Where("v.period = ? and v.kind = ?", id, kind).
 		Order(" v.block_level  desc").
 		Limit(limit).
 		Offset(offset).

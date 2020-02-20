@@ -22,7 +22,7 @@ func ProposalVoter(v models.ProposalVoter) *genModels.ProposalVoter {
 		Pkh:        v.Pkh,
 		Proposal:   v.Proposal,
 		Rolls:      v.Rolls,
-		Timestamp:  strfmt.DateTime{},
+		Timestamp:  strfmt.DateTime(v.Timestamp),
 	}
 }
 
@@ -42,7 +42,7 @@ func BallotVoter(v models.ProposalVoter) *genModels.BallotVoter {
 		Pkh:        v.Pkh,
 		Decision:   v.Ballot,
 		Rolls:      v.Rolls,
-		Timestamp:  strfmt.DateTime{},
+		Timestamp:  strfmt.DateTime(v.Timestamp),
 	}
 }
 

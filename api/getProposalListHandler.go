@@ -35,7 +35,7 @@ func (h *getProposalListHandler) Handle(params vt.GetProposalsByPeriodIDParams) 
 
 	proposals, _, err := service.ProposalsByPeriodID(id, limiter)
 	if err != nil {
-		logrus.Errorf("failed to get voting period: %s", err.Error())
+		logrus.Errorf("failed to get proposal list: %s", err.Error())
 		return vt.NewGetProposalsByPeriodIDNotFound()
 	}
 

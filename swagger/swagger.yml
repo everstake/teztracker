@@ -1359,7 +1359,7 @@ paths:
           type: integer
           default: 20
           minimum: 1
-          maximum: 500
+          maximum: 300
         - in: query
           name: offset
           type: integer
@@ -1393,9 +1393,9 @@ paths:
         - in: query
           name: limit
           type: integer
-          default: 10
+          default: 20
           minimum: 1
-          maximum: 20
+          maximum: 300
         - in: query
           name: offset
           type: integer
@@ -1430,9 +1430,9 @@ paths:
         - in: query
           name: limit
           type: integer
-          default: 10
+          default: 20
           minimum: 1
-          maximum: 20
+          maximum: 300
         - in: query
           name: offset
           type: integer

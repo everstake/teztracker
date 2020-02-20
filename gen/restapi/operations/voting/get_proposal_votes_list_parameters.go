@@ -51,7 +51,7 @@ type GetProposalVotesListParams struct {
 	*/
 	ID string
 	/*
-	  Maximum: 500
+	  Maximum: 300
 	  Minimum: 1
 	  In: query
 	  Default: 20
@@ -156,7 +156,7 @@ func (o *GetProposalVotesListParams) validateLimit(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MaximumInt("limit", "query", int64(*o.Limit), 500, false); err != nil {
+	if err := validate.MaximumInt("limit", "query", int64(*o.Limit), 300, false); err != nil {
 		return err
 	}
 

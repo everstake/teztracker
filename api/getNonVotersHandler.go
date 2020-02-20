@@ -6,6 +6,7 @@ import (
 	"github.com/everstake/teztracker/repos"
 	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sirupsen/logrus"
 	"strconv"
 )
 
@@ -34,6 +35,7 @@ func (h *getNonVotersHandler) Handle(params vt.GetNonVotersByPeriodIDParams) mid
 
 	votes, _, err := service.GetPeriodNonVoters(id, limiter)
 	if err != nil {
+		logrus.Errorf("failed to get period non voters list: %s", err.Error())
 		return vt.NewGetNonVotersByPeriodIDNotFound()
 	}
 

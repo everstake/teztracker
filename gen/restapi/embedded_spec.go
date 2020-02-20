@@ -1923,10 +1923,10 @@ func init() {
             "required": true
           },
           {
-            "maximum": 20,
+            "maximum": 300,
             "minimum": 1,
             "type": "integer",
-            "default": 10,
+            "default": 20,
             "name": "limit",
             "in": "query"
           },
@@ -1976,10 +1976,10 @@ func init() {
             "required": true
           },
           {
-            "maximum": 20,
+            "maximum": 300,
             "minimum": 1,
             "type": "integer",
-            "default": 10,
+            "default": 20,
             "name": "limit",
             "in": "query"
           },
@@ -2067,7 +2067,7 @@ func init() {
             "required": true
           },
           {
-            "maximum": 500,
+            "maximum": 300,
             "minimum": 1,
             "type": "integer",
             "default": 20,
@@ -4880,10 +4880,10 @@ func init() {
             "required": true
           },
           {
-            "maximum": 20,
+            "maximum": 300,
             "minimum": 1,
             "type": "integer",
-            "default": 10,
+            "default": 20,
             "name": "limit",
             "in": "query"
           },
@@ -4934,10 +4934,10 @@ func init() {
             "required": true
           },
           {
-            "maximum": 20,
+            "maximum": 300,
             "minimum": 1,
             "type": "integer",
-            "default": 10,
+            "default": 20,
             "name": "limit",
             "in": "query"
           },
@@ -5026,7 +5026,7 @@ func init() {
             "required": true
           },
           {
-            "maximum": 500,
+            "maximum": 300,
             "minimum": 1,
             "type": "integer",
             "default": 20,

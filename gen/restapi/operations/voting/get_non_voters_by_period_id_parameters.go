@@ -24,7 +24,7 @@ func NewGetNonVotersByPeriodIDParams() GetNonVotersByPeriodIDParams {
 	var (
 		// initialize parameters with default values
 
-		limitDefault = int64(10)
+		limitDefault = int64(20)
 
 		offsetDefault = int64(0)
 	)
@@ -51,10 +51,10 @@ type GetNonVotersByPeriodIDParams struct {
 	*/
 	ID string
 	/*
-	  Maximum: 20
+	  Maximum: 300
 	  Minimum: 1
 	  In: query
-	  Default: 10
+	  Default: 20
 	*/
 	Limit *int64
 	/*
@@ -156,7 +156,7 @@ func (o *GetNonVotersByPeriodIDParams) validateLimit(formats strfmt.Registry) er
 		return err
 	}
 
-	if err := validate.MaximumInt("limit", "query", int64(*o.Limit), 20, false); err != nil {
+	if err := validate.MaximumInt("limit", "query", int64(*o.Limit), 300, false); err != nil {
 		return err
 	}
 

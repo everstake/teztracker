@@ -6,6 +6,7 @@ import (
 	"github.com/everstake/teztracker/repos"
 	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sirupsen/logrus"
 	"strconv"
 )
 
@@ -34,6 +35,7 @@ func (h *getProposalVotesHandler) Handle(params vt.GetProposalVotesListParams) m
 
 	votes, _, err := service.GetProposalVoters(id, limiter)
 	if err != nil {
+		logrus.Errorf("failed to get proposal voters: %s", err.Error())
 		return vt.NewGetProposalsByPeriodIDNotFound()
 	}
 

@@ -24,6 +24,7 @@ func (h *getPeriodInfoHandler) Handle(params voting.GetPeriodParams) middleware.
 	if err != nil {
 		return voting.NewGetPeriodNotFound()
 	}
+
 	service := services.New(repos.New(db), net)
 	var id *int64
 	if params.ID != nil {
