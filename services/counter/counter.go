@@ -39,7 +39,7 @@ func SaveCounterFor(kind string, repo OpRepo, cntRepo CounterRepo) error {
 }
 func SaveCounters(repo OpRepo, cntRepo CounterRepo) error {
 	logrus.Tracef("Saving counters")
-	kinds := []string{"endorsement", "proposals", "seed_nonce_revelation", "delegation", "transaction", "activate_account", "ballot", "origination", "reveal", "double_baking_evidence"}
+	kinds := []string{"endorsement", "proposals", "seed_nonce_revelation", "delegation", "transaction", "activate_account", "ballot", "origination", "reveal", "double_baking_evidence", "double_endorsement_evidence"}
 	for i := range kinds {
 		err := SaveCounterFor(kinds[i], repo, cntRepo)
 		if err != nil {
