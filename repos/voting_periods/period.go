@@ -12,11 +12,12 @@ type (
 	}
 
 	Repo interface {
+		List() ([]models.PeriodInfo, error)
+		Info(id int64) (models.PeriodStats, error)
 		GetCurrentPeriodId() (int64, error)
-		Info(id int64) (models.PeriodInfo, error)
 		BallotsList(id int64) ([]models.PeriodBallot, error)
 		ProposalsList(id int64, limit uint) ([]models.VotingProposal, error)
-		StatsByKind(periodType string) ([]models.PeriodInfo, error)
+		StatsByKind(periodType string) ([]models.PeriodStats, error)
 		VotersList(id int64, kind string, limit uint, offset uint) (periodProposals []models.ProposalVoter, err error)
 		ProposalNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error)
 	}
@@ -27,6 +28,18 @@ func New(db *gorm.DB) *Repository {
 	return &Repository{
 		db: db,
 	}
+}
+
+func (r *Repository) List() (periods []models.PeriodInfo, err error) {
+	err = r.db.Select("*").
+		Table("tezos.voting_period").
+		Order("id asc").
+		Scan(&periods).Error
+	if err != nil {
+		return periods, err
+	}
+
+	return periods, nil
 }
 
 func (r *Repository) GetCurrentPeriodId() (id int64, err error) {
@@ -43,7 +56,7 @@ func (r *Repository) GetCurrentPeriodId() (id int64, err error) {
 	return period.ID, nil
 }
 
-func (r *Repository) Info(id int64) (periodInfo models.PeriodInfo, err error) {
+func (r *Repository) Info(id int64) (periodInfo models.PeriodStats, err error) {
 	err = r.db.Select("vp.*, psw.*, ptsv.total_rolls, ptsv.total_bakers").Table("tezos.voting_period as vp").
 		Joins("left join tezos.period_stat_view as psw on id = psw.period").
 		Joins("left join tezos.period_total_stat_view as ptsv on id = ptsv.period").
@@ -56,7 +69,7 @@ func (r *Repository) Info(id int64) (periodInfo models.PeriodInfo, err error) {
 	return periodInfo, nil
 }
 
-func (r *Repository) StatsByKind(periodKind string) (periods []models.PeriodInfo, err error) {
+func (r *Repository) StatsByKind(periodKind string) (periods []models.PeriodStats, err error) {
 	err = r.db.Select("psv.*, ptsv.total_rolls, ptsv.total_bakers").
 		Table("tezos.period_stat_view as psv").
 		Joins("left join tezos.period_total_stat_view as ptsv on psv.period = ptsv.period").

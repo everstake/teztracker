@@ -34,11 +34,11 @@ func (h *getPeriodInfoHandler) Handle(params voting.GetPeriodParams) middleware.
 		}
 	}
 
-	period, err := service.VotingPeriod(id)
+	period, err := service.VotingPeriodStats(id)
 	if err != nil {
 		logrus.Errorf("failed to get voting period: %s", err.Error())
 		return voting.NewGetPeriodNotFound()
 	}
 
-	return voting.NewGetPeriodOK().WithPayload(render.Period(period))
+	return voting.NewGetPeriodOK().WithPayload(render.PeriodInfo(period))
 }

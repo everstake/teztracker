@@ -168,6 +168,42 @@ func init() {
         }
       }
     },
+    "/v2/data/{network}/periods": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getPeriodsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for periods",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Period"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/proposal_votes/{id}": {
       "get": {
         "produces": [
@@ -2818,9 +2854,6 @@ func init() {
         "curLevel": {
           "type": "integer"
         },
-        "cycle": {
-          "type": "integer"
-        },
         "endLevel": {
           "type": "integer"
         },
@@ -2848,12 +2881,6 @@ func init() {
         "period": {
           "$ref": "#/definitions/Period"
         },
-        "periodTimes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PeriodTime"
-          }
-        },
         "periodType": {
           "type": "string"
         },
@@ -2868,21 +2895,6 @@ func init() {
         },
         "winner": {
           "$ref": "#/definitions/Proposal"
-        }
-      }
-    },
-    "PeriodTime": {
-      "properties": {
-        "endTime": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "periodType": {
-          "type": "string"
-        },
-        "startTime": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -3104,6 +3116,42 @@ func init() {
             "description": "Query compatibility endpoint for periods",
             "schema": {
               "$ref": "#/definitions/PeriodInfo"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/periods": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getPeriodsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for periods",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Period"
+              }
             }
           },
           "400": {
@@ -5781,9 +5829,6 @@ func init() {
         "curLevel": {
           "type": "integer"
         },
-        "cycle": {
-          "type": "integer"
-        },
         "endLevel": {
           "type": "integer"
         },
@@ -5811,12 +5856,6 @@ func init() {
         "period": {
           "$ref": "#/definitions/Period"
         },
-        "periodTimes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PeriodTime"
-          }
-        },
         "periodType": {
           "type": "string"
         },
@@ -5831,21 +5870,6 @@ func init() {
         },
         "winner": {
           "$ref": "#/definitions/Proposal"
-        }
-      }
-    },
-    "PeriodTime": {
-      "properties": {
-        "endTime": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "periodType": {
-          "type": "string"
-        },
-        "startTime": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },

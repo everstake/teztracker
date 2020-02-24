@@ -7,16 +7,10 @@ import (
 )
 
 // Snapshot renders an app level model to a gennerated OpenAPI model.
-func Period(p models.PeriodInfo) *genModels.PeriodInfo {
+func PeriodInfo(p models.PeriodStats) *genModels.PeriodInfo {
 	pi := &genModels.PeriodInfo{
 		PeriodType: p.Type,
-		Period: &genModels.Period{
-			ID:         p.Period,
-			StartLevel: p.StartBlock,
-			EndLevel:   p.EndBlock,
-			StartTime:  strfmt.DateTime(p.StartTime),
-			EndTime:    strfmt.DateTime(p.EndTime),
-		},
+		Period:     Period(p.PeriodInfo),
 		VoteStats: &genModels.VoteStats{
 			NumVoters:      p.Bakers,
 			NumVotersTotal: p.TotalBakers,
@@ -36,4 +30,22 @@ func Period(p models.PeriodInfo) *genModels.PeriodInfo {
 	}
 
 	return pi
+}
+
+func Periods(vp []models.PeriodInfo) []*genModels.Period {
+	votes := make([]*genModels.Period, len(vp))
+	for i := range vp {
+		votes[i] = Period(vp[i])
+	}
+	return votes
+}
+
+func Period(p models.PeriodInfo) *genModels.Period {
+	return &genModels.Period{
+		ID:         p.ID,
+		StartLevel: p.StartBlock,
+		EndLevel:   p.EndBlock,
+		StartTime:  strfmt.DateTime(p.StartTime),
+		EndTime:    strfmt.DateTime(p.EndTime),
+	}
 }

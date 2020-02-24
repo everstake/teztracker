@@ -802,7 +802,6 @@ paths:
           description: Internal error
       tags:
         - Blocks
-
   '/v2/data/{platform}/{network}/operation_groups':
     get:
       operationId: getOperationGroups
@@ -1294,6 +1293,29 @@ paths:
           schema:
             $ref: >-
               #/definitions/PeriodInfo
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Voting
+  '/v2/data/{network}/periods':
+    get:
+      operationId: getPeriodsList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for periods
+          schema:
+            items:
+              $ref: '#/definitions/Period'
+            type: array
         '400':
           description: Bad request
         '404':
@@ -1899,8 +1921,6 @@ definitions:
       endTime:
         type: string
         format: date-time
-      cycle:
-        type: integer
   PeriodInfo:
     properties:
       periodType:
@@ -1909,10 +1929,6 @@ definitions:
         $ref: '#/definitions/Period'
       totalPeriods:
         type: integer
-      periodTimes:
-        type: array
-        items:
-          $ref: '#/definitions/PeriodTime'
       proposal:
         $ref: '#/definitions/Proposal'
       winner:
@@ -1921,16 +1937,6 @@ definitions:
         $ref: '#/definitions/VoteStats'
       ballots:
         $ref: '#/definitions/Ballots'
-  PeriodTime:
-    properties:
-      startTime:
-        type: string
-        format: date-time
-      endTime:
-        type: string
-        format: date-time
-      periodType:
-        type: string
   VoteStats:
     properties:
       votesCast:

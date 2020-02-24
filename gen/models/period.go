@@ -20,9 +20,6 @@ type Period struct {
 	// cur level
 	CurLevel int64 `json:"curLevel,omitempty"`
 
-	// cycle
-	Cycle int64 `json:"cycle,omitempty"`
-
 	// end level
 	EndLevel int64 `json:"endLevel,omitempty"`
 

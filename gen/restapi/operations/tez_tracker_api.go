@@ -108,6 +108,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		VotingGetPeriodHandler: voting.GetPeriodHandlerFunc(func(params voting.GetPeriodParams) middleware.Responder {
 			return middleware.NotImplemented("operation VotingGetPeriod has not yet been implemented")
 		}),
+		VotingGetPeriodsListHandler: voting.GetPeriodsListHandlerFunc(func(params voting.GetPeriodsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation VotingGetPeriodsList has not yet been implemented")
+		}),
 		VotingGetProposalVotesListHandler: voting.GetProposalVotesListHandlerFunc(func(params voting.GetProposalVotesListParams) middleware.Responder {
 			return middleware.NotImplemented("operation VotingGetProposalVotesList has not yet been implemented")
 		}),
@@ -190,6 +193,8 @@ type TezTrackerAPI struct {
 	OperationsListGetOperationsListHandler operations_list.GetOperationsListHandler
 	// VotingGetPeriodHandler sets the operation handler for the get period operation
 	VotingGetPeriodHandler voting.GetPeriodHandler
+	// VotingGetPeriodsListHandler sets the operation handler for the get periods list operation
+	VotingGetPeriodsListHandler voting.GetPeriodsListHandler
 	// VotingGetProposalVotesListHandler sets the operation handler for the get proposal votes list operation
 	VotingGetProposalVotesListHandler voting.GetProposalVotesListHandler
 	// VotingGetProposalsByPeriodIDHandler sets the operation handler for the get proposals by period ID operation
@@ -341,6 +346,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.VotingGetPeriodHandler == nil {
 		unregistered = append(unregistered, "voting.GetPeriodHandler")
+	}
+
+	if o.VotingGetPeriodsListHandler == nil {
+		unregistered = append(unregistered, "voting.GetPeriodsListHandler")
 	}
 
 	if o.VotingGetProposalVotesListHandler == nil {
@@ -557,6 +566,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{network}/period"] = voting.NewGetPeriod(o.context, o.VotingGetPeriodHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/periods"] = voting.NewGetPeriodsList(o.context, o.VotingGetPeriodsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

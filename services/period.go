@@ -18,7 +18,16 @@ const (
 	maxQuorum                 = 0.7
 )
 
-func (t *TezTracker) VotingPeriod(id *int64) (info models.PeriodInfo, err error) {
+func (t *TezTracker) VotingPeriodsList() ([]models.PeriodInfo, error) {
+	periods, err := t.repoProvider.GetVotingPeriod().List()
+	if err != nil {
+		return periods, err
+	}
+
+	return periods, nil
+}
+
+func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err error) {
 	repo := t.repoProvider.GetVotingPeriod()
 	if id == nil {
 		info.Period, err = repo.GetCurrentPeriodId()
