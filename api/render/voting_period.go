@@ -42,7 +42,7 @@ func Periods(vp []models.PeriodInfo) []*genModels.Period {
 
 func Period(p models.PeriodInfo) *genModels.Period {
 	return &genModels.Period{
-		ID:         p.ID,
+		ID:         &p.ID,
 		StartLevel: p.StartBlock,
 		EndLevel:   p.EndBlock,
 		StartTime:  strfmt.DateTime(p.StartTime),
