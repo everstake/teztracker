@@ -28,7 +28,8 @@ type Period struct {
 	EndTime strfmt.DateTime `json:"endTime,omitempty"`
 
 	// id
-	ID int64 `json:"id,omitempty"`
+	// Required: true
+	ID *int64 `json:"id"`
 
 	// start level
 	StartLevel int64 `json:"startLevel,omitempty"`
@@ -43,6 +44,10 @@ func (m *Period) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateEndTime(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -63,6 +68,15 @@ func (m *Period) validateEndTime(formats strfmt.Registry) error {
 	}
 
 	if err := validate.FormatOf("endTime", "body", "date-time", m.EndTime.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Period) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
 	}
 

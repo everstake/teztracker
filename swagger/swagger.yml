@@ -1921,6 +1921,8 @@ definitions:
       endTime:
         type: string
         format: date-time
+    required:
+      - id
   PeriodInfo:
     properties:
       periodType:

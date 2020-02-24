@@ -2850,6 +2850,9 @@ func init() {
       }
     },
     "Period": {
+      "required": [
+        "id"
+      ],
       "properties": {
         "curLevel": {
           "type": "integer"
@@ -5825,6 +5828,9 @@ func init() {
       }
     },
     "Period": {
+      "required": [
+        "id"
+      ],
       "properties": {
         "curLevel": {
           "type": "integer"
