@@ -88,15 +88,57 @@ paths:
           required: true
       responses:
         '200':
-          description: Endpoint for rolls 
+          description: Endpoint for rolls
           schema:
             type: array
-            items: 
+            items:
               type: integer
         '500':
           description: Internal error
       tags:
         - Snapshots
+  /chains/main/blocks/head/context/contracts/{contract}/script:
+    get:
+      operationId: getContractScript
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: contract
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Endpoint for contract script
+          schema:
+            type: object
+        '500':
+          description: Internal error
+      tags:
+        - Contracts
+  /chains/main/blocks/{block}/operations:
+    get:
+      operationId: getBlockOperations
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: block
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Endpoint for contract script
+          schema:
+            type: array
+            items:
+              type: array
+              items:
+                type: object
+        '500':
+          description: Internal error
+      tags:
+        - Operations
 definitions:
   BakingRight:
     properties:

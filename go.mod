@@ -3,6 +3,7 @@ module github.com/everstake/teztracker
 go 1.13.6
 
 require (
+	blockwatch.cc/tzindex v0.0.0-20200216192617-519bcd88724c
 	github.com/bullblock-io/go-tezos/v2 v2.0.5
 	github.com/go-openapi/errors v0.19.2
 	github.com/go-openapi/loads v0.19.2
@@ -25,7 +26,7 @@ require (
 	github.com/sirupsen/logrus v1.2.0
 	github.com/superoo7/go-gecko v0.0.0-20190607060444-a448b0c99969
 	github.com/t-tiger/gorm-bulk-insert v0.0.0-20191014134946-beb77b81825f
-	golang.org/x/net v0.0.0-20190628185345-da137c7871d7
+	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
 	gopkg.in/h2non/gock.v1 v1.0.15 // indirect
 	gotest.tools v2.2.0+incompatible // indirect
 )
