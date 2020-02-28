@@ -21,6 +21,8 @@ type (
 		EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error)
 		TotalStakingBalance() (int64, error)
 		RefreshView() error
+		PublicBakersList() ([]models.PublicBaker, error)
+		SavePublicBaker(models.PublicBaker) error
 	}
 
 	BakerCounter struct {
@@ -135,5 +137,28 @@ func (r *Repository) RefreshView() (err error) {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (r *Repository) PublicBakersList() (bakers []models.PublicBaker, err error) {
+	err = r.db.Model(&models.PublicBaker{}).Scan(&bakers).Error
+	if err != nil {
+		return bakers, err
+	}
+
+	return bakers, nil
+}
+
+func (r *Repository) SavePublicBaker(baker models.PublicBaker) (err error) {
+	if r.db.First(&models.PublicBaker{}, "delegate = ?", baker.Delegate).RecordNotFound() {
+		err = r.db.Create(&baker).Error
+		return err
+	}
+
+	err = r.db.Save(baker).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

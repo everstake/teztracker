@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"github.com/everstake/teztracker/services/public_baker"
 	"sync/atomic"
 	"time"
 
@@ -155,6 +156,29 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 				}
 			} else {
 				log.Tracef("skipping materialized view update as the previous job is still running")
+			}
+		})
+	}()
+
+	func() {
+		var jobIsRunning uint32
+
+		dur := 1 * time.Minute
+		log.Infof("Sheduling materialized view update every %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := repos.New(db)
+				rpc := rpc_client.New(rpcConfig, string(network), isTestNetwork)
+				err := public_baker.MonitorPublicBakers(context.TODO(), unitOfWork, rpc)
+				if err != nil {
+					log.Errorf("public bakers update failed: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("skipping public bakers update as the previous job is still running")
 			}
 		})
 	}()

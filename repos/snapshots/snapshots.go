@@ -41,6 +41,7 @@ func (r *Repository) List(limit, offset uint) (count int64, snapshots []models.S
 	if err := db.Count(&count).Error; err != nil {
 		return 0, nil, err
 	}
+
 	err = db.Order("snp_cycle desc").
 		Limit(limit).
 		Offset(offset).
@@ -71,5 +72,6 @@ func (r *Repository) CreateBulk(snapshots []models.Snapshot) error {
 	for i := range snapshots {
 		insertRecords[i] = snapshots[i]
 	}
+
 	return gormbulk.BulkInsert(r.db, insertRecords, 2000)
 }
