@@ -6,8 +6,8 @@ import (
 	"fmt"
 )
 
-func NewBigMapContainer() *BigMapContainer {
-	return &BigMapContainer{
+func NewBigMapContainer() BigMapContainer {
+	return BigMapContainer{
 		pathMap:  map[string]contractElement{},
 		finalMap: map[string]interface{}{},
 	}

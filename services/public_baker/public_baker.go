@@ -33,7 +33,7 @@ func MonitorPublicBakers(ctx context.Context, unit UnitOfWork, rpc BakesProvider
 	}
 
 	operationRepo := unit.GetOperation()
-	operations, err := operationRepo.List(nil, []string{operationKindTransaction}, nil, []string{BakerRegistryContract}, 0, 0, 0)
+	operations, err := operationRepo.List(nil, []string{operationKindTransaction}, nil, []string{BakerRegistryContract}, 100, 0, 0)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func MonitorPublicBakers(ctx context.Context, unit UnitOfWork, rpc BakesProvider
 
 	for key, value := range operationsByBaker {
 		//Baker have actual data
-		if value.Level <= bakersMap[key].LastUpdateId {
+		if value.OperationID.Int64 <= bakersMap[key].LastUpdateId {
 			continue
 		}
 
@@ -96,6 +96,7 @@ func InitContractScript(ctx context.Context, rpc BakesProvider, contractHash str
 		return container, err
 	}
 
+	container = michelson.NewBigMapContainer()
 	//Insert params locate on L branch
 	//R branch contains params for storage
 	container.InitPath(contractScript.Code.Args[0].Args[0])
