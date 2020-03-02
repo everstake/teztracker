@@ -1909,6 +1909,8 @@ definitions:
     properties:
       id:
         type: integer
+      periodType:
+        type: string
       curLevel:
         type: integer
       startLevel:
@@ -1925,8 +1927,6 @@ definitions:
       - id
   PeriodInfo:
     properties:
-      periodType:
-        type: string
       period:
         $ref: '#/definitions/Period'
       totalPeriods:

@@ -31,6 +31,9 @@ type Period struct {
 	// Required: true
 	ID *int64 `json:"id"`
 
+	// period type
+	PeriodType string `json:"periodType,omitempty"`
+
 	// start level
 	StartLevel int64 `json:"startLevel,omitempty"`
 

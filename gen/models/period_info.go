@@ -22,9 +22,6 @@ type PeriodInfo struct {
 	// period
 	Period *Period `json:"period,omitempty"`
 
-	// period type
-	PeriodType string `json:"periodType,omitempty"`
-
 	// proposal
 	Proposal *Proposal `json:"proposal,omitempty"`
 

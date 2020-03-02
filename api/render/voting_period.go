@@ -9,8 +9,7 @@ import (
 // Snapshot renders an app level model to a gennerated OpenAPI model.
 func PeriodInfo(p models.PeriodStats) *genModels.PeriodInfo {
 	pi := &genModels.PeriodInfo{
-		PeriodType: p.Type,
-		Period:     Period(p.PeriodInfo),
+		Period: Period(p.PeriodInfo),
 		VoteStats: &genModels.VoteStats{
 			NumVoters:      p.Bakers,
 			NumVotersTotal: p.TotalBakers,
@@ -43,6 +42,7 @@ func Periods(vp []models.PeriodInfo) []*genModels.Period {
 func Period(p models.PeriodInfo) *genModels.Period {
 	return &genModels.Period{
 		ID:         &p.ID,
+		PeriodType: p.Type,
 		StartLevel: p.StartBlock,
 		EndLevel:   p.EndBlock,
 		StartTime:  strfmt.DateTime(p.StartTime),

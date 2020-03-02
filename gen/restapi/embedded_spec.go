@@ -2867,6 +2867,9 @@ func init() {
         "id": {
           "type": "integer"
         },
+        "periodType": {
+          "type": "string"
+        },
         "startLevel": {
           "type": "integer"
         },
@@ -2883,9 +2886,6 @@ func init() {
         },
         "period": {
           "$ref": "#/definitions/Period"
-        },
-        "periodType": {
-          "type": "string"
         },
         "proposal": {
           "$ref": "#/definitions/Proposal"
@@ -5845,6 +5845,9 @@ func init() {
         "id": {
           "type": "integer"
         },
+        "periodType": {
+          "type": "string"
+        },
         "startLevel": {
           "type": "integer"
         },
@@ -5861,9 +5864,6 @@ func init() {
         },
         "period": {
           "$ref": "#/definitions/Period"
-        },
-        "periodType": {
-          "type": "string"
         },
         "proposal": {
           "$ref": "#/definitions/Proposal"
