@@ -23,13 +23,13 @@ type PublicBaker struct {
 	BakerChargesTransactionFee             bool           `json:"bakerChargesTransactionFee"`
 	MinDelegation                          int64          `json:"minDelegation,string"`
 	MinPayout                              int64          `json:"minPayout,string"`
-	OpenForDelegation                      bool           `json:"openForDelegation"`
 	OverDelegationThreshold                int64          `json:"overDelegationThreshold,string"`
 	PayoutDelay                            int64          `json:"payoutDelay,string"`
 	PaymentConfigMask                      string         `json:"paymentConfigMask"`
 	PayoutFrequency                        int64          `json:"payoutFrequency,string"`
 	ReporterAccount                        pq.StringArray `gorm:"type:varchar[]" json:"reporterAccount"`
 	Split                                  int64          `json:"split,string""`
+	OpenForDelegation                      bool           `json:"openForDelegation"`
 	SubtractPayoutsLessThanMin             bool           `json:"subtractPayoutsLessThanMin"`
 	SubtractRewardsFromUninvitedDelegation bool           `json:"subtractRewardsFromUninvitedDelegation"`
 	LastUpdateId                           int64          `json:"-"`

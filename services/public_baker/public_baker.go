@@ -14,6 +14,7 @@ type BakesProvider interface {
 	Operation(ctx context.Context, blockHash, transactionHash string) (op rpc_client.Operation, err error)
 	Script(ctx context.Context, contractHash string) (bm michelson.BigMap, err error)
 }
+
 type UnitOfWork interface {
 	GetBaker() baker.Repo
 	GetOperation() operation.Repo
