@@ -5,6 +5,7 @@ type Delegate struct {
 	BlockID          string `json:"block_id"`
 	Block            *Block `json:"block"` // This line is infered from column name "block_id".
 	Balance          int64  `json:"balance"`
+	LiquidBalance    int64  `json:"-"`
 	FrozenBalance    int64  `json:"frozen_balance"`
 	StakingBalance   int64  `json:"staking_balance"`
 	DelegatedBalance int64  `json:"delegated_balance"`

@@ -21,17 +21,26 @@ type BakerInfo struct {
 	// baking rewards
 	BakingRewards int64 `json:"bakingRewards,omitempty"`
 
+	// delegate balance
+	DelegateBalance int64 `json:"delegateBalance,omitempty"`
+
 	// endorsement deposits
 	EndorsementDeposits int64 `json:"endorsementDeposits,omitempty"`
 
 	// endorsement rewards
 	EndorsementRewards int64 `json:"endorsementRewards,omitempty"`
 
-	// evaluated balance
-	EvaluatedBalance int64 `json:"evaluatedBalance,omitempty"`
+	// frozen balance
+	FrozenBalance int64 `json:"frozenBalance,omitempty"`
+
+	// liquid balance
+	LiquidBalance int64 `json:"liquidBalance,omitempty"`
 
 	// staking balance
 	StakingBalance int64 `json:"stakingBalance,omitempty"`
+
+	// total balance
+	TotalBalance int64 `json:"totalBalance,omitempty"`
 }
 
 // Validate validates this baker info

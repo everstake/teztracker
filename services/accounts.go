@@ -57,6 +57,9 @@ func (t *TezTracker) GetAccount(id string) (acc models.Account, err error) {
 	if err != nil {
 		return acc, err
 	}
+
+	bi.LiquidBalance = bi.Balance - bi.FrozenBalance
+
 	acc.BakerInfo = bi
 	return acc, nil
 }

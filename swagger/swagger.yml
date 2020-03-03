@@ -1597,10 +1597,19 @@ definitions:
     type: object
   BakerInfo:
     properties:
+      delegateBalance:
+        format: int64
+        type: integer
+      frozenBalance:
+        format: int64
+        type: integer
       stakingBalance:
         format: int64
         type: integer
-      evaluatedBalance:
+      liquidBalance:
+        type: integer
+        format: int64
+      totalBalance:
         type: integer
         format: int64
       endorsementDeposits:

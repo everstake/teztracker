@@ -2271,6 +2271,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "delegateBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
         "endorsementDeposits": {
           "type": "integer",
           "format": "int64"
@@ -2279,11 +2283,19 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
-        "evaluatedBalance": {
+        "frozenBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "liquidBalance": {
           "type": "integer",
           "format": "int64"
         },
         "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "totalBalance": {
           "type": "integer",
           "format": "int64"
         }
@@ -5248,6 +5260,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "delegateBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
         "endorsementDeposits": {
           "type": "integer",
           "format": "int64"
@@ -5256,11 +5272,19 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
-        "evaluatedBalance": {
+        "frozenBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "liquidBalance": {
           "type": "integer",
           "format": "int64"
         },
         "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "totalBalance": {
           "type": "integer",
           "format": "int64"
         }
