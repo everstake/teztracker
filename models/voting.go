@@ -13,6 +13,7 @@ type PeriodStats struct {
 	TotalBakers int64
 	TotalRolls  int64
 	BallotsStat *BallotsStat
+	Proposal    *VotingProposal
 	PeriodInfo
 }
 

@@ -28,6 +28,12 @@ func PeriodInfo(p models.PeriodStats) *genModels.PeriodInfo {
 		}
 	}
 
+	if p.Proposal != nil {
+		pi.Proposal = &genModels.Proposal{
+			Hash: p.Proposal.Proposal,
+		}
+	}
+
 	return pi
 }
 

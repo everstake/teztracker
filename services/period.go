@@ -51,6 +51,7 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 		}
 
 		var b models.BallotsStat
+		var proposal string
 		for _, value := range ballots {
 			switch value.Ballot {
 			case "yay":
@@ -60,6 +61,9 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 			case "pass":
 				b.Pass = value.Rolls
 			}
+
+			//Temp All ballots have same proposal
+			proposal = value.Proposal
 		}
 
 		b.Supermajority = supermajority
@@ -67,6 +71,11 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 		b.Quorum, err = t.calcQuorumForPeriod(info.Period)
 
 		info.BallotsStat = &b
+		info.Proposal = &models.VotingProposal{
+			PeriodBallot: models.PeriodBallot{
+				Proposal: proposal,
+			},
+		}
 	}
 
 	return info, nil
