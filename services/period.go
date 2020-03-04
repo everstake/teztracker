@@ -163,11 +163,14 @@ func (t *TezTracker) GetPeriodNonVoters(id int64, limits Limiter) (proposals []m
 		return proposals, count, err
 	}
 
-	blockLevel := lastBlock.MetaLevel
+	//last block level van pe on processing by indexer
+	blockLevel := lastBlock.MetaLevel - 1
 
 	_, endBlock := t.calcVotingPeriod(id)
 	if endBlock < blockLevel {
-		blockLevel = endBlock
+		//Indexer not process rolls state for testing period
+		//so take block before end
+		blockLevel = endBlock - 1
 	}
 
 	proposals, err = t.repoProvider.GetVotingPeriod().ProposalNonVotersList(id, blockLevel, limits.Limit(), limits.Offset())
