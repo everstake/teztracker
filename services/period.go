@@ -86,12 +86,15 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 		proposalHash = block.ActiveProposal
 	}
 
-	proposalInfo, err := repo.ProposalInfo(proposalHash)
-	if err != nil {
-		return info, err
-	}
+	//Get additional information if proposalHash presented
+	if proposalHash != "" {
+		proposalInfo, err := repo.ProposalInfo(proposalHash)
+		if err != nil {
+			return info, err
+		}
 
-	info.Proposal = &proposalInfo
+		info.Proposal = &proposalInfo
+	}
 
 	return info, nil
 }
