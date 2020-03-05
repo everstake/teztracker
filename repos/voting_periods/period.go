@@ -16,6 +16,7 @@ type (
 		Info(id int64) (models.PeriodStats, error)
 		GetCurrentPeriodId() (int64, error)
 		BallotsList(id int64) ([]models.PeriodBallot, error)
+		ProposalInfo(proposal string) (models.ProposalInfo, error)
 		ProposalsList(id int64, limit uint) ([]models.VotingProposal, error)
 		StatsByKind(periodType string) ([]models.PeriodStats, error)
 		VotersList(id int64, kind string, limit uint, offset uint) (periodProposals []models.ProposalVoter, err error)
@@ -134,7 +135,7 @@ func (r *Repository) VotersCount(id int64, kind string) (count int64, err error)
 }
 
 func (r *Repository) PeriodNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error) {
-	err = r.db.Select("pkh,r.rolls,name as alias").
+	err = r.db.Select("pkh,r.rolls,name").
 		Table("tezos.rolls as r").
 		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
 		Joins("left join tezos.baker_alias on pkh = address").
@@ -160,4 +161,16 @@ func (r *Repository) PeriodNonVotersCount(id, blockLevel int64) (count int64, er
 	}
 
 	return count, nil
+}
+
+func (r *Repository) ProposalInfo(proposal string) (proposalInfo models.ProposalInfo, err error) {
+	err = r.db.Select("*, address as pkh").
+		Table("tezos.voting_proposal as vp").
+		Joins("left join tezos.baker_alias on proposer = address").
+		Where("hash = ? ", proposal).Find(&proposalInfo).Error
+	if err != nil {
+		return proposalInfo, err
+	}
+
+	return proposalInfo, nil
 }

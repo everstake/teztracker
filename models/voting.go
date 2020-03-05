@@ -13,7 +13,7 @@ type PeriodStats struct {
 	TotalBakers int64
 	TotalRolls  int64
 	BallotsStat *BallotsStat
-	Proposal    *VotingProposal
+	Proposal    *ProposalInfo
 	PeriodInfo
 }
 
@@ -50,9 +50,25 @@ type ProposalVoter struct {
 }
 
 type Voter struct {
-	Pkh   string
+	GenericAccount
 	Rolls int64
-	Alias string
+}
+
+type GenericAccount struct {
+	Pkh  string `json:"pkh"`
+	Name string `json:"name"`
+}
+
+type Proposer struct {
+	GenericAccount
+}
+
+type ProposalInfo struct {
+	Hash             string
+	Title            string
+	ShortDescription string
+	ProposalFile     string
+	Proposer
 }
 
 type VotingProposal struct {

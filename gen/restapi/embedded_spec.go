@@ -2930,6 +2930,26 @@ func init() {
         "period": {
           "type": "integer"
         },
+        "proposalFile": {
+          "type": "string"
+        },
+        "proposer": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "pkh": {
+              "type": "string"
+            }
+          }
+        },
+        "shortDescription": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
         "votesCasted": {
           "type": "integer"
         },
@@ -5925,6 +5945,26 @@ func init() {
         },
         "period": {
           "type": "integer"
+        },
+        "proposalFile": {
+          "type": "string"
+        },
+        "proposer": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "pkh": {
+              "type": "string"
+            }
+          }
+        },
+        "shortDescription": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
         },
         "votesCasted": {
           "type": "integer"

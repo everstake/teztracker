@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"github.com/everstake/teztracker/models"
+	"github.com/guregu/null"
 	"math"
 )
 
@@ -51,7 +52,6 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 		}
 
 		var b models.BallotsStat
-		var proposal string
 		for _, value := range ballots {
 			switch value.Ballot {
 			case "yay":
@@ -62,8 +62,6 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 				b.Pass = value.Rolls
 			}
 
-			//Temp All ballots have same proposal
-			proposal = value.Proposal
 		}
 
 		b.Supermajority = supermajority
@@ -71,11 +69,22 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 		b.Quorum, err = t.calcQuorumForPeriod(info.Period)
 
 		info.BallotsStat = &b
-		info.Proposal = &models.VotingProposal{
-			PeriodBallot: models.PeriodBallot{
-				Proposal: proposal,
-			},
+	}
+
+	found, block, err := t.repoProvider.GetBlock().Find(models.Block{
+		Level: null.IntFrom(info.StartBlock),
+	})
+	if err != nil {
+		return info, err
+	}
+
+	if found {
+		proposalInfo, err := repo.ProposalInfo(block.ActiveProposal)
+		if err != nil {
+			return info, err
 		}
+
+		info.Proposal = &proposalInfo
 	}
 
 	return info, nil
