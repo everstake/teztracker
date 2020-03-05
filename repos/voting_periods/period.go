@@ -96,7 +96,9 @@ func (r *Repository) BallotsList(id int64) (periodBallots []models.PeriodBallot,
 }
 
 func (r *Repository) ProposalsList(id int64, limit uint) (periodProposals []models.VotingProposal, err error) {
-	err = r.db.Select("*").Table("tezos.proposal_stat_view").
+	err = r.db.Select("*, address as pkh").Table("tezos.proposal_stat_view").
+		Joins("left join tezos.voting_proposal on proposal = hash").
+		Joins("left join tezos.baker_alias on proposer = address").
 		Where("period = ? and kind = 'proposals'", id).
 		Limit(limit).Scan(&periodProposals).Error
 	if err != nil {

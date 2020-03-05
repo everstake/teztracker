@@ -72,6 +72,7 @@ type ProposalInfo struct {
 }
 
 type VotingProposal struct {
+	ProposalInfo
 	PeriodBallot
 	Bakers     int64
 	BlockLevel int64

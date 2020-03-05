@@ -44,6 +44,7 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 		return info, err
 	}
 
+	var proposalHash string
 	if info.Kind == periodKindBallot {
 
 		ballots, err := repo.BallotsList(info.Period)
@@ -62,6 +63,7 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 				b.Pass = value.Rolls
 			}
 
+			proposalHash = value.Proposal
 		}
 
 		b.Supermajority = supermajority
@@ -71,21 +73,25 @@ func (t *TezTracker) VotingPeriodStats(id *int64) (info models.PeriodStats, err 
 		info.BallotsStat = &b
 	}
 
-	found, block, err := t.repoProvider.GetBlock().Find(models.Block{
+	_, block, err := t.repoProvider.GetBlock().Find(models.Block{
 		Level: null.IntFrom(info.StartBlock),
 	})
 	if err != nil {
 		return info, err
 	}
 
-	if found {
-		proposalInfo, err := repo.ProposalInfo(block.ActiveProposal)
-		if err != nil {
-			return info, err
-		}
-
-		info.Proposal = &proposalInfo
+	//If block have active proposal replace
+	//for old proposals
+	if block.ActiveProposal != "" {
+		proposalHash = block.ActiveProposal
 	}
+
+	proposalInfo, err := repo.ProposalInfo(proposalHash)
+	if err != nil {
+		return info, err
+	}
+
+	info.Proposal = &proposalInfo
 
 	return info, nil
 }
