@@ -9,8 +9,8 @@ const (
 	XTZ                        = 1000000
 	BlockSecurityDeposit       = 512 * XTZ
 	EndorsementSecurityDeposit = 64 * XTZ
-	BlockReward                = 16 * XTZ
-	EndorsementReward          = 2 * XTZ
+	BlockReward                = 40 * XTZ
+	EndorsementReward          = 1.25 * XTZ
 	BlockEndorsers             = 32
 	BlockLockEstimate          = BlockReward + BlockSecurityDeposit + BlockEndorsers*(EndorsementReward+EndorsementSecurityDeposit)
 )
