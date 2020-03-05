@@ -1394,6 +1394,10 @@ paths:
             items:
               $ref: '#/definitions/ProposalVoter'
             type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '404':
           description: Not Found
       tags:
@@ -1431,6 +1435,10 @@ paths:
               $ref: >-
                 #/definitions/BallotVoter
             type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '404':
           description: Not Found
       tags:
@@ -1468,6 +1476,10 @@ paths:
               $ref: >-
                 #/definitions/NonVoter
             type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '404':
           description: Not Found
       tags:

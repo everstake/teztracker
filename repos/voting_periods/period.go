@@ -19,7 +19,9 @@ type (
 		ProposalsList(id int64, limit uint) ([]models.VotingProposal, error)
 		StatsByKind(periodType string) ([]models.PeriodStats, error)
 		VotersList(id int64, kind string, limit uint, offset uint) (periodProposals []models.ProposalVoter, err error)
-		ProposalNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error)
+		VotersCount(id int64, kind string) (count int64, err error)
+		PeriodNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error)
+		PeriodNonVotersCount(id, blockLevel int64) (count int64, err error)
 	}
 )
 
@@ -119,7 +121,19 @@ func (r *Repository) VotersList(id int64, kind string, limit uint, offset uint) 
 	return periodProposals, nil
 }
 
-func (r *Repository) ProposalNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error) {
+func (r *Repository) VotersCount(id int64, kind string) (count int64, err error) {
+	err = r.db.Table("tezos.voting_view as v").
+		Where("v.period = ? and v.kind = ?", id, kind).
+		Count(&count).
+		Error
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (r *Repository) PeriodNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error) {
 	err = r.db.Select("pkh,r.rolls,name as alias").
 		Table("tezos.rolls as r").
 		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
@@ -134,4 +148,16 @@ func (r *Repository) ProposalNonVotersList(id, blockLevel int64, limit uint, off
 	}
 
 	return periodProposals, nil
+}
+
+func (r *Repository) PeriodNonVotersCount(id, blockLevel int64) (count int64, err error) {
+	err = r.db.
+		Table("tezos.rolls as r").
+		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
+		Where("r.block_level = ? and period is null", blockLevel).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

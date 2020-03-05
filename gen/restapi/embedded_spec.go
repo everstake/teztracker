@@ -69,6 +69,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/BallotVoter"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "404": {
@@ -121,6 +127,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/NonVoter"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
@@ -248,6 +260,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/ProposalVoter"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
@@ -3030,6 +3048,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/BallotVoter"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "404": {
@@ -3083,6 +3107,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/NonVoter"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
@@ -3211,6 +3241,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/ProposalVoter"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },

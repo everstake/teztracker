@@ -141,20 +141,33 @@ func (t *TezTracker) ProposalsByPeriodID(id int64, limits Limiter) (proposals []
 }
 
 func (t *TezTracker) GetProposalVoters(id int64, limits Limiter) (votes []models.ProposalVoter, count int64, err error) {
-	votes, err = t.repoProvider.GetVotingPeriod().VotersList(id, periodKindProposal, limits.Limit(), limits.Offset())
+	periodRepo := t.repoProvider.GetVotingPeriod()
+	count, err = periodRepo.VotersCount(id, periodKindProposal)
 	if err != nil {
 		return votes, 0, err
 	}
-	return votes, 0, err
+
+	votes, err = periodRepo.VotersList(id, periodKindProposal, limits.Limit(), limits.Offset())
+	if err != nil {
+		return votes, 0, err
+	}
+
+	return votes, count, nil
 }
 
 func (t *TezTracker) GetBallotVoters(id int64, limits Limiter) (votes []models.ProposalVoter, count int64, err error) {
+	periodRepo := t.repoProvider.GetVotingPeriod()
+	count, err = periodRepo.VotersCount(id, periodKindBallot)
+	if err != nil {
+		return votes, 0, err
+	}
 
 	votes, err = t.repoProvider.GetVotingPeriod().VotersList(id, periodKindBallot, limits.Limit(), limits.Offset())
 	if err != nil {
 		return votes, 0, err
 	}
-	return votes, 0, err
+
+	return votes, count, nil
 }
 
 func (t *TezTracker) GetPeriodNonVoters(id int64, limits Limiter) (proposals []models.Voter, count int64, err error) {
@@ -173,12 +186,19 @@ func (t *TezTracker) GetPeriodNonVoters(id int64, limits Limiter) (proposals []m
 		blockLevel = endBlock - 1
 	}
 
-	proposals, err = t.repoProvider.GetVotingPeriod().ProposalNonVotersList(id, blockLevel, limits.Limit(), limits.Offset())
+	periodRepo := t.repoProvider.GetVotingPeriod()
+
+	count, err = periodRepo.PeriodNonVotersCount(id, blockLevel)
+	if err != nil {
+		return proposals, count, err
+	}
+
+	proposals, err = periodRepo.PeriodNonVotersList(id, blockLevel, limits.Limit(), limits.Offset())
 	if err != nil {
 		return proposals, 0, err
 	}
 
-	return proposals, 0, err
+	return proposals, count, err
 }
 
 func (t *TezTracker) calcVotingPeriod(id int64) (startBlock, endBlock int64) {
