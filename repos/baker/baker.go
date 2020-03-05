@@ -21,6 +21,8 @@ type (
 		EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error)
 		TotalStakingBalance() (int64, error)
 		RefreshView() error
+
+		//New
 		PublicBakersList() ([]models.PublicBaker, error)
 		SavePublicBaker(models.PublicBaker) error
 	}

@@ -7,12 +7,20 @@ import (
 )
 
 type Baker struct {
-	AccountID      string `json:"pkh"`
-	Name           string `json:"name"`
-	StakingBalance int64  `json:"staking_balance"`
-	Blocks         int64  `json:"blocks"`
-	Endorsements   int64  `json:"endorsements"`
-	Fees           int64  `json:"fees"`
+	AccountID string `json:"pkh"`
+	Name      string `json:"name"`
+	BakerStats
+}
+
+type BakerStats struct {
+	Balance           int64 `json:"balance"`
+	StakingBalance    int64 `json:"staking_balance"`
+	Blocks            int64 `json:"blocks"`
+	Endorsements      int64 `json:"endorsements"`
+	Fees              int64 `json:"fees"`
+	FirstBlock        int64 `json:"first_block"`
+	ActiveDelegations int64 `json:"active_delegations"`
+	StakingCapacity   int64 `json:"staking_capacity"`
 }
 
 type PublicBaker struct {
