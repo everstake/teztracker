@@ -27,7 +27,7 @@ func (h *getProposalListHandler) Handle(params vt.GetProposalsByPeriodIDParams) 
 
 	limiter := NewLimiter(params.Limit, params.Offset)
 
-	proposals, _, err := service.ProposalsByPeriodID(params.ID, limiter)
+	proposals, _, err := service.ProposalsByPeriodID(params.PeriodID, limiter)
 	if err != nil {
 		logrus.Errorf("failed to get proposal list: %s", err.Error())
 		return vt.NewGetProposalsByPeriodIDNotFound()
