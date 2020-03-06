@@ -1322,20 +1322,19 @@ paths:
           description: Not Found
       tags:
         - Voting
-  '/v2/data/{network}/proposals/{id}':
+  '/v2/data/{network}/proposals':
     get:
       operationId: getProposalsByPeriodID
       produces:
         - application/json
       parameters:
         - in: path
-          name: id
-          required: true
-          type: string
-        - in: path
           name: network
           required: true
           type: string
+        - in: query
+          name: period_id
+          type: integer
         - in: query
           name: limit
           type: integer

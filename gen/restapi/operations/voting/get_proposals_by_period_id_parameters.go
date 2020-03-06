@@ -46,11 +46,6 @@ type GetProposalsByPeriodIDParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*
-	  Required: true
-	  In: path
-	*/
-	ID string
-	/*
 	  Maximum: 20
 	  Minimum: 1
 	  In: query
@@ -68,6 +63,10 @@ type GetProposalsByPeriodIDParams struct {
 	  Default: 0
 	*/
 	Offset *int64
+	/*
+	  In: query
+	*/
+	PeriodID *int64
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -80,11 +79,6 @@ func (o *GetProposalsByPeriodIDParams) BindRequest(r *http.Request, route *middl
 	o.HTTPRequest = r
 
 	qs := runtime.Values(r.URL.Query())
-
-	rID, rhkID, _ := route.Params.GetOK("id")
-	if err := o.bindID(rID, rhkID, route.Formats); err != nil {
-		res = append(res, err)
-	}
 
 	qLimit, qhkLimit, _ := qs.GetOK("limit")
 	if err := o.bindLimit(qLimit, qhkLimit, route.Formats); err != nil {
@@ -101,24 +95,14 @@ func (o *GetProposalsByPeriodIDParams) BindRequest(r *http.Request, route *middl
 		res = append(res, err)
 	}
 
+	qPeriodID, qhkPeriodID, _ := qs.GetOK("period_id")
+	if err := o.bindPeriodID(qPeriodID, qhkPeriodID, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-// bindID binds and validates parameter ID from path.
-func (o *GetProposalsByPeriodIDParams) bindID(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: true
-	// Parameter is provided by construction from the route
-
-	o.ID = raw
-
 	return nil
 }
 
@@ -211,6 +195,28 @@ func (o *GetProposalsByPeriodIDParams) validateOffset(formats strfmt.Registry) e
 	if err := validate.MinimumInt("offset", "query", int64(*o.Offset), 0, false); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+// bindPeriodID binds and validates parameter PeriodID from query.
+func (o *GetProposalsByPeriodIDParams) bindPeriodID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertInt64(raw)
+	if err != nil {
+		return errors.InvalidType("period_id", "query", "int64", raw)
+	}
+	o.PeriodID = &value
 
 	return nil
 }

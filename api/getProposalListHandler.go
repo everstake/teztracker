@@ -7,7 +7,6 @@ import (
 	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sirupsen/logrus"
-	"strconv"
 )
 
 type getProposalListHandler struct {
@@ -28,12 +27,7 @@ func (h *getProposalListHandler) Handle(params vt.GetProposalsByPeriodIDParams) 
 
 	limiter := NewLimiter(params.Limit, params.Offset)
 
-	id, err := strconv.ParseInt(params.ID, 10, 64)
-	if err != nil {
-		return vt.NewGetProposalsByPeriodIDNotFound()
-	}
-
-	proposals, _, err := service.ProposalsByPeriodID(id, limiter)
+	proposals, _, err := service.ProposalsByPeriodID(params.ID, limiter)
 	if err != nil {
 		logrus.Errorf("failed to get proposal list: %s", err.Error())
 		return vt.NewGetProposalsByPeriodIDNotFound()

@@ -275,7 +275,7 @@ func init() {
         }
       }
     },
-    "/v2/data/{network}/proposals/{id}": {
+    "/v2/data/{network}/proposals": {
       "get": {
         "produces": [
           "application/json"
@@ -287,15 +287,14 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "name": "id",
+            "name": "network",
             "in": "path",
             "required": true
           },
           {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
+            "type": "integer",
+            "name": "period_id",
+            "in": "query"
           },
           {
             "maximum": 20,
@@ -3276,7 +3275,7 @@ func init() {
         }
       }
     },
-    "/v2/data/{network}/proposals/{id}": {
+    "/v2/data/{network}/proposals": {
       "get": {
         "produces": [
           "application/json"
@@ -3288,15 +3287,14 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "name": "id",
+            "name": "network",
             "in": "path",
             "required": true
           },
           {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
+            "type": "integer",
+            "name": "period_id",
+            "in": "query"
           },
           {
             "maximum": 20,

@@ -149,7 +149,7 @@ func QuorumNewFormula(prevAverPart, actualPart float64) (q float64, avP float64)
 	return minQuorum + avP*(maxQuorum-minQuorum), avP
 }
 
-func (t *TezTracker) ProposalsByPeriodID(id int64, limits Limiter) (proposals []models.VotingProposal, count int64, err error) {
+func (t *TezTracker) ProposalsByPeriodID(id *int64, limits Limiter) (proposals []models.VotingProposal, count int64, err error) {
 	proposals, err = t.repoProvider.GetVotingPeriod().ProposalsList(id, limits.Limit())
 	if err != nil {
 		return proposals, 0, err

@@ -580,7 +580,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/data/{network}/proposals/{id}"] = voting.NewGetProposalsByPeriodID(o.context, o.VotingGetProposalsByPeriodIDHandler)
+	o.handlers["GET"]["/v2/data/{network}/proposals"] = voting.NewGetProposalsByPeriodID(o.context, o.VotingGetProposalsByPeriodIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

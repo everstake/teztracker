@@ -17,7 +17,7 @@ type (
 		GetCurrentPeriodId() (int64, error)
 		BallotsList(id int64) ([]models.PeriodBallot, error)
 		ProposalInfo(proposal string) (models.ProposalInfo, error)
-		ProposalsList(id int64, limit uint) ([]models.VotingProposal, error)
+		ProposalsList(id *int64, limit uint) ([]models.VotingProposal, error)
 		StatsByKind(periodType string) ([]models.PeriodStats, error)
 		VotersList(id int64, kind string, limit uint, offset uint) (periodProposals []models.ProposalVoter, err error)
 		VotersCount(id int64, kind string) (count int64, err error)
@@ -95,12 +95,17 @@ func (r *Repository) BallotsList(id int64) (periodBallots []models.PeriodBallot,
 	return periodBallots, nil
 }
 
-func (r *Repository) ProposalsList(id int64, limit uint) (periodProposals []models.VotingProposal, err error) {
-	err = r.db.Select("*, address as pkh").Table("tezos.proposal_stat_view").
+func (r *Repository) ProposalsList(id *int64, limit uint) (periodProposals []models.VotingProposal, err error) {
+	db := r.db.Select("*, address as pkh").Table("tezos.proposal_stat_view").
 		Joins("left join tezos.voting_proposal on proposal = hash").
 		Joins("left join tezos.baker_alias on proposer = address").
-		Where("period = ? and kind = 'proposals'", id).
-		Limit(limit).Scan(&periodProposals).Error
+		Where("kind = 'proposals'")
+
+	if id != nil {
+		db = db.Where("period = ?", &id)
+	}
+
+	err = db.Limit(limit).Scan(&periodProposals).Error
 	if err != nil {
 		return periodProposals, err
 	}
