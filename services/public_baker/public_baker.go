@@ -28,7 +28,7 @@ const (
 func MonitorPublicBakers(ctx context.Context, unit UnitOfWork, rpc BakesProvider) (err error) {
 
 	bakerRepo := unit.GetBaker()
-	publicBakers, err := bakerRepo.PublicBakersList()
+	publicBakers, err := bakerRepo.BakerRegistryList()
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func MonitorPublicBakers(ctx context.Context, unit UnitOfWork, rpc BakesProvider
 		operationsByBaker[operations[key].Source] = operations[key]
 	}
 
-	bakersMap := map[string]models.PublicBaker{}
+	bakersMap := map[string]models.BakerRegistry{}
 
 	//Group bakers by pkh
 	for key := range publicBakers {
@@ -105,7 +105,7 @@ func InitContractScript(ctx context.Context, rpc BakesProvider, contractHash str
 	return container, nil
 }
 
-func GetPublicBakerInfo(ctx context.Context, rpc BakesProvider, container michelson.BigMapContainer, blockHash, operationHash string) (publicBaker models.PublicBaker, isStorageOperation bool, err error) {
+func GetPublicBakerInfo(ctx context.Context, rpc BakesProvider, container michelson.BigMapContainer, blockHash, operationHash string) (publicBaker models.BakerRegistry, isStorageOperation bool, err error) {
 	op, err := rpc.Operation(ctx, blockHash, operationHash)
 	if err != nil {
 		return publicBaker, false, err

@@ -8,22 +8,31 @@ import (
 
 type Baker struct {
 	AccountID string `json:"pkh"`
-	Name      string `json:"name"`
 	BakerStats
 }
 
 type BakerStats struct {
-	Balance           int64 `json:"balance"`
-	StakingBalance    int64 `json:"staking_balance"`
-	Blocks            int64 `json:"blocks"`
-	Endorsements      int64 `json:"endorsements"`
-	Fees              int64 `json:"fees"`
-	FirstBlock        int64 `json:"first_block"`
-	ActiveDelegations int64 `json:"active_delegations"`
-	StakingCapacity   int64 `json:"staking_capacity"`
+	Name              string `json:"name"`
+	Fee               int64  `json:"fee"`
+	FirstBlock        int64  `json:"first_block"` //first baking block
+	Balance           int64  `json:"balance"`
+	StakingBalance    int64  `json:"staking_balance"`
+	FrozenBalance     int64  `json:"frozen_balance"`
+	Rolls             int64  `json:"rolls"`
+	Blocks            int64  `json:"blocks"`
+	Endorsements      int64  `json:"endorsements"`
+	TotalPaidFees     int64  `json:"fees"`
+	ActiveDelegations int64  `json:"active_delegations"`
+	StakingCapacity   int64  `json:"staking_capacity"`
+
+	//	From old resp
+	BakingDeposits      int64
+	EndorsementDeposits int64
+	BakingRewards       int64
+	EndorsementRewards  int64
 }
 
-type PublicBaker struct {
+type BakerRegistry struct {
 	Delegate                               string         `gorm:"primary_key" json:"delegate"`
 	BakerName                              string         `json:"bakerName"`
 	BakerOffchainRegistryUrl               string         `json:"bakerOffchainRegistryUrl"`
@@ -41,9 +50,10 @@ type PublicBaker struct {
 	SubtractPayoutsLessThanMin             bool           `json:"subtractPayoutsLessThanMin"`
 	SubtractRewardsFromUninvitedDelegation bool           `json:"subtractRewardsFromUninvitedDelegation"`
 	LastUpdateId                           int64          `json:"-"`
+	IsHidden                               bool           `json:"is_hidden"`
 }
 
-func (pb *PublicBaker) Unmarshal(data []byte) (err error) {
+func (pb *BakerRegistry) Unmarshal(data []byte) (err error) {
 
 	err = json.Unmarshal(data, &pb)
 	if err != nil {
@@ -64,12 +74,4 @@ func (pb *PublicBaker) Unmarshal(data []byte) (err error) {
 	pb.BakerOffchainRegistryUrl = string(bytes)
 
 	return nil
-}
-
-type BakerInfo struct {
-	Delegate
-	BakingDeposits      int64
-	EndorsementDeposits int64
-	BakingRewards       int64
-	EndorsementRewards  int64
 }

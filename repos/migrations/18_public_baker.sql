@@ -16,6 +16,8 @@ CREATE TABLE tezos.public_bakers(
 	subtract_payouts_less_than_min boolean,
 	subtract_rewards_from_uninvited_delegation boolean,
 	last_update_id integer,
+	baker_charges_transaction_fee boolean,
+	is_hidden boolean default set false
 	PRIMARY KEY (delegate)
 )
 
@@ -23,13 +25,13 @@ create index ix_operations_endorsements_level
   on tezos.operations (level)
   where ((kind)::text = 'endorsement'::text);
 
---Add min baking or endorsement level into baker view
 create or replace view tezos.baker_endorsement_view as
 SELECT delegates.pkh  AS baker,
        delegates.staking_balance,
        en.count       AS endorsements,
        en.block_level as first_endorsement_level,
-       delegates.balance
+       delegates.balance,
+       delegates.frozen_balance
 FROM (tezos.delegates
        JOIN (SELECT endorsements_view.baker,
                     sum(endorsements_view.count) AS count,
@@ -67,6 +69,8 @@ FROM (
                 ELSE r.bevbaker
                 END AS account_id,
               r.staking_balance,
+              TRUNC(staking_balance/8000/1000000,0) as rolls,
+              r.frozen_balance,
               r.endorsements,
               r.blocks,
               r.first_block,
@@ -74,6 +78,7 @@ FROM (
        FROM (SELECT bcv.baker                                          AS bcvbaker,
                     bev.baker                                          AS bevbaker,
                     COALESCE(bev.staking_balance, (0)::numeric)        AS staking_balance,
+                    COALESCE(bev.frozen_balance,  (0)::numeric)        AS frozen_balance,
                     COALESCE(bev.balance, (0)::numeric)                AS balance,
                     COALESCE(bev.endorsements, (0)::bigint)            AS endorsements,
                     COALESCE(bcv.blocks, (0)::bigint)                  AS blocks,
@@ -87,3 +92,6 @@ FROM (
 
 create unique index unique_index
   on tezos.baker_view (account_id);
+
+---
+drop table tezos.baker_alias;

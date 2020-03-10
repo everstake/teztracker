@@ -33,3 +33,29 @@ func (h *getBakerListHandler) Handle(params accounts.GetBakersListParams) middle
 	}
 	return accounts.NewGetBakersListOK().WithPayload(render.Bakers(accs)).WithXTotalCount(count)
 }
+
+type getPublicBakerListHandler struct {
+	provider DbProvider
+}
+
+// Handle serves the Get Baker List request.
+func (h *getPublicBakerListHandler) Handle(params accounts.GetPublicBakersListParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetBakersListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetBakersListNotFound()
+	}
+	service := services.New(repos.New(db), net)
+	limiter := NewLimiter(params.Limit, params.Offset)
+
+	accs, count, err := service.PublicBakerList(limiter)
+	if err != nil {
+		logrus.Errorf("failed to get accounts: %s", err.Error())
+		return accounts.NewGetBakersListNotFound()
+	}
+
+	return accounts.NewGetPublicBakersListOK().WithPayload(render.PublicBakers(accs)).WithXTotalCount(count)
+}

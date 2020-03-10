@@ -15,11 +15,20 @@ import (
 // swagger:model BakerInfo
 type BakerInfo struct {
 
+	// active delegators
+	ActiveDelegators int64 `json:"activeDelegators,omitempty"`
+
 	// baking deposits
 	BakingDeposits int64 `json:"bakingDeposits,omitempty"`
 
 	// baking rewards
 	BakingRewards int64 `json:"bakingRewards,omitempty"`
+
+	// baking since
+	BakingSince int64 `json:"bakingSince,omitempty"`
+
+	// blocks
+	Blocks int64 `json:"blocks,omitempty"`
 
 	// endorsement deposits
 	EndorsementDeposits int64 `json:"endorsementDeposits,omitempty"`
@@ -27,11 +36,29 @@ type BakerInfo struct {
 	// endorsement rewards
 	EndorsementRewards int64 `json:"endorsementRewards,omitempty"`
 
+	// endorsements
+	Endorsements int64 `json:"endorsements,omitempty"`
+
 	// evaluated balance
 	EvaluatedBalance int64 `json:"evaluatedBalance,omitempty"`
 
+	// fee
+	Fee int64 `json:"fee,omitempty"`
+
+	// frozen balance
+	FrozenBalance int64 `json:"frozenBalance,omitempty"`
+
+	// name
+	Name string `json:"name,omitempty"`
+
+	// rolls
+	Rolls int64 `json:"rolls,omitempty"`
+
 	// staking balance
 	StakingBalance int64 `json:"stakingBalance,omitempty"`
+
+	// total paid fees
+	TotalPaidFees int64 `json:"totalPaidFees,omitempty"`
 }
 
 // Validate validates this baker info

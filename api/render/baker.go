@@ -8,12 +8,8 @@ import (
 // Baker renders an app level model to a generated OpenAPI model.
 func Baker(a models.Baker) *genModels.BakersRow {
 	return &genModels.BakersRow{
-		AccountID:      &a.AccountID,
-		Name:           a.Name,
-		Blocks:         &a.Blocks,
-		Endorsements:   &a.Endorsements,
-		StakingBalance: &a.StakingBalance,
-		Fees:           &a.Fees,
+		AccountID: a.AccountID,
+		BakerInfo: BakerInfo(&a),
 	}
 }
 
@@ -26,17 +22,34 @@ func Bakers(ams []models.Baker) []*genModels.BakersRow {
 	return accs
 }
 
+func PublicBakers(ams []models.Baker) []genModels.PublicBaker {
+	accs := make([]genModels.PublicBaker, len(ams))
+	for i := range ams {
+		bakerRow := Baker(ams[i])
+		accs[i] = genModels.PublicBaker{BakersRow: *bakerRow}
+	}
+	return accs
+}
+
 // BakerInfo renders a baker info details.
-func BakerInfo(bi *models.BakerInfo) *genModels.BakerInfo {
+func BakerInfo(bi *models.Baker) *genModels.BakerInfo {
 	if bi == nil {
 		return nil
 	}
+
 	return &genModels.BakerInfo{
-		EvaluatedBalance:    bi.Balance,
+		Name:                bi.Name,
+		Blocks:              bi.Blocks,
+		Endorsements:        bi.Endorsements,
 		StakingBalance:      bi.StakingBalance,
+		ActiveDelegators:    bi.ActiveDelegations,
+		EvaluatedBalance:    bi.Balance,
+		FrozenBalance:       bi.FrozenBalance,
+		Rolls:               bi.Rolls,
 		BakingDeposits:      bi.BakingDeposits,
 		BakingRewards:       bi.BakingRewards,
 		EndorsementDeposits: bi.EndorsementDeposits,
 		EndorsementRewards:  bi.EndorsementRewards,
+		TotalPaidFees:       bi.TotalPaidFees,
 	}
 }
