@@ -39,13 +39,15 @@ func BakerInfo(bi *models.Baker) *genModels.BakerInfo {
 
 	return &genModels.BakerInfo{
 		Name:                bi.Name,
+		BakingSince:         bi.BakingSince,
+		Rolls:               bi.Rolls,
+		Fee:                 bi.Fee,
 		Blocks:              bi.Blocks,
 		Endorsements:        bi.Endorsements,
-		StakingBalance:      bi.StakingBalance,
 		ActiveDelegators:    bi.ActiveDelegations,
+		StakingBalance:      bi.StakingBalance,
 		EvaluatedBalance:    bi.Balance,
 		FrozenBalance:       bi.FrozenBalance,
-		Rolls:               bi.Rolls,
 		BakingDeposits:      bi.BakingDeposits,
 		BakingRewards:       bi.BakingRewards,
 		EndorsementDeposits: bi.EndorsementDeposits,

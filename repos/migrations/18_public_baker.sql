@@ -73,7 +73,7 @@ FROM (
               r.frozen_balance,
               r.endorsements,
               r.blocks,
-              r.first_block,
+              b.timestamp as baking_since,
               r.balance
        FROM (SELECT bcv.baker                                          AS bcvbaker,
                     bev.baker                                          AS bevbaker,
@@ -86,6 +86,7 @@ FROM (
              FROM (tezos.baker_endorsement_view bev
                     FULL JOIN tezos.blocks_counter_view bcv ON (((bev.baker)::text = (bcv.baker)::text)))
             ) r
+       LEFT JOIN tezos.blocks as b on r.first_block = b.level
        WHERE ((r.bcvbaker IS NOT NULL) OR (r.bevbaker IS NOT NULL))
      ) as w
        left join tezos.baker_delegations_view as bdv on account_id = bdv.baker;

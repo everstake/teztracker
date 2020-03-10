@@ -14,7 +14,7 @@ type Baker struct {
 type BakerStats struct {
 	Name              string `json:"name"`
 	Fee               int64  `json:"fee"`
-	FirstBlock        int64  `json:"first_block"` //first baking block
+	BakingSince       int64  `json:"baking_since"` //first baking or endorsement
 	Balance           int64  `json:"balance"`
 	StakingBalance    int64  `json:"staking_balance"`
 	FrozenBalance     int64  `json:"frozen_balance"`
