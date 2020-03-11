@@ -79,3 +79,9 @@ type VotingProposal struct {
 	Period     int64
 	Kind       string
 }
+
+type Protocol struct {
+	Hash string
+	StartBlock int64
+	EndBlock int64
+}
