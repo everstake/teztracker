@@ -3037,6 +3037,11 @@ func init() {
       }
     },
     "Protocol": {
+      "required": [
+        "hash",
+        "startBlock",
+        "endBlock"
+      ],
       "properties": {
         "endBlock": {
           "type": "integer",
@@ -6121,6 +6126,11 @@ func init() {
       }
     },
     "Protocol": {
+      "required": [
+        "hash",
+        "startBlock",
+        "endBlock"
+      ],
       "properties": {
         "endBlock": {
           "type": "integer",

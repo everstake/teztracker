@@ -187,6 +187,7 @@ func (r *Repository) ProtocolsList(limit uint, offset uint) (protocolsList []mod
 	err = r.db.Select("protocol as hash, min(level) as start_block, max(level) as end_block").
 		Table("tezos.blocks").
 		Group("protocol").
+		Order("start_block asc").
 		Limit(limit).
 		Offset(offset).
 		Scan(&protocolsList).Error

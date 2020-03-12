@@ -2086,3 +2086,7 @@ definitions:
       endBlock:
        type: integer
        format: int64
+    required:
+      - hash
+      - startBlock
+      - endBlock

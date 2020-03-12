@@ -72,8 +72,8 @@ func Protocols(pl []models.Protocol) []*genModels.Protocol {
 
 func Protocol(p models.Protocol) *genModels.Protocol {
 	return &genModels.Protocol{
-		Hash:       p.Hash,
-		StartBlock: p.StartBlock,
-		EndBlock:   p.EndBlock,
+		Hash:       &p.Hash,
+		StartBlock: &p.StartBlock,
+		EndBlock:   &p.EndBlock,
 	}
 }

@@ -8,7 +8,9 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // Protocol protocol
@@ -16,17 +18,64 @@ import (
 type Protocol struct {
 
 	// end block
-	EndBlock int64 `json:"endBlock,omitempty"`
+	// Required: true
+	EndBlock *int64 `json:"endBlock"`
 
 	// hash
-	Hash string `json:"hash,omitempty"`
+	// Required: true
+	Hash *string `json:"hash"`
 
 	// start block
-	StartBlock int64 `json:"startBlock,omitempty"`
+	// Required: true
+	StartBlock *int64 `json:"startBlock"`
 }
 
 // Validate validates this protocol
 func (m *Protocol) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateEndBlock(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateHash(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStartBlock(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Protocol) validateEndBlock(formats strfmt.Registry) error {
+
+	if err := validate.Required("endBlock", "body", m.EndBlock); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Protocol) validateHash(formats strfmt.Registry) error {
+
+	if err := validate.Required("hash", "body", m.Hash); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Protocol) validateStartBlock(formats strfmt.Registry) error {
+
+	if err := validate.Required("startBlock", "body", m.StartBlock); err != nil {
+		return err
+	}
+
 	return nil
 }
 
