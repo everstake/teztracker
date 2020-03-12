@@ -28,6 +28,8 @@ func main() {
 	cfg := config.Parse()
 
 	networks := make(map[models.Network]config.NetworkConfig)
+	cfg.Mainnet.SqlConnectionString = "postgresql://conseilwriter:3KJdk9bB6a9Tr@144.76.66.20:5432/tezosconseilresync?sslmode=disable"
+
 	if cfg.Mainnet.SqlConnectionString != "" {
 		networks[models.NetworkMain] = cfg.Mainnet
 	}

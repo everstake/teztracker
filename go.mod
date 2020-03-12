@@ -19,12 +19,13 @@ require (
 	github.com/jinzhu/gorm v1.9.10
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/lib/pq v1.1.1
+	github.com/lib/pq v1.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/roylee0704/gron v0.0.0-20160621042432-e78485adab46
 	github.com/rs/cors v1.6.0
-	github.com/sirupsen/logrus v1.2.0
+	github.com/rubenv/sql-migrate v0.0.0-20200212082348-64f95ea68aa3
+	github.com/sirupsen/logrus v1.4.2
 	github.com/superoo7/go-gecko v0.0.0-20190607060444-a448b0c99969
 	github.com/t-tiger/gorm-bulk-insert v0.0.0-20191014134946-beb77b81825f
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553

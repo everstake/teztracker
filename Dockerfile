@@ -8,6 +8,10 @@ RUN go build
 
 FROM alpine:latest
 RUN apk add ca-certificates
+
+RUN mkdir -p repos/migrations
+
+COPY --from=build-env /app/repos/migrations repos/migrations
 COPY --from=build-env /app/teztracker /
 
 CMD ["/teztracker"]

@@ -1,9 +1,4 @@
-create index ix_operations_voting_proposal_source_kind_period
-  on tezos.operations (proposal, source, kind, period)
-  where ((kind::text = 'proposals'::text) or (kind::text = 'ballot'::text)) and proposal is not null;
-
-create index ix_rolls_pkh_block_level
-  on tezos.rolls (pkh, block_level);
+-- +migrate Up
 
 CREATE VIEW tezos.voting_view AS
 select period, proposal, source, rolls, kind, ballot, s.block_level as block_level
@@ -52,11 +47,6 @@ from tezos.period_stat_view as psv
        left join tezos.rolls as r on psv.block_level = r.block_level
 group by psv.period;
 
-
-create index ix_operations_double_endorsement_index
-  on tezos.operations (operation_id)
-  where ((kind)::text = 'double_endorsement_evidence'::text);
-
 CREATE table tezos.voting_proposal
 (
   hash      varchar,
@@ -65,3 +55,5 @@ CREATE table tezos.voting_proposal
   proposal_file varchar,
   proposer varchar
 );
+
+-- +migrate Down

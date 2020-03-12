@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW public.block_aggregation_view
+-- +migrate Up
+
+CREATE OR REPLACE VIEW tezos.block_aggregation_view
     AS
     SELECT operations.block_level AS level,
     COALESCE(sum(operations.amount), 0::numeric) AS volume,
@@ -12,9 +14,12 @@ CREATE OR REPLACE VIEW public.block_aggregation_view
     sum(operations.isballot) AS ballots,
     sum(operations.isorigination) AS originations,
     sum(operations.isreveal) AS reveals,
-    sum(operations.isdouble_baking_evidence) AS double_baking_evidences
-   FROM operations_for_counters operations
+    sum(operations.isdouble_baking_evidence) AS double_baking_evidences,
+    sum(operations.isdouble_endorsement_evidence) AS double_endorsement_evidences
+   FROM tezos.operations_for_counters operations
   GROUP BY operations.block_level;
+
+-- +migrate Down
 
 
 
