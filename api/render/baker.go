@@ -39,7 +39,7 @@ func BakerInfo(bi *models.Baker) *genModels.BakerInfo {
 
 	return &genModels.BakerInfo{
 		Name:                bi.Name,
-		BakingSince:         bi.BakingSince,
+		BakingSince:         bi.BakingSince.Unix(),
 		Rolls:               bi.Rolls,
 		Fee:                 bi.Fee,
 		Blocks:              bi.Blocks,
