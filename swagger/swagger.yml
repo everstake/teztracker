@@ -1897,6 +1897,10 @@ definitions:
       timestamp:
         format: int64
         type: integer
+      ballot:
+        type: string
+      proposal:
+        type: string
       doubleBake:
         $ref: '#/definitions/DoubleBakingDetails'
     required:

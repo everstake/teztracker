@@ -2813,6 +2813,9 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "ballot": {
+          "type": "string"
+        },
         "blockHash": {
           "type": "string"
         },
@@ -2879,6 +2882,9 @@ func init() {
           "type": "string"
         },
         "pkh": {
+          "type": "string"
+        },
+        "proposal": {
           "type": "string"
         },
         "publicKey": {
@@ -5902,6 +5908,9 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "ballot": {
+          "type": "string"
+        },
         "blockHash": {
           "type": "string"
         },
@@ -5968,6 +5977,9 @@ func init() {
           "type": "string"
         },
         "pkh": {
+          "type": "string"
+        },
+        "proposal": {
           "type": "string"
         },
         "publicKey": {
