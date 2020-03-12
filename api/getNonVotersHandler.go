@@ -33,11 +33,11 @@ func (h *getNonVotersHandler) Handle(params vt.GetNonVotersByPeriodIDParams) mid
 		return vt.NewGetNonVotersByPeriodIDNotFound()
 	}
 
-	votes, _, err := service.GetPeriodNonVoters(id, limiter)
+	votes, count, err := service.GetPeriodNonVoters(id, limiter)
 	if err != nil {
 		logrus.Errorf("failed to get period non voters list: %s", err.Error())
 		return vt.NewGetNonVotersByPeriodIDNotFound()
 	}
 
-	return vt.NewGetNonVotersByPeriodIDOK().WithPayload(render.NonVoters(votes))
+	return vt.NewGetNonVotersByPeriodIDOK().WithPayload(render.NonVoters(votes)).WithXTotalCount(count)
 }

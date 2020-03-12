@@ -41,6 +41,8 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 		OriginatedContracts: b.OriginatedContracts,
 		BlockHash:           b.BlockHash.Ptr(),
 		BlockLevel:          b.BlockLevel.Ptr(),
+		Ballot:              b.Ballot,
+		Proposal:            b.Proposal,
 		Timestamp:           &ts,
 	}
 	if dbe != nil {

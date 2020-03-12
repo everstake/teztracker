@@ -9,29 +9,29 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type getProposalListHandler struct {
+type getProtocolListHandler struct {
 	provider DbProvider
 }
 
 // Handle serves the Get Proposal List request.
-func (h *getProposalListHandler) Handle(params vt.GetProposalsByPeriodIDParams) middleware.Responder {
+func (h *getProtocolListHandler) Handle(params vt.GetProtocolsListParams) middleware.Responder {
 	net, err := ToNetwork(params.Network)
 	if err != nil {
-		return vt.NewGetProposalsByPeriodIDNotFound()
+		return vt.NewGetProtocolsListNotFound()
 	}
 	db, err := h.provider.GetDb(net)
 	if err != nil {
-		return vt.NewGetProposalsByPeriodIDNotFound()
+		return vt.NewGetProtocolsListNotFound()
 	}
 	service := services.New(repos.New(db), net)
 
 	limiter := NewLimiter(params.Limit, params.Offset)
 
-	proposals, _, err := service.ProposalsByPeriodID(params.PeriodID, limiter)
+	votes, count, err := service.GetProtocolsList(limiter)
 	if err != nil {
-		logrus.Errorf("failed to get proposal list: %s", err.Error())
-		return vt.NewGetProposalsByPeriodIDNotFound()
+		logrus.Errorf("failed to get proposal voters: %s", err.Error())
+		return vt.NewGetProtocolsListNotFound()
 	}
 
-	return vt.NewGetProposalsByPeriodIDOK().WithPayload(render.Proposals(proposals))
+	return vt.NewGetProtocolsListOK().WithPayload(render.Protocols(votes)).WithXTotalCount(count)
 }

@@ -17,39 +17,39 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetProposalsByPeriodIDParams creates a new GetProposalsByPeriodIDParams object
+// NewGetProtocolsListParams creates a new GetProtocolsListParams object
 // with the default values initialized.
-func NewGetProposalsByPeriodIDParams() GetProposalsByPeriodIDParams {
+func NewGetProtocolsListParams() GetProtocolsListParams {
 
 	var (
 		// initialize parameters with default values
 
-		limitDefault = int64(10)
+		limitDefault = int64(20)
 
 		offsetDefault = int64(0)
 	)
 
-	return GetProposalsByPeriodIDParams{
+	return GetProtocolsListParams{
 		Limit: &limitDefault,
 
 		Offset: &offsetDefault,
 	}
 }
 
-// GetProposalsByPeriodIDParams contains all the bound params for the get proposals by period ID operation
+// GetProtocolsListParams contains all the bound params for the get protocols list operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters getProposalsByPeriodID
-type GetProposalsByPeriodIDParams struct {
+// swagger:parameters getProtocolsList
+type GetProtocolsListParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
 	/*
-	  Maximum: 20
+	  Maximum: 300
 	  Minimum: 1
 	  In: query
-	  Default: 10
+	  Default: 20
 	*/
 	Limit *int64
 	/*
@@ -63,17 +63,13 @@ type GetProposalsByPeriodIDParams struct {
 	  Default: 0
 	*/
 	Offset *int64
-	/*
-	  In: query
-	*/
-	PeriodID *int64
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewGetProposalsByPeriodIDParams() beforehand.
-func (o *GetProposalsByPeriodIDParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewGetProtocolsListParams() beforehand.
+func (o *GetProtocolsListParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -95,11 +91,6 @@ func (o *GetProposalsByPeriodIDParams) BindRequest(r *http.Request, route *middl
 		res = append(res, err)
 	}
 
-	qPeriodID, qhkPeriodID, _ := qs.GetOK("period_id")
-	if err := o.bindPeriodID(qPeriodID, qhkPeriodID, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -107,7 +98,7 @@ func (o *GetProposalsByPeriodIDParams) BindRequest(r *http.Request, route *middl
 }
 
 // bindLimit binds and validates parameter Limit from query.
-func (o *GetProposalsByPeriodIDParams) bindLimit(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetProtocolsListParams) bindLimit(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -116,7 +107,7 @@ func (o *GetProposalsByPeriodIDParams) bindLimit(rawData []string, hasKey bool, 
 	// Required: false
 	// AllowEmptyValue: false
 	if raw == "" { // empty values pass all other validations
-		// Default values have been previously initialized by NewGetProposalsByPeriodIDParams()
+		// Default values have been previously initialized by NewGetProtocolsListParams()
 		return nil
 	}
 
@@ -134,13 +125,13 @@ func (o *GetProposalsByPeriodIDParams) bindLimit(rawData []string, hasKey bool, 
 }
 
 // validateLimit carries on validations for parameter Limit
-func (o *GetProposalsByPeriodIDParams) validateLimit(formats strfmt.Registry) error {
+func (o *GetProtocolsListParams) validateLimit(formats strfmt.Registry) error {
 
 	if err := validate.MinimumInt("limit", "query", int64(*o.Limit), 1, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumInt("limit", "query", int64(*o.Limit), 20, false); err != nil {
+	if err := validate.MaximumInt("limit", "query", int64(*o.Limit), 300, false); err != nil {
 		return err
 	}
 
@@ -148,7 +139,7 @@ func (o *GetProposalsByPeriodIDParams) validateLimit(formats strfmt.Registry) er
 }
 
 // bindNetwork binds and validates parameter Network from path.
-func (o *GetProposalsByPeriodIDParams) bindNetwork(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetProtocolsListParams) bindNetwork(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -163,7 +154,7 @@ func (o *GetProposalsByPeriodIDParams) bindNetwork(rawData []string, hasKey bool
 }
 
 // bindOffset binds and validates parameter Offset from query.
-func (o *GetProposalsByPeriodIDParams) bindOffset(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetProtocolsListParams) bindOffset(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -172,7 +163,7 @@ func (o *GetProposalsByPeriodIDParams) bindOffset(rawData []string, hasKey bool,
 	// Required: false
 	// AllowEmptyValue: false
 	if raw == "" { // empty values pass all other validations
-		// Default values have been previously initialized by NewGetProposalsByPeriodIDParams()
+		// Default values have been previously initialized by NewGetProtocolsListParams()
 		return nil
 	}
 
@@ -190,33 +181,11 @@ func (o *GetProposalsByPeriodIDParams) bindOffset(rawData []string, hasKey bool,
 }
 
 // validateOffset carries on validations for parameter Offset
-func (o *GetProposalsByPeriodIDParams) validateOffset(formats strfmt.Registry) error {
+func (o *GetProtocolsListParams) validateOffset(formats strfmt.Registry) error {
 
 	if err := validate.MinimumInt("offset", "query", int64(*o.Offset), 0, false); err != nil {
 		return err
 	}
-
-	return nil
-}
-
-// bindPeriodID binds and validates parameter PeriodID from query.
-func (o *GetProposalsByPeriodIDParams) bindPeriodID(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: false
-	// AllowEmptyValue: false
-	if raw == "" { // empty values pass all other validations
-		return nil
-	}
-
-	value, err := swag.ConvertInt64(raw)
-	if err != nil {
-		return errors.InvalidType("period_id", "query", "int64", raw)
-	}
-	o.PeriodID = &value
 
 	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/swag"
 
 	models "github.com/everstake/teztracker/gen/models"
 )
@@ -21,6 +22,10 @@ const GetBallotsByPeriodIDOKCode int = 200
 swagger:response getBallotsByPeriodIdOK
 */
 type GetBallotsByPeriodIDOK struct {
+	/*The total number of data entries.
+
+	 */
+	XTotalCount int64 `json:"X-Total-Count"`
 
 	/*
 	  In: Body
@@ -32,6 +37,17 @@ type GetBallotsByPeriodIDOK struct {
 func NewGetBallotsByPeriodIDOK() *GetBallotsByPeriodIDOK {
 
 	return &GetBallotsByPeriodIDOK{}
+}
+
+// WithXTotalCount adds the xTotalCount to the get ballots by period Id o k response
+func (o *GetBallotsByPeriodIDOK) WithXTotalCount(xTotalCount int64) *GetBallotsByPeriodIDOK {
+	o.XTotalCount = xTotalCount
+	return o
+}
+
+// SetXTotalCount sets the xTotalCount to the get ballots by period Id o k response
+func (o *GetBallotsByPeriodIDOK) SetXTotalCount(xTotalCount int64) {
+	o.XTotalCount = xTotalCount
 }
 
 // WithPayload adds the payload to the get ballots by period Id o k response
@@ -47,6 +63,13 @@ func (o *GetBallotsByPeriodIDOK) SetPayload(payload []*models.BallotVoter) {
 
 // WriteResponse to the client
 func (o *GetBallotsByPeriodIDOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header X-Total-Count
+
+	xTotalCount := swag.FormatInt64(o.XTotalCount)
+	if xTotalCount != "" {
+		rw.Header().Set("X-Total-Count", xTotalCount)
+	}
 
 	rw.WriteHeader(200)
 	payload := o.Payload

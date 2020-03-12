@@ -14,13 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// GetProposalsByPeriodIDURL generates an URL for the get proposals by period ID operation
-type GetProposalsByPeriodIDURL struct {
+// GetProtocolsListURL generates an URL for the get protocols list operation
+type GetProtocolsListURL struct {
 	Network string
 
-	Limit    *int64
-	Offset   *int64
-	PeriodID *int64
+	Limit  *int64
+	Offset *int64
 
 	_basePath string
 	// avoid unkeyed usage
@@ -30,7 +29,7 @@ type GetProposalsByPeriodIDURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetProposalsByPeriodIDURL) WithBasePath(bp string) *GetProposalsByPeriodIDURL {
+func (o *GetProtocolsListURL) WithBasePath(bp string) *GetProtocolsListURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -38,21 +37,21 @@ func (o *GetProposalsByPeriodIDURL) WithBasePath(bp string) *GetProposalsByPerio
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetProposalsByPeriodIDURL) SetBasePath(bp string) {
+func (o *GetProtocolsListURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *GetProposalsByPeriodIDURL) Build() (*url.URL, error) {
+func (o *GetProtocolsListURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/data/{network}/proposals"
+	var _path = "/v2/data/{network}/protocols"
 
 	network := o.Network
 	if network != "" {
 		_path = strings.Replace(_path, "{network}", network, -1)
 	} else {
-		return nil, errors.New("network is required on GetProposalsByPeriodIDURL")
+		return nil, errors.New("network is required on GetProtocolsListURL")
 	}
 
 	_basePath := o._basePath
@@ -76,21 +75,13 @@ func (o *GetProposalsByPeriodIDURL) Build() (*url.URL, error) {
 		qs.Set("offset", offsetQ)
 	}
 
-	var periodIDQ string
-	if o.PeriodID != nil {
-		periodIDQ = swag.FormatInt64(*o.PeriodID)
-	}
-	if periodIDQ != "" {
-		qs.Set("period_id", periodIDQ)
-	}
-
 	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *GetProposalsByPeriodIDURL) Must(u *url.URL, err error) *url.URL {
+func (o *GetProtocolsListURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -101,17 +92,17 @@ func (o *GetProposalsByPeriodIDURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *GetProposalsByPeriodIDURL) String() string {
+func (o *GetProtocolsListURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *GetProposalsByPeriodIDURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *GetProtocolsListURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on GetProposalsByPeriodIDURL")
+		return nil, errors.New("scheme is required for a full url on GetProtocolsListURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on GetProposalsByPeriodIDURL")
+		return nil, errors.New("host is required for a full url on GetProtocolsListURL")
 	}
 
 	base, err := o.Build()
@@ -125,6 +116,6 @@ func (o *GetProposalsByPeriodIDURL) BuildFull(scheme, host string) (*url.URL, er
 }
 
 // StringFull returns the string representation of a complete url
-func (o *GetProposalsByPeriodIDURL) StringFull(scheme, host string) string {
+func (o *GetProtocolsListURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

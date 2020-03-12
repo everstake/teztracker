@@ -69,6 +69,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/BallotVoter"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "404": {
@@ -121,6 +127,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/NonVoter"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
@@ -249,6 +261,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/ProposalVoter"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "404": {
@@ -257,7 +275,7 @@ func init() {
         }
       }
     },
-    "/v2/data/{network}/proposals/{id}": {
+    "/v2/data/{network}/proposals": {
       "get": {
         "produces": [
           "application/json"
@@ -269,15 +287,14 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "name": "id",
+            "name": "network",
             "in": "path",
             "required": true
           },
           {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
+            "type": "integer",
+            "name": "period_id",
+            "in": "query"
           },
           {
             "maximum": 20,
@@ -301,6 +318,59 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Proposal"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/protocols": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProtocolsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for protocols",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Protocol"
               }
             },
             "headers": {
@@ -2820,6 +2890,9 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "ballot": {
+          "type": "string"
+        },
         "blockHash": {
           "type": "string"
         },
@@ -2888,6 +2961,9 @@ func init() {
         "pkh": {
           "type": "string"
         },
+        "proposal": {
+          "type": "string"
+        },
         "publicKey": {
           "type": "string"
         },
@@ -2944,6 +3020,9 @@ func init() {
         "id": {
           "type": "integer"
         },
+        "periodType": {
+          "type": "string"
+        },
         "startLevel": {
           "type": "integer"
         },
@@ -2960,9 +3039,6 @@ func init() {
         },
         "period": {
           "$ref": "#/definitions/Period"
-        },
-        "periodType": {
-          "type": "string"
         },
         "proposal": {
           "$ref": "#/definitions/Proposal"
@@ -2988,6 +3064,26 @@ func init() {
         },
         "period": {
           "type": "integer"
+        },
+        "proposalFile": {
+          "type": "string"
+        },
+        "proposer": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "pkh": {
+              "type": "string"
+            }
+          }
+        },
+        "shortDescription": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
         },
         "votesCasted": {
           "type": "integer"
@@ -3020,6 +3116,26 @@ func init() {
         "timestamp": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "Protocol": {
+      "required": [
+        "hash",
+        "startBlock",
+        "endBlock"
+      ],
+      "properties": {
+        "endBlock": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "startBlock": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -3110,6 +3226,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/BallotVoter"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "404": {
@@ -3163,6 +3285,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/NonVoter"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
@@ -3292,6 +3420,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/ProposalVoter"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "404": {
@@ -3300,7 +3434,7 @@ func init() {
         }
       }
     },
-    "/v2/data/{network}/proposals/{id}": {
+    "/v2/data/{network}/proposals": {
       "get": {
         "produces": [
           "application/json"
@@ -3312,15 +3446,14 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "name": "id",
+            "name": "network",
             "in": "path",
             "required": true
           },
           {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
+            "type": "integer",
+            "name": "period_id",
+            "in": "query"
           },
           {
             "maximum": 20,
@@ -3345,6 +3478,60 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Proposal"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/protocols": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProtocolsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for protocols",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Protocol"
               }
             },
             "headers": {
@@ -5879,6 +6066,9 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "ballot": {
+          "type": "string"
+        },
         "blockHash": {
           "type": "string"
         },
@@ -5947,6 +6137,9 @@ func init() {
         "pkh": {
           "type": "string"
         },
+        "proposal": {
+          "type": "string"
+        },
         "publicKey": {
           "type": "string"
         },
@@ -6003,6 +6196,9 @@ func init() {
         "id": {
           "type": "integer"
         },
+        "periodType": {
+          "type": "string"
+        },
         "startLevel": {
           "type": "integer"
         },
@@ -6019,9 +6215,6 @@ func init() {
         },
         "period": {
           "$ref": "#/definitions/Period"
-        },
-        "periodType": {
-          "type": "string"
         },
         "proposal": {
           "$ref": "#/definitions/Proposal"
@@ -6047,6 +6240,26 @@ func init() {
         },
         "period": {
           "type": "integer"
+        },
+        "proposalFile": {
+          "type": "string"
+        },
+        "proposer": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "pkh": {
+              "type": "string"
+            }
+          }
+        },
+        "shortDescription": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
         },
         "votesCasted": {
           "type": "integer"
@@ -6079,6 +6292,26 @@ func init() {
         "timestamp": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "Protocol": {
+      "required": [
+        "hash",
+        "startBlock",
+        "endBlock"
+      ],
+      "properties": {
+        "endBlock": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "startBlock": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

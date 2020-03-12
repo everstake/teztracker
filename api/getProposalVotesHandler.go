@@ -33,11 +33,11 @@ func (h *getProposalVotesHandler) Handle(params vt.GetProposalVotesListParams) m
 		return vt.NewGetProposalsByPeriodIDNotFound()
 	}
 
-	votes, _, err := service.GetProposalVoters(id, limiter)
+	votes, count, err := service.GetProposalVoters(id, limiter)
 	if err != nil {
 		logrus.Errorf("failed to get proposal voters: %s", err.Error())
 		return vt.NewGetProposalsByPeriodIDNotFound()
 	}
 
-	return vt.NewGetProposalVotesListOK().WithPayload(render.ProposalVoters(votes))
+	return vt.NewGetProposalVotesListOK().WithPayload(render.ProposalVoters(votes)).WithXTotalCount(count)
 }
