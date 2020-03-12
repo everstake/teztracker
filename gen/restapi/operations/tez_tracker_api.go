@@ -117,6 +117,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		VotingGetProposalsByPeriodIDHandler: voting.GetProposalsByPeriodIDHandlerFunc(func(params voting.GetProposalsByPeriodIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation VotingGetProposalsByPeriodID has not yet been implemented")
 		}),
+		VotingGetProtocolsListHandler: voting.GetProtocolsListHandlerFunc(func(params voting.GetProtocolsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation VotingGetProtocolsList has not yet been implemented")
+		}),
 		GetSnapshotsHandler: GetSnapshotsHandlerFunc(func(params GetSnapshotsParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetSnapshots has not yet been implemented")
 		}),
@@ -199,6 +202,8 @@ type TezTrackerAPI struct {
 	VotingGetProposalVotesListHandler voting.GetProposalVotesListHandler
 	// VotingGetProposalsByPeriodIDHandler sets the operation handler for the get proposals by period ID operation
 	VotingGetProposalsByPeriodIDHandler voting.GetProposalsByPeriodIDHandler
+	// VotingGetProtocolsListHandler sets the operation handler for the get protocols list operation
+	VotingGetProtocolsListHandler voting.GetProtocolsListHandler
 	// GetSnapshotsHandler sets the operation handler for the get snapshots operation
 	GetSnapshotsHandler GetSnapshotsHandler
 
@@ -358,6 +363,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.VotingGetProposalsByPeriodIDHandler == nil {
 		unregistered = append(unregistered, "voting.GetProposalsByPeriodIDHandler")
+	}
+
+	if o.VotingGetProtocolsListHandler == nil {
+		unregistered = append(unregistered, "voting.GetProtocolsListHandler")
 	}
 
 	if o.GetSnapshotsHandler == nil {
@@ -581,6 +590,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{network}/proposals"] = voting.NewGetProposalsByPeriodID(o.context, o.VotingGetProposalsByPeriodIDHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/protocols"] = voting.NewGetProtocolsList(o.context, o.VotingGetProtocolsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

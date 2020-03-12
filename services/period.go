@@ -188,6 +188,15 @@ func (t *TezTracker) GetBallotVoters(id int64, limits Limiter) (votes []models.P
 	return votes, count, nil
 }
 
+func (t *TezTracker) GetProtocolsList(limits Limiter) (protocols []models.Protocol, count int64, err error) {
+	protocols, err = t.repoProvider.GetVotingPeriod().ProtocolsList(limits.Limit(), limits.Offset())
+	if err != nil {
+		return protocols, 0, err
+	}
+
+	return protocols, count, nil
+}
+
 func (t *TezTracker) GetPeriodNonVoters(id int64, limits Limiter) (proposals []models.Voter, count int64, err error) {
 	lastBlock, err := t.repoProvider.GetBlock().Last()
 	if err != nil {

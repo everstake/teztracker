@@ -61,3 +61,19 @@ func NonVoter(v models.Voter) *genModels.NonVoter {
 		Rolls: v.Rolls,
 	}
 }
+
+func Protocols(pl []models.Protocol) []*genModels.Protocol {
+	protocols := make([]*genModels.Protocol, len(pl))
+	for i := range pl {
+		protocols[i] = Protocol(pl[i])
+	}
+	return protocols
+}
+
+func Protocol(p models.Protocol) *genModels.Protocol {
+	return &genModels.Protocol{
+		Hash:       p.Hash,
+		StartBlock: p.StartBlock,
+		EndBlock:   p.EndBlock,
+	}
+}

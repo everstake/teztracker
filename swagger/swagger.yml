@@ -1490,10 +1490,6 @@ paths:
         - application/json
       parameters:
         - in: path
-          name: id
-          required: true
-          type: string
-        - in: path
           name: network
           required: true
           type: string

@@ -23,7 +23,7 @@ type (
 		VotersCount(id int64, kind string) (count int64, err error)
 		PeriodNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error)
 		PeriodNonVotersCount(id, blockLevel int64) (count int64, err error)
-		ProtocolsList(limit uint, offset uint) (models.Protocol, error)
+		ProtocolsList(limit uint, offset uint) ([]models.Protocol, error)
 	}
 )
 
@@ -183,7 +183,7 @@ func (r *Repository) ProposalInfo(proposal string) (proposalInfo models.Proposal
 	return proposalInfo, nil
 }
 
-func (r *Repository) ProtocolsList(limit uint, offset uint) (protocolsList models.Protocol, err error) {
+func (r *Repository) ProtocolsList(limit uint, offset uint) (protocolsList []models.Protocol, err error) {
 	err = r.db.Select("protocol as hash, min(level) as start_block, max(level) as end_block").
 		Table("tezos.blocks").
 		Group("protocol").

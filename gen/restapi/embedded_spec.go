@@ -333,6 +333,59 @@ func init() {
         }
       }
     },
+    "/v2/data/{network}/protocols": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProtocolsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for protocols",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Protocol"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts": {
       "get": {
         "produces": [
@@ -2983,6 +3036,21 @@ func init() {
         }
       }
     },
+    "Protocol": {
+      "properties": {
+        "endBlock": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "startBlock": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -3319,6 +3387,60 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Proposal"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/protocols": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Voting"
+        ],
+        "operationId": "getProtocolsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for protocols",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Protocol"
               }
             },
             "headers": {
@@ -5995,6 +6117,21 @@ func init() {
         "timestamp": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "Protocol": {
+      "properties": {
+        "endBlock": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "startBlock": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
