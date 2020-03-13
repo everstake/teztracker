@@ -40,6 +40,9 @@ type AccountsRow struct {
 	// Required: true
 	Counter *int64 `json:"counter"`
 
+	// created at
+	CreatedAt int64 `json:"createdAt,omitempty"`
+
 	// delegate setable
 	// Required: true
 	DelegateSetable *bool `json:"delegateSetable"`

@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/guregu/null"
+	"time"
 )
 
 type Account struct {
@@ -21,6 +22,7 @@ type Account struct {
 	DelegatedContracts []*DelegatedContract  `json:"delegated_contracts"` // This line is infered from other tables.
 	BakerInfo          *Baker                `json:"baker_info"`
 	IsBaker            bool                  `json:"is_baker"`
+	Asof               time.Time             `json:"asof"`
 }
 
 type AccountType int

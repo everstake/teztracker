@@ -1605,6 +1605,9 @@ definitions:
         type: string
       bakerInfo:
         $ref: '#/definitions/BakerInfo'
+      createdAt:
+        format: int64
+        type: integer
     required:
       - balance
       - accountId

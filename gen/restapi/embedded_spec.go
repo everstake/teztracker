@@ -2305,6 +2305,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
         "delegateSetable": {
           "type": "boolean"
         },
@@ -5367,6 +5371,10 @@ func init() {
           "format": "int64"
         },
         "counter": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "createdAt": {
           "type": "integer",
           "format": "int64"
         },
