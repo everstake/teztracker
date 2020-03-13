@@ -8,7 +8,9 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // BakerInfo baker info
@@ -43,7 +45,8 @@ type BakerInfo struct {
 	EvaluatedBalance int64 `json:"evaluatedBalance,omitempty"`
 
 	// fee
-	Fee int64 `json:"fee,omitempty"`
+	// Required: true
+	Fee *int64 `json:"fee"`
 
 	// frozen balance
 	FrozenBalance int64 `json:"frozenBalance,omitempty"`
@@ -57,12 +60,33 @@ type BakerInfo struct {
 	// staking balance
 	StakingBalance int64 `json:"stakingBalance,omitempty"`
 
+	// staking capacity
+	StakingCapacity int64 `json:"stakingCapacity,omitempty"`
+
 	// total paid fees
 	TotalPaidFees int64 `json:"totalPaidFees,omitempty"`
 }
 
 // Validate validates this baker info
 func (m *BakerInfo) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateFee(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BakerInfo) validateFee(formats strfmt.Registry) error {
+
+	if err := validate.Required("fee", "body", m.Fee); err != nil {
+		return err
+	}
+
 	return nil
 }
 
