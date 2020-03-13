@@ -80,7 +80,7 @@ func (t *TezTracker) GetCurrentCycle() (int64, error) {
 }
 
 func getFirstPreservedBlock(currentCycle, blocksInCycle int64) (fpb int64) {
-	fpc := currentCycle //- PreservedCycles
+	fpc := currentCycle - PreservedCycles
 
 	if fpc > 0 {
 		fpb = fpc*blocksInCycle + 1
