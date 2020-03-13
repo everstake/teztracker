@@ -1672,6 +1672,11 @@ definitions:
       totalPaidFees:
         format: int64
         type: integer
+      stakingCapacity:
+        format: int64
+        type: integer
+    required:
+      - fee
     type: object
   BlocksRow:
     properties:

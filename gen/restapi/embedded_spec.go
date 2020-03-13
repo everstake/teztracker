@@ -2327,6 +2327,9 @@ func init() {
     },
     "BakerInfo": {
       "type": "object",
+      "required": [
+        "fee"
+      ],
       "properties": {
         "activeDelegators": {
           "type": "integer",
@@ -2380,6 +2383,10 @@ func init() {
           "format": "int64"
         },
         "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stakingCapacity": {
           "type": "integer",
           "format": "int64"
         },
@@ -5385,6 +5392,9 @@ func init() {
     },
     "BakerInfo": {
       "type": "object",
+      "required": [
+        "fee"
+      ],
       "properties": {
         "activeDelegators": {
           "type": "integer",
@@ -5438,6 +5448,10 @@ func init() {
           "format": "int64"
         },
         "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stakingCapacity": {
           "type": "integer",
           "format": "int64"
         },
