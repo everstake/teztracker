@@ -22,16 +22,17 @@ func (h *getPeriodInfoHandler) Handle(params voting.GetPeriodParams) middleware.
 	}
 	db, err := h.provider.GetDb(net)
 	if err != nil {
-		return voting.NewGetPeriodNotFound()
+		return voting.NewGetPeriodBadRequest()
 	}
 
 	service := services.New(repos.New(db), net)
 	var id *int64
 	if params.ID != nil {
 		parseID, err := strconv.ParseInt(*params.ID, 10, 64)
-		if err == nil {
-			id = &parseID
+		if err != nil {
+			return voting.NewGetPeriodBadRequest()
 		}
+		id = &parseID
 	}
 
 	period, err := service.VotingPeriodStats(id)
