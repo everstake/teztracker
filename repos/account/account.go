@@ -29,10 +29,12 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb(filter models.AccountFilter) *gorm.DB {
-	db := r.db.Model(&models.Account{})
+	db := r.db.Select("accounts.*, asof").Model(&models.Account{}).
+		Joins("natural join tezos.account_create_time_view")
 	if filter.After != "" {
 		db = db.Where("account_id > ?", filter.After)
 	}
+
 	if filter.Type == models.AccountTypeAccount {
 		db = db.Where("account_id like 'tz%'")
 	} else if filter.Type == models.AccountTypeContract {
@@ -65,8 +67,9 @@ func (r *Repository) Count(filter models.Account) (count int64, err error) {
 
 // Filter returns a list of accounts that sutisfies the filter.
 func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error) {
-	err = r.db.Model(&filter).
+	err = r.db.Select("accounts.*, asof").Model(&filter).
 		Where(&filter).
+		Joins("natural join tezos.account_create_time_view").
 		Order("account_id asc").
 		Limit(limit).
 		Offset(offset).
@@ -76,7 +79,7 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 
 // Find looks up for an account with filter.
 func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
-	if res := r.db.Model(&filter).Where(&filter).Find(&acc); res.Error != nil {
+	if res := r.db.Select("accounts.*, asof").Model(&filter).Joins("natural join tezos.account_create_time_view").Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
 		}
