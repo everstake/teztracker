@@ -1676,7 +1676,20 @@ definitions:
         format: int64
         type: integer
     required:
+      - stakingBalance
+      - evaluatedBalance
+      - frozenBalance
+      - endorsementDeposits
+      - bakingDeposits
+      - endorsementRewards
+      - bakingRewards
+      - activeDelegators
+      - blocks
+      - endorsements
+      - rolls
+      - bakingSince
       - fee
+      - stakingCapacity
     type: object
   BlocksRow:
     properties:

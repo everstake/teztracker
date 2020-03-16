@@ -2328,7 +2328,20 @@ func init() {
     "BakerInfo": {
       "type": "object",
       "required": [
-        "fee"
+        "stakingBalance",
+        "evaluatedBalance",
+        "frozenBalance",
+        "endorsementDeposits",
+        "bakingDeposits",
+        "endorsementRewards",
+        "bakingRewards",
+        "activeDelegators",
+        "blocks",
+        "endorsements",
+        "rolls",
+        "bakingSince",
+        "fee",
+        "stakingCapacity"
       ],
       "properties": {
         "activeDelegators": {
@@ -5393,7 +5406,20 @@ func init() {
     "BakerInfo": {
       "type": "object",
       "required": [
-        "fee"
+        "stakingBalance",
+        "evaluatedBalance",
+        "frozenBalance",
+        "endorsementDeposits",
+        "bakingDeposits",
+        "endorsementRewards",
+        "bakingRewards",
+        "activeDelegators",
+        "blocks",
+        "endorsements",
+        "rolls",
+        "bakingSince",
+        "fee",
+        "stakingCapacity"
       ],
       "properties": {
         "activeDelegators": {
