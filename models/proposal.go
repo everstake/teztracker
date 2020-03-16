@@ -1,5 +1,6 @@
 package models
 
+//Unsupported
 type Proposal struct {
 	ProtocolHash string `json:"protocol_hash"`
 	BlockID      string `json:"block_id"`

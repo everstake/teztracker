@@ -23,6 +23,9 @@ type OperationsRow struct {
 	// balance
 	Balance int64 `json:"balance,omitempty"`
 
+	// ballot
+	Ballot string `json:"ballot,omitempty"`
+
 	// block hash
 	// Required: true
 	BlockHash *string `json:"blockHash"`
@@ -87,6 +90,9 @@ type OperationsRow struct {
 
 	// pkh
 	Pkh string `json:"pkh,omitempty"`
+
+	// proposal
+	Proposal string `json:"proposal,omitempty"`
 
 	// public key
 	PublicKey string `json:"publicKey,omitempty"`

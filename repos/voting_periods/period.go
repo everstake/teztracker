@@ -16,10 +16,14 @@ type (
 		Info(id int64) (models.PeriodStats, error)
 		GetCurrentPeriodId() (int64, error)
 		BallotsList(id int64) ([]models.PeriodBallot, error)
-		ProposalsList(id int64, limit uint) ([]models.VotingProposal, error)
+		ProposalInfo(proposal string) (models.ProposalInfo, error)
+		ProposalsList(id *int64, limit uint) ([]models.VotingProposal, error)
 		StatsByKind(periodType string) ([]models.PeriodStats, error)
 		VotersList(id int64, kind string, limit uint, offset uint) (periodProposals []models.ProposalVoter, err error)
-		ProposalNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error)
+		VotersCount(id int64, kind string) (count int64, err error)
+		PeriodNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error)
+		PeriodNonVotersCount(id, blockLevel int64) (count int64, err error)
+		ProtocolsList(limit uint, offset uint) ([]models.Protocol, error)
 	}
 )
 
@@ -92,10 +96,17 @@ func (r *Repository) BallotsList(id int64) (periodBallots []models.PeriodBallot,
 	return periodBallots, nil
 }
 
-func (r *Repository) ProposalsList(id int64, limit uint) (periodProposals []models.VotingProposal, err error) {
-	err = r.db.Select("*").Table("tezos.proposal_stat_view").
-		Where("period = ? and kind = 'proposals'", id).
-		Limit(limit).Scan(&periodProposals).Error
+func (r *Repository) ProposalsList(id *int64, limit uint) (periodProposals []models.VotingProposal, err error) {
+	db := r.db.Select("*, address as pkh").Table("tezos.proposal_stat_view").
+		Joins("left join tezos.voting_proposal on proposal = hash").
+		Joins("left join tezos.baker_alias on proposer = address").
+		Where("kind = 'proposals'")
+
+	if id != nil {
+		db = db.Where("period = ?", &id)
+	}
+
+	err = db.Limit(limit).Scan(&periodProposals).Error
 	if err != nil {
 		return periodProposals, err
 	}
@@ -119,8 +130,20 @@ func (r *Repository) VotersList(id int64, kind string, limit uint, offset uint) 
 	return periodProposals, nil
 }
 
-func (r *Repository) ProposalNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error) {
-	err = r.db.Select("pkh,r.rolls, baker_name as alias").
+func (r *Repository) VotersCount(id int64, kind string) (count int64, err error) {
+	err = r.db.Table("tezos.voting_view as v").
+		Where("v.period = ? and v.kind = ?", id, kind).
+		Count(&count).
+		Error
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (r *Repository) PeriodNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error) {
+	err = r.db.Select("pkh,r.rolls,baker_name as alias").
 		Table("tezos.rolls as r").
 		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
 		Joins("left join tezos.public_bakers on pkh = delegate").
@@ -134,4 +157,43 @@ func (r *Repository) ProposalNonVotersList(id, blockLevel int64, limit uint, off
 	}
 
 	return periodProposals, nil
+}
+
+func (r *Repository) PeriodNonVotersCount(id, blockLevel int64) (count int64, err error) {
+	err = r.db.
+		Table("tezos.rolls as r").
+		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
+		Where("r.block_level = ? and period is null", blockLevel).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (r *Repository) ProposalInfo(proposal string) (proposalInfo models.ProposalInfo, err error) {
+	err = r.db.Select("*, address as pkh").
+		Table("tezos.voting_proposal as vp").
+		Joins("left join tezos.baker_alias on proposer = address").
+		Where("hash = ? ", proposal).Find(&proposalInfo).Error
+	if err != nil {
+		return proposalInfo, err
+	}
+
+	return proposalInfo, nil
+}
+
+func (r *Repository) ProtocolsList(limit uint, offset uint) (protocolsList []models.Protocol, err error) {
+	err = r.db.Select("protocol as hash, min(level) as start_block, max(level) as end_block").
+		Table("tezos.blocks").
+		Group("protocol").
+		Order("start_block asc").
+		Limit(limit).
+		Offset(offset).
+		Scan(&protocolsList).Error
+	if err != nil {
+		return protocolsList, err
+	}
+
+	return protocolsList, nil
 }

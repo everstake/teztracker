@@ -53,7 +53,7 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err error) {
-	if res := r.db.Select("tezos.baker_view.*,baker_name as name").Table(bakerMaterializedView).
+	if res := r.db.Select("tezos.baker_view.*, baker_name as name, (10000 - split)/100 as fee").Table(bakerMaterializedView).
 		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
 		Where("account_id = ?", accountID).
 		Order("staking_balance desc").
@@ -81,10 +81,6 @@ func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error)
 	}
 
 	return bakers, err
-}
-
-func (r *Repository) bakerStatsQ() {
-
 }
 
 // BlocksCountBakedBy returns a slice of block counters with the number of blocks baked by each baker among ids.

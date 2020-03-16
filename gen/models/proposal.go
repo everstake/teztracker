@@ -8,6 +8,7 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
@@ -24,6 +25,18 @@ type Proposal struct {
 	// period
 	Period int64 `json:"period,omitempty"`
 
+	// proposal file
+	ProposalFile string `json:"proposalFile,omitempty"`
+
+	// proposer
+	Proposer *ProposalProposer `json:"proposer,omitempty"`
+
+	// short description
+	ShortDescription string `json:"shortDescription,omitempty"`
+
+	// title
+	Title string `json:"title,omitempty"`
+
 	// votes casted
 	VotesCasted int64 `json:"votesCasted,omitempty"`
 
@@ -33,6 +46,33 @@ type Proposal struct {
 
 // Validate validates this proposal
 func (m *Proposal) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateProposer(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Proposal) validateProposer(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Proposer) { // not required
+		return nil
+	}
+
+	if m.Proposer != nil {
+		if err := m.Proposer.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("proposer")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -47,6 +87,40 @@ func (m *Proposal) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *Proposal) UnmarshalBinary(b []byte) error {
 	var res Proposal
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ProposalProposer proposal proposer
+// swagger:model ProposalProposer
+type ProposalProposer struct {
+
+	// name
+	Name string `json:"name,omitempty"`
+
+	// pkh
+	Pkh string `json:"pkh,omitempty"`
+}
+
+// Validate validates this proposal proposer
+func (m *ProposalProposer) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ProposalProposer) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ProposalProposer) UnmarshalBinary(b []byte) error {
+	var res ProposalProposer
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

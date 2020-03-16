@@ -15,10 +15,16 @@ func Proposals(vp []models.VotingProposal) []*genModels.Proposal {
 
 func Proposal(p models.VotingProposal) *genModels.Proposal {
 	return &genModels.Proposal{
-		Hash:        p.Proposal,
-		MinQuorum:   0,
-		Period:      p.Period,
-		VotesCasted: p.Rolls,
-		VotesNum:    p.Bakers,
+		Hash:         p.Proposal,
+		Period:       p.Period,
+		VotesCasted:  p.Rolls,
+		VotesNum:     p.Bakers,
+		ProposalFile: p.ProposalFile,
+		Proposer: &genModels.ProposalProposer{
+			Name: p.Name,
+			Pkh:  p.Pkh,
+		},
+		ShortDescription: p.ShortDescription,
+		Title:            p.Title,
 	}
 }

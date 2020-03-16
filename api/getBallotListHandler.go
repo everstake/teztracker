@@ -32,10 +32,10 @@ func (h *getBallotsHandler) Handle(params vt.GetBallotsByPeriodIDParams) middlew
 		return vt.NewGetBallotsByPeriodIDNotFound()
 	}
 
-	votes, _, err := service.GetBallotVoters(id, limiter)
+	votes, count, err := service.GetBallotVoters(id, limiter)
 	if err != nil {
 		return vt.NewGetBallotsByPeriodIDNotFound()
 	}
 
-	return vt.NewGetBallotsByPeriodIDOK().WithPayload(render.BallotVoters(votes))
+	return vt.NewGetBallotsByPeriodIDOK().WithPayload(render.BallotVoters(votes)).WithXTotalCount(count)
 }
