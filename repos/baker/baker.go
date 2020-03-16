@@ -14,13 +14,19 @@ type (
 	}
 
 	Repo interface {
-		Find(accountID string) (bool, models.Delegate, error)
+		Find(accountID string) (bool, models.Baker, error)
 		List(limit, offset uint) ([]models.Baker, error)
 		Count() (int64, error)
 		BlocksCountBakedBy(ids []string, startingLevel int64) (counter []BakerCounter, err error)
 		EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error)
 		TotalStakingBalance() (int64, error)
 		RefreshView() error
+
+		//New
+		PublicBakersCount() (int64, error)
+		PublicBakersList(limit, offset uint) (bakers []models.Baker, err error)
+		BakerRegistryList() ([]models.BakerRegistry, error)
+		SavePublicBaker(models.BakerRegistry) error
 	}
 
 	BakerCounter struct {
@@ -46,23 +52,26 @@ func New(db *gorm.DB) *Repository {
 	}
 }
 
-func (r *Repository) Find(accountID string) (found bool, delegate models.Delegate, err error) {
-	filter := models.Delegate{Pkh: accountID}
-	if res := r.db.Model(&filter).Where(&filter).Find(&delegate); res.Error != nil {
+func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err error) {
+	if res := r.db.Select("tezos.baker_view.*, baker_name as name, (10000 - split)/100 as fee").Table(bakerMaterializedView).
+		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
+		Where("account_id = ?", accountID).
+		Order("staking_balance desc").
+		Find(&baker); res.Error != nil {
 		if res.RecordNotFound() {
-			return false, delegate, nil
+			return false, baker, nil
 		}
-		return false, delegate, res.Error
+		return false, baker, res.Error
 	}
-	return true, delegate, nil
+	return true, baker, nil
 }
 
 // List returns a list of bakers(accounts which have at least 1 endorsement operation) ordered by their staking balance.
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
 func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error) {
-	err = r.db.Select("tezos.baker_view.*, name").Table(bakerMaterializedView).
-		Joins("left join tezos.baker_alias on baker_view.account_id = baker_alias.address").
+	err = r.db.Select("tezos.baker_view.*,baker_name as name").Table(bakerMaterializedView).
+		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
 		Order("staking_balance desc").
 		Limit(limit).
 		Offset(offset).
@@ -81,6 +90,7 @@ func (r *Repository) BlocksCountBakedBy(ids []string, startingLevel int64) (coun
 	if startingLevel > 0 {
 		db = db.Where("level >= ?", startingLevel)
 	}
+
 	err = db.Select("baker, count(1) count").
 		Group("baker").Scan(&counter).Error
 	if err != nil {
@@ -135,5 +145,51 @@ func (r *Repository) RefreshView() (err error) {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (r *Repository) BakerRegistryList() (bakers []models.BakerRegistry, err error) {
+	err = r.db.Model(&models.BakerRegistry{}).Scan(&bakers).Error
+	if err != nil {
+		return bakers, err
+	}
+
+	return bakers, nil
+}
+
+// Count counts a number of bakers sutisfying the filter.
+func (r *Repository) PublicBakersCount() (count int64, err error) {
+	err = r.db.Table("tezos.public_bakers").Where("is_hidden IS false").Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *Repository) PublicBakersList(limit, offset uint) (bakers []models.Baker, err error) {
+	err = r.db.Select("pb.baker_name as name,delegate as account_id, bw.*, (10000 - split)/100 as fee ").Table("tezos.public_bakers as pb").
+		Joins(fmt.Sprintf("left join %s as bw on bw.account_id = pb.delegate", bakerMaterializedView)).
+		Where("is_hidden IS false").
+		Order("COALESCE(staking_balance,0) desc").
+		Limit(limit).
+		Offset(offset).
+		Find(&bakers).Error
+	if err != nil {
+		return nil, err
+	}
+	return bakers, nil
+}
+
+func (r *Repository) SavePublicBaker(baker models.BakerRegistry) (err error) {
+	if r.db.First(&models.BakerRegistry{}, "delegate = ?", baker.Delegate).RecordNotFound() {
+		err = r.db.Create(&baker).Error
+		return err
+	}
+
+	err = r.db.Save(baker).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

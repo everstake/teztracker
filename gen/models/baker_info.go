@@ -8,34 +8,267 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // BakerInfo baker info
 // swagger:model BakerInfo
 type BakerInfo struct {
 
+	// active delegators
+	// Required: true
+	ActiveDelegators *int64 `json:"activeDelegators"`
+
 	// baking deposits
-	BakingDeposits int64 `json:"bakingDeposits,omitempty"`
+	// Required: true
+	BakingDeposits *int64 `json:"bakingDeposits"`
 
 	// baking rewards
-	BakingRewards int64 `json:"bakingRewards,omitempty"`
+	// Required: true
+	BakingRewards *int64 `json:"bakingRewards"`
+
+	// baking since
+	// Required: true
+	BakingSince *int64 `json:"bakingSince"`
+
+	// blocks
+	// Required: true
+	Blocks *int64 `json:"blocks"`
 
 	// endorsement deposits
-	EndorsementDeposits int64 `json:"endorsementDeposits,omitempty"`
+	// Required: true
+	EndorsementDeposits *int64 `json:"endorsementDeposits"`
 
 	// endorsement rewards
-	EndorsementRewards int64 `json:"endorsementRewards,omitempty"`
+	// Required: true
+	EndorsementRewards *int64 `json:"endorsementRewards"`
+
+	// endorsements
+	// Required: true
+	Endorsements *int64 `json:"endorsements"`
 
 	// evaluated balance
-	EvaluatedBalance int64 `json:"evaluatedBalance,omitempty"`
+	// Required: true
+	EvaluatedBalance *int64 `json:"evaluatedBalance"`
+
+	// fee
+	// Required: true
+	Fee *int64 `json:"fee"`
+
+	// frozen balance
+	// Required: true
+	FrozenBalance *int64 `json:"frozenBalance"`
+
+	// name
+	Name string `json:"name,omitempty"`
+
+	// rolls
+	// Required: true
+	Rolls *int64 `json:"rolls"`
 
 	// staking balance
-	StakingBalance int64 `json:"stakingBalance,omitempty"`
+	// Required: true
+	StakingBalance *int64 `json:"stakingBalance"`
+
+	// staking capacity
+	// Required: true
+	StakingCapacity *int64 `json:"stakingCapacity"`
+
+	// total paid fees
+	TotalPaidFees int64 `json:"totalPaidFees,omitempty"`
 }
 
 // Validate validates this baker info
 func (m *BakerInfo) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateActiveDelegators(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateBakingDeposits(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateBakingRewards(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateBakingSince(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateBlocks(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEndorsementDeposits(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEndorsementRewards(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEndorsements(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEvaluatedBalance(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFee(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFrozenBalance(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRolls(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStakingBalance(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStakingCapacity(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BakerInfo) validateActiveDelegators(formats strfmt.Registry) error {
+
+	if err := validate.Required("activeDelegators", "body", m.ActiveDelegators); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateBakingDeposits(formats strfmt.Registry) error {
+
+	if err := validate.Required("bakingDeposits", "body", m.BakingDeposits); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateBakingRewards(formats strfmt.Registry) error {
+
+	if err := validate.Required("bakingRewards", "body", m.BakingRewards); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateBakingSince(formats strfmt.Registry) error {
+
+	if err := validate.Required("bakingSince", "body", m.BakingSince); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateBlocks(formats strfmt.Registry) error {
+
+	if err := validate.Required("blocks", "body", m.Blocks); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateEndorsementDeposits(formats strfmt.Registry) error {
+
+	if err := validate.Required("endorsementDeposits", "body", m.EndorsementDeposits); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateEndorsementRewards(formats strfmt.Registry) error {
+
+	if err := validate.Required("endorsementRewards", "body", m.EndorsementRewards); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateEndorsements(formats strfmt.Registry) error {
+
+	if err := validate.Required("endorsements", "body", m.Endorsements); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateEvaluatedBalance(formats strfmt.Registry) error {
+
+	if err := validate.Required("evaluatedBalance", "body", m.EvaluatedBalance); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateFee(formats strfmt.Registry) error {
+
+	if err := validate.Required("fee", "body", m.Fee); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateFrozenBalance(formats strfmt.Registry) error {
+
+	if err := validate.Required("frozenBalance", "body", m.FrozenBalance); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateRolls(formats strfmt.Registry) error {
+
+	if err := validate.Required("rolls", "body", m.Rolls); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateStakingBalance(formats strfmt.Registry) error {
+
+	if err := validate.Required("stakingBalance", "body", m.StakingBalance); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BakerInfo) validateStakingCapacity(formats strfmt.Registry) error {
+
+	if err := validate.Required("stakingCapacity", "body", m.StakingCapacity); err != nil {
+		return err
+	}
+
 	return nil
 }
 

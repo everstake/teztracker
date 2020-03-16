@@ -14,6 +14,7 @@ type (
 
 	Repo interface {
 		List(limit, offset uint) (count int64, snapshots []models.Snapshot, err error)
+		Find(id int64) (found bool, snapshot models.Snapshot, err error)
 		RollsAndBakersInBlock(block int64) (int64, int64, error)
 		Create(snapshot models.Snapshot) error
 		CreateBulk(snapshots []models.Snapshot) error
@@ -41,11 +42,26 @@ func (r *Repository) List(limit, offset uint) (count int64, snapshots []models.S
 	if err := db.Count(&count).Error; err != nil {
 		return 0, nil, err
 	}
+
 	err = db.Order("snp_cycle desc").
 		Limit(limit).
 		Offset(offset).
 		Find(&snapshots).Error
 	return count, snapshots, err
+}
+
+func (r *Repository) Find(id int64) (found bool, snapshot models.Snapshot, err error) {
+	db := r.getDb()
+
+	if res := db.Where("snp_cycle = ?", id).Find(&snapshot); res.Error != nil {
+		if res.RecordNotFound() {
+			return false, snapshot, nil
+		}
+
+		return false, snapshot, res.Error
+	}
+
+	return true, snapshot, nil
 }
 
 // RollsInBlock returns the total number of rolls in a block.
@@ -71,5 +87,6 @@ func (r *Repository) CreateBulk(snapshots []models.Snapshot) error {
 	for i := range snapshots {
 		insertRecords[i] = snapshots[i]
 	}
+
 	return gormbulk.BulkInsert(r.db, insertRecords, 2000)
 }

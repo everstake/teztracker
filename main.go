@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"strings"
 
@@ -17,9 +18,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var cronDisableFlag = flag.Bool("crondisable", false, "disable cron for api tests")
+
 func main() {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stdout)
+	flag.Parse()
+
 	cfg := config.Parse()
 
 	networks := make(map[models.Network]config.NetworkConfig)
@@ -63,27 +68,29 @@ func main() {
 			log.Fatalln(err)
 		}
 	}()
-	cron := gron.New()
-	for k := range networks {
-		db, err := provider.GetDb(k)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		rpc, err := provider.GetRpcConfig(k)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		// Using models.NetworkMain instead of k due to stupid nodes configuration for babylonnet.
-		// todo: if something is not workign for testnets, check this one.
-		services.AddToCron(cron, cfg, db, rpc, models.NetworkMain, k == models.NetworkBabylon || k == models.NetworkCarthage)
-	}
 
-	cron.Start()
-	defer cron.Stop()
+	if !*cronDisableFlag {
+		cron := gron.New()
+		for k := range networks {
+			db, err := provider.GetDb(k)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			rpc, err := provider.GetRpcConfig(k)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			// Using models.NetworkMain instead of k due to stupid nodes configuration for babylonnet.
+			// todo: if something is not workign for testnets, check this one.
+			services.AddToCron(cron, cfg, db, rpc, models.NetworkMain, k == models.NetworkBabylon || k == models.NetworkCarthage)
+		}
+
+		cron.Start()
+		defer cron.Stop()
+	}
 
 	server.Port = cfg.Port
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)
 	}
-
 }

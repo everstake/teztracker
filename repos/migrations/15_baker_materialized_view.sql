@@ -7,7 +7,7 @@ select delegates.pkh as baker, staking_balance, en.count as endorsements from te
   inner join (select baker, SUM(count) as count from tezos.endorsements_view group by baker) as en ON delegates.pkh = en.baker
 WHERE deactivated=false;
 
-CREATE MATERIALIZED VIEW tezos.baker_view_new AS
+CREATE MATERIALIZED VIEW tezos.baker_view AS
 select
        case WHEN bcvbaker IS NOT NULL THEN bcvbaker ELSE bevbaker END as account_id, staking_balance, endorsements, blocks
 from (

@@ -115,9 +115,9 @@ func (r *Repository) ProposalsList(id *int64, limit uint) (periodProposals []mod
 }
 
 func (r *Repository) VotersList(id int64, kind string, limit uint, offset uint) (periodProposals []models.ProposalVoter, err error) {
-	err = r.db.Select("v.*, v.source as pkh, operation_group_hash as operation, timestamp, name as alias").Table("tezos.voting_view as v").
+	err = r.db.Select("v.*, v.source as pkh, operation_group_hash as operation, timestamp, baker_name as alias").Table("tezos.voting_view as v").
 		Joins("left join tezos.operations as o on o.block_level = v.block_level and v.source = o.source and v.kind = o.kind").
-		Joins("left join tezos.baker_alias as ba on ba.address = v.source").
+		Joins("left join tezos.public_bakers as pb on pb.delegate = v.source").
 		Where("v.period = ? and v.kind = ?", id, kind).
 		Order(" v.block_level  desc").
 		Limit(limit).
@@ -143,10 +143,10 @@ func (r *Repository) VotersCount(id int64, kind string) (count int64, err error)
 }
 
 func (r *Repository) PeriodNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error) {
-	err = r.db.Select("pkh,r.rolls,name").
+	err = r.db.Select("pkh,r.rolls,baker_name as alias").
 		Table("tezos.rolls as r").
 		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
-		Joins("left join tezos.baker_alias on pkh = address").
+		Joins("left join tezos.public_bakers on pkh = delegate").
 		Where("r.block_level = ? and period is null", blockLevel).
 		Order("r.rolls desc").
 		Limit(limit).

@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // BakersRow bakers row
@@ -18,50 +17,17 @@ import (
 type BakersRow struct {
 
 	// account Id
-	// Required: true
-	AccountID *string `json:"accountId"`
+	AccountID string `json:"accountId,omitempty"`
 
-	// blocks
-	// Required: true
-	Blocks *int64 `json:"blocks"`
-
-	// endorsements
-	// Required: true
-	Endorsements *int64 `json:"endorsements"`
-
-	// fees
-	// Required: true
-	Fees *int64 `json:"fees"`
-
-	// name
-	Name string `json:"name,omitempty"`
-
-	// staking balance
-	// Required: true
-	StakingBalance *int64 `json:"stakingBalance"`
+	// baker info
+	BakerInfo *BakerInfo `json:"bakerInfo,omitempty"`
 }
 
 // Validate validates this bakers row
 func (m *BakersRow) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAccountID(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateBlocks(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateEndorsements(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateFees(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateStakingBalance(formats); err != nil {
+	if err := m.validateBakerInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -71,46 +37,19 @@ func (m *BakersRow) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BakersRow) validateAccountID(formats strfmt.Registry) error {
+func (m *BakersRow) validateBakerInfo(formats strfmt.Registry) error {
 
-	if err := validate.Required("accountId", "body", m.AccountID); err != nil {
-		return err
+	if swag.IsZero(m.BakerInfo) { // not required
+		return nil
 	}
 
-	return nil
-}
-
-func (m *BakersRow) validateBlocks(formats strfmt.Registry) error {
-
-	if err := validate.Required("blocks", "body", m.Blocks); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BakersRow) validateEndorsements(formats strfmt.Registry) error {
-
-	if err := validate.Required("endorsements", "body", m.Endorsements); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BakersRow) validateFees(formats strfmt.Registry) error {
-
-	if err := validate.Required("fees", "body", m.Fees); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BakersRow) validateStakingBalance(formats strfmt.Registry) error {
-
-	if err := validate.Required("stakingBalance", "body", m.StakingBalance); err != nil {
-		return err
+	if m.BakerInfo != nil {
+		if err := m.BakerInfo.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("bakerInfo")
+			}
+			return err
+		}
 	}
 
 	return nil

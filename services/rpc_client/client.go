@@ -2,11 +2,16 @@ package rpc_client
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/everstake/teztracker/services/michelson"
+	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
+	"github.com/everstake/teztracker/services/rpc_client/client/operations"
 	"strconv"
 	"strings"
 	"time"
 
+	script "blockwatch.cc/tzindex/micheline"
 	tzblock "github.com/bullblock-io/go-tezos/v2/block"
 	tzc "github.com/bullblock-io/go-tezos/v2/client"
 	"github.com/everstake/teztracker/models"
@@ -204,4 +209,72 @@ func GetDoubleEndorsementEvidenceLevel(op tzblock.Operations) (int64, error) {
 		}
 	}
 	return 0, fmt.Errorf("not a double endorsement evidence")
+}
+
+//Todo move models somewhere
+//Block parse
+type Parameters struct {
+	Entrypoint string       `json:"entrypoint"`
+	Value      *script.Prim `json:"value"`
+}
+
+type Contents struct {
+	Parameters Parameters `json:"parameters`
+	Kind       string     `json:"kind"`
+}
+
+type Operation struct {
+	Hash     string      `json:"hash"`
+	Contents []*Contents `json:"contents"`
+}
+
+var sc [][]Operation
+
+func (t *Tezos) Operation(ctx context.Context, blockHash, transactionHash string) (op Operation, err error) {
+
+	params := operations.NewGetBlockOperationsParamsWithContext(ctx).WithBlock(blockHash)
+	operations, err := t.client.Operations.GetBlockOperations(params)
+	if err != nil {
+		return op, err
+	}
+
+	for _, cont := range operations.Payload {
+		for _, genOp := range cont {
+			bt, err := json.Marshal(genOp)
+			if err != nil {
+				return op, err
+			}
+
+			err = json.Unmarshal(bt, &op)
+			if err != nil {
+				return op, err
+			}
+
+			if op.Hash == transactionHash {
+				return op, nil
+			}
+
+		}
+	}
+	return op, fmt.Errorf("Operation not found")
+}
+
+func (t *Tezos) Script(ctx context.Context, contractHash string) (bm michelson.BigMap, err error) {
+	params := contracts.NewGetContractScriptParamsWithContext(ctx).WithContract(contractHash)
+	resp, err := t.client.Contracts.GetContractScript(params)
+	if err != nil {
+		return bm, err
+	}
+
+	bytes, err := json.Marshal(resp.Payload)
+	if err != nil {
+		return bm, err
+	}
+
+	err = json.Unmarshal(bytes, &bm)
+	if err != nil {
+		return bm, err
+	}
+
+	return bm, nil
 }

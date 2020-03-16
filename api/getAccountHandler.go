@@ -26,7 +26,6 @@ func (h *getAccountHandler) Handle(params accounts.GetAccountParams) middleware.
 	service := services.New(repos.New(db), net)
 
 	acc, err := service.GetAccount(params.AccountID)
-
 	if err != nil {
 		if err == services.ErrNotFound {
 			return accounts.NewGetAccountNotFound()

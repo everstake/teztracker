@@ -12,10 +12,42 @@ const (
 	BlockReward                = 40 * XTZ
 	EndorsementReward          = 1.25 * XTZ
 	BlockEndorsers             = 32
+	TokensPerRoll              = 8000
+	TotalLocked                = (BlockSecurityDeposit + EndorsementSecurityDeposit*BlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
 	BlockLockEstimate          = BlockReward + BlockSecurityDeposit + BlockEndorsers*(EndorsementReward+EndorsementSecurityDeposit)
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
+func (t *TezTracker) PublicBakerList(limits Limiter) (bakers []models.Baker, count int64, err error) {
+	r := t.repoProvider.GetBaker()
+	count, err = r.PublicBakersCount()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	bakers, err = r.PublicBakersList(limits.Limit(), limits.Offset())
+	if err != nil {
+		return nil, 0, err
+	}
+
+	block, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	//Get last snapshot
+	_, snap, err := t.repoProvider.GetSnapshots().Find(block.MetaCycle - PreservedCycles)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	for i := range bakers {
+		bakers[i].StakingCapacity = t.calcBakerCapacity(bakers[i].Balance, snap.Rolls)
+	}
+
+	return bakers, count, nil
+}
+
 func (t *TezTracker) BakerList(limits Limiter) (bakers []models.Baker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.Count()
@@ -25,6 +57,17 @@ func (t *TezTracker) BakerList(limits Limiter) (bakers []models.Baker, count int
 
 	bakers, err = r.List(limits.Limit(), limits.Offset())
 	return bakers, count, err
+}
+
+//Used BakingBad capacity formula
+func (t *TezTracker) calcBakerCapacity(bakerBalance, totalRolls int64) int64 {
+	bakerBalanceF := float64(bakerBalance)
+	totalRollsF := float64(totalRolls)
+
+	bakerShare := bakerBalanceF / float64(TotalLocked)
+
+	bakerRollsCapacity := totalRollsF * bakerShare
+	return int64(bakerRollsCapacity * float64(TokensPerRoll))
 }
 
 func (t *TezTracker) GetCurrentCycle() (int64, error) {
@@ -45,36 +88,49 @@ func getFirstPreservedBlock(currentCycle, blocksInCycle int64) (fpb int64) {
 	return fpb
 }
 
-func (t *TezTracker) GetBakerInfo(accountID string) (bi *models.BakerInfo, err error) {
+//TODO change this method
+func (t *TezTracker) GetBakerInfo(accountID string) (bi *models.Baker, err error) {
 	r := t.repoProvider.GetBaker()
-	found, delegate, err := r.Find(accountID)
+	found, baker, err := r.Find(accountID)
 	if err != nil {
-		return nil, err
+		return bi, err
 	}
 	if !found {
 		return nil, nil
 	}
-	bi = &models.BakerInfo{Delegate: delegate}
-	curCycle, err := t.GetCurrentCycle()
+
+	err = t.calcDepositRewards(&baker.BakerStats, baker.AccountID)
 	if err != nil {
 		return bi, err
+	}
+
+	return &baker, nil
+}
+
+func (t *TezTracker) calcDepositRewards(bi *models.BakerStats, accountID string) (err error) {
+	r := t.repoProvider.GetBaker()
+	curCycle, err := t.GetCurrentCycle()
+	if err != nil {
+		return err
 	}
 
 	fpb := getFirstPreservedBlock(curCycle, t.BlocksInCycle())
 	counter, err := r.BlocksCountBakedBy([]string{accountID}, fpb)
 	if err != nil {
-		return bi, err
+		return err
 	}
+
 	var blocksCount int64
 	if len(counter) == 1 {
 		blocksCount = counter[0].Count
 	}
+
 	bi.BakingDeposits = blocksCount * BlockSecurityDeposit
 	bi.BakingRewards = blocksCount * BlockReward
 
 	endCounter, err := r.EndorsementsCountBy([]string{accountID}, fpb)
 	if err != nil {
-		return bi, err
+		return err
 	}
 	var endorsementCount int64
 	var endorsementWeight float64
@@ -85,7 +141,7 @@ func (t *TezTracker) GetBakerInfo(accountID string) (bi *models.BakerInfo, err e
 	bi.EndorsementDeposits = endorsementCount * EndorsementSecurityDeposit
 	bi.EndorsementRewards = int64(endorsementWeight * EndorsementReward)
 
-	return bi, nil
+	return nil
 }
 
 func (t *TezTracker) getLockedBalance() (int64, error) {

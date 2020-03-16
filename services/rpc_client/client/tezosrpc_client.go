@@ -12,6 +12,8 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/everstake/teztracker/services/rpc_client/client/baking_rights"
+	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
+	"github.com/everstake/teztracker/services/rpc_client/client/operations"
 	"github.com/everstake/teztracker/services/rpc_client/client/snapshots"
 )
 
@@ -59,6 +61,10 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Tezosrpc {
 	cli.Transport = transport
 
 	cli.BakingRights = baking_rights.New(transport, formats)
+
+	cli.Contracts = contracts.New(transport, formats)
+
+	cli.Operations = operations.New(transport, formats)
 
 	cli.Snapshots = snapshots.New(transport, formats)
 
@@ -108,6 +114,10 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type Tezosrpc struct {
 	BakingRights *baking_rights.Client
 
+	Contracts *contracts.Client
+
+	Operations *operations.Client
+
 	Snapshots *snapshots.Client
 
 	Transport runtime.ClientTransport
@@ -118,6 +128,10 @@ func (c *Tezosrpc) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 
 	c.BakingRights.SetTransport(transport)
+
+	c.Contracts.SetTransport(transport)
+
+	c.Operations.SetTransport(transport)
 
 	c.Snapshots.SetTransport(transport)
 
