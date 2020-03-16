@@ -37,22 +37,24 @@ func BakerInfo(bi *models.Baker) *genModels.BakerInfo {
 		return nil
 	}
 
+	bakingSince := bi.BakingSince.Unix()
+
 	return &genModels.BakerInfo{
 		Name:                bi.Name,
-		BakingSince:         bi.BakingSince.Unix(),
-		Rolls:               bi.Rolls,
+		BakingSince:         &bakingSince,
+		Rolls:               &bi.Rolls,
 		Fee:                 &bi.Fee,
-		Blocks:              bi.Blocks,
-		Endorsements:        bi.Endorsements,
-		ActiveDelegators:    bi.ActiveDelegations,
-		StakingBalance:      bi.StakingBalance,
-		StakingCapacity:     bi.StakingCapacity,
-		EvaluatedBalance:    bi.Balance,
-		FrozenBalance:       bi.FrozenBalance,
-		BakingDeposits:      bi.BakingDeposits,
-		BakingRewards:       bi.BakingRewards,
-		EndorsementDeposits: bi.EndorsementDeposits,
-		EndorsementRewards:  bi.EndorsementRewards,
+		Blocks:              &bi.Blocks,
+		Endorsements:        &bi.Endorsements,
+		ActiveDelegators:    &bi.ActiveDelegations,
+		StakingBalance:      &bi.StakingBalance,
+		StakingCapacity:     &bi.StakingCapacity,
+		EvaluatedBalance:    &bi.Balance,
+		FrozenBalance:       &bi.FrozenBalance,
+		BakingDeposits:      &bi.BakingDeposits,
+		BakingRewards:       &bi.BakingRewards,
+		EndorsementDeposits: &bi.EndorsementDeposits,
+		EndorsementRewards:  &bi.EndorsementRewards,
 		TotalPaidFees:       bi.TotalPaidFees,
 	}
 }
