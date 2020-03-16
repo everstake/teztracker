@@ -160,10 +160,10 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 		})
 	}()
 
-	func() {
+	if cfg.BakerRegistryCheckIntervalMinutes > 0 {
 		var jobIsRunning uint32
 
-		dur := 1 * time.Minute
+		dur := time.Duration(cfg.BakerRegistryCheckIntervalMinutes) * time.Minute
 		log.Infof("Sheduling materialized view update every %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
@@ -181,6 +181,5 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 				log.Tracef("skipping public bakers update as the previous job is still running")
 			}
 		})
-	}()
-
+	}
 }
