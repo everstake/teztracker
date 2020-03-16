@@ -13,7 +13,7 @@ type getProtocolListHandler struct {
 	provider DbProvider
 }
 
-// Handle serves the Get Proposal List request.
+// Handle serves the Get Protocol list request.
 func (h *getProtocolListHandler) Handle(params vt.GetProtocolsListParams) middleware.Responder {
 	net, err := ToNetwork(params.Network)
 	if err != nil {

@@ -14,7 +14,7 @@ type getProposalVotesHandler struct {
 	provider DbProvider
 }
 
-// Handle serves the Get Proposal List request.
+// Handle serves the Get Proposal votes List request.
 func (h *getProposalVotesHandler) Handle(params vt.GetProposalVotesListParams) middleware.Responder {
 	net, err := ToNetwork(params.Network)
 	if err != nil {
