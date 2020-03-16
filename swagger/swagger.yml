@@ -1656,6 +1656,9 @@ definitions:
       createdAt:
         format: int64
         type: integer
+      lastActive:
+        format: int64
+        type: integer
     required:
       - balance
       - accountId

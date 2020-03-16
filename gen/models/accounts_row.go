@@ -50,6 +50,9 @@ type AccountsRow struct {
 	// delegate value
 	DelegateValue string `json:"delegateValue,omitempty"`
 
+	// last active
+	LastActive int64 `json:"lastActive,omitempty"`
+
 	// manager
 	// Required: true
 	Manager *string `json:"manager"`

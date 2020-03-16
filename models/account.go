@@ -22,7 +22,8 @@ type Account struct {
 	DelegatedContracts []*DelegatedContract  `json:"delegated_contracts"` // This line is infered from other tables.
 	BakerInfo          *Baker                `json:"baker_info"`
 	IsBaker            bool                  `json:"is_baker"`
-	Asof               time.Time             `json:"asof"`
+	CreatedAt          time.Time             `json:"created_at"`
+	LastActive         time.Time             `json:"last_active"`
 }
 
 type AccountType int

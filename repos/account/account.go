@@ -28,11 +28,8 @@ func New(db *gorm.DB) *Repository {
 	}
 }
 
-func (r *Repository) getDb(filter models.AccountFilter, createdTime bool) *gorm.DB {
-	db := r.db.Select("accounts.*, asof").Model(&models.Account{})
-	if createdTime {
-		db = db.Joins("natural join tezos.account_create_time_view")
-	}
+func (r *Repository) getDb(filter models.AccountFilter) *gorm.DB {
+	db := r.db.Model(&models.Account{})
 
 	if filter.After != "" {
 		db = db.Where("account_id > ?", filter.After)
@@ -50,16 +47,21 @@ func (r *Repository) getDb(filter models.AccountFilter, createdTime bool) *gorm.
 // limit defines the limit for the maximum number of accounts returned.
 // before is used to paginate results based on the level. As the result is ordered descendingly the accounts with level < before will be returned.
 func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (count int64, accounts []models.Account, err error) {
-	db := r.getDb(filter, false)
+	db := r.getDb(filter)
+
 	if err := db.Count(&count).Error; err != nil {
 		return 0, nil, err
 	}
 
-	db = r.getDb(filter, true)
-	err = db.Order("account_id asc").
+	db = db.Order("account_id asc").
 		Limit(limit).
-		Offset(offset).
-		Find(&accounts).Error
+		Offset(offset)
+
+	db = r.db.Select("accounts.*, created_at, last_active").
+		Table("tezos.account_materialized_view as amv").
+		Joins("inner join (?) as accounts on accounts.account_id = amv.account_id", db.SubQuery())
+
+	err = db.Find(&accounts).Error
 	return count, accounts, err
 }
 

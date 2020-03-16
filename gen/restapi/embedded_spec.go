@@ -2385,6 +2385,10 @@ func init() {
         "delegateValue": {
           "type": "string"
         },
+        "lastActive": {
+          "type": "integer",
+          "format": "int64"
+        },
         "manager": {
           "type": "string"
         },
@@ -5583,6 +5587,10 @@ func init() {
         },
         "delegateValue": {
           "type": "string"
+        },
+        "lastActive": {
+          "type": "integer",
+          "format": "int64"
         },
         "manager": {
           "type": "string"
