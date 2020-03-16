@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/everstake/teztracker/repos/voting_periods"
 
 	"github.com/everstake/teztracker/repos/account"
 	"github.com/everstake/teztracker/repos/baker"
@@ -76,6 +77,10 @@ func (u *Provider) GetSnapshots() snapshots.Repo {
 
 func (u *Provider) GetDoubleBaking() double_baking.Repo {
 	return double_baking.New(u.getDB())
+}
+
+func (u *Provider) GetVotingPeriod() voting_periods.Repo {
+	return voting_periods.New(u.getDB())
 }
 
 func (u *Provider) Start(ctx context.Context) {

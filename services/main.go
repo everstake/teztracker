@@ -10,6 +10,7 @@ import (
 	"github.com/everstake/teztracker/repos/operation"
 	"github.com/everstake/teztracker/repos/operation_groups"
 	"github.com/everstake/teztracker/repos/snapshots"
+	"github.com/everstake/teztracker/repos/voting_periods"
 )
 
 //go:generate mockgen -source ./main.go -destination ./mock_service/main.go Provider
@@ -30,6 +31,7 @@ type (
 		GetFutureBakingRight() future_baking_rights.Repo
 		GetSnapshots() snapshots.Repo
 		GetDoubleBaking() double_baking.Repo
+		GetVotingPeriod() voting_periods.Repo
 	}
 
 	Limiter interface {
