@@ -52,7 +52,16 @@ from tezos.period_stat_view as psv
        left join tezos.rolls as r on psv.block_level = r.block_level
 group by psv.period;
 
---
+
 create index ix_operations_double_endorsement_index
   on tezos.operations (operation_id)
   where ((kind)::text = 'double_endorsement_evidence'::text);
+
+CREATE table tezos.voting_proposal
+(
+  hash      varchar,
+  title        varchar,
+  short_description varchar,
+  proposal_file varchar,
+  proposer varchar
+);

@@ -17,7 +17,7 @@ func ProposalVoters(vp []models.ProposalVoter) []*genModels.ProposalVoter {
 func ProposalVoter(v models.ProposalVoter) *genModels.ProposalVoter {
 	return &genModels.ProposalVoter{
 		BlockLevel: v.BlockLevel,
-		Name:       v.Alias,
+		Name:       v.Name,
 		Operation:  v.Operation,
 		Pkh:        v.Pkh,
 		Proposal:   v.Proposal,
@@ -37,7 +37,7 @@ func BallotVoters(vp []models.ProposalVoter) []*genModels.BallotVoter {
 func BallotVoter(v models.ProposalVoter) *genModels.BallotVoter {
 	return &genModels.BallotVoter{
 		BlockLevel: v.BlockLevel,
-		Name:       v.Alias,
+		Name:       v.Name,
 		Operation:  v.Operation,
 		Pkh:        v.Pkh,
 		Decision:   v.Ballot,
@@ -56,8 +56,24 @@ func NonVoters(vp []models.Voter) []*genModels.NonVoter {
 
 func NonVoter(v models.Voter) *genModels.NonVoter {
 	return &genModels.NonVoter{
-		Name:  v.Alias,
+		Name:  v.Name,
 		Pkh:   v.Pkh,
 		Rolls: v.Rolls,
+	}
+}
+
+func Protocols(pl []models.Protocol) []*genModels.Protocol {
+	protocols := make([]*genModels.Protocol, len(pl))
+	for i := range pl {
+		protocols[i] = Protocol(pl[i])
+	}
+	return protocols
+}
+
+func Protocol(p models.Protocol) *genModels.Protocol {
+	return &genModels.Protocol{
+		Hash:       &p.Hash,
+		StartBlock: &p.StartBlock,
+		EndBlock:   &p.EndBlock,
 	}
 }
