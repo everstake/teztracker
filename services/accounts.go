@@ -71,6 +71,8 @@ func (t *TezTracker) GetAccount(id string) (acc models.Account, err error) {
 		total += counts[i].Count
 	}
 
+	acc.Operations = total
+
 	bi, err := t.GetBakerInfo(id)
 	if err != nil {
 		return acc, err
