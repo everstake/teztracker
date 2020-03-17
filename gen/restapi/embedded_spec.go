@@ -2392,6 +2392,13 @@ func init() {
         "manager": {
           "type": "string"
         },
+        "operations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "revealed": {
+          "type": "boolean"
+        },
         "script": {
           "type": "string"
         },
@@ -2400,6 +2407,10 @@ func init() {
         },
         "storage": {
           "type": "string"
+        },
+        "transactions": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -5595,6 +5606,13 @@ func init() {
         "manager": {
           "type": "string"
         },
+        "operations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "revealed": {
+          "type": "boolean"
+        },
         "script": {
           "type": "string"
         },
@@ -5603,6 +5621,10 @@ func init() {
         },
         "storage": {
           "type": "string"
+        },
+        "transactions": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

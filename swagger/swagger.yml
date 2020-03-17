@@ -1659,6 +1659,14 @@ definitions:
       lastActive:
         format: int64
         type: integer
+      transactions:
+        format: int64
+        type: integer
+      operations:
+        format: int64
+        type: integer
+      revealed:
+        type: boolean
     required:
       - balance
       - accountId

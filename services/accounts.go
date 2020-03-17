@@ -53,10 +53,28 @@ func (t *TezTracker) GetAccount(id string) (acc models.Account, err error) {
 		return acc, ErrNotFound
 	}
 
+	counts, err := t.repoProvider.GetOperation().AccountOperationCount(acc.AccountID.String)
+	if err != nil {
+		return acc, err
+	}
+
+	var total int64
+	for i := range counts {
+		if counts[i].Kind == "transaction" {
+			acc.Transactions = counts[i].Count
+		}
+		if counts[i].Kind == "reveal" {
+			acc.IsRevealed = true
+		}
+
+		total += counts[i].Count
+	}
+
 	bi, err := t.GetBakerInfo(id)
 	if err != nil {
 		return acc, err
 	}
+
 	acc.BakerInfo = bi
 	return acc, nil
 }

@@ -24,6 +24,9 @@ type Account struct {
 	IsBaker            bool                  `json:"is_baker"`
 	CreatedAt          time.Time             `json:"created_at"`
 	LastActive         time.Time             `json:"last_active"`
+	IsRevealed         bool                  `json:"is_revealed"`
+	Transactions       int64                 `json:"transactions"`
+	Operations         int64                 `json:"operations"`
 }
 
 type AccountType int

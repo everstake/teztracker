@@ -22,6 +22,9 @@ func Account(a models.Account) *genModels.AccountsRow {
 		BakerInfo:       BakerInfo(a.BakerInfo),
 		CreatedAt:       a.CreatedAt.Unix(),
 		LastActive:      a.LastActive.Unix(),
+		Transactions:    a.Transactions,
+		Operations:      a.Operations,
+		Revealed:        a.IsRevealed,
 	}
 }
 

@@ -57,6 +57,12 @@ type AccountsRow struct {
 	// Required: true
 	Manager *string `json:"manager"`
 
+	// operations
+	Operations int64 `json:"operations,omitempty"`
+
+	// revealed
+	Revealed bool `json:"revealed,omitempty"`
+
 	// script
 	Script string `json:"script,omitempty"`
 
@@ -66,6 +72,9 @@ type AccountsRow struct {
 
 	// storage
 	Storage string `json:"storage,omitempty"`
+
+	// transactions
+	Transactions int64 `json:"transactions,omitempty"`
 }
 
 // Validate validates this accounts row
