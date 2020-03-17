@@ -48,6 +48,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetAccountHandler: accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccount has not yet been implemented")
 		}),
+		AccountsGetAccountBalanceListHandler: accounts.GetAccountBalanceListHandlerFunc(func(params accounts.GetAccountBalanceListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountBalanceList has not yet been implemented")
+		}),
 		AccountsGetAccountDelegatorsHandler: accounts.GetAccountDelegatorsHandlerFunc(func(params accounts.GetAccountDelegatorsParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountDelegators has not yet been implemented")
 		}),
@@ -159,6 +162,8 @@ type TezTrackerAPI struct {
 
 	// AccountsGetAccountHandler sets the operation handler for the get account operation
 	AccountsGetAccountHandler accounts.GetAccountHandler
+	// AccountsGetAccountBalanceListHandler sets the operation handler for the get account balance list operation
+	AccountsGetAccountBalanceListHandler accounts.GetAccountBalanceListHandler
 	// AccountsGetAccountDelegatorsHandler sets the operation handler for the get account delegators operation
 	AccountsGetAccountDelegatorsHandler accounts.GetAccountDelegatorsHandler
 	// AccountsGetAccountsListHandler sets the operation handler for the get accounts list operation
@@ -276,6 +281,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetAccountHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountHandler")
+	}
+
+	if o.AccountsGetAccountBalanceListHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountBalanceListHandler")
 	}
 
 	if o.AccountsGetAccountDelegatorsHandler == nil {
@@ -484,6 +493,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}"] = accounts.NewGetAccount(o.context, o.AccountsGetAccountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/balances/{accountId}"] = accounts.NewGetAccountBalanceList(o.context, o.AccountsGetAccountBalanceListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

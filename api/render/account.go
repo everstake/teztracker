@@ -36,3 +36,18 @@ func Accounts(ams []models.Account) []*genModels.AccountsRow {
 	}
 	return accs
 }
+
+func AccountBalances(acb []models.AccountBalance) []*genModels.AccountBalance {
+	accs := make([]*genModels.AccountBalance, len(acb))
+	for i := range acb {
+		accs[i] = AccountBalance(acb[i])
+	}
+	return accs
+}
+
+func AccountBalance(acb models.AccountBalance) *genModels.AccountBalance {
+	return &genModels.AccountBalance{
+		Balance:   acb.Balance,
+		Timestamp: acb.Time.Unix(),
+	}
+}

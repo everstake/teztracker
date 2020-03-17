@@ -42,3 +42,8 @@ type AccountFilter struct {
 	Delegate string
 	After    string
 }
+
+type AccountBalance struct {
+	Time    time.Time
+	Balance int64
+}

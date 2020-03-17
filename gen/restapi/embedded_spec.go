@@ -587,6 +587,68 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/balances/{accountId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountBalanceList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "to",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account balances",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountBalance"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/{accountId}": {
       "get": {
         "produces": [
@@ -2330,6 +2392,18 @@ func init() {
     }
   },
   "definitions": {
+    "AccountBalance": {
+      "properties": {
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "AccountResult": {
       "type": "object",
       "required": [
@@ -3788,6 +3862,68 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/balances/{accountId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountBalanceList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "to",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account balances",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountBalance"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/{accountId}": {
       "get": {
         "produces": [
@@ -5544,6 +5680,18 @@ func init() {
     }
   },
   "definitions": {
+    "AccountBalance": {
+      "properties": {
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "AccountResult": {
       "type": "object",
       "required": [

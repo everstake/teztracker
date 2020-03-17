@@ -3,6 +3,7 @@ package account
 import (
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
 //go:generate mockgen -source ./account.go -destination ./mock_account/main.go Repo
@@ -18,6 +19,7 @@ type (
 		Count(filter models.Account) (int64, error)
 		Find(filter models.Account) (found bool, acc models.Account, err error)
 		TotalBalance() (int64, error)
+		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 	}
 )
 
@@ -105,4 +107,16 @@ func (r *Repository) TotalBalance() (b int64, err error) {
 		return 0, err
 	}
 	return bal.Balance, nil
+}
+
+func (r *Repository) Balances(accountId string, from time.Time, to time.Time) (bal []models.AccountBalance, err error) {
+
+	err = r.db.Table("tezos.accounts_history").
+		Select("asof as time, balance").
+		Where("account_id = ? and asof >= ? and asof <= ?", accountId, from, to).
+		Scan(&bal).Error
+	if err != nil {
+		return bal, err
+	}
+	return bal, nil
 }
