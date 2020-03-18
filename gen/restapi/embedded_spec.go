@@ -2004,20 +2004,6 @@ func init() {
           {
             "type": "array",
             "items": {
-              "enum": [
-                "endorsement",
-                "proposals",
-                "seed_nonce_revelation",
-                "delegation",
-                "transaction",
-                "activate_account",
-                "ballot",
-                "origination",
-                "reveal",
-                "double_baking_evidence",
-                "double_endorsement_evidence",
-                "other"
-              ],
               "type": "string"
             },
             "collectionFormat": "multi",
@@ -5290,20 +5276,6 @@ func init() {
           {
             "type": "array",
             "items": {
-              "enum": [
-                "endorsement",
-                "proposals",
-                "seed_nonce_revelation",
-                "delegation",
-                "transaction",
-                "activate_account",
-                "ballot",
-                "origination",
-                "reveal",
-                "double_baking_evidence",
-                "double_endorsement_evidence",
-                "other"
-              ],
               "type": "string"
             },
             "collectionFormat": "multi",
