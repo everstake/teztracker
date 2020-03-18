@@ -59,8 +59,14 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 		db = db.Where("operation_group_hash IN (?)", ids)
 	}
 	if len(kinds) > 0 {
-		db = db.Where("kind IN (?)", kinds)
+		//Other operations for not baker accounts
+		if len(kinds) == 1 && kinds[0] == "other" {
+			db = db.Where("kind NOT IN (?)", []string{"transaction", "delegation", "origination"})
+		} else {
+			db = db.Where("kind IN (?)", kinds)
+		}
 	}
+
 	if len(inBlocks) > 0 {
 		db = db.Where("block_hash IN (?)", inBlocks)
 	}

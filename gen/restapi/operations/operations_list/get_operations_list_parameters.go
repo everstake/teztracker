@@ -605,7 +605,7 @@ func (o *GetOperationsListParams) bindOperationKind(rawData []string, hasKey boo
 	for i, operationKindIV := range operationKindIC {
 		operationKindI := operationKindIV
 
-		if err := validate.Enum(fmt.Sprintf("%s.%v", "operation_kind", i), "query", operationKindI, []interface{}{"endorsement", "proposals", "seed_nonce_revelation", "delegation", "transaction", "activate_account", "ballot", "origination", "reveal", "double_baking_evidence", "double_endorsement_evidence"}); err != nil {
+		if err := validate.Enum(fmt.Sprintf("%s.%v", "operation_kind", i), "query", operationKindI, []interface{}{"endorsement", "proposals", "seed_nonce_revelation", "delegation", "transaction", "activate_account", "ballot", "origination", "reveal", "double_baking_evidence", "double_endorsement_evidence", "other"}); err != nil {
 			return err
 		}
 

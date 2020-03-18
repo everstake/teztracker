@@ -2015,7 +2015,8 @@ func init() {
                 "origination",
                 "reveal",
                 "double_baking_evidence",
-                "double_endorsement_evidence"
+                "double_endorsement_evidence",
+                "other"
               ],
               "type": "string"
             },
@@ -5300,7 +5301,8 @@ func init() {
                 "origination",
                 "reveal",
                 "double_baking_evidence",
-                "double_endorsement_evidence"
+                "double_endorsement_evidence",
+                "other"
               ],
               "type": "string"
             },
