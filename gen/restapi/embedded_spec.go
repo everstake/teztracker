@@ -2774,6 +2774,10 @@ func init() {
         "nonceHash": {
           "type": "string"
         },
+        "number_of_operations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "operationsHash": {
           "type": "string"
         },
@@ -6048,6 +6052,10 @@ func init() {
         },
         "nonceHash": {
           "type": "string"
+        },
+        "number_of_operations": {
+          "type": "integer",
+          "format": "int64"
         },
         "operationsHash": {
           "type": "string"

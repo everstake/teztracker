@@ -14,6 +14,7 @@ type BlockAggregationView struct {
 	Originations         int64 `json:"originations"`
 	Reveals              int64 `json:"reveals"`
 	DoubleBakingEvidence int64 `json:"double_baking_evidences"`
+	NumberOfOperations   int64 `json:"number_of_operations"`
 }
 
 func (*BlockAggregationView) TableName() string {

@@ -89,6 +89,9 @@ type BlocksRow struct {
 	// nonce hash
 	NonceHash string `json:"nonceHash,omitempty"`
 
+	// number of operations
+	NumberOfOperations int64 `json:"number_of_operations,omitempty"`
+
 	// operations hash
 	OperationsHash string `json:"operationsHash,omitempty"`
 
