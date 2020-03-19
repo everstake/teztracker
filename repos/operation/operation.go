@@ -120,8 +120,9 @@ func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (o
 
 // EndorsementsFor returns a list of endorsement operations for the provided block level.
 func (r *Repository) EndorsementsFor(blockLevel int64) (operations []models.Operation, err error) {
-	err = r.db.Model(&models.Operation{}).
-		Where("kind = ?", endorsementKind).
+	err = r.db.Select("*").Model(&models.Operation{}).
+		Joins("left join tezos.balance_updates on (operations.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')").
+		Where("operations.kind = ?", endorsementKind).
 		// the endorsements of the block with blockLevel can only be in a block with level (blockLevel + 1)
 		Where("block_level = ?", blockLevel+1).
 		Order("operation_id DESC").

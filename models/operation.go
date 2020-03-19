@@ -46,6 +46,7 @@ type Operation struct {
 	Ballot              string      `json:"ballot" gorm:"column:ballot"`
 	Internal            bool        `json:"internal" gorm:"column:internal"`
 	Period              int64       `json:"period" gorm:"column:period"`
+	Reward              int64       `json:"reward" gorm:"column:change"`
 }
 
 type OperationCount struct {
