@@ -23,6 +23,7 @@ type Block struct {
 	CurrentExpectedQuorum    int64                  `json:"current_expected_quorum"`
 	ActiveProposal           string                 `json:"active_proposal"`
 	Baker                    string                 `json:"baker"`
+	BakerName                string                 `json:"baker_name"`
 	NonceHash                string                 `json:"nonce_hash"`
 	ConsumedGas              int64                  `json:"consumed_gas"`
 	MetaLevel                int64                  `json:"meta_level"`

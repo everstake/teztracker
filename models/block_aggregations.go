@@ -4,6 +4,7 @@ type BlockAggregationView struct {
 	Level                int64 `json:"level"`
 	Volume               int64 `json:"volume"`
 	Fees                 int64 `json:"fees"`
+	GasUsed              int64 `json:"gas_used"`
 	Endorsements         int64 `json:"endorsements"`
 	Proposals            int64 `json:"proposals"`
 	SeedNonceRevelations int64 `json:"seed_nonce_revelations"`

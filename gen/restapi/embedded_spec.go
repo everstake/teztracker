@@ -2700,6 +2700,9 @@ func init() {
         "baker": {
           "type": "string"
         },
+        "bakerName": {
+          "type": "string"
+        },
         "ballots": {
           "type": "integer",
           "format": "int64"
@@ -2790,6 +2793,10 @@ func init() {
         },
         "predecessor": {
           "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
         },
         "proposals": {
           "type": "integer",
@@ -5979,6 +5986,9 @@ func init() {
         "baker": {
           "type": "string"
         },
+        "bakerName": {
+          "type": "string"
+        },
         "ballots": {
           "type": "integer",
           "format": "int64"
@@ -6069,6 +6079,10 @@ func init() {
         },
         "predecessor": {
           "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
         },
         "proposals": {
           "type": "integer",
