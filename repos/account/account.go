@@ -88,7 +88,10 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 
 // Find looks up for an account with filter.
 func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
-	if res := r.db.Select("accounts.*, created_at, last_active, account_name").Model(&filter).Joins("natural join tezos.account_materialized_view").Where(&filter).Find(&acc); res.Error != nil {
+	if res := r.db.Select("accounts.*, created_at, last_active").
+		Model(&filter).
+		Joins("natural join tezos.account_materialized_view").
+		Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
 		}

@@ -2418,6 +2418,9 @@ func init() {
         "accountId": {
           "type": "string"
         },
+        "accountName": {
+          "type": "string"
+        },
         "bakerInfo": {
           "$ref": "#/definitions/BakerInfo"
         },
@@ -5691,6 +5694,9 @@ func init() {
       ],
       "properties": {
         "accountId": {
+          "type": "string"
+        },
+        "accountName": {
           "type": "string"
         },
         "bakerInfo": {

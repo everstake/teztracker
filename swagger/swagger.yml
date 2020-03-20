@@ -1668,6 +1668,8 @@ definitions:
     properties:
       accountId:
         type: string
+      accountName:
+        type: string
       balance:
         format: int64
         type: integer

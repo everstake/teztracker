@@ -9,6 +9,7 @@ import (
 func Account(a models.Account) *genModels.AccountsRow {
 	return &genModels.AccountsRow{
 		AccountID:       a.AccountID.Ptr(),
+		AccountName:     a.AccountName,
 		BlockID:         a.BlockID.Ptr(),
 		Manager:         a.Manager.Ptr(),
 		Spendable:       a.Spendable.Ptr(),

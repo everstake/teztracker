@@ -21,6 +21,9 @@ type AccountsRow struct {
 	// Required: true
 	AccountID *string `json:"accountId"`
 
+	// account name
+	AccountName string `json:"accountName,omitempty"`
+
 	// baker info
 	BakerInfo *BakerInfo `json:"bakerInfo,omitempty"`
 
