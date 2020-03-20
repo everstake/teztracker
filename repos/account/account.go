@@ -3,6 +3,7 @@ package account
 import (
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
 //go:generate mockgen -source ./account.go -destination ./mock_account/main.go Repo
@@ -18,6 +19,7 @@ type (
 		Count(filter models.Account) (int64, error)
 		Find(filter models.Account) (found bool, acc models.Account, err error)
 		TotalBalance() (int64, error)
+		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 	}
 )
 
@@ -28,11 +30,8 @@ func New(db *gorm.DB) *Repository {
 	}
 }
 
-func (r *Repository) getDb(filter models.AccountFilter, createdTime bool) *gorm.DB {
-	db := r.db.Select("accounts.*, asof").Model(&models.Account{})
-	if createdTime {
-		db = db.Joins("natural join tezos.account_create_time_view")
-	}
+func (r *Repository) getDb(filter models.AccountFilter) *gorm.DB {
+	db := r.db.Model(&models.Account{})
 
 	if filter.After != "" {
 		db = db.Where("account_id > ?", filter.After)
@@ -50,16 +49,21 @@ func (r *Repository) getDb(filter models.AccountFilter, createdTime bool) *gorm.
 // limit defines the limit for the maximum number of accounts returned.
 // before is used to paginate results based on the level. As the result is ordered descendingly the accounts with level < before will be returned.
 func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (count int64, accounts []models.Account, err error) {
-	db := r.getDb(filter, false)
+	db := r.getDb(filter)
+
 	if err := db.Count(&count).Error; err != nil {
 		return 0, nil, err
 	}
 
-	db = r.getDb(filter, true)
-	err = db.Order("account_id asc").
+	db = db.Order("account_id asc").
 		Limit(limit).
-		Offset(offset).
-		Find(&accounts).Error
+		Offset(offset)
+
+	db = r.db.Select("accounts.*, created_at, last_active, account_name").
+		Table("tezos.account_materialized_view as amv").
+		Joins("inner join (?) as accounts on accounts.account_id = amv.account_id", db.SubQuery())
+
+	err = db.Find(&accounts).Error
 	return count, accounts, err
 }
 
@@ -72,9 +76,9 @@ func (r *Repository) Count(filter models.Account) (count int64, err error) {
 
 // Filter returns a list of accounts that sutisfies the filter.
 func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error) {
-	err = r.db.Select("accounts.*, asof").Model(&filter).
+	err = r.db.Select("accounts.*, created_at, last_active, account_name").Model(&filter).
 		Where(&filter).
-		Joins("natural join tezos.account_create_time_view").
+		Joins("natural join tezos.account_materialized_view").
 		Order("account_id asc").
 		Limit(limit).
 		Offset(offset).
@@ -84,7 +88,10 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 
 // Find looks up for an account with filter.
 func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
-	if res := r.db.Select("accounts.*, asof").Model(&filter).Joins("natural join tezos.account_create_time_view").Where(&filter).Find(&acc); res.Error != nil {
+	if res := r.db.Select("accounts.*, created_at, last_active").
+		Model(&filter).
+		Joins("natural join tezos.account_materialized_view").
+		Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
 		}
@@ -103,4 +110,16 @@ func (r *Repository) TotalBalance() (b int64, err error) {
 		return 0, err
 	}
 	return bal.Balance, nil
+}
+
+func (r *Repository) Balances(accountId string, from time.Time, to time.Time) (bal []models.AccountBalance, err error) {
+
+	err = r.db.Table("tezos.accounts_history").
+		Select("asof as time, balance").
+		Where("account_id = ? and asof >= ? and asof <= ?", accountId, from, to).
+		Scan(&bal).Error
+	if err != nil {
+		return bal, err
+	}
+	return bal, nil
 }

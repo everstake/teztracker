@@ -20,6 +20,7 @@ type (
 		Last() (operation models.Operation, err error)
 		ListDoubleEndorsementsWithoutLevel(limit, offset uint) (operations []models.Operation, err error)
 		UpdateLevel(operation models.Operation) error
+		AccountOperationCount(string) ([]models.OperationCount, error)
 	}
 )
 
@@ -60,6 +61,7 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 	if len(kinds) > 0 {
 		db = db.Where("kind IN (?)", kinds)
 	}
+
 	if len(inBlocks) > 0 {
 		db = db.Where("block_hash IN (?)", inBlocks)
 	}
@@ -132,4 +134,17 @@ func (r *Repository) Last() (operation models.Operation, err error) {
 	db := r.db.Model(&operation)
 	err = db.Last(&operation).Error
 	return operation, err
+}
+
+func (r *Repository) AccountOperationCount(acc string) (counts []models.OperationCount, err error) {
+	db := r.getFilteredDB(nil, nil, nil, []string{acc})
+
+	err = db.Select("kind,count(1)").
+		Group("kind").
+		Scan(&counts).Error
+	if err != nil {
+		return counts, err
+	}
+
+	return counts, nil
 }

@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/everstake/teztracker/models"
 	"github.com/guregu/null"
+	"time"
 )
 
 // AccountList retrives up to limit of account before the specified id.
@@ -53,10 +54,39 @@ func (t *TezTracker) GetAccount(id string) (acc models.Account, err error) {
 		return acc, ErrNotFound
 	}
 
+	counts, err := t.repoProvider.GetOperation().AccountOperationCount(acc.AccountID.String)
+	if err != nil {
+		return acc, err
+	}
+
+	var total int64
+	for i := range counts {
+		if counts[i].Kind == "transaction" {
+			acc.Transactions = counts[i].Count
+		}
+		if counts[i].Kind == "reveal" {
+			acc.IsRevealed = true
+		}
+
+		total += counts[i].Count
+	}
+
+	acc.Operations = total
+
 	bi, err := t.GetBakerInfo(id)
 	if err != nil {
 		return acc, err
 	}
+
 	acc.BakerInfo = bi
 	return acc, nil
+}
+
+func (t *TezTracker) GetAccountBalanceHistory(id string, from, to time.Time) (balances []models.AccountBalance, err error) {
+	balances, err = t.repoProvider.GetAccount().Balances(id, from, to)
+	if err != nil {
+		return balances, err
+	}
+
+	return balances, nil
 }

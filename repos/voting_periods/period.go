@@ -143,7 +143,7 @@ func (r *Repository) VotersCount(id int64, kind string) (count int64, err error)
 }
 
 func (r *Repository) PeriodNonVotersList(id, blockLevel int64, limit uint, offset uint) (periodProposals []models.Voter, err error) {
-	err = r.db.Select("pkh,r.rolls,name").
+	err = r.db.Select("pkh,r.rolls,baker_name as alias").
 		Table("tezos.rolls as r").
 		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
 		Joins("left join tezos.public_bakers on pkh = delegate").

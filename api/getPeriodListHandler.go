@@ -13,7 +13,7 @@ type getPeriodListHandler struct {
 	provider DbProvider
 }
 
-// Handle serves the Get Proposal List request.
+// Handle serves the Get Period List request.
 func (h *getPeriodListHandler) Handle(params vt.GetPeriodsListParams) middleware.Responder {
 	net, err := ToNetwork(params.Network)
 	if err != nil {

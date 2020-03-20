@@ -47,3 +47,8 @@ type Operation struct {
 	Internal            bool        `json:"internal" gorm:"column:internal"`
 	Period              int64       `json:"period" gorm:"column:period"`
 }
+
+type OperationCount struct {
+	Kind  string `json:"kind"`
+	Count int64  `json:"count"`
+}

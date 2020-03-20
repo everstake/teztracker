@@ -20,6 +20,7 @@ type Config struct {
 	SnapshotCheckIntervalMinutes          int
 	DoubleBakingCheckIntervalMinutes      int
 	DoubleEndorsementCheckIntervalMinutes int
+	BakerRegistryCheckIntervalMinutes     int
 }
 type NetworkConfig struct {
 	SqlConnectionString string

@@ -7,6 +7,7 @@ import (
 
 type Account struct {
 	AccountID          null.String           `gorm:"primary_key;AUTO_INCREMENT" json:"account_id"`
+	AccountName        string                `json:"baker_name"`
 	BlockID            null.String           `json:"block_id"`
 	Block              *Block                `json:"block"` // This line is infered from column name "block_id".
 	Manager            null.String           `json:"manager"`
@@ -22,7 +23,11 @@ type Account struct {
 	DelegatedContracts []*DelegatedContract  `json:"delegated_contracts"` // This line is infered from other tables.
 	BakerInfo          *Baker                `json:"baker_info"`
 	IsBaker            bool                  `json:"is_baker"`
-	Asof               time.Time             `json:"asof"`
+	CreatedAt          time.Time             `json:"created_at"`
+	LastActive         time.Time             `json:"last_active"`
+	IsRevealed         bool                  `json:"is_revealed"`
+	Transactions       int64                 `json:"transactions"`
+	Operations         int64                 `json:"operations"`
 }
 
 type AccountType int
@@ -37,4 +42,9 @@ type AccountFilter struct {
 	Type     AccountType
 	Delegate string
 	After    string
+}
+
+type AccountBalance struct {
+	Time    time.Time
+	Balance int64
 }

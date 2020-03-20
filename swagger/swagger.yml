@@ -572,6 +572,47 @@ paths:
           description: Internal error
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/balances/{accountId}':
+    get:
+      operationId: getAccountBalanceList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: query
+          name: from
+          required: true
+          type: integer
+        - in: query
+          name: to
+          type: integer
+          required: true
+      responses:
+        '200':
+          description: Query compatibility endpoint for account balances
+          schema:
+            items:
+              $ref: '#/definitions/AccountBalance'
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/blocks':
     get:
       operationId: getBlocksList
@@ -1084,7 +1125,6 @@ paths:
           in: query
           items:
             type: string
-            enum: [endorsement, proposals, seed_nonce_revelation, delegation, transaction, activate_account, ballot, origination, reveal, double_baking_evidence, double_endorsement_evidence]
           name: operation_kind
           type: array
         - collectionFormat: multi
@@ -1628,6 +1668,8 @@ definitions:
     properties:
       accountId:
         type: string
+      accountName:
+        type: string
       balance:
         format: int64
         type: integer
@@ -1656,6 +1698,17 @@ definitions:
       createdAt:
         format: int64
         type: integer
+      lastActive:
+        format: int64
+        type: integer
+      transactions:
+        format: int64
+        type: integer
+      operations:
+        format: int64
+        type: integer
+      revealed:
+        type: boolean
     required:
       - balance
       - accountId
@@ -2161,14 +2214,22 @@ definitions:
   Protocol:
     properties:
       hash:
-       type: string
+        type: string
       startBlock:
-       type: integer
-       format: int64
+        type: integer
+        format: int64
       endBlock:
-       type: integer
-       format: int64
+        type: integer
+        format: int64
     required:
       - hash
       - startBlock
       - endBlock
+  AccountBalance:
+    properties:
+      timestamp:
+        type: integer
+        format: int64
+      balance:
+        type: integer
+        format: int64
