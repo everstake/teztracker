@@ -2607,6 +2607,9 @@ func init() {
         "delegate": {
           "type": "string"
         },
+        "delegate_name": {
+          "type": "string"
+        },
         "estimated_time": {
           "type": "string",
           "format": "date-time"
@@ -5894,6 +5897,9 @@ func init() {
       ],
       "properties": {
         "delegate": {
+          "type": "string"
+        },
+        "delegate_name": {
           "type": "string"
         },
         "estimated_time": {
