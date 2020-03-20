@@ -30,12 +30,13 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb(filter models.BakingRightFilter) *gorm.DB {
-	db := r.db.Model(&models.FutureBakingRight{})
+	db := r.db.Select("fbr.*, baker_name as delegate_name").Table("tezos.future_baking_rights as fbr").
+		Joins("left join tezos.public_bakers as pb on fbr.delegate = pb.delegate")
 	if len(filter.BlockLevels) != 0 {
 		db = db.Where("level IN (?)", filter.BlockLevels)
 	}
 	if len(filter.Delegates) != 0 {
-		db = db.Where("delegate IN (?)", filter.Delegates)
+		db = db.Where("fbr.delegate IN (?)", filter.Delegates)
 	}
 	if filter.PriorityFrom != 0 {
 		db = db.Where("priority >= ?", filter.PriorityFrom)

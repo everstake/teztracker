@@ -110,6 +110,7 @@ func BakingRight(r models.FutureBakingRight) *genModels.BakingRightsRow {
 	priority := int64(r.Priority)
 	return &genModels.BakingRightsRow{
 		Delegate:      r.Delegate,
+		DelegateName:  r.DelegateName,
 		Priority:      &priority,
 		EstimatedTime: strfmt.DateTime(r.EstimatedTime),
 	}
