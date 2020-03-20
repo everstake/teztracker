@@ -1895,6 +1895,14 @@ definitions:
       double_baking_evidence:
         format: int64
         type: integer
+      number_of_operations:
+        format: int64
+        type: integer
+      priority:
+        format: int64
+        type: integer
+      bakerName:
+        type: string
     required:
       - timestamp
       - proto

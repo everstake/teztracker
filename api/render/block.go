@@ -20,6 +20,7 @@ func Block(b models.Block) *genModels.BlocksRow {
 		Context:                  b.Context,
 		Signature:                b.Signature,
 		Protocol:                 b.Protocol.Ptr(),
+		Priority:                 b.Priority,
 		ChainID:                  b.ChainID,
 		Hash:                     b.Hash.Ptr(),
 		OperationsHash:           b.OperationsHash,
@@ -27,6 +28,7 @@ func Block(b models.Block) *genModels.BlocksRow {
 		CurrentExpectedQuorum:    b.CurrentExpectedQuorum,
 		ActiveProposal:           b.ActiveProposal,
 		Baker:                    b.Baker,
+		BakerName:                b.BakerName,
 		NonceHash:                b.NonceHash,
 		ConsumedGas:              b.ConsumedGas,
 		MetaLevel:                b.MetaLevel,
@@ -51,6 +53,7 @@ func Block(b models.Block) *genModels.BlocksRow {
 		genBlock.Originations = b.BlockAggregation.Originations
 		genBlock.Reveals = b.BlockAggregation.Reveals
 		genBlock.DoubleBakingEvidence = b.BlockAggregation.DoubleBakingEvidence
+		genBlock.NumberOfOperations = b.BlockAggregation.NumberOfOperations
 	}
 
 	return &genBlock

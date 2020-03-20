@@ -25,7 +25,6 @@ func (h *getBlockEndorsementsHandler) Handle(params blocks.GetBlockEndorsementsP
 	}
 	service := services.New(repos.New(db), net)
 	operations, count, err := service.GetBlockEndorsements(params.Hash)
-
 	if err != nil {
 		if err == services.ErrNotFound {
 			return blocks.NewGetBlockEndorsementsNotFound()

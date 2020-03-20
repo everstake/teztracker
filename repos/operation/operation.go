@@ -35,7 +35,7 @@ func New(db *gorm.DB) *Repository {
 
 // Count counts a number of operations sutisfying the filter.
 func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperationID int64) (count int64, err error) {
-	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs)
+	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs, true)
 	if maxOperationID > 0 {
 		db = db.Where("operation_id <= ?", maxOperationID)
 	}
@@ -53,16 +53,20 @@ func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperati
 	return count + snapshotCount, err
 }
 
-func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string) *gorm.DB {
-	db := r.db.Model(&models.Operation{})
+func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string, count bool) *gorm.DB {
+	db := r.db.Select("*").Model(&models.Operation{})
 	if len(ids) > 0 {
 		db = db.Where("operation_group_hash IN (?)", ids)
 	}
 	if len(kinds) > 0 {
-		db = db.Where("kind IN (?)", kinds)
+		db = db.Where("operations.kind IN (?)", kinds)
 	}
 
 	if len(inBlocks) > 0 {
+		if len(inBlocks) == 1 && kinds[0] == "endorsement" && !count {
+			db = db.Joins("left join tezos.balance_updates on (operations.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')")
+		}
+
 		db = db.Where("block_hash IN (?)", inBlocks)
 	}
 	if len(accountIDs) > 0 {
@@ -80,7 +84,7 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 // since is used to paginate results based on the operation id.
 // As the result is ordered descendingly the operations with operation_id < since will be returned.
 func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64) (operations []models.Operation, err error) {
-	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs)
+	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs, false)
 
 	if since > 0 {
 		db = db.Where("operation_id < ?", since)
@@ -106,7 +110,7 @@ func (r *Repository) UpdateLevel(operation models.Operation) error {
 }
 
 func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error) {
-	db := r.getFilteredDB(nil, kinds, nil, nil)
+	db := r.getFilteredDB(nil, kinds, nil, nil, false)
 
 	if after > 0 {
 		db = db.Where("operation_id > ?", after)
@@ -120,8 +124,9 @@ func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (o
 
 // EndorsementsFor returns a list of endorsement operations for the provided block level.
 func (r *Repository) EndorsementsFor(blockLevel int64) (operations []models.Operation, err error) {
-	err = r.db.Model(&models.Operation{}).
-		Where("kind = ?", endorsementKind).
+	err = r.db.Select("*").Model(&models.Operation{}).
+		Joins("left join tezos.balance_updates on (operations.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')").
+		Where("operations.kind = ?", endorsementKind).
 		// the endorsements of the block with blockLevel can only be in a block with level (blockLevel + 1)
 		Where("block_level = ?", blockLevel+1).
 		Order("operation_id DESC").
@@ -137,7 +142,7 @@ func (r *Repository) Last() (operation models.Operation, err error) {
 }
 
 func (r *Repository) AccountOperationCount(acc string) (counts []models.OperationCount, err error) {
-	db := r.getFilteredDB(nil, nil, nil, []string{acc})
+	db := r.getFilteredDB(nil, nil, nil, []string{acc}, true)
 
 	err = db.Select("kind,count(1)").
 		Group("kind").

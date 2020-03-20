@@ -26,6 +26,9 @@ type BlocksRow struct {
 	// baker
 	Baker string `json:"baker,omitempty"`
 
+	// baker name
+	BakerName string `json:"bakerName,omitempty"`
+
 	// ballots
 	Ballots int64 `json:"ballots,omitempty"`
 
@@ -89,6 +92,9 @@ type BlocksRow struct {
 	// nonce hash
 	NonceHash string `json:"nonceHash,omitempty"`
 
+	// number of operations
+	NumberOfOperations int64 `json:"number_of_operations,omitempty"`
+
 	// operations hash
 	OperationsHash string `json:"operationsHash,omitempty"`
 
@@ -101,6 +107,9 @@ type BlocksRow struct {
 	// predecessor
 	// Required: true
 	Predecessor *string `json:"predecessor"`
+
+	// priority
+	Priority int64 `json:"priority,omitempty"`
 
 	// proposals
 	Proposals int64 `json:"proposals,omitempty"`

@@ -31,9 +31,16 @@ func New(db *gorm.DB) *Repository {
 	}
 }
 
+func (r *Repository) getDb() *gorm.DB {
+	db := r.db.Select("*").Model(&models.Block{}).Joins("left join tezos.public_bakers on delegate=baker")
+
+	return db
+}
+
 // Last returns the last added block.
 func (r *Repository) Last() (block models.Block, err error) {
-	err = r.db.Model(&block).Order("level desc").First(&block).Error
+	db := r.getDb()
+	err = db.Order("level desc").First(&block).Error
 	return block, err
 }
 
@@ -41,7 +48,7 @@ func (r *Repository) Last() (block models.Block, err error) {
 // limit defines the limit for the maximum number of blocks returned.
 // since is used to paginate results based on the level. As the result is ordered descendingly the blocks with level < since will be returned.
 func (r *Repository) List(limit, offset uint, since uint64) (blocks []models.Block, err error) {
-	db := r.db.Model(&models.Block{})
+	db := r.getDb()
 	if since > 0 {
 		db = db.Where("level < ?", since)
 	}
@@ -70,7 +77,8 @@ func (r *Repository) FindExtended(filter models.Block) (found bool, block models
 
 // Find looks up for blocks with filter.
 func (r *Repository) Find(filter models.Block) (found bool, block models.Block, err error) {
-	if res := r.db.Model(&filter).Where(&filter).Find(&block); res.Error != nil {
+	db := r.getDb()
+	if res := db.Where(&filter).Find(&block); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, block, nil
 		}
@@ -121,7 +129,7 @@ func (r *Repository) ExtendBlocks(blocks []models.Block) (extended []models.Bloc
 }
 
 func (r *Repository) Filter(filter models.BlockFilter) (blocks []models.Block, err error) {
-	db := r.db.Model(&models.Block{})
+	db := r.getDb()
 	db = db.Or("level in (?)", filter.BlockLevels).Or("hash in (?)", filter.BlockHashes)
 	err = db.Find(&blocks).Error
 	return blocks, err

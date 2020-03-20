@@ -2703,6 +2703,9 @@ func init() {
         "baker": {
           "type": "string"
         },
+        "bakerName": {
+          "type": "string"
+        },
         "ballots": {
           "type": "integer",
           "format": "int64"
@@ -2777,6 +2780,10 @@ func init() {
         "nonceHash": {
           "type": "string"
         },
+        "number_of_operations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "operationsHash": {
           "type": "string"
         },
@@ -2789,6 +2796,10 @@ func init() {
         },
         "predecessor": {
           "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
         },
         "proposals": {
           "type": "integer",
@@ -5981,6 +5992,9 @@ func init() {
         "baker": {
           "type": "string"
         },
+        "bakerName": {
+          "type": "string"
+        },
         "ballots": {
           "type": "integer",
           "format": "int64"
@@ -6055,6 +6069,10 @@ func init() {
         "nonceHash": {
           "type": "string"
         },
+        "number_of_operations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "operationsHash": {
           "type": "string"
         },
@@ -6067,6 +6085,10 @@ func init() {
         },
         "predecessor": {
           "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
         },
         "proposals": {
           "type": "integer",
