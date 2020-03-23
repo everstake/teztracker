@@ -104,6 +104,19 @@ func (t *TezTracker) GetBakerInfo(accountID string) (bi *models.Baker, err error
 		return bi, err
 	}
 
+	block, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return nil, err
+	}
+
+	//Get last snapshot
+	_, snap, err := t.repoProvider.GetSnapshots().Find(block.MetaCycle - PreservedCycles)
+	if err != nil {
+		return nil, err
+	}
+
+	baker.StakingCapacity = t.calcBakerCapacity(baker.Balance, snap.Rolls)
+
 	return &baker, nil
 }
 
