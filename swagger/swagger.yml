@@ -1849,6 +1849,9 @@ definitions:
         type: integer
       protocol:
         type: string
+      proposals:
+        format: int64
+        type: integer
       signature:
         type: string
       timestamp:
@@ -1864,9 +1867,6 @@ definitions:
         format: int64
         type: integer
       endorsements:
-        format: int64
-        type: integer
-      proposals:
         format: int64
         type: integer
       seed_nonce_revelations:
@@ -1903,11 +1903,12 @@ definitions:
         type: string
     required:
       - timestamp
-      - proto
       - validationPass
       - hash
       - fitness
+      - proto
       - protocol
+      - priority
       - predecessor
       - level
     type: object

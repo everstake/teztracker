@@ -109,7 +109,8 @@ type BlocksRow struct {
 	Predecessor *string `json:"predecessor"`
 
 	// priority
-	Priority int64 `json:"priority,omitempty"`
+	// Required: true
+	Priority *int64 `json:"priority"`
 
 	// proposals
 	Proposals int64 `json:"proposals,omitempty"`
@@ -166,6 +167,10 @@ func (m *BlocksRow) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validatePriority(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateProto(formats); err != nil {
 		res = append(res, err)
 	}
@@ -218,6 +223,15 @@ func (m *BlocksRow) validateLevel(formats strfmt.Registry) error {
 func (m *BlocksRow) validatePredecessor(formats strfmt.Registry) error {
 
 	if err := validate.Required("predecessor", "body", m.Predecessor); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BlocksRow) validatePriority(formats strfmt.Registry) error {
+
+	if err := validate.Required("priority", "body", m.Priority); err != nil {
 		return err
 	}
 
