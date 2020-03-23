@@ -32,6 +32,9 @@ type BlocksRow struct {
 	// ballots
 	Ballots int64 `json:"ballots,omitempty"`
 
+	// block time
+	BlockTime int64 `json:"blockTime,omitempty"`
+
 	// chain Id
 	ChainID string `json:"chainId,omitempty"`
 
@@ -49,6 +52,9 @@ type BlocksRow struct {
 
 	// double baking evidence
 	DoubleBakingEvidence int64 `json:"double_baking_evidence,omitempty"`
+
+	// double endorsement evidence
+	DoubleEndorsementEvidence int64 `json:"double_endorsement_evidence,omitempty"`
 
 	// endorsements
 	Endorsements int64 `json:"endorsements,omitempty"`

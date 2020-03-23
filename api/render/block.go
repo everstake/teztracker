@@ -52,7 +52,8 @@ func Block(b models.Block) *genModels.BlocksRow {
 		genBlock.Ballots = b.BlockAggregation.Ballots
 		genBlock.Originations = b.BlockAggregation.Originations
 		genBlock.Reveals = b.BlockAggregation.Reveals
-		genBlock.DoubleBakingEvidence = b.BlockAggregation.DoubleBakingEvidence
+		genBlock.DoubleBakingEvidence = b.BlockAggregation.DoubleBakingEvidences
+		genBlock.DoubleEndorsementEvidence = b.BlockAggregation.DoubleEndorsementEvidences
 		genBlock.NumberOfOperations = b.BlockAggregation.NumberOfOperations
 	}
 

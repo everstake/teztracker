@@ -11,6 +11,7 @@ type Block struct {
 	Proto                    null.Int               `json:"proto"`
 	Predecessor              null.String            `json:"predecessor"`
 	Timestamp                time.Time              `json:"timestamp"`
+	BlockTime                int64                  `json:"block_time"`
 	ValidationPass           null.Int               `json:"validation_pass"`
 	Fitness                  null.String            `json:"fitness"`
 	Context                  string                 `json:"context"`

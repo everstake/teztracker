@@ -2714,6 +2714,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64"
+        },
         "chainId": {
           "type": "string"
         },
@@ -2733,6 +2737,10 @@ func init() {
           "format": "int64"
         },
         "double_baking_evidence": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "double_endorsement_evidence": {
           "type": "integer",
           "format": "int64"
         },
@@ -6007,6 +6015,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64"
+        },
         "chainId": {
           "type": "string"
         },
@@ -6026,6 +6038,10 @@ func init() {
           "format": "int64"
         },
         "double_baking_evidence": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "double_endorsement_evidence": {
           "type": "integer",
           "format": "int64"
         },
