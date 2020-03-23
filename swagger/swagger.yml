@@ -1799,6 +1799,9 @@ definitions:
         type: string
       baker:
         type: string
+      blockTime:
+        type: integer
+        format: int64
       chainId:
         type: string
       consumedGas:
@@ -1891,6 +1894,9 @@ definitions:
         format: int64
         type: integer
       double_baking_evidence:
+        format: int64
+        type: integer
+      double_endorsement_evidence:
         format: int64
         type: integer
       number_of_operations:
