@@ -13,6 +13,7 @@ func Block(b models.Block) *genModels.BlocksRow {
 	genBlock := genModels.BlocksRow{
 		Level:                    b.Level.Ptr(),
 		Proto:                    b.Proto.Ptr(),
+		BlockTime:                b.BlockTime,
 		Predecessor:              b.Predecessor.Ptr(),
 		Timestamp:                &ts,
 		ValidationPass:           b.ValidationPass.Ptr(),
