@@ -20,7 +20,7 @@ func Block(b models.Block) *genModels.BlocksRow {
 		Context:                  b.Context,
 		Signature:                b.Signature,
 		Protocol:                 b.Protocol.Ptr(),
-		Priority:                 b.Priority,
+		Priority:                 b.Priority.Ptr(),
 		ChainID:                  b.ChainID,
 		Hash:                     b.Hash.Ptr(),
 		OperationsHash:           b.OperationsHash,
@@ -93,7 +93,7 @@ func BlocksBakingRights(bs []models.Block) []*genModels.BakingRightsPerBlock {
 
 // BlockBakingRights renders an app level block model into a OpenAPI model.
 func BlockBakingRights(b models.Block) *genModels.BakingRightsPerBlock {
-	br := genModels.BakingRightsPerBlock{Baker: b.Baker, Level: b.Level.Int64, BlockHash: b.Hash.String, BakerPriority: &b.Priority}
+	br := genModels.BakingRightsPerBlock{Baker: b.Baker, Level: b.Level.Int64, BlockHash: b.Hash.String, BakerPriority: b.Priority.Ptr()}
 	br.Rights = BakingRights(b.BakingRights)
 	return &br
 }

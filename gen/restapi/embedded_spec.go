@@ -2687,11 +2687,12 @@ func init() {
       "type": "object",
       "required": [
         "timestamp",
-        "proto",
         "validationPass",
         "hash",
         "fitness",
+        "proto",
         "protocol",
+        "priority",
         "predecessor",
         "level"
       ],
@@ -5979,11 +5980,12 @@ func init() {
       "type": "object",
       "required": [
         "timestamp",
-        "proto",
         "validationPass",
         "hash",
         "fitness",
+        "proto",
         "protocol",
+        "priority",
         "predecessor",
         "level"
       ],
