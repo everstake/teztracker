@@ -3087,6 +3087,10 @@ func init() {
         "publicKey": {
           "type": "string"
         },
+        "reward": {
+          "type": "integer",
+          "format": "int64"
+        },
         "script": {
           "type": "string"
         },
@@ -6382,6 +6386,10 @@ func init() {
         },
         "publicKey": {
           "type": "string"
+        },
+        "reward": {
+          "type": "integer",
+          "format": "int64"
         },
         "script": {
           "type": "string"
