@@ -2053,6 +2053,9 @@ definitions:
         type: string
       proposal:
         type: string
+      reward:
+        type: integer
+        format: int64
       doubleBake:
         $ref: '#/definitions/DoubleBakingDetails'
     required:
