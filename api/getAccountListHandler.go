@@ -61,7 +61,7 @@ func (h *getAccountBalanceListHandler) Handle(params accounts.GetAccountBalanceL
 	from := time.Unix(params.From, 0)
 	to := time.Unix(params.To, 0)
 
-	if from.Sub(to) > 24*31*time.Hour {
+	if to.Sub(from) > 24*31*time.Hour {
 		return accounts.NewGetAccountBalanceListBadRequest()
 	}
 
