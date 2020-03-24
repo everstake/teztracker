@@ -1980,7 +1980,11 @@ definitions:
         type: boolean
       delegate:
         type: string
+      delegateName:
+        type: string
       destination:
+        type: string
+      destinationName:
         type: string
       fee:
         type: integer
@@ -2018,6 +2022,8 @@ definitions:
       slots:
         type: string
       source:
+        type: string
+      sourceName:
         type: string
       spendable:
         type: boolean
