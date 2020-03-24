@@ -54,10 +54,19 @@ func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperati
 }
 
 func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string, count bool) *gorm.DB {
-	db := r.db.Select("*").Model(&models.Operation{})
+	db := r.db.Model(&models.Operation{})
+
+	if !count {
+		db = db.Select("*, des.baker_name as destination_name, s.baker_name as source_name, del.baker_name as delegate_name").
+			Joins("left join tezos.public_bakers as des on operations.destination = des.delegate").
+			Joins("left join tezos.public_bakers as s on operations.source = s.delegate").
+			Joins("left join tezos.public_bakers as del on operations.delegate = del.delegate")
+	}
+
 	if len(ids) > 0 {
 		db = db.Where("operation_group_hash IN (?)", ids)
 	}
+
 	if len(kinds) > 0 {
 		db = db.Where("operations.kind IN (?)", kinds)
 	}
@@ -69,6 +78,7 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 
 		db = db.Where("block_hash IN (?)", inBlocks)
 	}
+
 	if len(accountIDs) > 0 {
 		if len(kinds) == 1 && kinds[0] == "transaction" {
 			db = db.Where("source IN (?) OR destination IN (?)", accountIDs, accountIDs)
@@ -89,10 +99,12 @@ func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, li
 	if since > 0 {
 		db = db.Where("operation_id < ?", since)
 	}
+
 	err = db.Order("operation_id desc").
 		Limit(limit).
 		Offset(offset).
-		Find(&operations).Error
+		Scan(&operations).Error
+
 	return operations, err
 }
 

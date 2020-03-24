@@ -3040,7 +3040,13 @@ func init() {
         "delegate": {
           "type": "string"
         },
+        "delegateName": {
+          "type": "string"
+        },
         "destination": {
+          "type": "string"
+        },
+        "destinationName": {
           "type": "string"
         },
         "doubleBake": {
@@ -3103,6 +3109,9 @@ func init() {
           "type": "string"
         },
         "source": {
+          "type": "string"
+        },
+        "sourceName": {
           "type": "string"
         },
         "spendable": {
@@ -6342,7 +6351,13 @@ func init() {
         "delegate": {
           "type": "string"
         },
+        "delegateName": {
+          "type": "string"
+        },
         "destination": {
+          "type": "string"
+        },
+        "destinationName": {
           "type": "string"
         },
         "doubleBake": {
@@ -6405,6 +6420,9 @@ func init() {
           "type": "string"
         },
         "source": {
+          "type": "string"
+        },
+        "sourceName": {
           "type": "string"
         },
         "spendable": {
