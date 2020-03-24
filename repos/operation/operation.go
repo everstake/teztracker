@@ -72,10 +72,6 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 	}
 
 	if len(inBlocks) > 0 {
-		if len(inBlocks) == 1 && kinds[0] == "endorsement" && !count {
-			db = db.Joins("left join tezos.balance_updates on (operations.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')")
-		}
-
 		db = db.Where("block_hash IN (?)", inBlocks)
 	}
 
@@ -100,10 +96,15 @@ func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, li
 		db = db.Where("operation_id < ?", since)
 	}
 
-	err = db.Order("operation_id desc").
+	db = db.Order("operation_id desc").
 		Limit(limit).
-		Offset(offset).
-		Scan(&operations).Error
+		Offset(offset)
+
+	if len(inBlocks) == 1 && len(kinds) == 1 && kinds[0] == "endorsement" {
+		db = r.db.Raw("SELECT * from (?) as s left join tezos.balance_updates on (s.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')", db.SubQuery())
+	}
+
+	err = db.Scan(&operations).Error
 
 	return operations, err
 }
