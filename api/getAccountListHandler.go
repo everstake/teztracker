@@ -54,7 +54,7 @@ func (h *getAccountBalanceListHandler) Handle(params accounts.GetAccountBalanceL
 	}
 	service := services.New(repos.New(db), net)
 
-	if params.From <= 0 || params.To <= 0 || params.To > params.From {
+	if params.From <= 0 || params.To <= 0 || params.To < params.From {
 		return accounts.NewGetAccountBalanceListBadRequest()
 	}
 
