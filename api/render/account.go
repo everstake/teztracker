@@ -25,7 +25,7 @@ func Account(a models.Account) *genModels.AccountsRow {
 		LastActive:      a.LastActive.Unix(),
 		Transactions:    a.Transactions,
 		Operations:      a.Operations,
-		Revealed:        a.IsRevealed,
+		Revealed:        &a.IsRevealed,
 	}
 }
 

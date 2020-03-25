@@ -1718,6 +1718,7 @@ definitions:
       - counter
       - blockLevel
       - blockId
+      - revealed
     type: object
   BakersRow:
     properties:
