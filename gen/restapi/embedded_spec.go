@@ -2412,7 +2412,8 @@ func init() {
         "manager",
         "counter",
         "blockLevel",
-        "blockId"
+        "blockId",
+        "revealed"
       ],
       "properties": {
         "accountId": {
@@ -5726,7 +5727,8 @@ func init() {
         "manager",
         "counter",
         "blockLevel",
-        "blockId"
+        "blockId",
+        "revealed"
       ],
       "properties": {
         "accountId": {
