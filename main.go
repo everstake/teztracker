@@ -31,12 +31,12 @@ func main() {
 	if cfg.Mainnet.SqlConnectionString != "" {
 		networks[models.NetworkMain] = cfg.Mainnet
 	}
-	//if cfg.Babylonnet.SqlConnectionString != "" {
-	//	networks[models.NetworkBabylon] = cfg.Babylonnet
-	//}
-	//if cfg.Carthagenet.SqlConnectionString != "" {
-	//	networks[models.NetworkCarthage] = cfg.Carthagenet
-	//}
+	if cfg.Babylonnet.SqlConnectionString != "" {
+		networks[models.NetworkBabylon] = cfg.Babylonnet
+	}
+	if cfg.Carthagenet.SqlConnectionString != "" {
+		networks[models.NetworkCarthage] = cfg.Carthagenet
+	}
 	if len(networks) == 0 {
 		log.Fatalln("no networks are configured")
 	}
