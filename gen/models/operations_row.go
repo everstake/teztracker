@@ -49,6 +49,9 @@ type OperationsRow struct {
 	// delegate name
 	DelegateName string `json:"delegateName,omitempty"`
 
+	// delegation amount
+	DelegationAmount int64 `json:"delegationAmount,omitempty"`
+
 	// destination
 	Destination string `json:"destination,omitempty"`
 

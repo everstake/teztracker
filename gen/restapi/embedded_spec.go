@@ -3049,6 +3049,10 @@ func init() {
         "delegateName": {
           "type": "string"
         },
+        "delegationAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
         "destination": {
           "type": "string"
         },
@@ -6369,6 +6373,10 @@ func init() {
         },
         "delegateName": {
           "type": "string"
+        },
+        "delegationAmount": {
+          "type": "integer",
+          "format": "int64"
         },
         "destination": {
           "type": "string"
