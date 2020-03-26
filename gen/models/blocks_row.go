@@ -132,6 +132,10 @@ type BlocksRow struct {
 	// reveals
 	Reveals int64 `json:"reveals,omitempty"`
 
+	// reward
+	// Required: true
+	Reward *int64 `json:"reward"`
+
 	// seed nonce revelations
 	SeedNonceRevelations int64 `json:"seed_nonce_revelations,omitempty"`
 
@@ -182,6 +186,10 @@ func (m *BlocksRow) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateProtocol(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateReward(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -256,6 +264,15 @@ func (m *BlocksRow) validateProto(formats strfmt.Registry) error {
 func (m *BlocksRow) validateProtocol(formats strfmt.Registry) error {
 
 	if err := validate.Required("protocol", "body", m.Protocol); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BlocksRow) validateReward(formats strfmt.Registry) error {
+
+	if err := validate.Required("reward", "body", m.Reward); err != nil {
 		return err
 	}
 

@@ -1907,6 +1907,9 @@ definitions:
         type: integer
       bakerName:
         type: string
+      reward:
+        format: int64
+        type: integer
     required:
       - timestamp
       - validationPass
@@ -1917,6 +1920,7 @@ definitions:
       - priority
       - predecessor
       - level
+      - reward
     type: object
   OperationGroupsRow:
     properties:

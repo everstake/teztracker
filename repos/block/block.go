@@ -32,7 +32,10 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb() *gorm.DB {
-	db := r.db.Select("*").Model(&models.Block{}).Joins("left join tezos.public_bakers on delegate=baker")
+	db := r.db.Select("blocks.*, pb.baker_name, bu.change as reward").
+		Model(&models.Block{}).
+		Joins("left join tezos.public_bakers as pb on delegate=baker").
+		Joins("left join tezos.balance_updates as bu on (source_hash=hash and category='rewards' and source='block')")
 
 	return db
 }
@@ -40,7 +43,7 @@ func (r *Repository) getDb() *gorm.DB {
 // Last returns the last added block.
 func (r *Repository) Last() (block models.Block, err error) {
 	db := r.getDb()
-	err = db.Order("level desc").First(&block).Error
+	err = db.Order("blocks.level desc").First(&block).Error
 	return block, err
 }
 
@@ -52,7 +55,7 @@ func (r *Repository) List(limit, offset uint, since uint64) (blocks []models.Blo
 	if since > 0 {
 		db = db.Where("level < ?", since)
 	}
-	err = db.Order("level desc").
+	err = db.Order("blocks.level desc").
 		Limit(limit).
 		Offset(offset).
 		Find(&blocks).Error
