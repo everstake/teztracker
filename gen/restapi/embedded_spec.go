@@ -2695,7 +2695,8 @@ func init() {
         "protocol",
         "priority",
         "predecessor",
-        "level"
+        "level",
+        "reward"
       ],
       "properties": {
         "activate_accounts": {
@@ -2826,6 +2827,10 @@ func init() {
           "type": "string"
         },
         "reveals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         },
@@ -6010,7 +6015,8 @@ func init() {
         "protocol",
         "priority",
         "predecessor",
-        "level"
+        "level",
+        "reward"
       ],
       "properties": {
         "activate_accounts": {
@@ -6141,6 +6147,10 @@ func init() {
           "type": "string"
         },
         "reveals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         },

@@ -39,3 +39,6 @@ CREATE OR REPLACE VIEW tezos.block_aggregation_view
     COALESCE(sum(operations.consumed_gas), 0::numeric) AS gas_used
    FROM tezos.operations_for_counters operations
   GROUP BY operations.block_level;
+
+create index concurrently balance_updates_source_hash_index
+  on tezos.balance_updates (source_hash) where category='rewards' and source='block';
