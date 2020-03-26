@@ -2,6 +2,7 @@ package operation
 
 import (
 	"github.com/everstake/teztracker/models"
+	"github.com/go-openapi/validate"
 	"github.com/jinzhu/gorm"
 )
 
@@ -54,11 +55,15 @@ func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperati
 }
 
 func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string) *gorm.DB {
-	db := r.db.Model(&models.Operation{})
+	db := r.db.Select("*").Model(&models.Operation{})
 	if len(ids) > 0 {
 		db = db.Where("operation_group_hash IN (?)", ids)
 	}
 	if len(kinds) > 0 {
+		if validate.Enum("", "", "delegation", kinds) == nil {
+			db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source)")
+		}
+
 		db = db.Where("kind IN (?)", kinds)
 	}
 

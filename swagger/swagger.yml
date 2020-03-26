@@ -1975,6 +1975,9 @@ definitions:
         type: boolean
       delegate:
         type: string
+      delegationAmount:
+        type: integer
+        format: int64
       destination:
         type: string
       fee:

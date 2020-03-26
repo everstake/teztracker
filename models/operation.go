@@ -29,6 +29,7 @@ type Operation struct {
 	Balance             int64       `json:"balance"`
 	Spendable           bool        `json:"spendable"`
 	Delegatable         bool        `json:"delegatable"`
+	DelegationAmount    int64       `json:"delegation_amount" gorm:"column:balance"`
 	Script              string      `json:"script"`
 	Storage             string      `json:"storage"`
 	Status              string      `json:"status"`

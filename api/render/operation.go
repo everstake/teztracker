@@ -32,6 +32,7 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 		Balance:             b.Balance,
 		Spendable:           b.Spendable,
 		Delegatable:         b.Delegatable,
+		DelegationAmount:    b.DelegationAmount,
 		Script:              b.Script,
 		Storage:             b.Storage,
 		Status:              b.Status,
