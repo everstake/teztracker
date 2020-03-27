@@ -2412,10 +2412,14 @@ func init() {
         "manager",
         "counter",
         "blockLevel",
-        "blockId"
+        "blockId",
+        "revealed"
       ],
       "properties": {
         "accountId": {
+          "type": "string"
+        },
+        "accountName": {
           "type": "string"
         },
         "bakerInfo": {
@@ -2684,13 +2688,15 @@ func init() {
       "type": "object",
       "required": [
         "timestamp",
-        "proto",
         "validationPass",
         "hash",
         "fitness",
+        "proto",
         "protocol",
+        "priority",
         "predecessor",
-        "level"
+        "level",
+        "reward"
       ],
       "properties": {
         "activate_accounts": {
@@ -2707,6 +2713,10 @@ func init() {
           "type": "string"
         },
         "ballots": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blockTime": {
           "type": "integer",
           "format": "int64"
         },
@@ -2729,6 +2739,10 @@ func init() {
           "format": "int64"
         },
         "double_baking_evidence": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "double_endorsement_evidence": {
           "type": "integer",
           "format": "int64"
         },
@@ -2813,6 +2827,10 @@ func init() {
           "type": "string"
         },
         "reveals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         },
@@ -3031,6 +3049,10 @@ func init() {
         "delegateName": {
           "type": "string"
         },
+        "delegationAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
         "destination": {
           "type": "string"
         },
@@ -3086,6 +3108,10 @@ func init() {
         },
         "publicKey": {
           "type": "string"
+        },
+        "reward": {
+          "type": "integer",
+          "format": "int64"
         },
         "script": {
           "type": "string"
@@ -5710,10 +5736,14 @@ func init() {
         "manager",
         "counter",
         "blockLevel",
-        "blockId"
+        "blockId",
+        "revealed"
       ],
       "properties": {
         "accountId": {
+          "type": "string"
+        },
+        "accountName": {
           "type": "string"
         },
         "bakerInfo": {
@@ -5982,13 +6012,15 @@ func init() {
       "type": "object",
       "required": [
         "timestamp",
-        "proto",
         "validationPass",
         "hash",
         "fitness",
+        "proto",
         "protocol",
+        "priority",
         "predecessor",
-        "level"
+        "level",
+        "reward"
       ],
       "properties": {
         "activate_accounts": {
@@ -6005,6 +6037,10 @@ func init() {
           "type": "string"
         },
         "ballots": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blockTime": {
           "type": "integer",
           "format": "int64"
         },
@@ -6027,6 +6063,10 @@ func init() {
           "format": "int64"
         },
         "double_baking_evidence": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "double_endorsement_evidence": {
           "type": "integer",
           "format": "int64"
         },
@@ -6111,6 +6151,10 @@ func init() {
           "type": "string"
         },
         "reveals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         },
@@ -6330,6 +6374,10 @@ func init() {
         "delegateName": {
           "type": "string"
         },
+        "delegationAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
         "destination": {
           "type": "string"
         },
@@ -6385,6 +6433,10 @@ func init() {
         },
         "publicKey": {
           "type": "string"
+        },
+        "reward": {
+          "type": "integer",
+          "format": "int64"
         },
         "script": {
           "type": "string"

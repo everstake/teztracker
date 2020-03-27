@@ -11,6 +11,7 @@ type Block struct {
 	Proto                    null.Int               `json:"proto"`
 	Predecessor              null.String            `json:"predecessor"`
 	Timestamp                time.Time              `json:"timestamp"`
+	BlockTime                int64                  `json:"block_time"`
 	ValidationPass           null.Int               `json:"validation_pass"`
 	Fitness                  null.String            `json:"fitness"`
 	Context                  string                 `json:"context"`
@@ -24,6 +25,7 @@ type Block struct {
 	ActiveProposal           string                 `json:"active_proposal"`
 	Baker                    string                 `json:"baker"`
 	BakerName                string                 `json:"baker_name"`
+	Reward                   int64                  `json:"reward"`
 	NonceHash                string                 `json:"nonce_hash"`
 	ConsumedGas              int64                  `json:"consumed_gas"`
 	MetaLevel                int64                  `json:"meta_level"`
@@ -33,7 +35,7 @@ type Block struct {
 	MetaVotingPeriod         int64                  `json:"meta_voting_period"`
 	MetaVotingPeriodPosition int64                  `json:"meta_voting_period_position"`
 	ExpectedCommitment       bool                   `json:"expected_commitment"`
-	Priority                 int64                  `json:"priority" gorm:"column:priority"`
+	Priority                 null.Int               `json:"priority" gorm:"column:priority"`
 	BlockAggregation         *BlockAggregationView  `json:"-"`
 	Delegates                []*Delegate            `json:"delegates"`            // This line is infered from other tables.
 	Proposals                []*Proposal            `json:"proposals"`            // This line is infered from other tables.

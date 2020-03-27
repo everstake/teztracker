@@ -1,9 +1,10 @@
 CREATE MATERIALIZED VIEW tezos.account_materialized_view
 AS
-select *
+select acc.*, baker_name as account_name
 from (select account_id, min(asof) as created_at, max(asof) as last_active
       from tezos.accounts_history
-      group by account_id) as s;
+      group by account_id) as acc
+       left join tezos.public_bakers on acc.account_id = delegate;
 
 CREATE TRIGGER update_materialized_view
   AFTER INSERT

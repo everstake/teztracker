@@ -54,14 +54,14 @@ func (h *getAccountBalanceListHandler) Handle(params accounts.GetAccountBalanceL
 	}
 	service := services.New(repos.New(db), net)
 
-	if params.From <= 0 || params.To <= 0 || params.To > params.From {
+	if params.From <= 0 || params.To <= 0 || params.To < params.From {
 		return accounts.NewGetAccountBalanceListBadRequest()
 	}
 
 	from := time.Unix(params.From, 0)
 	to := time.Unix(params.To, 0)
 
-	if from.Sub(to) > 24*31*time.Hour {
+	if to.Sub(from) > 24*31*time.Hour {
 		return accounts.NewGetAccountBalanceListBadRequest()
 	}
 

@@ -13,6 +13,7 @@ func Block(b models.Block) *genModels.BlocksRow {
 	genBlock := genModels.BlocksRow{
 		Level:                    b.Level.Ptr(),
 		Proto:                    b.Proto.Ptr(),
+		BlockTime:                b.BlockTime,
 		Predecessor:              b.Predecessor.Ptr(),
 		Timestamp:                &ts,
 		ValidationPass:           b.ValidationPass.Ptr(),
@@ -20,9 +21,10 @@ func Block(b models.Block) *genModels.BlocksRow {
 		Context:                  b.Context,
 		Signature:                b.Signature,
 		Protocol:                 b.Protocol.Ptr(),
-		Priority:                 b.Priority,
+		Priority:                 b.Priority.Ptr(),
 		ChainID:                  b.ChainID,
 		Hash:                     b.Hash.Ptr(),
+		Reward:                   &b.Reward,
 		OperationsHash:           b.OperationsHash,
 		PeriodKind:               b.PeriodKind,
 		CurrentExpectedQuorum:    b.CurrentExpectedQuorum,
@@ -52,7 +54,8 @@ func Block(b models.Block) *genModels.BlocksRow {
 		genBlock.Ballots = b.BlockAggregation.Ballots
 		genBlock.Originations = b.BlockAggregation.Originations
 		genBlock.Reveals = b.BlockAggregation.Reveals
-		genBlock.DoubleBakingEvidence = b.BlockAggregation.DoubleBakingEvidence
+		genBlock.DoubleBakingEvidence = b.BlockAggregation.DoubleBakingEvidences
+		genBlock.DoubleEndorsementEvidence = b.BlockAggregation.DoubleEndorsementEvidences
 		genBlock.NumberOfOperations = b.BlockAggregation.NumberOfOperations
 	}
 
@@ -93,7 +96,7 @@ func BlocksBakingRights(bs []models.Block) []*genModels.BakingRightsPerBlock {
 
 // BlockBakingRights renders an app level block model into a OpenAPI model.
 func BlockBakingRights(b models.Block) *genModels.BakingRightsPerBlock {
-	br := genModels.BakingRightsPerBlock{Baker: b.Baker, Level: b.Level.Int64, BlockHash: b.Hash.String, BakerPriority: &b.Priority}
+	br := genModels.BakingRightsPerBlock{Baker: b.Baker, Level: b.Level.Int64, BlockHash: b.Hash.String, BakerPriority: b.Priority.Ptr()}
 	br.Rights = BakingRights(b.BakingRights)
 	return &br
 }

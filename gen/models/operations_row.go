@@ -49,6 +49,9 @@ type OperationsRow struct {
 	// delegate name
 	DelegateName string `json:"delegateName,omitempty"`
 
+	// delegation amount
+	DelegationAmount int64 `json:"delegationAmount,omitempty"`
+
 	// destination
 	Destination string `json:"destination,omitempty"`
 
@@ -102,6 +105,9 @@ type OperationsRow struct {
 
 	// public key
 	PublicKey string `json:"publicKey,omitempty"`
+
+	// reward
+	Reward int64 `json:"reward,omitempty"`
 
 	// script
 	Script string `json:"script,omitempty"`

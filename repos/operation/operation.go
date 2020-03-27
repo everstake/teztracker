@@ -2,6 +2,7 @@ package operation
 
 import (
 	"github.com/everstake/teztracker/models"
+	"github.com/go-openapi/validate"
 	"github.com/jinzhu/gorm"
 )
 
@@ -64,26 +65,26 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 	}
 
 	if len(ids) > 0 {
-		db = db.Where("operation_group_hash IN (?)", ids)
+		db = db.Where("operations.operation_group_hash IN (?)", ids)
 	}
 
 	if len(kinds) > 0 {
+		if !count && validate.Enum("", "", "delegation", kinds) == nil {
+			db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source)")
+		}
+
 		db = db.Where("operations.kind IN (?)", kinds)
 	}
 
 	if len(inBlocks) > 0 {
-		if len(inBlocks) == 1 && kinds[0] == "endorsement" && !count {
-			db = db.Joins("left join tezos.balance_updates on (operations.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')")
-		}
-
-		db = db.Where("block_hash IN (?)", inBlocks)
+		db = db.Where("operations.block_hash IN (?)", inBlocks)
 	}
 
 	if len(accountIDs) > 0 {
 		if len(kinds) == 1 && kinds[0] == "transaction" {
-			db = db.Where("source IN (?) OR destination IN (?)", accountIDs, accountIDs)
+			db = db.Where("operations.source IN (?) OR operations.destination IN (?)", accountIDs, accountIDs)
 		} else {
-			db = db.Where("operations.delegate IN (?) OR pkh IN (?) OR source IN (?) OR public_key IN (?) OR destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
+			db = db.Where("operations.delegate IN (?) OR operations.pkh IN (?) OR operations.source IN (?) OR operations.public_key IN (?) OR operations.destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
 		}
 	}
 	return db
@@ -100,10 +101,15 @@ func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, li
 		db = db.Where("operation_id < ?", since)
 	}
 
-	err = db.Order("operation_id desc").
+	db = db.Order("operation_id desc").
 		Limit(limit).
-		Offset(offset).
-		Scan(&operations).Error
+		Offset(offset)
+
+	if len(inBlocks) == 1 && len(kinds) == 1 && kinds[0] == "endorsement" {
+		db = r.db.Raw("SELECT * from (?) as s left join tezos.balance_updates on (s.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')", db.SubQuery())
+	}
+
+	err = db.Find(&operations).Error
 
 	return operations, err
 }
