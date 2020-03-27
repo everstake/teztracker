@@ -113,6 +113,7 @@ func BakingRight(r models.FutureBakingRight) *genModels.BakingRightsRow {
 	priority := int64(r.Priority)
 	return &genModels.BakingRightsRow{
 		Delegate:      r.Delegate,
+		DelegateName:  r.DelegateName,
 		Priority:      &priority,
 		EstimatedTime: strfmt.DateTime(r.EstimatedTime),
 	}
@@ -131,6 +132,7 @@ func FutureBlockBakingRights(r models.FutureBlockBakingRight) *genModels.FutureB
 		priority := int64(r.Rights[i].Priority)
 		resp.Rights[i] = &genModels.BakingRightsRow{
 			Delegate:      r.Rights[i].Delegate,
+			DelegateName:  r.Rights[i].DelegateName,
 			Priority:      &priority,
 			EstimatedTime: strfmt.DateTime(r.Rights[i].EstimatedTime),
 		}

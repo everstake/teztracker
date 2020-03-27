@@ -20,6 +20,9 @@ type BakingRightsRow struct {
 	// delegate
 	Delegate string `json:"delegate,omitempty"`
 
+	// delegate name
+	DelegateName string `json:"delegate_name,omitempty"`
+
 	// estimated time
 	// Format: date-time
 	EstimatedTime strfmt.DateTime `json:"estimated_time,omitempty"`

@@ -1994,10 +1994,14 @@ definitions:
         type: boolean
       delegate:
         type: string
+      delegateName:
+        type: string
       delegationAmount:
         type: integer
         format: int64
       destination:
+        type: string
+      destinationName:
         type: string
       fee:
         type: integer
@@ -2035,6 +2039,8 @@ definitions:
       slots:
         type: string
       source:
+        type: string
+      sourceName:
         type: string
       spendable:
         type: boolean
@@ -2100,6 +2106,8 @@ definitions:
         format: int64
         type: integer
       delegate:
+        type: string
+      delegate_name:
         type: string
       estimated_time:
         type: string

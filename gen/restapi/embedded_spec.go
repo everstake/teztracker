@@ -2608,6 +2608,9 @@ func init() {
         "delegate": {
           "type": "string"
         },
+        "delegate_name": {
+          "type": "string"
+        },
         "estimated_time": {
           "type": "string",
           "format": "date-time"
@@ -3043,11 +3046,17 @@ func init() {
         "delegate": {
           "type": "string"
         },
+        "delegateName": {
+          "type": "string"
+        },
         "delegationAmount": {
           "type": "integer",
           "format": "int64"
         },
         "destination": {
+          "type": "string"
+        },
+        "destinationName": {
           "type": "string"
         },
         "doubleBake": {
@@ -3114,6 +3123,9 @@ func init() {
           "type": "string"
         },
         "source": {
+          "type": "string"
+        },
+        "sourceName": {
           "type": "string"
         },
         "spendable": {
@@ -5920,6 +5932,9 @@ func init() {
         "delegate": {
           "type": "string"
         },
+        "delegate_name": {
+          "type": "string"
+        },
         "estimated_time": {
           "type": "string",
           "format": "date-time"
@@ -6356,11 +6371,17 @@ func init() {
         "delegate": {
           "type": "string"
         },
+        "delegateName": {
+          "type": "string"
+        },
         "delegationAmount": {
           "type": "integer",
           "format": "int64"
         },
         "destination": {
+          "type": "string"
+        },
+        "destinationName": {
           "type": "string"
         },
         "doubleBake": {
@@ -6427,6 +6448,9 @@ func init() {
           "type": "string"
         },
         "source": {
+          "type": "string"
+        },
+        "sourceName": {
           "type": "string"
         },
         "spendable": {

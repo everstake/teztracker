@@ -22,6 +22,7 @@ type BakingRightFilter struct {
 type FutureBakingRight struct {
 	Level         int64     `json:"level"`
 	Delegate      string    `json:"delegate"`
+	DelegateName  string    `json:"delegate_name"`
 	Priority      int       `json:"priority"`
 	EstimatedTime time.Time `json:"estimated_time"`
 }

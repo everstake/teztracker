@@ -48,6 +48,9 @@ type Operation struct {
 	Internal            bool        `json:"internal" gorm:"column:internal"`
 	Period              int64       `json:"period" gorm:"column:period"`
 	Reward              int64       `json:"reward" gorm:"column:change"`
+	DelegateName        string      `json:"delegate_name" gorm:"column:delegate_name"`
+	SourceName          string      `json:"source_name" gorm:"column:source_name"`
+	DestinationName     string      `json:"destination_name" gorm:"column:destination_name"`
 }
 
 type OperationCount struct {

@@ -46,11 +46,17 @@ type OperationsRow struct {
 	// delegate
 	Delegate string `json:"delegate,omitempty"`
 
+	// delegate name
+	DelegateName string `json:"delegateName,omitempty"`
+
 	// delegation amount
 	DelegationAmount int64 `json:"delegationAmount,omitempty"`
 
 	// destination
 	Destination string `json:"destination,omitempty"`
+
+	// destination name
+	DestinationName string `json:"destinationName,omitempty"`
 
 	// double bake
 	DoubleBake *DoubleBakingDetails `json:"doubleBake,omitempty"`
@@ -114,6 +120,9 @@ type OperationsRow struct {
 
 	// source
 	Source string `json:"source,omitempty"`
+
+	// source name
+	SourceName string `json:"sourceName,omitempty"`
 
 	// spendable
 	Spendable bool `json:"spendable,omitempty"`
