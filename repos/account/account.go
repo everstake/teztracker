@@ -113,11 +113,17 @@ func (r *Repository) TotalBalance() (b int64, err error) {
 }
 
 func (r *Repository) Balances(accountId string, from time.Time, to time.Time) (bal []models.AccountBalance, err error) {
+	db := r.db.Table("tezos.accounts_history").
+		Select("max(asof) as asof").
+		Where("account_id = ?", accountId).
+		Where("asof >= ?", from).
+		Where("asof <= ?", to).
+		Group("date_trunc('day', asof)")
 
-	err = r.db.Table("tezos.accounts_history").
-		Select("asof as time, balance").
-		Where("account_id = ? and asof >= ? and asof <= ?", accountId, from, to).
-		Scan(&bal).Error
+	err = r.db.Table("tezos.accounts_history as ah").
+		Select("ah.asof as time, balance").
+		Joins("right join (?) as s on s.asof = ah.asof", db.QueryExpr()).
+		Where("account_id = ?", accountId).Scan(&bal).Error
 	if err != nil {
 		return bal, err
 	}

@@ -108,7 +108,6 @@ func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, li
 	}
 
 	err = db.Scan(&operations).Error
-
 	return operations, err
 }
 
