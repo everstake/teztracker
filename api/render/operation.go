@@ -22,6 +22,7 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 		Source:              b.Source,
 		Fee:                 b.Fee,
 		Counter:             b.Counter,
+		Reward:              b.Reward,
 		GasLimit:            b.GasLimit,
 		StorageLimit:        b.StorageLimit,
 		PublicKey:           b.PublicKey,

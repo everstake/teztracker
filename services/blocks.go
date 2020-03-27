@@ -45,6 +45,15 @@ func (t *TezTracker) GetBlockWithOperationGroups(hashOrLevel string) (block mode
 	if !found {
 		return block, ErrNotFound
 	}
+
+	found, prevBlock, err := r.Find(models.Block{Level: null.IntFrom(block.Level.Int64 - 1)})
+	if err != nil {
+		return block, err
+	}
+	if found {
+		block.BlockTime = int64(block.Timestamp.Sub(prevBlock.Timestamp).Seconds())
+	}
+
 	ogr := t.repoProvider.GetOperationGroup()
 	ogs, err := ogr.GetGroupsFor(block)
 	if err != nil {

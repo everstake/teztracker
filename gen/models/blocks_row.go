@@ -26,8 +26,14 @@ type BlocksRow struct {
 	// baker
 	Baker string `json:"baker,omitempty"`
 
+	// baker name
+	BakerName string `json:"bakerName,omitempty"`
+
 	// ballots
 	Ballots int64 `json:"ballots,omitempty"`
+
+	// block time
+	BlockTime int64 `json:"blockTime,omitempty"`
 
 	// chain Id
 	ChainID string `json:"chainId,omitempty"`
@@ -46,6 +52,9 @@ type BlocksRow struct {
 
 	// double baking evidence
 	DoubleBakingEvidence int64 `json:"double_baking_evidence,omitempty"`
+
+	// double endorsement evidence
+	DoubleEndorsementEvidence int64 `json:"double_endorsement_evidence,omitempty"`
 
 	// endorsements
 	Endorsements int64 `json:"endorsements,omitempty"`
@@ -89,6 +98,9 @@ type BlocksRow struct {
 	// nonce hash
 	NonceHash string `json:"nonceHash,omitempty"`
 
+	// number of operations
+	NumberOfOperations int64 `json:"number_of_operations,omitempty"`
+
 	// operations hash
 	OperationsHash string `json:"operationsHash,omitempty"`
 
@@ -101,6 +113,10 @@ type BlocksRow struct {
 	// predecessor
 	// Required: true
 	Predecessor *string `json:"predecessor"`
+
+	// priority
+	// Required: true
+	Priority *int64 `json:"priority"`
 
 	// proposals
 	Proposals int64 `json:"proposals,omitempty"`
@@ -115,6 +131,10 @@ type BlocksRow struct {
 
 	// reveals
 	Reveals int64 `json:"reveals,omitempty"`
+
+	// reward
+	// Required: true
+	Reward *int64 `json:"reward"`
 
 	// seed nonce revelations
 	SeedNonceRevelations int64 `json:"seed_nonce_revelations,omitempty"`
@@ -157,11 +177,19 @@ func (m *BlocksRow) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validatePriority(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateProto(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateProtocol(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateReward(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -215,6 +243,15 @@ func (m *BlocksRow) validatePredecessor(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *BlocksRow) validatePriority(formats strfmt.Registry) error {
+
+	if err := validate.Required("priority", "body", m.Priority); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *BlocksRow) validateProto(formats strfmt.Registry) error {
 
 	if err := validate.Required("proto", "body", m.Proto); err != nil {
@@ -227,6 +264,15 @@ func (m *BlocksRow) validateProto(formats strfmt.Registry) error {
 func (m *BlocksRow) validateProtocol(formats strfmt.Registry) error {
 
 	if err := validate.Required("protocol", "body", m.Protocol); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BlocksRow) validateReward(formats strfmt.Registry) error {
+
+	if err := validate.Required("reward", "body", m.Reward); err != nil {
 		return err
 	}
 

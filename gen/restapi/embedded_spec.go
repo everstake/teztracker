@@ -2685,13 +2685,15 @@ func init() {
       "type": "object",
       "required": [
         "timestamp",
-        "proto",
         "validationPass",
         "hash",
         "fitness",
+        "proto",
         "protocol",
+        "priority",
         "predecessor",
-        "level"
+        "level",
+        "reward"
       ],
       "properties": {
         "activate_accounts": {
@@ -2704,7 +2706,14 @@ func init() {
         "baker": {
           "type": "string"
         },
+        "bakerName": {
+          "type": "string"
+        },
         "ballots": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blockTime": {
           "type": "integer",
           "format": "int64"
         },
@@ -2727,6 +2736,10 @@ func init() {
           "format": "int64"
         },
         "double_baking_evidence": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "double_endorsement_evidence": {
           "type": "integer",
           "format": "int64"
         },
@@ -2778,6 +2791,10 @@ func init() {
         "nonceHash": {
           "type": "string"
         },
+        "number_of_operations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "operationsHash": {
           "type": "string"
         },
@@ -2791,6 +2808,10 @@ func init() {
         "predecessor": {
           "type": "string"
         },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
+        },
         "proposals": {
           "type": "integer",
           "format": "int64"
@@ -2803,6 +2824,10 @@ func init() {
           "type": "string"
         },
         "reveals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         },
@@ -3074,6 +3099,10 @@ func init() {
         },
         "publicKey": {
           "type": "string"
+        },
+        "reward": {
+          "type": "integer",
+          "format": "int64"
         },
         "script": {
           "type": "string"
@@ -5968,13 +5997,15 @@ func init() {
       "type": "object",
       "required": [
         "timestamp",
-        "proto",
         "validationPass",
         "hash",
         "fitness",
+        "proto",
         "protocol",
+        "priority",
         "predecessor",
-        "level"
+        "level",
+        "reward"
       ],
       "properties": {
         "activate_accounts": {
@@ -5987,7 +6018,14 @@ func init() {
         "baker": {
           "type": "string"
         },
+        "bakerName": {
+          "type": "string"
+        },
         "ballots": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blockTime": {
           "type": "integer",
           "format": "int64"
         },
@@ -6010,6 +6048,10 @@ func init() {
           "format": "int64"
         },
         "double_baking_evidence": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "double_endorsement_evidence": {
           "type": "integer",
           "format": "int64"
         },
@@ -6061,6 +6103,10 @@ func init() {
         "nonceHash": {
           "type": "string"
         },
+        "number_of_operations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "operationsHash": {
           "type": "string"
         },
@@ -6074,6 +6120,10 @@ func init() {
         "predecessor": {
           "type": "string"
         },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
+        },
         "proposals": {
           "type": "integer",
           "format": "int64"
@@ -6086,6 +6136,10 @@ func init() {
           "type": "string"
         },
         "reveals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         },
@@ -6358,6 +6412,10 @@ func init() {
         },
         "publicKey": {
           "type": "string"
+        },
+        "reward": {
+          "type": "integer",
+          "format": "int64"
         },
         "script": {
           "type": "string"

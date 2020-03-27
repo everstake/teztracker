@@ -1802,6 +1802,9 @@ definitions:
         type: string
       baker:
         type: string
+      blockTime:
+        type: integer
+        format: int64
       chainId:
         type: string
       consumedGas:
@@ -1852,6 +1855,9 @@ definitions:
         type: integer
       protocol:
         type: string
+      proposals:
+        format: int64
+        type: integer
       signature:
         type: string
       timestamp:
@@ -1867,9 +1873,6 @@ definitions:
         format: int64
         type: integer
       endorsements:
-        format: int64
-        type: integer
-      proposals:
         format: int64
         type: integer
       seed_nonce_revelations:
@@ -1896,15 +1899,31 @@ definitions:
       double_baking_evidence:
         format: int64
         type: integer
+      double_endorsement_evidence:
+        format: int64
+        type: integer
+      number_of_operations:
+        format: int64
+        type: integer
+      priority:
+        format: int64
+        type: integer
+      bakerName:
+        type: string
+      reward:
+        format: int64
+        type: integer
     required:
       - timestamp
-      - proto
       - validationPass
       - hash
       - fitness
+      - proto
       - protocol
+      - priority
       - predecessor
       - level
+      - reward
     type: object
   OperationGroupsRow:
     properties:
@@ -2036,6 +2055,9 @@ definitions:
         type: string
       proposal:
         type: string
+      reward:
+        type: integer
+        format: int64
       doubleBake:
         $ref: '#/definitions/DoubleBakingDetails'
     required:

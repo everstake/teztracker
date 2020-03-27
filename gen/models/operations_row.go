@@ -100,6 +100,9 @@ type OperationsRow struct {
 	// public key
 	PublicKey string `json:"publicKey,omitempty"`
 
+	// reward
+	Reward int64 `json:"reward,omitempty"`
+
 	// script
 	Script string `json:"script,omitempty"`
 
