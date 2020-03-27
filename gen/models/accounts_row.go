@@ -21,6 +21,9 @@ type AccountsRow struct {
 	// Required: true
 	AccountID *string `json:"accountId"`
 
+	// account name
+	AccountName string `json:"accountName,omitempty"`
+
 	// baker info
 	BakerInfo *BakerInfo `json:"bakerInfo,omitempty"`
 
@@ -40,6 +43,9 @@ type AccountsRow struct {
 	// Required: true
 	Counter *int64 `json:"counter"`
 
+	// created at
+	CreatedAt int64 `json:"createdAt,omitempty"`
+
 	// delegate setable
 	// Required: true
 	DelegateSetable *bool `json:"delegateSetable"`
@@ -47,9 +53,19 @@ type AccountsRow struct {
 	// delegate value
 	DelegateValue string `json:"delegateValue,omitempty"`
 
+	// last active
+	LastActive int64 `json:"lastActive,omitempty"`
+
 	// manager
 	// Required: true
 	Manager *string `json:"manager"`
+
+	// operations
+	Operations int64 `json:"operations,omitempty"`
+
+	// revealed
+	// Required: true
+	Revealed *bool `json:"revealed"`
 
 	// script
 	Script string `json:"script,omitempty"`
@@ -60,6 +76,9 @@ type AccountsRow struct {
 
 	// storage
 	Storage string `json:"storage,omitempty"`
+
+	// transactions
+	Transactions int64 `json:"transactions,omitempty"`
 }
 
 // Validate validates this accounts row
@@ -95,6 +114,10 @@ func (m *AccountsRow) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateManager(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRevealed(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -183,6 +206,15 @@ func (m *AccountsRow) validateDelegateSetable(formats strfmt.Registry) error {
 func (m *AccountsRow) validateManager(formats strfmt.Registry) error {
 
 	if err := validate.Required("manager", "body", m.Manager); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AccountsRow) validateRevealed(formats strfmt.Registry) error {
+
+	if err := validate.Required("revealed", "body", m.Revealed); err != nil {
 		return err
 	}
 

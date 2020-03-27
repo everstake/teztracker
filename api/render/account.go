@@ -9,6 +9,7 @@ import (
 func Account(a models.Account) *genModels.AccountsRow {
 	return &genModels.AccountsRow{
 		AccountID:       a.AccountID.Ptr(),
+		AccountName:     a.AccountName,
 		BlockID:         a.BlockID.Ptr(),
 		Manager:         a.Manager.Ptr(),
 		Spendable:       a.Spendable.Ptr(),
@@ -20,6 +21,11 @@ func Account(a models.Account) *genModels.AccountsRow {
 		Balance:         a.Balance.Ptr(),
 		BlockLevel:      a.BlockLevel.Ptr(),
 		BakerInfo:       BakerInfo(a.BakerInfo),
+		CreatedAt:       a.CreatedAt.Unix(),
+		LastActive:      a.LastActive.Unix(),
+		Transactions:    a.Transactions,
+		Operations:      a.Operations,
+		Revealed:        &a.IsRevealed,
 	}
 }
 
@@ -30,4 +36,19 @@ func Accounts(ams []models.Account) []*genModels.AccountsRow {
 		accs[i] = Account(ams[i])
 	}
 	return accs
+}
+
+func AccountBalances(acb []models.AccountBalance) []*genModels.AccountBalance {
+	accs := make([]*genModels.AccountBalance, len(acb))
+	for i := range acb {
+		accs[i] = AccountBalance(acb[i])
+	}
+	return accs
+}
+
+func AccountBalance(acb models.AccountBalance) *genModels.AccountBalance {
+	return &genModels.AccountBalance{
+		Balance:   acb.Balance,
+		Timestamp: acb.Time.Unix(),
+	}
 }

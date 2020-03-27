@@ -29,6 +29,7 @@ type Operation struct {
 	Balance             int64       `json:"balance"`
 	Spendable           bool        `json:"spendable"`
 	Delegatable         bool        `json:"delegatable"`
+	DelegationAmount    int64       `json:"delegation_amount" gorm:"column:balance"`
 	Script              string      `json:"script"`
 	Storage             string      `json:"storage"`
 	Status              string      `json:"status"`
@@ -46,4 +47,9 @@ type Operation struct {
 	Ballot              string      `json:"ballot" gorm:"column:ballot"`
 	Internal            bool        `json:"internal" gorm:"column:internal"`
 	Period              int64       `json:"period" gorm:"column:period"`
+}
+
+type OperationCount struct {
+	Kind  string `json:"kind"`
+	Count int64  `json:"count"`
 }

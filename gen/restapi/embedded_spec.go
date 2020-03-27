@@ -587,6 +587,68 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/balances/{accountId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountBalanceList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "to",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account balances",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountBalance"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/{accountId}": {
       "get": {
         "produces": [
@@ -1942,19 +2004,6 @@ func init() {
           {
             "type": "array",
             "items": {
-              "enum": [
-                "endorsement",
-                "proposals",
-                "seed_nonce_revelation",
-                "delegation",
-                "transaction",
-                "activate_account",
-                "ballot",
-                "origination",
-                "reveal",
-                "double_baking_evidence",
-                "double_endorsement_evidence"
-              ],
               "type": "string"
             },
             "collectionFormat": "multi",
@@ -2330,6 +2379,18 @@ func init() {
     }
   },
   "definitions": {
+    "AccountBalance": {
+      "properties": {
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "AccountResult": {
       "type": "object",
       "required": [
@@ -2351,10 +2412,14 @@ func init() {
         "manager",
         "counter",
         "blockLevel",
-        "blockId"
+        "blockId",
+        "revealed"
       ],
       "properties": {
         "accountId": {
+          "type": "string"
+        },
+        "accountName": {
           "type": "string"
         },
         "bakerInfo": {
@@ -2375,14 +2440,29 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
         "delegateSetable": {
           "type": "boolean"
         },
         "delegateValue": {
           "type": "string"
         },
+        "lastActive": {
+          "type": "integer",
+          "format": "int64"
+        },
         "manager": {
           "type": "string"
+        },
+        "operations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "revealed": {
+          "type": "boolean"
         },
         "script": {
           "type": "string"
@@ -2392,6 +2472,10 @@ func init() {
         },
         "storage": {
           "type": "string"
+        },
+        "transactions": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -2933,6 +3017,10 @@ func init() {
         },
         "delegate": {
           "type": "string"
+        },
+        "delegationAmount": {
+          "type": "integer",
+          "format": "int64"
         },
         "destination": {
           "type": "string"
@@ -3769,6 +3857,68 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/balances/{accountId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountBalanceList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "to",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account balances",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountBalance"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/{accountId}": {
       "get": {
         "produces": [
@@ -5134,19 +5284,6 @@ func init() {
           {
             "type": "array",
             "items": {
-              "enum": [
-                "endorsement",
-                "proposals",
-                "seed_nonce_revelation",
-                "delegation",
-                "transaction",
-                "activate_account",
-                "ballot",
-                "origination",
-                "reveal",
-                "double_baking_evidence",
-                "double_endorsement_evidence"
-              ],
               "type": "string"
             },
             "collectionFormat": "multi",
@@ -5525,6 +5662,18 @@ func init() {
     }
   },
   "definitions": {
+    "AccountBalance": {
+      "properties": {
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "AccountResult": {
       "type": "object",
       "required": [
@@ -5546,10 +5695,14 @@ func init() {
         "manager",
         "counter",
         "blockLevel",
-        "blockId"
+        "blockId",
+        "revealed"
       ],
       "properties": {
         "accountId": {
+          "type": "string"
+        },
+        "accountName": {
           "type": "string"
         },
         "bakerInfo": {
@@ -5570,14 +5723,29 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
         "delegateSetable": {
           "type": "boolean"
         },
         "delegateValue": {
           "type": "string"
         },
+        "lastActive": {
+          "type": "integer",
+          "format": "int64"
+        },
         "manager": {
           "type": "string"
+        },
+        "operations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "revealed": {
+          "type": "boolean"
         },
         "script": {
           "type": "string"
@@ -5587,6 +5755,10 @@ func init() {
         },
         "storage": {
           "type": "string"
+        },
+        "transactions": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -6129,6 +6301,10 @@ func init() {
         },
         "delegate": {
           "type": "string"
+        },
+        "delegationAmount": {
+          "type": "integer",
+          "format": "int64"
         },
         "destination": {
           "type": "string"

@@ -7,6 +7,7 @@ import (
 	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sirupsen/logrus"
+	"time"
 )
 
 type getAccountListHandler struct {
@@ -35,4 +36,40 @@ func (h *getAccountListHandler) Handle(params accounts.GetAccountsListParams) mi
 		return accounts.NewGetAccountsListNotFound()
 	}
 	return accounts.NewGetAccountsListOK().WithPayload(render.Accounts(accs)).WithXTotalCount(count)
+}
+
+type getAccountBalanceListHandler struct {
+	provider DbProvider
+}
+
+// Handle serves the Get Account List request.
+func (h *getAccountBalanceListHandler) Handle(params accounts.GetAccountBalanceListParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountBalanceListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountBalanceListBadRequest()
+	}
+	service := services.New(repos.New(db), net)
+
+	if params.From <= 0 || params.To <= 0 || params.To < params.From {
+		return accounts.NewGetAccountBalanceListBadRequest()
+	}
+
+	from := time.Unix(params.From, 0)
+	to := time.Unix(params.To, 0)
+
+	if to.Sub(from) > 24*31*time.Hour {
+		return accounts.NewGetAccountBalanceListBadRequest()
+	}
+
+	accs, err := service.GetAccountBalanceHistory(params.AccountID, from, to)
+	if err != nil {
+		logrus.Errorf("failed to get accounts: %s", err.Error())
+		return accounts.NewGetAccountsListNotFound()
+	}
+
+	return accounts.NewGetAccountBalanceListOK().WithPayload(render.AccountBalances(accs))
 }

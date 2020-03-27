@@ -602,12 +602,8 @@ func (o *GetOperationsListParams) bindOperationKind(rawData []string, hasKey boo
 	}
 
 	var operationKindIR []string
-	for i, operationKindIV := range operationKindIC {
+	for _, operationKindIV := range operationKindIC {
 		operationKindI := operationKindIV
-
-		if err := validate.Enum(fmt.Sprintf("%s.%v", "operation_kind", i), "query", operationKindI, []interface{}{"endorsement", "proposals", "seed_nonce_revelation", "delegation", "transaction", "activate_account", "ballot", "origination", "reveal", "double_baking_evidence", "double_endorsement_evidence"}); err != nil {
-			return err
-		}
 
 		operationKindIR = append(operationKindIR, operationKindI)
 	}

@@ -22,6 +22,7 @@ func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
 	serv.AppInfoGetInfoHandler = &getInfoHandler{cmc.NewCoinGecko(), db}
 	serv.AccountsGetAccountsListHandler = &getAccountListHandler{db}
 	serv.AccountsGetAccountHandler = &getAccountHandler{db}
+	serv.AccountsGetAccountBalanceListHandler = &getAccountBalanceListHandler{db}
 	serv.BlocksGetBlockEndorsementsHandler = &getBlockEndorsementsHandler{db}
 	serv.AccountsGetBakersListHandler = &getBakerListHandler{db}
 	serv.AccountsGetPublicBakersListHandler = &getPublicBakerListHandler{db}

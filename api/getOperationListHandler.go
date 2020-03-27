@@ -1,12 +1,15 @@
 package api
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/api/render"
 	ops "github.com/everstake/teztracker/gen/restapi/operations/operations_list"
 	"github.com/everstake/teztracker/repos"
 	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/validate"
 	"github.com/sirupsen/logrus"
+	"strings"
 )
 
 type getOperationListHandler struct {
@@ -31,7 +34,19 @@ func (h *getOperationListHandler) Handle(params ops.GetOperationsListParams) mid
 		before = *params.BeforeID
 	}
 
-	operations, count, err := service.GetOperations(params.OperationID, params.OperationKind, params.BlockID, params.AccountID, limiter, before)
+	var kinds []string
+
+	for key := range params.OperationKind {
+		kinds = append(kinds, strings.Split(params.OperationKind[key], ",")...)
+	}
+
+	for key := range kinds {
+		if err := validate.Enum(fmt.Sprintf("%s.%v", "operation_kind", key), "query", kinds[key], []interface{}{"endorsement", "proposals", "seed_nonce_revelation", "delegation", "transaction", "activate_account", "ballot", "origination", "reveal", "double_baking_evidence", "double_endorsement_evidence"}); err != nil {
+			return ops.NewGetOperationsListBadRequest()
+		}
+	}
+
+	operations, count, err := service.GetOperations(params.OperationID, kinds, params.BlockID, params.AccountID, limiter, before)
 	if err != nil {
 		logrus.Errorf("failed to get operations: %s", err.Error())
 		return ops.NewGetOperationsListNotFound()
