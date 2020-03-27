@@ -133,7 +133,7 @@ func (r *Repository) ExtendBlocks(blocks []models.Block) (extended []models.Bloc
 
 func (r *Repository) Filter(filter models.BlockFilter) (blocks []models.Block, err error) {
 	db := r.getDb()
-	db = db.Or("level in (?)", filter.BlockLevels).Or("hash in (?)", filter.BlockHashes)
+	db = db.Or("blocks.level in (?)", filter.BlockLevels).Or("hash in (?)", filter.BlockHashes)
 	err = db.Find(&blocks).Error
 	return blocks, err
 }
