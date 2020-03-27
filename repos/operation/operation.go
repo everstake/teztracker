@@ -64,7 +64,7 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 			Joins("left join tezos.public_bakers as del on operations.delegate = del.delegate")
 	}
 	if len(ids) > 0 {
-		db = db.Where("operation_group_hash IN (?)", ids)
+		db = db.Where("operations.operation_group_hash IN (?)", ids)
 	}
 
 	if len(kinds) > 0 {
@@ -76,13 +76,13 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 	}
 
 	if len(inBlocks) > 0 {
-		db = db.Where("block_hash IN (?)", inBlocks)
+		db = db.Where("operations.block_hash IN (?)", inBlocks)
 	}
 	if len(accountIDs) > 0 {
 		if len(kinds) == 1 && kinds[0] == "transaction" {
-			db = db.Where("source IN (?) OR destination IN (?)", accountIDs, accountIDs)
+			db = db.Where("operations.source IN (?) OR operations.destination IN (?)", accountIDs, accountIDs)
 		} else {
-			db = db.Where("delegate IN (?) OR pkh IN (?) OR source IN (?) OR public_key IN (?) OR destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
+			db = db.Where("operations.delegate IN (?) OR operations.pkh IN (?) OR operations.source IN (?) OR operations.public_key IN (?) OR operations.destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
 		}
 	}
 	return db
