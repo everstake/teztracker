@@ -1668,6 +1668,8 @@ definitions:
     properties:
       accountId:
         type: string
+      accountName:
+        type: string
       balance:
         format: int64
         type: integer
@@ -1716,6 +1718,7 @@ definitions:
       - counter
       - blockLevel
       - blockId
+      - revealed
     type: object
   BakersRow:
     properties:
@@ -1991,6 +1994,9 @@ definitions:
         type: boolean
       delegate:
         type: string
+      delegationAmount:
+        type: integer
+        format: int64
       destination:
         type: string
       fee:

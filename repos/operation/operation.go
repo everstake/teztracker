@@ -2,6 +2,7 @@ package operation
 
 import (
 	"github.com/everstake/teztracker/models"
+	"github.com/go-openapi/validate"
 	"github.com/jinzhu/gorm"
 )
 
@@ -56,21 +57,25 @@ func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperati
 func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string, count bool) *gorm.DB {
 	db := r.db.Select("*").Model(&models.Operation{})
 	if len(ids) > 0 {
-		db = db.Where("operation_group_hash IN (?)", ids)
+		db = db.Where("operations.operation_group_hash IN (?)", ids)
 	}
 	if len(kinds) > 0 {
+		if !count && validate.Enum("", "", "delegation", kinds) == nil {
+			db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source)")
+		}
+
 		db = db.Where("operations.kind IN (?)", kinds)
 	}
 
 	if len(inBlocks) > 0 {
-		db = db.Where("block_hash IN (?)", inBlocks)
+		db = db.Where("operations.block_hash IN (?)", inBlocks)
 	}
 
 	if len(accountIDs) > 0 {
 		if len(kinds) == 1 && kinds[0] == "transaction" {
-			db = db.Where("source IN (?) OR destination IN (?)", accountIDs, accountIDs)
+			db = db.Where("operations.source IN (?) OR operations.destination IN (?)", accountIDs, accountIDs)
 		} else {
-			db = db.Where("delegate IN (?) OR pkh IN (?) OR source IN (?) OR public_key IN (?) OR destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
+			db = db.Where("operations.delegate IN (?) OR operations.pkh IN (?) OR operations.source IN (?) OR operations.public_key IN (?) OR operations.destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
 		}
 	}
 	return db

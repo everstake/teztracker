@@ -2412,10 +2412,14 @@ func init() {
         "manager",
         "counter",
         "blockLevel",
-        "blockId"
+        "blockId",
+        "revealed"
       ],
       "properties": {
         "accountId": {
+          "type": "string"
+        },
+        "accountName": {
           "type": "string"
         },
         "bakerInfo": {
@@ -3038,6 +3042,10 @@ func init() {
         },
         "delegate": {
           "type": "string"
+        },
+        "delegationAmount": {
+          "type": "integer",
+          "format": "int64"
         },
         "destination": {
           "type": "string"
@@ -5716,10 +5724,14 @@ func init() {
         "manager",
         "counter",
         "blockLevel",
-        "blockId"
+        "blockId",
+        "revealed"
       ],
       "properties": {
         "accountId": {
+          "type": "string"
+        },
+        "accountName": {
           "type": "string"
         },
         "bakerInfo": {
@@ -6343,6 +6355,10 @@ func init() {
         },
         "delegate": {
           "type": "string"
+        },
+        "delegationAmount": {
+          "type": "integer",
+          "format": "int64"
         },
         "destination": {
           "type": "string"
