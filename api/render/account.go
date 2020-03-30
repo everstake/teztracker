@@ -52,3 +52,22 @@ func AccountBalance(acb models.AccountBalance) *genModels.AccountBalance {
 		Timestamp: acb.Time.Unix(),
 	}
 }
+
+func AccountBaking(acb models.AccountBaking) *genModels.AccountBakingRow {
+	return &genModels.AccountBakingRow{
+		AvgPriority: &acb.AvgPriority,
+		Blocks:      &acb.Count,
+		Cycle:       &acb.Cycle,
+		Missed:      &acb.Missed,
+		Rewards:     &acb.Reward,
+		Stolen:      &acb.Stolen,
+	}
+}
+
+func AccountBakingList(accb []models.AccountBaking) []*genModels.AccountBakingRow {
+	accbs := make([]*genModels.AccountBakingRow, len(accb))
+	for i := range accb {
+		accbs[i] = AccountBaking(accb[i])
+	}
+	return accbs
+}

@@ -21,6 +21,7 @@ type (
 		Find(filter models.Block) (found bool, block models.Block, err error)
 		FindExtended(filter models.Block) (found bool, block models.Block, err error)
 		ListExtended(limit, offset uint, since uint64) (blocks []models.Block, err error)
+		BakedBlocksList(accountID string, limit uint, offset uint) (int64, []models.Block, error)
 	}
 )
 
@@ -136,4 +137,21 @@ func (r *Repository) Filter(filter models.BlockFilter) (blocks []models.Block, e
 	db = db.Or("blocks.level in (?)", filter.BlockLevels).Or("hash in (?)", filter.BlockHashes)
 	err = db.Find(&blocks).Error
 	return blocks, err
+}
+
+func (r *Repository) BakedBlocksList(accountID string, limit uint, offset uint) (count int64, blocks []models.Block, err error) {
+	db := r.getDb()
+
+	db = db.Where("baker = ?", accountID)
+	err = db.Count(&count).Error
+	if err != nil {
+		return count, blocks, err
+	}
+
+	err = db.Order("blocks.level desc").
+		Limit(limit).
+		Offset(offset).
+		Find(&blocks).Error
+
+	return count, blocks, err
 }

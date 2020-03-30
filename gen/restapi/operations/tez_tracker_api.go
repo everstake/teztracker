@@ -48,6 +48,12 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetAccountHandler: accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccount has not yet been implemented")
 		}),
+		AccountsGetAccountBakedBlocksListHandler: accounts.GetAccountBakedBlocksListHandlerFunc(func(params accounts.GetAccountBakedBlocksListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountBakedBlocksList has not yet been implemented")
+		}),
+		AccountsGetAccountBakingListHandler: accounts.GetAccountBakingListHandlerFunc(func(params accounts.GetAccountBakingListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountBakingList has not yet been implemented")
+		}),
 		AccountsGetAccountBalanceListHandler: accounts.GetAccountBalanceListHandlerFunc(func(params accounts.GetAccountBalanceListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountBalanceList has not yet been implemented")
 		}),
@@ -162,6 +168,10 @@ type TezTrackerAPI struct {
 
 	// AccountsGetAccountHandler sets the operation handler for the get account operation
 	AccountsGetAccountHandler accounts.GetAccountHandler
+	// AccountsGetAccountBakedBlocksListHandler sets the operation handler for the get account baked blocks list operation
+	AccountsGetAccountBakedBlocksListHandler accounts.GetAccountBakedBlocksListHandler
+	// AccountsGetAccountBakingListHandler sets the operation handler for the get account baking list operation
+	AccountsGetAccountBakingListHandler accounts.GetAccountBakingListHandler
 	// AccountsGetAccountBalanceListHandler sets the operation handler for the get account balance list operation
 	AccountsGetAccountBalanceListHandler accounts.GetAccountBalanceListHandler
 	// AccountsGetAccountDelegatorsHandler sets the operation handler for the get account delegators operation
@@ -281,6 +291,14 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetAccountHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountHandler")
+	}
+
+	if o.AccountsGetAccountBakedBlocksListHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountBakedBlocksListHandler")
+	}
+
+	if o.AccountsGetAccountBakingListHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountBakingListHandler")
 	}
 
 	if o.AccountsGetAccountBalanceListHandler == nil {
@@ -493,6 +511,16 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}"] = accounts.NewGetAccount(o.context, o.AccountsGetAccountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/baking/{accountId}/blocks/{cycleId}"] = accounts.NewGetAccountBakedBlocksList(o.context, o.AccountsGetAccountBakedBlocksListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/baking/{accountId}"] = accounts.NewGetAccountBakingList(o.context, o.AccountsGetAccountBakingListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

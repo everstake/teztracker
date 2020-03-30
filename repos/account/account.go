@@ -20,6 +20,7 @@ type (
 		Find(filter models.Account) (found bool, acc models.Account, err error)
 		TotalBalance() (int64, error)
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
+		BakingList(accountID string, limit uint, offset uint) (int64, []models.AccountBaking, error)
 	}
 )
 
@@ -122,4 +123,21 @@ func (r *Repository) Balances(accountId string, from time.Time, to time.Time) (b
 		return bal, err
 	}
 	return bal, nil
+}
+
+func (r *Repository) BakingList(accountID string, limit uint, offset uint) (count int64, baking []models.AccountBaking, err error) {
+	db := r.db.Table("tezos.baking_materialized_view").
+		Model(&models.AccountBaking{}).
+		Where("delegate = ?", accountID)
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, baking, err
+	}
+
+	err = db.Order("cycle desc").Limit(limit).
+		Offset(offset).
+		Find(&baking).Error
+
+	return count, baking, err
 }

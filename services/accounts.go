@@ -90,3 +90,21 @@ func (t *TezTracker) GetAccountBalanceHistory(id string, from, to time.Time) (ba
 
 	return balances, nil
 }
+
+func (t *TezTracker) GetAccountBakingList(accountID string, limits Limiter) (count int64, list []models.AccountBaking, err error) {
+	count, list, err = t.repoProvider.GetAccount().BakingList(accountID, limits.Limit(), limits.Offset())
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return count, list, nil
+}
+
+func (t *TezTracker) GetAccountBakedBlocksList(accountID string, limits Limiter) (count int64, list []models.Block, err error) {
+	count, list, err = t.repoProvider.GetBlock().BakedBlocksList(accountID, limits.Limit(), limits.Offset())
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return count, list, nil
+}

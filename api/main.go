@@ -17,17 +17,20 @@ func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
 	serv.Logger = logrus.Infof
 	serv.BlocksGetBlocksHeadHandler = &getHeadBlockHandler{db}
 	serv.BlocksGetBlocksListHandler = &getBlockListHandler{db}
+	serv.BlocksGetBlockEndorsementsHandler = &getBlockEndorsementsHandler{db}
 	serv.BlocksGetBlockHandler = &getBlockHandler{db}
 	serv.OperationsListGetOperationsListHandler = &getOperationListHandler{db}
 	serv.AppInfoGetInfoHandler = &getInfoHandler{cmc.NewCoinGecko(), db}
+	//Account
 	serv.AccountsGetAccountsListHandler = &getAccountListHandler{db}
 	serv.AccountsGetAccountHandler = &getAccountHandler{db}
 	serv.AccountsGetAccountBalanceListHandler = &getAccountBalanceListHandler{db}
-	serv.BlocksGetBlockEndorsementsHandler = &getBlockEndorsementsHandler{db}
+	serv.AccountsGetAccountBakingListHandler = &getAccountBakingListHandler{db}
 	serv.AccountsGetBakersListHandler = &getBakerListHandler{db}
 	serv.AccountsGetPublicBakersListHandler = &getPublicBakerListHandler{db}
 	serv.AccountsGetAccountDelegatorsHandler = &getAccountDelegatorsHandler{db}
 	serv.AccountsGetContractsListHandler = &getContractListHandler{db}
+	serv.AccountsGetAccountBakedBlocksListHandler = &getAccountBakedBlocksListHandler{db}
 	serv.BlocksGetBakingRightsHandler = &getBakingRightsHandler{db}
 	serv.BlocksGetFutureBakingRightsHandler = &getFutureBakingRightsHandler{db}
 	serv.GetSnapshotsHandler = &getSnapshotsHandler{db}
