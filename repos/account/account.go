@@ -20,6 +20,7 @@ type (
 		Find(filter models.Account) (found bool, acc models.Account, err error)
 		TotalBalance() (int64, error)
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
+		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
 	}
 )
 
@@ -128,4 +129,19 @@ func (r *Repository) Balances(accountId string, from time.Time, to time.Time) (b
 		return bal, err
 	}
 	return bal, nil
+}
+
+func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, balance models.AccountBalance, err error) {
+	if res := r.db.Table("tezos.accounts_history").
+		Select("asof as time, balance").
+		Where("account_id = ?", accountId).
+		Where("asof < ?", from).
+		First(&balance); res.Error != nil {
+		if res.RecordNotFound() {
+			return false, balance, nil
+		}
+		return false, balance, res.Error
+	}
+	return true, balance, nil
+
 }
