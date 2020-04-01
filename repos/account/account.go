@@ -1,6 +1,7 @@
 package account
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 	"time"
@@ -21,8 +22,11 @@ type (
 		TotalBalance() (int64, error)
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
+		RefreshView() error
 	}
 )
+
+const accountMaterializedView = "tezos.account_materialized_view"
 
 // New creates an instance of repository using the provided db.
 func New(db *gorm.DB) *Repository {
@@ -78,7 +82,7 @@ func (r *Repository) Count(filter models.Account) (count int64, err error) {
 func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error) {
 	err = r.db.Select("accounts.*, created_at, last_active, account_name").Model(&filter).
 		Where(&filter).
-		Joins("natural join tezos.account_materialized_view").
+		Joins("natural join ?", accountMaterializedView).
 		Order("account_id asc").
 		Limit(limit).
 		Offset(offset).
@@ -90,7 +94,7 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
 	if res := r.db.Select("accounts.*, created_at, last_active").
 		Model(&filter).
-		Joins("natural join tezos.account_materialized_view").
+		Joins("natural join ?", accountMaterializedView).
 		Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
@@ -143,4 +147,12 @@ func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, 
 	}
 	return true, balance, nil
 
+}
+
+func (r *Repository) RefreshView() (err error) {
+	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW CONCURRENTLY ", accountMaterializedView)).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
