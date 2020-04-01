@@ -20,6 +20,7 @@ type (
 		Find(filter models.Account) (found bool, acc models.Account, err error)
 		TotalBalance() (int64, error)
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
+		BakingTotal(string) (models.AccountBaking, error)
 		BakingList(accountID string, limit uint, offset uint) (int64, []models.AccountBaking, error)
 	}
 )
@@ -123,6 +124,17 @@ func (r *Repository) Balances(accountId string, from time.Time, to time.Time) (b
 		return bal, err
 	}
 	return bal, nil
+}
+
+func (r *Repository) BakingTotal(accountID string) (total models.AccountBaking, err error) {
+	db := r.db.Select("avg(avg_priority) avg_priority, sum(reward) reward, sum(count) count, sum(missed) missed, sum(stolen) stolen").
+		Table("tezos.baking_materialized_view").
+		Model(&models.AccountBaking{}).
+		Where("delegate = ?", accountID)
+
+	err = db.Find(&total).Error
+
+	return total, err
 }
 
 func (r *Repository) BakingList(accountID string, limit uint, offset uint) (count int64, baking []models.AccountBaking, err error) {

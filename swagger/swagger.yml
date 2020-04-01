@@ -662,6 +662,37 @@ paths:
           description: Not Found
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/baking/{accountId}/total':
+    get:
+      operationId: getAccountTotalBakingList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account baking
+          schema:
+              $ref: '#/definitions/AccountBakingRow'
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/accounts/baking/{accountId}/blocks/{cycleId}':
     get:
       operationId: getAccountBakedBlocksList

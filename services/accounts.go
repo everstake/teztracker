@@ -108,3 +108,12 @@ func (t *TezTracker) GetAccountBakedBlocksList(accountID string, limits Limiter)
 
 	return count, list, nil
 }
+
+func (t *TezTracker) GetAccountBakingTotal(accountID string) (total models.AccountBaking, err error) {
+	total, err = t.repoProvider.GetAccount().BakingTotal(accountID)
+	if err != nil {
+		return total, err
+	}
+
+	return total, nil
+}
