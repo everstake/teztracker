@@ -56,13 +56,12 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		return 0, nil, err
 	}
 
-	db = db.Order("account_id asc").
-		Limit(limit).
-		Offset(offset)
-
 	db = r.db.Select("accounts.*, created_at, last_active, account_name").
 		Table("tezos.account_materialized_view as amv").
-		Joins("inner join (?) as accounts on accounts.account_id = amv.account_id", db.SubQuery())
+		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id").
+		Order("created_at desc").
+		Limit(limit).
+		Offset(offset)
 
 	err = db.Find(&accounts).Error
 	return count, accounts, err
