@@ -89,7 +89,7 @@ func (r *Repository) Count(filter models.Account) (count int64, err error) {
 func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error) {
 	err = r.db.Select("accounts.*, created_at, last_active, account_name").Model(&filter).
 		Where(&filter).
-		Joins("natural join ?", accountMaterializedView).
+		Joins("natural join tezos.account_materialized_view").
 		Order("account_id asc").
 		Limit(limit).
 		Offset(offset).
@@ -101,7 +101,7 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
 	if res := r.db.Select("accounts.*, created_at, last_active").
 		Model(&filter).
-		Joins("natural join ?", accountMaterializedView).
+		Joins("natural join tezos.account_materialized_view").
 		Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
