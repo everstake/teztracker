@@ -1,6 +1,7 @@
 package account
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 	"time"
@@ -20,8 +21,12 @@ type (
 		Find(filter models.Account) (found bool, acc models.Account, err error)
 		TotalBalance() (int64, error)
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
+		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
+		RefreshView() error
 	}
 )
+
+const accountMaterializedView = "tezos.account_materialized_view"
 
 // New creates an instance of repository using the provided db.
 func New(db *gorm.DB) *Repository {
@@ -55,13 +60,19 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		return 0, nil, err
 	}
 
-	db = db.Order("account_id asc").
-		Limit(limit).
-		Offset(offset)
-
 	db = r.db.Select("accounts.*, created_at, last_active, account_name").
 		Table("tezos.account_materialized_view as amv").
-		Joins("inner join (?) as accounts on accounts.account_id = amv.account_id", db.SubQuery())
+		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id")
+
+	if filter.Type == models.AccountTypeAccount {
+		db = db.Where("amv.account_id like 'tz%'")
+	} else if filter.Type == models.AccountTypeContract {
+		db = db.Where("amv.account_id like 'KT1%'")
+	}
+
+	db = db.Order("created_at desc").
+		Limit(limit).
+		Offset(offset)
 
 	err = db.Find(&accounts).Error
 	return count, accounts, err
@@ -113,13 +124,42 @@ func (r *Repository) TotalBalance() (b int64, err error) {
 }
 
 func (r *Repository) Balances(accountId string, from time.Time, to time.Time) (bal []models.AccountBalance, err error) {
+	db := r.db.Table("tezos.accounts_history").
+		Select("max(asof) as asof").
+		Where("account_id = ?", accountId).
+		Where("asof >= ?", from).
+		Where("asof <= ?", to).
+		Group("date_trunc('day', asof)")
 
-	err = r.db.Table("tezos.accounts_history").
-		Select("asof as time, balance").
-		Where("account_id = ? and asof >= ? and asof <= ?", accountId, from, to).
-		Scan(&bal).Error
+	err = r.db.Table("tezos.accounts_history as ah").
+		Select("ah.asof as time, balance").
+		Joins("right join (?) as s on s.asof = ah.asof", db.QueryExpr()).
+		Where("account_id = ?", accountId).Scan(&bal).Error
 	if err != nil {
 		return bal, err
 	}
 	return bal, nil
+}
+
+func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, balance models.AccountBalance, err error) {
+	if res := r.db.Table("tezos.accounts_history").
+		Select("asof as time, balance").
+		Where("account_id = ?", accountId).
+		Where("asof < ?", from).
+		First(&balance); res.Error != nil {
+		if res.RecordNotFound() {
+			return false, balance, nil
+		}
+		return false, balance, res.Error
+	}
+	return true, balance, nil
+
+}
+
+func (r *Repository) RefreshView() (err error) {
+	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW CONCURRENTLY ", accountMaterializedView)).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }

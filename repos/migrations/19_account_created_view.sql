@@ -30,3 +30,6 @@ where account_id like 'tz%';
 create index accounts_account_id_kt_index
 	on tezos.accounts (account_id)
 where account_id like 'KT1%';
+
+CREATE INDEX account_created_time
+  ON tezos.account_materialized_view (created_at);
