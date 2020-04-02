@@ -142,7 +142,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 		var jobIsRunning uint32
 
 		dur := 30 * time.Second
-		log.Infof("Sheduling materialized view update every %s", dur)
+		log.Infof("Sheduling baker materialized view update every %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
 			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
@@ -150,6 +150,28 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 
 				unitOfWork := repos.New(db)
 				err := unitOfWork.GetBaker().RefreshView()
+				if err != nil {
+					log.Errorf("materialized view update failed: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("skipping materialized view update as the previous job is still running")
+			}
+		})
+	}()
+
+	func() {
+		var jobIsRunning uint32
+
+		dur := 60 * time.Second
+		log.Infof("Sheduling account materialized view update every %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := repos.New(db)
+				err := unitOfWork.GetAccount().RefreshView()
 				if err != nil {
 					log.Errorf("materialized view update failed: %s", err.Error())
 					return
