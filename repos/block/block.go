@@ -21,7 +21,7 @@ type (
 		Find(filter models.Block) (found bool, block models.Block, err error)
 		FindExtended(filter models.Block) (found bool, block models.Block, err error)
 		ListExtended(limit, offset uint, since uint64) (blocks []models.Block, err error)
-		BakedBlocksList(accountID string, limit uint, offset uint) (int64, []models.Block, error)
+		BakedBlocksList(accountID string, cycle int64, limit uint, offset uint) (int64, []models.Block, error)
 	}
 )
 
@@ -139,10 +139,10 @@ func (r *Repository) Filter(filter models.BlockFilter) (blocks []models.Block, e
 	return blocks, err
 }
 
-func (r *Repository) BakedBlocksList(accountID string, limit uint, offset uint) (count int64, blocks []models.Block, err error) {
+func (r *Repository) BakedBlocksList(accountID string, cycle int64, limit uint, offset uint) (count int64, blocks []models.Block, err error) {
 	db := r.getDb()
 
-	db = db.Where("baker = ?", accountID)
+	db = db.Where("baker = ?", accountID).Where("cycle = ?", cycle)
 	err = db.Count(&count).Error
 	if err != nil {
 		return count, blocks, err

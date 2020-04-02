@@ -71,3 +71,20 @@ func AccountBakingList(accb []models.AccountBaking) []*genModels.AccountBakingRo
 	}
 	return accbs
 }
+
+func AccountEndorsing(acb models.AccountEndorsing) *genModels.AccountEndorsingRow {
+	return &genModels.AccountEndorsingRow{
+		Slots:   &acb.Count,
+		Cycle:   &acb.Cycle,
+		Missed:  &acb.Missed,
+		Rewards: &acb.Reward,
+	}
+}
+
+func AccountEndorsingList(acce []models.AccountEndorsing) []*genModels.AccountEndorsingRow {
+	accbs := make([]*genModels.AccountEndorsingRow, len(acce))
+	for i := range acce {
+		accbs[i] = AccountEndorsing(acce[i])
+	}
+	return accbs
+}

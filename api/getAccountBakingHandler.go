@@ -51,7 +51,7 @@ func (h *getAccountBakedBlocksListHandler) Handle(params accounts.GetAccountBake
 	service := services.New(repos.New(db), net)
 	limiter := NewLimiter(params.Limit, params.Offset)
 
-	count, accs, err := service.GetAccountBakedBlocksList(params.AccountID, limiter)
+	count, accs, err := service.GetAccountBakedBlocksList(params.AccountID, params.CycleID, limiter)
 	if err != nil {
 		logrus.Errorf("failed to get accounts: %s", err.Error())
 		return accounts.NewGetAccountBakedBlocksListNotFound()
@@ -63,22 +63,22 @@ type getAccountTotalBakingHandler struct {
 	provider DbProvider
 }
 
-func (h *getAccountTotalBakingHandler) Handle(params accounts.GetAccountTotalBakingListParams) middleware.Responder {
+func (h *getAccountTotalBakingHandler) Handle(params accounts.GetAccountTotalBakingParams) middleware.Responder {
 	net, err := ToNetwork(params.Network)
 	if err != nil {
-		return accounts.NewGetAccountTotalBakingListBadRequest()
+		return accounts.NewGetAccountTotalBakingBadRequest()
 	}
 	db, err := h.provider.GetDb(net)
 	if err != nil {
-		return accounts.NewGetAccountTotalBakingListBadRequest()
+		return accounts.NewGetAccountTotalBakingBadRequest()
 	}
 	service := services.New(repos.New(db), net)
 
 	total, err := service.GetAccountBakingTotal(params.AccountID)
 	if err != nil {
 		logrus.Errorf("failed to get accounts: %s", err.Error())
-		return accounts.NewGetAccountTotalBakingListNotFound()
+		return accounts.NewGetAccountTotalBakingNotFound()
 	}
 
-	return accounts.NewGetAccountTotalBakingListOK().WithPayload(render.AccountBaking(total))
+	return accounts.NewGetAccountTotalBakingOK().WithPayload(render.AccountBaking(total))
 }

@@ -743,7 +743,7 @@ func init() {
         "tags": [
           "Accounts"
         ],
-        "operationId": "getAccountTotalBakingList",
+        "operationId": "getAccountTotalBaking",
         "parameters": [
           {
             "type": "string",
@@ -833,6 +833,201 @@ func init() {
               "items": {
                 "$ref": "#/definitions/AccountBalance"
               }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountEndorsingList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountEndorsingRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/endorsements/{cycleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountEndorsementsByCycleList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "cycleId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/total": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountTotalEndorsing",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account baking",
+            "schema": {
+              "$ref": "#/definitions/AccountEndorsingRow"
             }
           },
           "400": {
@@ -2617,6 +2812,32 @@ func init() {
           "format": "int64"
         },
         "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "AccountEndorsingRow": {
+      "required": [
+        "cycle",
+        "missed",
+        "rewards",
+        "slots"
+      ],
+      "properties": {
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "missed": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rewards": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "slots": {
           "type": "integer",
           "format": "int64"
         }
@@ -4287,7 +4508,7 @@ func init() {
         "tags": [
           "Accounts"
         ],
-        "operationId": "getAccountTotalBakingList",
+        "operationId": "getAccountTotalBaking",
         "parameters": [
           {
             "type": "string",
@@ -4377,6 +4598,203 @@ func init() {
               "items": {
                 "$ref": "#/definitions/AccountBalance"
               }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountEndorsingList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountEndorsingRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/endorsements/{cycleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountEndorsementsByCycleList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "cycleId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/total": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountTotalEndorsing",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account baking",
+            "schema": {
+              "$ref": "#/definitions/AccountEndorsingRow"
             }
           },
           "400": {
@@ -6174,6 +6592,32 @@ func init() {
           "format": "int64"
         },
         "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "AccountEndorsingRow": {
+      "required": [
+        "cycle",
+        "missed",
+        "rewards",
+        "slots"
+      ],
+      "properties": {
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "missed": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rewards": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "slots": {
           "type": "integer",
           "format": "int64"
         }

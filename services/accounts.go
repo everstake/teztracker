@@ -100,8 +100,8 @@ func (t *TezTracker) GetAccountBakingList(accountID string, limits Limiter) (cou
 	return count, list, nil
 }
 
-func (t *TezTracker) GetAccountBakedBlocksList(accountID string, limits Limiter) (count int64, list []models.Block, err error) {
-	count, list, err = t.repoProvider.GetBlock().BakedBlocksList(accountID, limits.Limit(), limits.Offset())
+func (t *TezTracker) GetAccountBakedBlocksList(accountID string, cycle int64, limits Limiter) (count int64, list []models.Block, err error) {
+	count, list, err = t.repoProvider.GetBlock().BakedBlocksList(accountID, cycle, limits.Limit(), limits.Offset())
 	if err != nil {
 		return 0, nil, err
 	}
@@ -116,4 +116,31 @@ func (t *TezTracker) GetAccountBakingTotal(accountID string) (total models.Accou
 	}
 
 	return total, nil
+}
+
+func (t *TezTracker) GetAccountEndorsingList(accountID string, limits Limiter) (count int64, list []models.AccountEndorsing, err error) {
+	count, list, err = t.repoProvider.GetAccount().EndorsingList(accountID, limits.Limit(), limits.Offset())
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return count, list, nil
+}
+
+func (t *TezTracker) GetAccountEndorsingTotal(accountID string) (total models.AccountEndorsing, err error) {
+	total, err = t.repoProvider.GetAccount().EndorsingTotal(accountID)
+	if err != nil {
+		return total, err
+	}
+
+	return total, nil
+}
+
+func (t *TezTracker) GetAccountEndorsementsList(accountID string, cycle int64, limits Limiter) (count int64, list []models.Operation, err error) {
+	count, list, err = t.repoProvider.GetOperation().AccountEndorsements(accountID, cycle, limits.Limit(), limits.Offset())
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return count, list, nil
 }

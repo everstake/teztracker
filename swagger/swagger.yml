@@ -662,9 +662,58 @@ paths:
           description: Not Found
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}':
+    get:
+      operationId: getAccountEndorsingList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for account baking
+          schema:
+            items:
+              $ref: '#/definitions/AccountEndorsingRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/accounts/baking/{accountId}/total':
     get:
-      operationId: getAccountTotalBakingList
+      operationId: getAccountTotalBaking
       produces:
         - application/json
       parameters:
@@ -687,6 +736,37 @@ paths:
           description: Query compatibility endpoint for account baking
           schema:
               $ref: '#/definitions/AccountBakingRow'
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/total':
+    get:
+      operationId: getAccountTotalEndorsing
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account baking
+          schema:
+            $ref: '#/definitions/AccountEndorsingRow'
         '400':
           description: Bad request
         '404':
@@ -740,6 +820,59 @@ paths:
               X-Total-Count:
                 description: The total number of data entries.
                 type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/endorsements/{cycleId}':
+    get:
+      operationId: getAccountEndorsementsByCycleList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: path
+          name: cycleId
+          required: true
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for account baking
+          schema:
+            items:
+              $ref: '#/definitions/OperationsRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '400':
           description: Bad request
         '404':
@@ -2427,3 +2560,22 @@ definitions:
       - cycle
       - rewards
       - blocks
+  AccountEndorsingRow:
+    properties:
+      cycle:
+        type: integer
+        format: int64
+      slots:
+        type: integer
+        format: int64
+      missed:
+        type: integer
+        format: int64
+      rewards:
+        type: integer
+        format: int64
+    required:
+      - cycle
+      - missed
+      - rewards
+      - slots

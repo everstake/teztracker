@@ -57,3 +57,10 @@ type AccountBaking struct {
 	Stolen      int64
 	Reward      int64
 }
+
+type AccountEndorsing struct {
+	Cycle  int64
+	Count  int64
+	Missed int64
+	Reward int64
+}

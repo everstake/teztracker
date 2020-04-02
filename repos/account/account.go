@@ -22,6 +22,8 @@ type (
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 		BakingTotal(string) (models.AccountBaking, error)
 		BakingList(accountID string, limit uint, offset uint) (int64, []models.AccountBaking, error)
+		EndorsingTotal(string) (models.AccountEndorsing, error)
+		EndorsingList(accountID string, limit uint, offset uint) (int64, []models.AccountEndorsing, error)
 	}
 )
 
@@ -152,4 +154,32 @@ func (r *Repository) BakingList(accountID string, limit uint, offset uint) (coun
 		Find(&baking).Error
 
 	return count, baking, err
+}
+
+func (r *Repository) EndorsingTotal(accountID string) (total models.AccountEndorsing, err error) {
+	db := r.db.Select("sum(reward) reward, sum(count) count, sum(missed) missed").
+		Table("tezos.endorsements_materialized_view").
+		Model(&models.AccountEndorsing{}).
+		Where("delegate = ?", accountID)
+
+	err = db.Find(&total).Error
+
+	return total, err
+}
+
+func (r *Repository) EndorsingList(accountID string, limit uint, offset uint) (count int64, endorsing []models.AccountEndorsing, err error) {
+	db := r.db.Table("tezos.endorsements_materialized_view").
+		Model(&models.AccountEndorsing{}).
+		Where("delegate = ?", accountID)
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, endorsing, err
+	}
+
+	err = db.Order("cycle desc").Limit(limit).
+		Offset(offset).
+		Find(&endorsing).Error
+
+	return count, endorsing, err
 }
