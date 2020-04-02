@@ -65,9 +65,9 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id")
 
 	if filter.Type == models.AccountTypeAccount {
-		db = db.Where("account_id like 'tz%'")
+		db = db.Where("amv.account_id like 'tz%'")
 	} else if filter.Type == models.AccountTypeContract {
-		db = db.Where("account_id like 'KT1%'")
+		db = db.Where("amv.account_id like 'KT1%'")
 	}
 
 	db = db.Order("created_at desc").
