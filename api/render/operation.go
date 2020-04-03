@@ -52,14 +52,16 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 	}
 	if dbe != nil {
 		row.DoubleBake = &genModels.DoubleBakingDetails{
-			BakerReward:    dbe.BakerReward,
-			DenouncedLevel: dbe.DenouncedLevel,
-			EvidenceBaker:  dbe.EvidenceBaker,
-			LostDeposits:   dbe.LostDeposits,
-			LostFees:       dbe.LostFees,
-			LostRewards:    dbe.LostRewards,
-			Offender:       dbe.Offender,
-			Priority:       int64(dbe.Priority),
+			BakerReward:       dbe.BakerReward,
+			DenouncedLevel:    dbe.DenouncedLevel,
+			EvidenceBaker:     dbe.EvidenceBaker,
+			EvidenceBakerName: dbe.EvidenceBakerName,
+			LostDeposits:      dbe.LostDeposits,
+			LostFees:          dbe.LostFees,
+			LostRewards:       dbe.LostRewards,
+			Offender:          dbe.Offender,
+			OffenderName:      dbe.OffenderName,
+			Priority:          int64(dbe.Priority),
 		}
 	}
 	return &row

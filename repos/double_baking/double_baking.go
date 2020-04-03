@@ -26,7 +26,10 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb(options models.DoubleBakingEvidenceQueryOptions) *gorm.DB {
-	db := r.db.Model(&models.DoubleBakingEvidence{})
+	db := r.db.Select("*").Model(&models.DoubleBakingEvidence{}).
+		Joins("left join tezos.public_bakers as off on dbe_offender = off.delegate").
+		Joins("left join tezos.public_bakers as evd on dbe_evidence_baker = evd.delegate")
+
 	if options.LoadOperation {
 		db = db.Preload("Operation")
 	}
@@ -61,7 +64,8 @@ func (r *Repository) List(options models.DoubleBakingEvidenceQueryOptions) (coun
 }
 
 func (r *Repository) Last() (found bool, evidence models.DoubleBakingEvidence, err error) {
-	db := r.db.Model(&evidence)
+	db := r.getDb(models.DoubleBakingEvidenceQueryOptions{})
+
 	if res := db.Order("operation_id desc").Take(&evidence); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, evidence, nil
