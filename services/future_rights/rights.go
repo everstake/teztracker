@@ -77,6 +77,10 @@ func SaveFutureRightsForBlockRange(ctx context.Context, blockFrom, blockTo, head
 		return 0, err
 	}
 
+	for i := range rights {
+		rights[i].Cycle = (rights[i].Level - 1) / provider.BlocksInCycle()
+	}
+
 	unit.Start(ctx)
 	defer unit.RollbackUnlessCommitted()
 	rightsRepo := unit.GetFutureBakingRight()
