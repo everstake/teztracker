@@ -35,7 +35,7 @@ func (r *Repository) getDb(options models.DoubleBakingEvidenceQueryOptions) *gor
 		db = db.Where("dbe_block_hash IN (?)", options.BlockIDs)
 	}
 	if len(options.OperationHashes) != 0 {
-		db = db.Joins("natural join operations")
+		db = db.Joins("natural join tezos.operations")
 		db = db.Where("operations.operation_group_hash in (?)", options.OperationHashes)
 	}
 	return db

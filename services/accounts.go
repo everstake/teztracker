@@ -83,9 +83,19 @@ func (t *TezTracker) GetAccount(id string) (acc models.Account, err error) {
 }
 
 func (t *TezTracker) GetAccountBalanceHistory(id string, from, to time.Time) (balances []models.AccountBalance, err error) {
-	balances, err = t.repoProvider.GetAccount().Balances(id, from, to)
+	repo := t.repoProvider.GetAccount()
+	balances, err = repo.Balances(id, from, to)
 	if err != nil {
 		return balances, err
+	}
+
+	found, bal, err := repo.PrevBalance(id, from)
+	if err != nil {
+		return balances, err
+	}
+
+	if found {
+		balances = append([]models.AccountBalance{bal}, balances...)
 	}
 
 	return balances, nil
