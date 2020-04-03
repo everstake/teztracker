@@ -15,3 +15,11 @@ from (select cycle,
         and source = 'block'
      ) as s
 group by cycle, delegate;
+
+alter table tezos.future_baking_rights
+	add cycle integer;
+
+
+alter table tezos.future_baking_rights
+    add constraint future_baking_rights_pk
+	    primary key (cycle, level, delegate, priority);
