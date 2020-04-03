@@ -157,7 +157,7 @@ func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, 
 }
 
 func (r *Repository) RefreshView() (err error) {
-	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW CONCURRENTLY ", accountMaterializedView)).Error
+	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW ", accountMaterializedView)).Error
 	if err != nil {
 		return err
 	}
