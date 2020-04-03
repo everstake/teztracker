@@ -82,3 +82,27 @@ func (h *getAccountTotalBakingHandler) Handle(params accounts.GetAccountTotalBak
 
 	return accounts.NewGetAccountTotalBakingOK().WithPayload(render.AccountBaking(total))
 }
+
+type getAccountFutureBakingHandler struct {
+	provider DbProvider
+}
+
+func (h *getAccountFutureBakingHandler) Handle(params accounts.GetAccountFutureBakingParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountFutureBakingBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountFutureBakingBadRequest()
+	}
+	service := services.New(repos.New(db), net)
+
+	total, err := service.GetAccountFutureBakingList(params.AccountID)
+	if err != nil {
+		logrus.Errorf("failed to get accounts: %s", err.Error())
+		return accounts.NewGetAccountFutureBakingNotFound()
+	}
+
+	return accounts.NewGetAccountFutureBakingOK().WithPayload(render.AccountBakingList(total))
+}

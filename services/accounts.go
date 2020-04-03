@@ -110,6 +110,15 @@ func (t *TezTracker) GetAccountBakingList(accountID string, limits Limiter) (cou
 	return count, list, nil
 }
 
+func (t *TezTracker) GetAccountFutureBakingList(accountID string) (list []models.AccountBaking, err error) {
+	list, err = t.repoProvider.GetAccount().FutureBakingList(accountID)
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
+
 func (t *TezTracker) GetAccountBakedBlocksList(accountID string, cycle int64, limits Limiter) (count int64, list []models.Block, err error) {
 	count, list, err = t.repoProvider.GetBlock().BakedBlocksList(accountID, cycle, limits.Limit(), limits.Offset())
 	if err != nil {

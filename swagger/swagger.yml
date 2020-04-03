@@ -742,6 +742,39 @@ paths:
           description: Not Found
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/baking/{accountId}/future':
+    get:
+      operationId: getAccountFutureBaking
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account future baking
+          schema:
+            items:
+              $ref: '#/definitions/AccountBakingRow'
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/total':
     get:
       operationId: getAccountTotalEndorsing

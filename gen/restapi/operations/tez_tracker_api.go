@@ -66,6 +66,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetAccountEndorsingListHandler: accounts.GetAccountEndorsingListHandlerFunc(func(params accounts.GetAccountEndorsingListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountEndorsingList has not yet been implemented")
 		}),
+		AccountsGetAccountFutureBakingHandler: accounts.GetAccountFutureBakingHandlerFunc(func(params accounts.GetAccountFutureBakingParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountFutureBaking has not yet been implemented")
+		}),
 		AccountsGetAccountTotalBakingHandler: accounts.GetAccountTotalBakingHandlerFunc(func(params accounts.GetAccountTotalBakingParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountTotalBaking has not yet been implemented")
 		}),
@@ -192,6 +195,8 @@ type TezTrackerAPI struct {
 	AccountsGetAccountEndorsementsByCycleListHandler accounts.GetAccountEndorsementsByCycleListHandler
 	// AccountsGetAccountEndorsingListHandler sets the operation handler for the get account endorsing list operation
 	AccountsGetAccountEndorsingListHandler accounts.GetAccountEndorsingListHandler
+	// AccountsGetAccountFutureBakingHandler sets the operation handler for the get account future baking operation
+	AccountsGetAccountFutureBakingHandler accounts.GetAccountFutureBakingHandler
 	// AccountsGetAccountTotalBakingHandler sets the operation handler for the get account total baking operation
 	AccountsGetAccountTotalBakingHandler accounts.GetAccountTotalBakingHandler
 	// AccountsGetAccountTotalEndorsingHandler sets the operation handler for the get account total endorsing operation
@@ -335,6 +340,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetAccountEndorsingListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountEndorsingListHandler")
+	}
+
+	if o.AccountsGetAccountFutureBakingHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountFutureBakingHandler")
 	}
 
 	if o.AccountsGetAccountTotalBakingHandler == nil {
@@ -577,6 +586,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/endorsing/{accountId}"] = accounts.NewGetAccountEndorsingList(o.context, o.AccountsGetAccountEndorsingListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/baking/{accountId}/future"] = accounts.NewGetAccountFutureBaking(o.context, o.AccountsGetAccountFutureBakingHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

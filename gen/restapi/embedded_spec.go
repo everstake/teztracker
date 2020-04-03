@@ -735,6 +735,56 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/baking/{accountId}/future": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureBaking",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountBakingRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/baking/{accountId}/total": {
       "get": {
         "produces": [
@@ -4488,6 +4538,56 @@ func init() {
               "X-Total-Count": {
                 "type": "integer",
                 "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/baking/{accountId}/future": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureBaking",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountBakingRow"
               }
             }
           },
