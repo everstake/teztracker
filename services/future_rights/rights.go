@@ -2,6 +2,7 @@ package future_rights
 
 import (
 	"context"
+	"github.com/everstake/teztracker/repos/account"
 
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/block"
@@ -29,6 +30,7 @@ type UnitOfWork interface {
 	Commit() error
 	GetBlock() block.Repo
 	GetFutureBakingRight() future_baking_rights.Repo
+	GetAccount() account.Repo
 }
 
 const BlocksRangeSize = 256
@@ -68,6 +70,12 @@ func SaveNewBakingRights(ctx context.Context, unit UnitOfWork, provider RightsPr
 		count += cnt
 		nextBlockToScan = endRange + 1
 	}
+
+	err = unit.GetAccount().RefreshView()
+	if err != nil {
+		return 0, err
+	}
+
 	return count, nil
 }
 

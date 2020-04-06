@@ -52,3 +52,39 @@ func AccountBalance(acb models.AccountBalance) *genModels.AccountBalance {
 		Timestamp: acb.Time.Unix(),
 	}
 }
+
+func AccountBaking(acb models.AccountBaking) *genModels.AccountBakingRow {
+	return &genModels.AccountBakingRow{
+		AvgPriority: &acb.AvgPriority,
+		Blocks:      &acb.Count,
+		Cycle:       &acb.Cycle,
+		Missed:      &acb.Missed,
+		Rewards:     &acb.Reward,
+		Stolen:      &acb.Stolen,
+	}
+}
+
+func AccountBakingList(accb []models.AccountBaking) []*genModels.AccountBakingRow {
+	accbs := make([]*genModels.AccountBakingRow, len(accb))
+	for i := range accb {
+		accbs[i] = AccountBaking(accb[i])
+	}
+	return accbs
+}
+
+func AccountEndorsing(acb models.AccountEndorsing) *genModels.AccountEndorsingRow {
+	return &genModels.AccountEndorsingRow{
+		Slots:   &acb.Count,
+		Cycle:   &acb.Cycle,
+		Missed:  &acb.Missed,
+		Rewards: &acb.Reward,
+	}
+}
+
+func AccountEndorsingList(acce []models.AccountEndorsing) []*genModels.AccountEndorsingRow {
+	accbs := make([]*genModels.AccountEndorsingRow, len(acce))
+	for i := range acce {
+		accbs[i] = AccountEndorsing(acce[i])
+	}
+	return accbs
+}

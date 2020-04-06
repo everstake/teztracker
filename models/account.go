@@ -48,3 +48,19 @@ type AccountBalance struct {
 	Time    time.Time
 	Balance int64
 }
+
+type AccountBaking struct {
+	Cycle       int64
+	Count       int64
+	AvgPriority float32
+	Missed      int64
+	Stolen      int64
+	Reward      int64
+}
+
+type AccountEndorsing struct {
+	Cycle  int64
+	Count  int64
+	Missed int64
+	Reward int64
+}
