@@ -173,7 +173,7 @@ func (r *Repository) AccountOperationCount(acc string) (counts []models.Operatio
 func (r *Repository) AccountEndorsements(accountID string, cycle int64, limit uint, offset uint) (count int64, operations []models.Operation, err error) {
 	db := r.db.Model(&models.Operation{}).
 		Where("delegate = ?", accountID).
-		Where("kind = 'endorsement").
+		Where("kind = ?", endorsementKind).
 		Where("cycle = ?", cycle).
 		Order("operation_id desc").
 		Limit(limit).
