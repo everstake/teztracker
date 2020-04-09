@@ -38,6 +38,15 @@ const (
 	AccountTypeContract
 )
 
+type RewardStatus string
+
+const (
+	StatusPending  RewardStatus = "pending"
+	StatusActive   RewardStatus = "active"
+	StatusFrozen   RewardStatus = "frozen"
+	StatusUnfrozen RewardStatus = "unfrozen"
+)
+
 type AccountFilter struct {
 	Type     AccountType
 	Delegate string
@@ -63,4 +72,18 @@ type AccountEndorsing struct {
 	Count  int64
 	Missed int64
 	Reward int64
+}
+
+type AccountReward struct {
+	Status              RewardStatus
+	Cycle               int64
+	Delegators          int64
+	StakingBalance      int64
+	BakingRewards       int64
+	FutureBakingRewards int64
+	EndorsementRewards  int64
+	Fees                int64
+	MissedBaking        int64
+	MissedEndorsements  int64
+	Losses              int64
 }

@@ -1141,7 +1141,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/RewardsRow"
+                "$ref": "#/definitions/AccountRewardsRow"
               }
             },
             "headers": {
@@ -2975,6 +2975,47 @@ func init() {
         }
       }
     },
+    "AccountRewardsRow": {
+      "required": [
+        "cycle",
+        "delegators",
+        "stakingBalance",
+        "endorsements",
+        "baking",
+        "losses",
+        "fees"
+      ],
+      "properties": {
+        "baking": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegators": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endorsements": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "fees": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "losses": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "AccountsRow": {
       "type": "object",
       "required": [
@@ -3863,34 +3904,6 @@ func init() {
     },
     "PublicBaker": {
       "$ref": "#/definitions/BakersRow"
-    },
-    "RewardsRow": {
-      "properties": {
-        "baking": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "cycle": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "delegators": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "endorsements": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "losses": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "stakingBalance": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
     },
     "Snapshots": {
       "properties": {
@@ -5058,7 +5071,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/RewardsRow"
+                "$ref": "#/definitions/AccountRewardsRow"
               }
             },
             "headers": {
@@ -6905,6 +6918,47 @@ func init() {
         }
       }
     },
+    "AccountRewardsRow": {
+      "required": [
+        "cycle",
+        "delegators",
+        "stakingBalance",
+        "endorsements",
+        "baking",
+        "losses",
+        "fees"
+      ],
+      "properties": {
+        "baking": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegators": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endorsements": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "fees": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "losses": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "AccountsRow": {
       "type": "object",
       "required": [
@@ -7794,34 +7848,6 @@ func init() {
     },
     "PublicBaker": {
       "$ref": "#/definitions/BakersRow"
-    },
-    "RewardsRow": {
-      "properties": {
-        "baking": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "cycle": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "delegators": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "endorsements": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "losses": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "stakingBalance": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
     },
     "Snapshots": {
       "properties": {

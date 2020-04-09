@@ -88,3 +88,22 @@ func AccountEndorsingList(acce []models.AccountEndorsing) []*genModels.AccountEn
 	}
 	return accbs
 }
+
+func AccountRewardsList(accrl []models.AccountReward) []*genModels.AccountRewardsRow {
+	accrr := make([]*genModels.AccountRewardsRow, len(accrl))
+	for i := range accrl {
+		accrr[i] = AccountReward(accrl[i])
+	}
+	return accrr
+}
+
+func AccountReward(acb models.AccountReward) *genModels.AccountRewardsRow {
+	return &genModels.AccountRewardsRow{
+		Cycle:          &acb.Cycle,
+		Delegators:     &acb.Delegators,
+		Baking:         &acb.BakingRewards,
+		StakingBalance: &acb.StakingBalance,
+		Endorsements:   &acb.EndorsementRewards,
+		Losses:         &acb.Losses,
+	}
+}

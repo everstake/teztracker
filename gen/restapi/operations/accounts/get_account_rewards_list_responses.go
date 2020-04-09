@@ -30,7 +30,7 @@ type GetAccountRewardsListOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []*models.RewardsRow `json:"body,omitempty"`
+	Payload []*models.AccountRewardsRow `json:"body,omitempty"`
 }
 
 // NewGetAccountRewardsListOK creates GetAccountRewardsListOK with default headers values
@@ -51,13 +51,13 @@ func (o *GetAccountRewardsListOK) SetXTotalCount(xTotalCount int64) {
 }
 
 // WithPayload adds the payload to the get account rewards list o k response
-func (o *GetAccountRewardsListOK) WithPayload(payload []*models.RewardsRow) *GetAccountRewardsListOK {
+func (o *GetAccountRewardsListOK) WithPayload(payload []*models.AccountRewardsRow) *GetAccountRewardsListOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get account rewards list o k response
-func (o *GetAccountRewardsListOK) SetPayload(payload []*models.RewardsRow) {
+func (o *GetAccountRewardsListOK) SetPayload(payload []*models.AccountRewardsRow) {
 	o.Payload = payload
 }
 
@@ -75,7 +75,7 @@ func (o *GetAccountRewardsListOK) WriteResponse(rw http.ResponseWriter, producer
 	payload := o.Payload
 	if payload == nil {
 		// return empty array
-		payload = make([]*models.RewardsRow, 0, 50)
+		payload = make([]*models.AccountRewardsRow, 0, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

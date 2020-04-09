@@ -26,6 +26,7 @@ type (
 		FutureBakingList(accountID string) ([]models.AccountBaking, error)
 		EndorsingTotal(string) (models.AccountEndorsing, error)
 		EndorsingList(accountID string, limit uint, offset uint) (int64, []models.AccountEndorsing, error)
+		RewardsList(accountID string, limit uint, offset uint) (count int64, rewards []models.AccountReward, err error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
 		RefreshView() error
 		RefreshAccountFutureBaking() error
@@ -227,6 +228,27 @@ func (r *Repository) EndorsingList(accountID string, limit uint, offset uint) (c
 		Find(&endorsing).Error
 
 	return count, endorsing, err
+}
+
+func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (count int64, rewards []models.AccountReward, err error) {
+	db := r.db.Select("br.*,bmv.reward as baking_rewards, bmv.missed missed_baking, fbrmv.rewards as future_baking_rewards, emv.reward endorsement_rewards ,emv.missed missed_endorsements").
+		Table("tezos.baking_rewards as br").
+		Joins("left join tezos.future_baking_rights_materialized_view fbrmv on br.baker = fbrmv.delegate and br.cycle = fbrmv.cycle").
+		Joins(" left join tezos.baking_materialized_view bmv on br.baker = bmv.delegate and br.cycle = bmv.cycle").
+		Joins("left join tezos.endorsements_materialized_view emv on br.baker = emv.delegate and br.cycle = emv.cycle").
+		Model(&models.AccountReward{}).
+		Where("baker = ?", accountID)
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, rewards, err
+	}
+
+	err = db.Order("cycle desc").Limit(limit).
+		Offset(offset).
+		Find(&rewards).Error
+
+	return count, rewards, err
 }
 
 func (r *Repository) FutureBakingList(accountID string) (baking []models.AccountBaking, err error) {

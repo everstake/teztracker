@@ -949,7 +949,7 @@ paths:
           description: Query compatibility endpoint for account rewards
           schema:
             items:
-              $ref: '#/definitions/RewardsRow'
+              $ref: '#/definitions/AccountRewardsRow'
             type: array
           headers:
             X-Total-Count:
@@ -2661,7 +2661,7 @@ definitions:
       - missed
       - rewards
       - slots
-  RewardsRow:
+  AccountRewardsRow:
     properties:
       cycle:
         type: integer
@@ -2681,3 +2681,14 @@ definitions:
       losses:
         type: integer
         format: int64
+      fees:
+        type: integer
+        format: int64
+    required:
+      - cycle
+      - delegators
+      - stakingBalance
+      - endorsements
+      - baking
+      - losses
+      - fees
