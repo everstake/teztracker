@@ -27,6 +27,9 @@ type (
 		PublicBakersList(limit, offset uint) (bakers []models.Baker, err error)
 		BakerRegistryList() ([]models.BakerRegistry, error)
 		SavePublicBaker(models.BakerRegistry) error
+
+		TotalBakingRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
+		TotalEndorsementRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
 	}
 
 	BakerCounter struct {
@@ -122,11 +125,57 @@ func (r *Repository) TotalStakingBalance() (b int64, err error) {
 	bal := struct {
 		Balance int64
 	}{}
-	err = r.db.Table("tezos.delegates").Select("SUM(staking_balance) balance").Find(&bal).Error
+	err = r.db.Table("tezos.delegates").
+		Select("SUM(staking_balance) balance").
+		Where("deactivated is not true").
+		Find(&bal).Error
 	if err != nil {
 		return 0, err
 	}
 	return bal.Balance, nil
+}
+
+func (r *Repository) TotalBakingRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error) {
+	rew := struct {
+		Rewards int64
+	}{}
+
+	db := r.db.Table("tezos.baking_materialized_view").
+		Select("SUM(reward) rewards").
+		Where("cycle >= ?", fromCycle).
+		Where("cycle <= ?", toCycle)
+	if accountId != "" {
+		db = db.Where("delegate = ?", accountId)
+	}
+
+	err = db.Find(&rew).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return rew.Rewards, nil
+}
+
+func (r *Repository) TotalEndorsementRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error) {
+	rew := struct {
+		Rewards int64
+	}{}
+
+	db := r.db.Table("tezos.endorsements_materialized_view").
+		Select("SUM(reward) rewards").
+		Where("cycle >= ?", fromCycle).
+		Where("cycle <= ?", toCycle)
+
+	if accountId != "" {
+		db = db.Where("delegate = ?", accountId)
+	}
+
+	err = db.Find(&rew).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return rew.Rewards, nil
 }
 
 // Count counts a number of bakers sutisfying the filter.

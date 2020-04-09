@@ -198,6 +198,22 @@ func (t *TezTracker) GetStakingRatio() (float64, error) {
 		return 0, nil
 	}
 
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return 0, nil
+	}
+
+	bakingRewards, err := br.TotalBakingRewards("", lastBlock.MetaCycle-PreservedCycles, lastBlock.MetaCycle)
+	if err != nil {
+		return 0, nil
+	}
+
+	endorsementRewards, err := br.TotalEndorsementRewards("", lastBlock.MetaCycle-PreservedCycles, lastBlock.MetaCycle)
+	if err != nil {
+		return 0, nil
+	}
+
+	stakedBalance = stakedBalance - bakingRewards - endorsementRewards
 	ratio := float64(stakedBalance) / float64(supply)
 
 	return ratio, nil
