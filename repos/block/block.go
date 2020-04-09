@@ -142,7 +142,7 @@ func (r *Repository) Filter(filter models.BlockFilter) (blocks []models.Block, e
 func (r *Repository) BakedBlocksList(accountID string, cycle int64, limit uint, offset uint) (count int64, blocks []models.Block, err error) {
 	db := r.getDb()
 
-	db = db.Where("baker = ?", accountID).Where("cycle = ?", cycle)
+	db = db.Where("baker = ?", accountID).Where("meta_cycle = ?", cycle)
 	err = db.Count(&count).Error
 	if err != nil {
 		return count, blocks, err
