@@ -10,7 +10,10 @@ const (
 	BlockSecurityDeposit       = 512 * XTZ
 	EndorsementSecurityDeposit = 64 * XTZ
 	BlockReward                = 40 * XTZ
+	BabylonBlockReward         = 24 * XTZ
 	EndorsementReward          = 1.25 * XTZ
+	BabylonEndorsementRewards  = 1.75 * XTZ
+	CarthageCycle              = 208
 	BlockEndorsers             = 32
 	TokensPerRoll              = 8000
 	TotalLocked                = (BlockSecurityDeposit + EndorsementSecurityDeposit*BlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
