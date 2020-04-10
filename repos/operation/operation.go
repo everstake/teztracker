@@ -177,15 +177,16 @@ func (r *Repository) AccountEndorsements(accountID string, cycle int64, limit ui
 	db := r.db.Model(&models.Operation{}).
 		Where("delegate = ?", accountID).
 		Where("kind = ?", endorsementKind).
-		Where("cycle = ?", cycle).
-		Order("operation_id desc").
-		Limit(limit).
-		Offset(offset)
+		Where("cycle = ?", cycle)
 
 	err = db.Count(&count).Error
 	if err != nil {
 		return count, operations, err
 	}
+
+	db = db.Order("operation_id desc").
+		Limit(limit).
+		Offset(offset)
 
 	db = r.db.Raw("SELECT * from (?) as s left join tezos.balance_updates on (s.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')", db.SubQuery())
 	err = db.Find(&operations).Error
