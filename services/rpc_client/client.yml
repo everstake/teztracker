@@ -37,6 +37,43 @@ paths:
           description: Internal error
       tags:
         - BakingRights
+  /chains/{network}/blocks/{block}/helpers/endorsing_rights:
+    get:
+      operationId: getEndorsingRights
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: block
+          required: true
+          type: string
+        - in: query
+          type: array
+          items:
+            type: string
+          name: level
+          collectionFormat: multi
+        - in: query
+          type: string
+          name: delegate
+        - in: query
+          type: string
+          name: cycle
+      responses:
+        '200':
+          description: Query compatibility endpoint for account
+          schema:
+            items:
+              $ref: '#/definitions/EndorsementRight'
+            type: array
+        '500':
+          description: Internal error
+      tags:
+        - EndorsingRights
   /chains/{network}/blocks/{block}/context/raw/json/cycle/{cycle}/roll_snapshot:
     get:
       operationId: getRollSnapshot
@@ -153,3 +190,16 @@ definitions:
       estimated_time:
         type: string
         format: date-time
+  EndorsementRight:
+    properties:
+      level:
+        type: integer
+        format: int64
+      delegate:
+        type: string
+      slots:
+        type: array
+        items:
+          type: integer
+          format: int64
+
