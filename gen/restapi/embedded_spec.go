@@ -3776,10 +3776,7 @@ func init() {
         "destinationName": {
           "type": "string"
         },
-        "doubleBake": {
-          "$ref": "#/definitions/DoubleOperationDetails"
-        },
-        "doubleEndorse": {
+        "doubleOperationDetails": {
           "$ref": "#/definitions/DoubleOperationDetails"
         },
         "fee": {
@@ -7827,10 +7824,7 @@ func init() {
         "destinationName": {
           "type": "string"
         },
-        "doubleBake": {
-          "$ref": "#/definitions/DoubleOperationDetails"
-        },
-        "doubleEndorse": {
+        "doubleOperationDetails": {
           "$ref": "#/definitions/DoubleOperationDetails"
         },
         "fee": {

@@ -51,7 +51,7 @@ func Operation(b models.Operation, dbe *models.DoubleOperationEvidence) *genMode
 		Timestamp:           &ts,
 	}
 	if dbe != nil {
-		row.DoubleBake = &genModels.DoubleOperationDetails{
+		row.DoubleOperationDetails = &genModels.DoubleOperationDetails{
 			BakerReward:    dbe.BakerReward,
 			DenouncedLevel: dbe.DenouncedLevel,
 			EvidenceBaker:  dbe.EvidenceBaker,

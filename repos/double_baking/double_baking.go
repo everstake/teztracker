@@ -27,7 +27,7 @@ func New(db *gorm.DB) *Repository {
 
 func (r *Repository) getDb(options models.DoubleOperationEvidenceQueryOptions) *gorm.DB {
 	db := r.db.Model(&models.DoubleOperationEvidence{}).
-		Where("type = ?", options.Type)
+		Where("doe_type = ?", options.Type)
 	if options.LoadOperation {
 		db = db.Preload("Operation")
 	}
@@ -63,7 +63,8 @@ func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (c
 
 func (r *Repository) Last() (found bool, evidence models.DoubleOperationEvidence, err error) {
 	db := r.db.Model(&evidence)
-	if res := db.Where("type = ?", models.DoubleOperationTypeBaking).Order("operation_id desc").Take(&evidence); res.Error != nil {
+	if res := db.Where("doe_type = ?", models.DoubleOperationTypeBaking).
+		Order("operation_id desc").Take(&evidence); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, evidence, nil
 		}

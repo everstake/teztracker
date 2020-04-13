@@ -2483,9 +2483,7 @@ definitions:
       reward:
         type: integer
         format: int64
-      doubleBake:
-        $ref: '#/definitions/DoubleOperationDetails'
-      doubleEndorse:
+      doubleOperationDetails:
         $ref: '#/definitions/DoubleOperationDetails'
     required:
       - blockHash
