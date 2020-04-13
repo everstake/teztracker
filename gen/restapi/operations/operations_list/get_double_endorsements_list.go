@@ -29,7 +29,7 @@ func NewGetDoubleEndorsementsList(ctx *middleware.Context, handler GetDoubleEndo
 	return &GetDoubleEndorsementsList{Context: ctx, Handler: handler}
 }
 
-/*GetDoubleEndorsementsList swagger:route GET /v2/data/{platform}/{network}/double_endorsement OperationsList getDoubleEndorsementsList
+/*GetDoubleEndorsementsList swagger:route GET /v2/data/{platform}/{network}/double_endorsements OperationsList getDoubleEndorsementsList
 
 GetDoubleEndorsementsList get double endorsements list API
 

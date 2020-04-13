@@ -52,14 +52,16 @@ func Operation(b models.Operation, dbe *models.DoubleOperationEvidence) *genMode
 	}
 	if dbe != nil {
 		row.DoubleOperationDetails = &genModels.DoubleOperationDetails{
-			BakerReward:    dbe.BakerReward,
-			DenouncedLevel: dbe.DenouncedLevel,
-			EvidenceBaker:  dbe.EvidenceBaker,
-			LostDeposits:   dbe.LostDeposits,
-			LostFees:       dbe.LostFees,
-			LostRewards:    dbe.LostRewards,
-			Offender:       dbe.Offender,
-			Priority:       int64(dbe.Priority),
+			BakerReward:       dbe.BakerReward,
+			DenouncedLevel:    dbe.DenouncedLevel,
+			EvidenceBaker:     dbe.EvidenceBaker,
+			EvidenceBakerName: dbe.EvidenceBakerName,
+			LostDeposits:      dbe.LostDeposits,
+			LostFees:          dbe.LostFees,
+			LostRewards:       dbe.LostRewards,
+			Offender:          dbe.Offender,
+			OffenderName:      dbe.OffenderName,
+			Priority:          int64(dbe.Priority),
 		}
 	}
 	return &row

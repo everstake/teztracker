@@ -2047,7 +2047,7 @@ func init() {
         }
       }
     },
-    "/v2/data/{platform}/{network}/double_endorsement": {
+    "/v2/data/{platform}/{network}/double_endorsements": {
       "get": {
         "produces": [
           "application/json"
@@ -3589,6 +3589,9 @@ func init() {
         "evidence_baker": {
           "type": "string"
         },
+        "evidence_baker_name": {
+          "type": "string"
+        },
         "lost_deposits": {
           "type": "integer",
           "format": "int64"
@@ -3602,6 +3605,9 @@ func init() {
           "format": "int64"
         },
         "offender": {
+          "type": "string"
+        },
+        "offender_name": {
           "type": "string"
         },
         "priority": {
@@ -6087,7 +6093,7 @@ func init() {
         }
       }
     },
-    "/v2/data/{platform}/{network}/double_endorsement": {
+    "/v2/data/{platform}/{network}/double_endorsements": {
       "get": {
         "produces": [
           "application/json"
@@ -7636,6 +7642,9 @@ func init() {
         "evidence_baker": {
           "type": "string"
         },
+        "evidence_baker_name": {
+          "type": "string"
+        },
         "lost_deposits": {
           "type": "integer",
           "format": "int64"
@@ -7649,6 +7658,9 @@ func init() {
           "format": "int64"
         },
         "offender": {
+          "type": "string"
+        },
+        "offender_name": {
           "type": "string"
         },
         "priority": {

@@ -50,7 +50,7 @@ func (o *GetDoubleEndorsementsListURL) SetBasePath(bp string) {
 func (o *GetDoubleEndorsementsListURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/data/{platform}/{network}/double_endorsement"
+	var _path = "/v2/data/{platform}/{network}/double_endorsements"
 
 	network := o.Network
 	if network != "" {

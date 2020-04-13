@@ -1593,7 +1593,7 @@ paths:
           description: Not Found
       tags:
         - OperationsList
-  '/v2/data/{platform}/{network}/double_endorsement':
+  '/v2/data/{platform}/{network}/double_endorsements':
     get:
       operationId: getDoubleEndorsementsList
       produces:
@@ -2371,10 +2371,14 @@ definitions:
         format: int64
       offender:
         type: string
+      offender_name:
+        type: string
       priority:
         type: integer
         format: int64
       evidence_baker:
+        type: string
+      evidence_baker_name:
         type: string
       baker_reward:
         type: integer

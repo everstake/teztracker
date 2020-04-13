@@ -24,6 +24,9 @@ type DoubleOperationDetails struct {
 	// evidence baker
 	EvidenceBaker string `json:"evidence_baker,omitempty"`
 
+	// evidence baker name
+	EvidenceBakerName string `json:"evidence_baker_name,omitempty"`
+
 	// lost deposits
 	LostDeposits int64 `json:"lost_deposits,omitempty"`
 
@@ -35,6 +38,9 @@ type DoubleOperationDetails struct {
 
 	// offender
 	Offender string `json:"offender,omitempty"`
+
+	// offender name
+	OffenderName string `json:"offender_name,omitempty"`
 
 	// priority
 	Priority int64 `json:"priority,omitempty"`

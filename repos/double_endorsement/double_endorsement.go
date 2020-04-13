@@ -26,14 +26,16 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb(options models.DoubleOperationEvidenceQueryOptions) *gorm.DB {
-	db := r.db.Model(&models.DoubleOperationEvidence{}).
-		Where("doe_type = ?", options.Type)
+	db := r.db.Select("*").Model(&models.DoubleOperationEvidence{}).
+		Where("doe_type = ?", options.Type).
+		Joins("left join tezos.public_bakers as off on doe_offender = off.delegate").
+		Joins("left join tezos.public_bakers as evd on doe_evidence_baker = evd.delegate")
 	if options.LoadOperation {
 		db = db.Preload("Operation")
 	}
 
 	if len(options.BlockIDs) != 0 {
-		db = db.Where("dbe_block_hash IN (?)", options.BlockIDs)
+		db = db.Where("doe_block_hash IN (?)", options.BlockIDs)
 	}
 	if len(options.OperationHashes) != 0 {
 		db = db.Joins("natural join tezos.operations")
@@ -62,8 +64,9 @@ func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (c
 }
 
 func (r *Repository) Last() (found bool, evidence models.DoubleOperationEvidence, err error) {
-	db := r.db.Model(&evidence)
-	if res := db.Where("doe_type = ?", models.DoubleOperationTypeEndorsement).
+	db := r.getDb(models.DoubleOperationEvidenceQueryOptions{})
+
+	if res := db.Where("doe_type = ?", models.DoubleOperationTypeBaking).
 		Order("operation_id desc").Take(&evidence); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, evidence, nil
