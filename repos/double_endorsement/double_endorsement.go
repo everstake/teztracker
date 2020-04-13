@@ -1,4 +1,4 @@
-package double_baking
+package double_endorsement
 
 import (
 	"github.com/everstake/teztracker/models"
@@ -63,7 +63,7 @@ func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (c
 
 func (r *Repository) Last() (found bool, evidence models.DoubleOperationEvidence, err error) {
 	db := r.db.Model(&evidence)
-	if res := db.Where("type = ?", models.DoubleOperationTypeBaking).Order("operation_id desc").Take(&evidence); res.Error != nil {
+	if res := db.Where("type = ?", models.DoubleOperationTypeEndorsement).Order("operation_id desc").Take(&evidence); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, evidence, nil
 		}

@@ -59,7 +59,10 @@ type OperationsRow struct {
 	DestinationName string `json:"destinationName,omitempty"`
 
 	// double bake
-	DoubleBake *DoubleBakingDetails `json:"doubleBake,omitempty"`
+	DoubleBake *DoubleOperationDetails `json:"doubleBake,omitempty"`
+
+	// double endorse
+	DoubleEndorse *DoubleOperationDetails `json:"doubleEndorse,omitempty"`
 
 	// fee
 	Fee int64 `json:"fee,omitempty"`
@@ -160,6 +163,10 @@ func (m *OperationsRow) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDoubleEndorse(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateKind(formats); err != nil {
 		res = append(res, err)
 	}
@@ -210,6 +217,24 @@ func (m *OperationsRow) validateDoubleBake(formats strfmt.Registry) error {
 		if err := m.DoubleBake.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("doubleBake")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OperationsRow) validateDoubleEndorse(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.DoubleEndorse) { // not required
+		return nil
+	}
+
+	if m.DoubleEndorse != nil {
+		if err := m.DoubleEndorse.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("doubleEndorse")
 			}
 			return err
 		}
