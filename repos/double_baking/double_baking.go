@@ -27,16 +27,15 @@ func New(db *gorm.DB) *Repository {
 
 func (r *Repository) getDb(options models.DoubleOperationEvidenceQueryOptions) *gorm.DB {
 	db := r.db.Select("*").Model(&models.DoubleOperationEvidence{}).
-		Joins("left join tezos.public_bakers as off on dbe_offender = off.delegate").
-		Joins("left join tezos.public_bakers as evd on dbe_evidence_baker = evd.delegate").
-		Where("doe_type = ?", options.Type)
-
+		Where("doe_type = ?", options.Type).
+		Joins("left join tezos.public_bakers as off on doe_offender = off.delegate").
+		Joins("left join tezos.public_bakers as evd on doe_evidence_baker = evd.delegate")
 	if options.LoadOperation {
 		db = db.Preload("Operation")
 	}
 
 	if len(options.BlockIDs) != 0 {
-		db = db.Where("dbe_block_hash IN (?)", options.BlockIDs)
+		db = db.Where("doe_block_hash IN (?)", options.BlockIDs)
 	}
 	if len(options.OperationHashes) != 0 {
 		db = db.Joins("natural join tezos.operations")

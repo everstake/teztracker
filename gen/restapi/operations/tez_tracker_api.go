@@ -688,7 +688,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/data/{platform}/{network}/double_endorsement"] = operations_list.NewGetDoubleEndorsementsList(o.context, o.OperationsListGetDoubleEndorsementsListHandler)
+	o.handlers["GET"]["/v2/data/{platform}/{network}/double_endorsements"] = operations_list.NewGetDoubleEndorsementsList(o.context, o.OperationsListGetDoubleEndorsementsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

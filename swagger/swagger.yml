@@ -1593,7 +1593,7 @@ paths:
           description: Not Found
       tags:
         - OperationsList
-  '/v2/data/{platform}/{network}/double_endorsement':
+  '/v2/data/{platform}/{network}/double_endorsements':
     get:
       operationId: getDoubleEndorsementsList
       produces:

@@ -2047,7 +2047,7 @@ func init() {
         }
       }
     },
-    "/v2/data/{platform}/{network}/double_endorsement": {
+    "/v2/data/{platform}/{network}/double_endorsements": {
       "get": {
         "produces": [
           "application/json"
@@ -6093,7 +6093,7 @@ func init() {
         }
       }
     },
-    "/v2/data/{platform}/{network}/double_endorsement": {
+    "/v2/data/{platform}/{network}/double_endorsements": {
       "get": {
         "produces": [
           "application/json"
