@@ -1,4 +1,4 @@
-package double_baking
+package double_endorsement
 
 import (
 	"github.com/everstake/teztracker/models"
@@ -26,11 +26,8 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb(options models.DoubleOperationEvidenceQueryOptions) *gorm.DB {
-	db := r.db.Select("*").Model(&models.DoubleOperationEvidence{}).
-		Joins("left join tezos.public_bakers as off on dbe_offender = off.delegate").
-		Joins("left join tezos.public_bakers as evd on dbe_evidence_baker = evd.delegate").
+	db := r.db.Model(&models.DoubleOperationEvidence{}).
 		Where("doe_type = ?", options.Type)
-
 	if options.LoadOperation {
 		db = db.Preload("Operation")
 	}
@@ -65,9 +62,8 @@ func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (c
 }
 
 func (r *Repository) Last() (found bool, evidence models.DoubleOperationEvidence, err error) {
-	db := r.getDb(models.DoubleOperationEvidenceQueryOptions{})
-
-	if res := db.Where("doe_type = ?", models.DoubleOperationTypeBaking).
+	db := r.db.Model(&evidence)
+	if res := db.Where("doe_type = ?", models.DoubleOperationTypeEndorsement).
 		Order("operation_id desc").Take(&evidence); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, evidence, nil

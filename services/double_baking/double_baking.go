@@ -9,12 +9,12 @@ import (
 )
 
 type EvidenceRepo interface {
-	Last() (found bool, evidence models.DoubleBakingEvidence, err error)
-	Create(evidence models.DoubleBakingEvidence) error
+	Last() (found bool, evidence models.DoubleOperationEvidence, err error)
+	Create(evidence models.DoubleOperationEvidence) error
 }
 
 type BakesProvider interface {
-	DoubleBakingEvidence(ctx context.Context, blockLevel int, operationHash string) (dee models.DoubleBakingEvidence, err error)
+	DoubleOperationEvidence(ctx context.Context, blockLevel int, operationHash string) (dee models.DoubleOperationEvidence, err error)
 }
 
 type UnitOfWork interface {
@@ -50,11 +50,12 @@ func SaveUnprocessedDoubleBakingEvidences(ctx context.Context, unit UnitOfWork, 
 }
 
 func SaveDoubleBakingEvidenceFor(ctx context.Context, op models.Operation, repo EvidenceRepo, provider BakesProvider) error {
-	evidence, err := provider.DoubleBakingEvidence(ctx, int(op.BlockLevel.Int64), op.OperationGroupHash.String)
+	evidence, err := provider.DoubleOperationEvidence(ctx, int(op.BlockLevel.Int64), op.OperationGroupHash.String)
 	if err != nil {
 		return err
 	}
 	evidence.OperationID = op.OperationID.Int64
+	evidence.Type = models.DoubleOperationTypeBaking
 
 	return repo.Create(evidence)
 }
