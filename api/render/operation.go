@@ -49,6 +49,9 @@ func Operation(b models.Operation, dbe *models.DoubleOperationEvidence) *genMode
 		Ballot:              b.Ballot,
 		Proposal:            b.Proposal,
 		Cycle:               b.Cycle,
+		Confirmations:       b.Confirmations,
+		EndorsementReward:   b.EndorsementReward,
+		EndorsementDeposit:  b.EndorsementDeposit,
 		Timestamp:           &ts,
 	}
 	if dbe != nil {

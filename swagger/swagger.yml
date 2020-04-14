@@ -2416,6 +2416,9 @@ definitions:
       cycle:
         type: integer
         format: int64
+      confirmations:
+        type: integer
+        format: int64
       delegatable:
         type: boolean
       delegate:
@@ -2429,6 +2432,12 @@ definitions:
         type: string
       destinationName:
         type: string
+      endorsementDeposit:
+        type: integer
+        format: int64
+      endorsementReward:
+        type: integer
+        format: int64
       fee:
         type: integer
         format: int64
