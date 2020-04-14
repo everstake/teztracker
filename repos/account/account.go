@@ -203,8 +203,8 @@ func (r *Repository) BakingList(accountID string, limit uint, offset uint) (coun
 }
 
 func (r *Repository) EndorsingTotal(accountID string) (total models.AccountEndorsing, err error) {
-	db := r.db.Select("sum(reward) reward, sum(count) count, sum(missed) missed").
-		Table("tezos.endorsements_materialized_view").
+	db := r.db.Select("sum(reward) reward, count(1) count, sum(missed) missed").
+		Table("tezos.baker_endorsements").
 		Model(&models.AccountEndorsing{}).
 		Where("delegate = ?", accountID)
 
@@ -214,9 +214,11 @@ func (r *Repository) EndorsingTotal(accountID string) (total models.AccountEndor
 }
 
 func (r *Repository) EndorsingList(accountID string, limit uint, offset uint) (count int64, endorsing []models.AccountEndorsing, err error) {
-	db := r.db.Table("tezos.endorsements_materialized_view").
+	db := r.db.Table("tezos.baker_endorsements").
+		Select("delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count").
 		Model(&models.AccountEndorsing{}).
-		Where("delegate = ?", accountID)
+		Where("delegate = ?", accountID).
+		Group("delegate, cycle")
 
 	err = db.Count(&count).Error
 	if err != nil {
