@@ -3013,6 +3013,9 @@ func init() {
         "stakingBalance": {
           "type": "integer",
           "format": "int64"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -6956,6 +6959,9 @@ func init() {
         "stakingBalance": {
           "type": "integer",
           "format": "int64"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },

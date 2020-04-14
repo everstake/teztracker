@@ -2684,6 +2684,8 @@ definitions:
       fees:
         type: integer
         format: int64
+      status:
+        type: string
     required:
       - cycle
       - delegators
