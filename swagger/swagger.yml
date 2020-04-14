@@ -2000,6 +2000,9 @@ definitions:
       confirmations:
         type: integer
         format: int64
+      claimedAmount:
+        type: integer
+        format: int64
       delegatable:
         type: boolean
       delegate:

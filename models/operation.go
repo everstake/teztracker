@@ -54,6 +54,7 @@ type Operation struct {
 	Confirmations       int64       `json:"confirmations"`
 	EndorsementReward   int64       `json:"endorsement_reward" gorm:"column:endorsement_reward"`
 	EndorsementDeposit  int64       `json:"endorsement_reward" gorm:"column:endorsement_deposit"`
+	ClaimedAmount       int64       `json:"claimed_amount" gorm:"column:aleimed_amount"`
 }
 
 type OperationCount struct {

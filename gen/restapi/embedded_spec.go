@@ -3038,6 +3038,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "claimedAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
         "confirmations": {
           "type": "integer",
           "format": "int64"
@@ -6382,6 +6386,10 @@ func init() {
           "type": "string"
         },
         "blockLevel": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "claimedAmount": {
           "type": "integer",
           "format": "int64"
         },
