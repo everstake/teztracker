@@ -3038,6 +3038,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "confirmations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "consumedGas": {
           "type": "integer",
           "format": "int64"
@@ -3071,6 +3075,14 @@ func init() {
         },
         "doubleBake": {
           "$ref": "#/definitions/DoubleBakingDetails"
+        },
+        "endorsementDeposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endorsementReward": {
+          "type": "integer",
+          "format": "int64"
         },
         "fee": {
           "type": "integer",
@@ -6373,6 +6385,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "confirmations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "consumedGas": {
           "type": "integer",
           "format": "int64"
@@ -6406,6 +6422,14 @@ func init() {
         },
         "doubleBake": {
           "$ref": "#/definitions/DoubleBakingDetails"
+        },
+        "endorsementDeposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endorsementReward": {
+          "type": "integer",
+          "format": "int64"
         },
         "fee": {
           "type": "integer",

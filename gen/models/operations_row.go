@@ -34,6 +34,9 @@ type OperationsRow struct {
 	// Required: true
 	BlockLevel *int64 `json:"blockLevel"`
 
+	// confirmations
+	Confirmations int64 `json:"confirmations,omitempty"`
+
 	// consumed gas
 	ConsumedGas int64 `json:"consumedGas,omitempty"`
 
@@ -63,6 +66,12 @@ type OperationsRow struct {
 
 	// double bake
 	DoubleBake *DoubleBakingDetails `json:"doubleBake,omitempty"`
+
+	// endorsement deposit
+	EndorsementDeposit int64 `json:"endorsementDeposit,omitempty"`
+
+	// endorsement reward
+	EndorsementReward int64 `json:"endorsementReward,omitempty"`
 
 	// fee
 	Fee int64 `json:"fee,omitempty"`
