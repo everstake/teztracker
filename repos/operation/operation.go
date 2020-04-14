@@ -66,6 +66,10 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 
 	if len(ids) > 0 {
 		db = db.Where("operations.operation_group_hash IN (?)", ids)
+		//Join for delegated amount
+		if !count && len(kinds) == 0 {
+			db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source and operations.kind='delegation')")
+		}
 	}
 
 	if len(kinds) > 0 {
