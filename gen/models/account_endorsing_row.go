@@ -32,6 +32,9 @@ type AccountEndorsingRow struct {
 	// slots
 	// Required: true
 	Slots *int64 `json:"slots"`
+
+	// status
+	Status string `json:"status,omitempty"`
 }
 
 // Validate validates this account endorsing row

@@ -2586,6 +2586,8 @@ definitions:
       rewards:
         type: integer
         format: int64
+      status:
+        type: string
     required:
       - avgPriority
       - missed
@@ -2607,6 +2609,8 @@ definitions:
       rewards:
         type: integer
         format: int64
+      status:
+        type: string
     required:
       - cycle
       - missed
