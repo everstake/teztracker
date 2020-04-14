@@ -70,10 +70,11 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 		db = db.Where("operations.operation_group_hash IN (?)", ids)
 		//Join for delegated amount
 		if !count && len(kinds) == 0 {
-			selectQ = fmt.Sprintf("%s, %s", selectQ, "bur.change endorsement_reward, bud.change endorsement_deposit")
+			selectQ = fmt.Sprintf("%s, %s", selectQ, "bur.change endorsement_reward, bud.change endorsement_deposit, bua.change claimed_amount")
 			db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source and operations.kind='delegation')").
 				Joins("left join tezos.balance_updates as bur on (operations.operation_group_hash = bur.operation_group_hash and bur.category='rewards')").
-				Joins("left join tezos.balance_updates as bud on (operations.operation_group_hash = bud.operation_group_hash and bud.category='deposits')")
+				Joins("left join tezos.balance_updates as bud on (operations.operation_group_hash = bud.operation_group_hash and bud.category='deposits')").
+				Joins("left join tezos.balance_updates as bua on (operations.operation_group_hash = bua.operation_group_hash and bua.kind='contract')")
 		}
 	}
 

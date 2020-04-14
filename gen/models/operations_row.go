@@ -34,6 +34,9 @@ type OperationsRow struct {
 	// Required: true
 	BlockLevel *int64 `json:"blockLevel"`
 
+	// claimed amount
+	ClaimedAmount int64 `json:"claimedAmount,omitempty"`
+
 	// confirmations
 	Confirmations int64 `json:"confirmations,omitempty"`
 
