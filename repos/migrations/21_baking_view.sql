@@ -31,6 +31,9 @@ from (select delegate, cycle, priority, case when priority = 0 then 1 else 0 end
       where cycle  > (select meta_cycle from tezos.blocks order by level desc limit 1)) s
 group by cycle, delegate;
 
+create index concurrently ix_balance_updates_operation_group_hash_rewards
+  on tezos.balance_updates (operation_group_hash, category) where category = 'rewards' and operation_group_hash IS NOT NULL;
+
 CREATE TABLE tezos.baker_endorsements(
   cycle integer,
   delegate varchar,

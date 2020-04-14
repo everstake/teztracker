@@ -102,9 +102,18 @@ func (t *TezTracker) GetAccountBalanceHistory(id string, from, to time.Time) (ba
 }
 
 func (t *TezTracker) GetAccountBakingList(accountID string, limits Limiter) (count int64, list []models.AccountBaking, err error) {
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return 0, list, err
+	}
+
 	count, list, err = t.repoProvider.GetAccount().BakingList(accountID, limits.Limit(), limits.Offset())
 	if err != nil {
 		return 0, nil, err
+	}
+
+	for i := range list {
+		list[i].Status = getRewardStatus(list[i].Cycle, lastBlock.MetaCycle)
 	}
 
 	return count, list, nil
@@ -138,9 +147,18 @@ func (t *TezTracker) GetAccountBakingTotal(accountID string) (total models.Accou
 }
 
 func (t *TezTracker) GetAccountEndorsingList(accountID string, limits Limiter) (count int64, list []models.AccountEndorsing, err error) {
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return 0, list, err
+	}
+
 	count, list, err = t.repoProvider.GetAccount().EndorsingList(accountID, limits.Limit(), limits.Offset())
 	if err != nil {
 		return 0, nil, err
+	}
+
+	for i := range list {
+		list[i].Status = getRewardStatus(list[i].Cycle, lastBlock.MetaCycle)
 	}
 
 	return count, list, nil
@@ -162,4 +180,19 @@ func (t *TezTracker) GetAccountEndorsementsList(accountID string, cycle int64, l
 	}
 
 	return count, list, nil
+}
+
+func getRewardStatus(cycle, currentCycle int64) (status models.RewardStatus) {
+	switch {
+	case cycle > currentCycle:
+		status = models.StatusPending
+	case cycle == currentCycle:
+		status = models.StatusActive
+	case cycle >= currentCycle-PreservedCycles:
+		status = models.StatusFrozen
+	default:
+		status = models.StatusUnfrozen
+	}
+
+	return status
 }

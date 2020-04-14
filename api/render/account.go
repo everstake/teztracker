@@ -58,6 +58,7 @@ func AccountBaking(acb models.AccountBaking) *genModels.AccountBakingRow {
 		AvgPriority: &acb.AvgPriority,
 		Blocks:      &acb.Count,
 		Cycle:       &acb.Cycle,
+		Status:      string(acb.Status),
 		Missed:      &acb.Missed,
 		Rewards:     &acb.Reward,
 		Stolen:      &acb.Stolen,
@@ -76,6 +77,7 @@ func AccountEndorsing(acb models.AccountEndorsing) *genModels.AccountEndorsingRo
 	return &genModels.AccountEndorsingRow{
 		Slots:   &acb.Count,
 		Cycle:   &acb.Cycle,
+		Status:  string(acb.Status),
 		Missed:  &acb.Missed,
 		Rewards: &acb.Reward,
 	}

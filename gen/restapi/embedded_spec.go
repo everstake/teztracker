@@ -3023,6 +3023,9 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "status": {
+          "type": "string"
+        },
         "stolen": {
           "type": "integer",
           "format": "int64"
@@ -3064,6 +3067,9 @@ func init() {
         "slots": {
           "type": "integer",
           "format": "int64"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -7083,6 +7089,9 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "status": {
+          "type": "string"
+        },
         "stolen": {
           "type": "integer",
           "format": "int64"
@@ -7124,6 +7133,9 @@ func init() {
         "slots": {
           "type": "integer",
           "format": "int64"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },

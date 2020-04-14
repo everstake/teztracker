@@ -60,15 +60,17 @@ type AccountBalance struct {
 
 type AccountBaking struct {
 	Cycle       int64
+	Status      RewardStatus
 	Count       int64
-	AvgPriority float32
 	Missed      int64
-	Stolen      int64
 	Reward      int64
+	AvgPriority float32
+	Stolen      int64
 }
 
 type AccountEndorsing struct {
 	Cycle  int64
+	Status RewardStatus
 	Count  int64
 	Missed int64
 	Reward int64

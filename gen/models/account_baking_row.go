@@ -37,6 +37,9 @@ type AccountBakingRow struct {
 	// Required: true
 	Rewards *int64 `json:"rewards"`
 
+	// status
+	Status string `json:"status,omitempty"`
+
 	// stolen
 	// Required: true
 	Stolen *int64 `json:"stolen"`
