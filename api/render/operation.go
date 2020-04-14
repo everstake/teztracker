@@ -48,6 +48,7 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 		BlockLevel:          b.BlockLevel.Ptr(),
 		Ballot:              b.Ballot,
 		Proposal:            b.Proposal,
+		Cycle:               b.Cycle,
 		Timestamp:           &ts,
 	}
 	if dbe != nil {
