@@ -100,6 +100,7 @@ func AccountRewardsList(accrl []models.AccountReward) []*genModels.AccountReward
 func AccountReward(acb models.AccountReward) *genModels.AccountRewardsRow {
 	return &genModels.AccountRewardsRow{
 		Cycle:          &acb.Cycle,
+		Status:         string(acb.Status),
 		Delegators:     &acb.Delegators,
 		Baking:         &acb.BakingRewards,
 		StakingBalance: &acb.StakingBalance,
