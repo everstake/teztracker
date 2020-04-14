@@ -37,18 +37,3 @@ func (t *TezTracker) GetAccountRewardsList(accountID string, limits Limiter) (co
 
 	return count, rewards, nil
 }
-
-func getRewardStatus(cycle, currentCycle int64) (status models.RewardStatus) {
-	switch {
-	case cycle > currentCycle:
-		status = models.StatusPending
-	case cycle == currentCycle:
-		status = models.StatusActive
-	case cycle >= currentCycle-PreservedCycles:
-		status = models.StatusFrozen
-	default:
-		status = models.StatusUnfrozen
-	}
-
-	return status
-}
