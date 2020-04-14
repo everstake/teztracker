@@ -40,6 +40,9 @@ type OperationsRow struct {
 	// counter
 	Counter int64 `json:"counter,omitempty"`
 
+	// cycle
+	Cycle int64 `json:"cycle,omitempty"`
+
 	// delegatable
 	Delegatable bool `json:"delegatable,omitempty"`
 

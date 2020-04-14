@@ -3763,6 +3763,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
         "delegatable": {
           "type": "boolean"
         },
@@ -7814,6 +7818,10 @@ func init() {
           "format": "int64"
         },
         "counter": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
           "type": "integer",
           "format": "int64"
         },

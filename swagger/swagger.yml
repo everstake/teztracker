@@ -2413,6 +2413,9 @@ definitions:
       counter:
         type: integer
         format: int64
+      cycle:
+        type: integer
+        format: int64
       delegatable:
         type: boolean
       delegate:
