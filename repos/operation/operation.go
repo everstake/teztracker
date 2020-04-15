@@ -56,25 +56,46 @@ func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperati
 	return count + snapshotCount, err
 }
 
-func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string, count bool) *gorm.DB {
+func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string, count bool) (db *gorm.DB) {
 	selectQ := "*"
-	db := r.db.Model(&models.Operation{})
+	db = r.db.Model(&models.Operation{})
 
-	if !count {
-		selectQ = fmt.Sprintf("%s, %s", selectQ, "des.baker_name as destination_name, s.baker_name as source_name, del.baker_name as delegate_name")
-		db = db.Joins("left join tezos.public_bakers as des on operations.destination = des.delegate").
-			Joins("left join tezos.public_bakers as s on operations.source = s.delegate").
-			Joins("left join tezos.public_bakers as del on operations.delegate = del.delegate")
-	}
 	if len(ids) > 0 {
-		db = db.Where("operations.operation_group_hash IN (?)", ids)
-		//Join for delegated amount
+		//Join for extend info
 		if !count && len(kinds) == 0 {
-			selectQ = fmt.Sprintf("%s, %s", selectQ, "bur.change endorsement_reward, bud.change endorsement_deposit, bua.change claimed_amount")
-			db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source and operations.kind='delegation')").
-				Joins("left join tezos.balance_updates as bur on (operations.operation_group_hash = bur.operation_group_hash and bur.category='rewards')").
-				Joins("left join tezos.balance_updates as bud on (operations.operation_group_hash = bud.operation_group_hash and bud.category='deposits')").
-				Joins("left join tezos.balance_updates as bua on (operations.operation_group_hash = bua.operation_group_hash and bua.kind='contract')")
+			//Preload orders
+			preloadDb := r.db
+			preloadDb = preloadDb.Where("operations.operation_group_hash IN (?)", ids)
+			op := []models.Operation{}
+			err := preloadDb.Model(&models.Operation{}).Find(&op).Error
+			if err != nil {
+				return
+			}
+
+			kindMap := map[string]bool{}
+			var operationIds []int64
+			for key := range op {
+				kindMap[op[key].Kind.String] = true
+				operationIds = append(operationIds, op[key].OperationID.Int64)
+			}
+
+			db = db.Where("operations.operation_id IN (?)", operationIds)
+
+			for kind := range kindMap {
+				switch kind {
+				case "delegation":
+					db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source and operations.kind='delegation')")
+				case endorsementKind:
+					selectQ = fmt.Sprintf("%s, %s", selectQ, "bur.change endorsement_reward, bud.change endorsement_deposit")
+					db = db.Joins("left join tezos.balance_updates as bur on (operations.operation_group_hash = bur.operation_group_hash and bur.category='rewards')").
+						Joins("left join tezos.balance_updates as bud on (operations.operation_group_hash = bud.operation_group_hash and bud.category='deposits')")
+				case "activate_account":
+					selectQ = fmt.Sprintf("%s, %s", selectQ, "bua.change claimed_amount")
+					db = db.Joins("left join tezos.balance_updates as bua on (operations.operation_group_hash = bua.operation_group_hash and bua.kind='contract')")
+				}
+			}
+		} else {
+			db = db.Where("operations.operation_group_hash IN (?)", ids)
 		}
 	}
 
@@ -95,6 +116,14 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 		} else {
 			db = db.Where("operations.delegate IN (?) OR operations.pkh IN (?) OR operations.source IN (?) OR operations.public_key IN (?) OR operations.destination IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
 		}
+	}
+
+	//Join Aliases
+	if !count {
+		selectQ = fmt.Sprintf("%s, %s", selectQ, "des.baker_name as destination_name, s.baker_name as source_name, del.baker_name as delegate_name")
+		db = db.Joins("left join tezos.public_bakers as des on operations.destination = des.delegate").
+			Joins("left join tezos.public_bakers as s on operations.source = s.delegate").
+			Joins("left join tezos.public_bakers as del on operations.delegate = del.delegate")
 	}
 
 	db = db.Select(selectQ)
@@ -143,6 +172,7 @@ func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (o
 	if after > 0 {
 		db = db.Where("operation_id > ?", after)
 	}
+
 	err = db.Order("operation_id asc").
 		Limit(limit).
 		Offset(offset).
