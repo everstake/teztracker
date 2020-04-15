@@ -25,10 +25,10 @@ alter table tezos.future_baking_rights
 	    primary key (cycle, level, delegate, priority);
 
 CREATE MATERIALIZED VIEW tezos.future_baking_rights_materialized_view as
-select cycle, delegate, avg(priority), sum(zero_priority) as count, sum(zero_priority) * 40 as rewards
+select cycle, delegate, avg(priority) avg_priority, sum(zero_priority) as count, sum(zero_priority) * 40 as rewards
 from (select delegate, cycle, priority, case when priority = 0 then 1 else 0 end as zero_priority
       from tezos.future_baking_rights
-      where cycle  > (select meta_cycle from tezos.blocks order by level desc limit 1)) s
+      where level  > (select level from tezos.blocks order by level desc limit 1)) s
 group by cycle, delegate;
 
 create index concurrently ix_balance_updates_operation_group_hash_rewards
@@ -79,3 +79,8 @@ CREATE TRIGGER baker_endorsements_insert
   ON tezos.blocks
   FOR EACH ROW
 EXECUTE PROCEDURE tezos.baker_endorsements();
+
+CREATE OR REPLACE VIEW tezos.baker_cycle_endorsements_view AS
+SELECT delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count
+FROM tezos.baker_endorsements
+GROUP BY delegate, cycle;

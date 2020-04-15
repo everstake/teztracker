@@ -112,10 +112,13 @@ func BakingRights(br []models.FutureBakingRight) []*genModels.BakingRightsRow {
 func BakingRight(r models.FutureBakingRight) *genModels.BakingRightsRow {
 	priority := int64(r.Priority)
 	return &genModels.BakingRightsRow{
+		Level:         r.Level,
 		Delegate:      r.Delegate,
 		DelegateName:  r.DelegateName,
 		Priority:      &priority,
 		EstimatedTime: strfmt.DateTime(r.EstimatedTime),
+		Reward:        r.Reward,
+		Deposit:       r.Deposit,
 	}
 }
 

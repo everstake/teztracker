@@ -106,3 +106,28 @@ func (h *getAccountFutureBakingHandler) Handle(params accounts.GetAccountFutureB
 
 	return accounts.NewGetAccountFutureBakingOK().WithPayload(render.AccountBakingList(total))
 }
+
+type getAccountFutureBakingRightsHandler struct {
+	provider DbProvider
+}
+
+func (h *getAccountFutureBakingRightsHandler) Handle(params accounts.GetAccountFutureBakingRightsByCycleParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountFutureBakingRightsByCycleBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountFutureBakingRightsByCycleBadRequest()
+	}
+	service := services.New(repos.New(db), net)
+	limiter := NewLimiter(params.Limit, params.Offset)
+
+	count, total, err := service.GetAccountFutureBakingRights(params.AccountID, params.CycleID, limiter)
+	if err != nil {
+		logrus.Errorf("failed to get future baking rights: %s", err.Error())
+		return accounts.NewGetAccountFutureBakingNotFound()
+	}
+
+	return accounts.NewGetAccountFutureBakingRightsByCycleOK().WithPayload(render.BakingRights(total)).WithXTotalCount(count)
+}

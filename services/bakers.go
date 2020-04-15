@@ -11,6 +11,7 @@ const (
 	EndorsementSecurityDeposit = 64 * XTZ
 	BlockReward                = 40 * XTZ
 	BabylonBlockReward         = 24 * XTZ
+	LowPriorityBlockReward     = 6 * XTZ
 	EndorsementReward          = 1.25 * XTZ
 	BabylonEndorsementRewards  = 1.75 * XTZ
 	CarthageCycle              = 208
