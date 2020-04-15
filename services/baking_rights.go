@@ -147,7 +147,8 @@ func (t *TezTracker) GetAccountFutureBakingRights(accountID string, cycle int64,
 			FromID: null.IntFrom(cycleFirstBlock),
 			ToID:   null.IntFrom(cycleFirstBlock + t.BlocksInCycle()),
 		},
-		Delegates: []string{accountID},
+		PriorityTo: 10,
+		Delegates:  []string{accountID},
 	}
 
 	count, err = repo.Count(filter)
