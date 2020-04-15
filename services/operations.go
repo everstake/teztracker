@@ -26,7 +26,7 @@ func (t *TezTracker) GetOperations(ids, kinds, inBlocks, accountIDs []string, li
 	}
 
 	for i := range operations {
-		operations[i].Confirmations = lastBlock.MetaLevel - operations[i].Level
+		operations[i].Confirmations = lastBlock.MetaLevel - operations[i].BlockLevel.Int64
 	}
 
 	return operations, count, err
