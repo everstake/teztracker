@@ -35,6 +35,10 @@ type AccountEndorsingRow struct {
 
 	// status
 	Status string `json:"status,omitempty"`
+
+	// total deposit
+	// Required: true
+	TotalDeposit *int64 `json:"totalDeposit"`
 }
 
 // Validate validates this account endorsing row
@@ -54,6 +58,10 @@ func (m *AccountEndorsingRow) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSlots(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTotalDeposit(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -93,6 +101,15 @@ func (m *AccountEndorsingRow) validateRewards(formats strfmt.Registry) error {
 func (m *AccountEndorsingRow) validateSlots(formats strfmt.Registry) error {
 
 	if err := validate.Required("slots", "body", m.Slots); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AccountEndorsingRow) validateTotalDeposit(formats strfmt.Registry) error {
+
+	if err := validate.Required("totalDeposit", "body", m.TotalDeposit); err != nil {
 		return err
 	}
 

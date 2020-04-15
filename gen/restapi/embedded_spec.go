@@ -785,6 +785,83 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/baking/{accountId}/future_baking_rights/{cycleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureBakingRightsByCycle",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "cycleId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakingRightsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/baking/{accountId}/total": {
       "get": {
         "produces": [
@@ -2826,7 +2903,8 @@ func init() {
         "stolen",
         "cycle",
         "rewards",
-        "blocks"
+        "blocks",
+        "totalDeposit"
       ],
       "properties": {
         "avgPriority": {
@@ -2855,6 +2933,10 @@ func init() {
         "stolen": {
           "type": "integer",
           "format": "int64"
+        },
+        "totalDeposit": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -2875,7 +2957,8 @@ func init() {
         "cycle",
         "missed",
         "rewards",
-        "slots"
+        "slots",
+        "totalDeposit"
       ],
       "properties": {
         "cycle": {
@@ -2896,6 +2979,10 @@ func init() {
         },
         "status": {
           "type": "string"
+        },
+        "totalDeposit": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -3119,11 +3206,23 @@ func init() {
         "delegate_name": {
           "type": "string"
         },
+        "deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
         "estimated_time": {
           "type": "string",
           "format": "date-time"
         },
+        "level": {
+          "type": "integer",
+          "format": "int64"
+        },
         "priority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         }
@@ -4606,6 +4705,84 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/baking/{accountId}/future_baking_rights/{cycleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureBakingRightsByCycle",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "cycleId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakingRightsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/baking/{accountId}/total": {
       "get": {
         "produces": [
@@ -6662,7 +6839,8 @@ func init() {
         "stolen",
         "cycle",
         "rewards",
-        "blocks"
+        "blocks",
+        "totalDeposit"
       ],
       "properties": {
         "avgPriority": {
@@ -6691,6 +6869,10 @@ func init() {
         "stolen": {
           "type": "integer",
           "format": "int64"
+        },
+        "totalDeposit": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -6711,7 +6893,8 @@ func init() {
         "cycle",
         "missed",
         "rewards",
-        "slots"
+        "slots",
+        "totalDeposit"
       ],
       "properties": {
         "cycle": {
@@ -6732,6 +6915,10 @@ func init() {
         },
         "status": {
           "type": "string"
+        },
+        "totalDeposit": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -6955,11 +7142,23 @@ func init() {
         "delegate_name": {
           "type": "string"
         },
+        "deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
         "estimated_time": {
           "type": "string",
           "format": "date-time"
         },
+        "level": {
+          "type": "integer",
+          "format": "int64"
+        },
         "priority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         }

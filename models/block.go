@@ -49,6 +49,8 @@ type Block struct {
 }
 
 type BlockFilter struct {
+	FromID      null.Int
+	ToID        null.Int
 	BlockLevels []int64
 	BlockHashes []string
 }
