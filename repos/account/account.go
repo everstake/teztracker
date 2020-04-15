@@ -28,13 +28,15 @@ type (
 		EndorsingList(accountID string, limit uint, offset uint) (int64, []models.AccountEndorsing, error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
 		RefreshView() error
-		RefreshAccountFutureBaking() error
+		RefreshAccountFutureBakingView() error
+		RefreshAccountBakingView() error
 	}
 )
 
 const (
 	accountMaterializedView = "tezos.account_materialized_view"
 	futureBakingView        = "tezos.future_baking_rights_materialized_view"
+	bakingView              = "tezos.baking_materialized_view"
 )
 
 // New creates an instance of repository using the provided db.
@@ -213,11 +215,9 @@ func (r *Repository) EndorsingTotal(accountID string) (total models.AccountEndor
 }
 
 func (r *Repository) EndorsingList(accountID string, limit uint, offset uint) (count int64, endorsing []models.AccountEndorsing, err error) {
-	db := r.db.Table("tezos.baker_endorsements").
-		Select("delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count").
+	db := r.db.Table("tezos.baker_cycle_endorsements_view").
 		Model(&models.AccountEndorsing{}).
-		Where("delegate = ?", accountID).
-		Group("delegate, cycle")
+		Where("delegate = ?", accountID)
 
 	err = db.Count(&count).Error
 	if err != nil {
@@ -241,8 +241,16 @@ func (r *Repository) FutureBakingList(accountID string) (baking []models.Account
 	return baking, err
 }
 
-func (r *Repository) RefreshAccountFutureBaking() (err error) {
+func (r *Repository) RefreshAccountFutureBakingView() (err error) {
 	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW ", futureBakingView)).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Repository) RefreshAccountBakingView() (err error) {
+	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW ", bakingView)).Error
 	if err != nil {
 		return err
 	}
