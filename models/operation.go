@@ -51,6 +51,10 @@ type Operation struct {
 	DelegateName        string      `json:"delegate_name" gorm:"column:delegate_name"`
 	SourceName          string      `json:"source_name" gorm:"column:source_name"`
 	DestinationName     string      `json:"destination_name" gorm:"column:destination_name"`
+	Confirmations       int64       `json:"confirmations"`
+	EndorsementReward   int64       `json:"endorsement_reward" gorm:"column:endorsement_reward"`
+	EndorsementDeposit  int64       `json:"endorsement_reward" gorm:"column:endorsement_deposit"`
+	ClaimedAmount       int64       `json:"claimed_amount" gorm:"column:claimed_amount"`
 }
 
 type OperationCount struct {
