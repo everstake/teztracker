@@ -51,6 +51,7 @@ type Operation struct {
 	DelegateName        string      `json:"delegate_name" gorm:"column:delegate_name"`
 	SourceName          string      `json:"source_name" gorm:"column:source_name"`
 	DestinationName     string      `json:"destination_name" gorm:"column:destination_name"`
+	Deposit             int64       `json:"deposit"`
 }
 
 type OperationCount struct {

@@ -32,12 +32,16 @@ func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
 	serv.AccountsGetContractsListHandler = &getContractListHandler{db}
 	serv.AccountsGetAccountBakedBlocksListHandler = &getAccountBakedBlocksListHandler{db}
 	serv.AccountsGetAccountTotalBakingHandler = &getAccountTotalBakingHandler{db}
+	serv.AccountsGetAccountFutureBakingHandler = &getAccountFutureBakingHandler{db}
+	serv.AccountsGetAccountFutureBakingRightsByCycleHandler = &getAccountFutureBakingRightsHandler{db}
 	serv.AccountsGetAccountEndorsingListHandler = &getAccountEndorsingListHandler{db}
 	serv.AccountsGetAccountTotalEndorsingHandler = &getAccountTotalEndorsingHandler{db}
 	serv.AccountsGetAccountEndorsementsByCycleListHandler = &getAccountEndorsementsHandler{db}
 	serv.AccountsGetAccountRewardsListHandler = &getAccountRewardsListHandler{db}
 	serv.BlocksGetBakingRightsHandler = &getBakingRightsHandler{db}
 	serv.BlocksGetFutureBakingRightsHandler = &getFutureBakingRightsHandler{db}
+	serv.AccountsGetAccountFutureEndorsingHandler = &getAccountFutureEndorsingHandler{db}
+	serv.AccountsGetAccountFutureEndorsementRightsByCycleHandler = &getAccountFutureEndorsingRightsHandler{db}
 	serv.GetSnapshotsHandler = &getSnapshotsHandler{db}
 	serv.BlocksGetBlockBakingRightsHandler = &getBlockBakingRightsHandler{db}
 	serv.OperationsListGetDoubleBakingsListHandler = &getDoubleBakingsListHandler{db}
