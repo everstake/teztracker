@@ -202,4 +202,7 @@ definitions:
         items:
           type: integer
           format: int64
+      estimated_time:
+        type: string
+        format: date-time
 

@@ -13,11 +13,12 @@ type RightFilter struct {
 }
 
 type FutureEndorsementRight struct {
-	Level        int64         `json:"level"`
-	Delegate     string        `json:"delegate"`
-	DelegateName string        `json:"delegate_name" gorm:"-"`
-	Cycle        int64         `json:"cycle"`
-	Slots        pq.Int64Array `json:"slots" gorm: "type:integer[]"`
+	Level         int64         `json:"level"`
+	Delegate      string        `json:"delegate"`
+	DelegateName  string        `json:"delegate_name" gorm:"-"`
+	Cycle         int64         `json:"cycle"`
+	Slots         pq.Int64Array `json:"slots" gorm: "type:integer[]"`
+	EstimatedTime time.Time     `json:"estimated_time"`
 }
 
 type FutureBlockEndorsementRight struct {
