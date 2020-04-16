@@ -7,5 +7,5 @@ CREATE TABLE tezos.future_endorsement_rights (
 );
 
 
-CREATE INDEX future_baking_rights_delegate_idx
-    ON tezos.future_baking_rights USING btree (delegate,cycle);
+CREATE INDEX future_endorsement_rights_delegate_cycle_idx
+    ON tezos.future_endorsement_rights USING btree (delegate,cycle);
