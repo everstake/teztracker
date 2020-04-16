@@ -23,13 +23,11 @@ type (
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
 		RefreshView() error
-		RefreshAccountFutureBakingView() error
 	}
 )
 
 const (
 	accountMaterializedView = "tezos.account_materialized_view"
-	futureBakingView        = "tezos.future_baking_rights_materialized_view"
 )
 
 // New creates an instance of repository using the provided db.
@@ -162,14 +160,6 @@ func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, 
 
 func (r *Repository) RefreshView() (err error) {
 	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW ", accountMaterializedView)).Error
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (r *Repository) RefreshAccountFutureBakingView() (err error) {
-	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW ", futureBakingView)).Error
 	if err != nil {
 		return err
 	}

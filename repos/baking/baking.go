@@ -54,7 +54,7 @@ func (r *Repository) BakingList(accountID string, limit uint, offset uint) (coun
 }
 
 func (r *Repository) FutureBakingList(accountID string) (baking []models.AccountBaking, err error) {
-	db := r.db.Table("tezos.future_baking_rights_materialized_view").
+	db := r.db.Table("tezos.baker_future_baking_rights_view").
 		Model(&models.AccountBaking{}).
 		Where("delegate = ?", accountID)
 

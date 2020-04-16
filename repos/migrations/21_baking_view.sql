@@ -61,7 +61,7 @@ alter table tezos.future_baking_rights
     add constraint future_baking_rights_pk
 	    primary key (cycle, level, delegate, priority);
 
-CREATE MATERIALIZED VIEW tezos.future_baking_rights_materialized_view as
+CREATE VIEW tezos.baker_future_baking_rights_view as
 select cycle, delegate, avg(priority) avg_priority, sum(zero_priority) as count
 from (select delegate, cycle, priority, case when priority = 0 then 1 else 0 end as zero_priority
       from tezos.future_baking_rights
