@@ -25,6 +25,7 @@ func Block(b models.Block) *genModels.BlocksRow {
 		ChainID:                  b.ChainID,
 		Hash:                     b.Hash.Ptr(),
 		Reward:                   &b.Reward,
+		Deposit:                  b.Deposit,
 		OperationsHash:           b.OperationsHash,
 		PeriodKind:               b.PeriodKind,
 		CurrentExpectedQuorum:    b.CurrentExpectedQuorum,

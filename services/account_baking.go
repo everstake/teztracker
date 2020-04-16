@@ -47,6 +47,10 @@ func (t *TezTracker) GetAccountBakedBlocksList(accountID string, cycle int64, li
 		return 0, nil, err
 	}
 
+	for i := range list {
+		list[i].Deposit = BlockSecurityDeposit
+	}
+
 	return count, list, nil
 }
 

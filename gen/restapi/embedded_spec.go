@@ -3345,6 +3345,10 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
         "double_baking_evidence": {
           "type": "integer",
           "format": "int64"
@@ -7284,6 +7288,10 @@ func init() {
           "format": "int64"
         },
         "delegations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "deposit": {
           "type": "integer",
           "format": "int64"
         },

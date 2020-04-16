@@ -26,6 +26,7 @@ type Block struct {
 	Baker                    string                 `json:"baker"`
 	BakerName                string                 `json:"baker_name"`
 	Reward                   int64                  `json:"reward"`
+	Deposit                  int64                  `json:"deposit"`
 	NonceHash                string                 `json:"nonce_hash"`
 	ConsumedGas              int64                  `json:"consumed_gas"`
 	MetaLevel                int64                  `json:"meta_level"`

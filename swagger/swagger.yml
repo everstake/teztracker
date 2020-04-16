@@ -2265,6 +2265,9 @@ definitions:
       reward:
         format: int64
         type: integer
+      deposit:
+        format: int64
+        type: integer
     required:
       - timestamp
       - validationPass
