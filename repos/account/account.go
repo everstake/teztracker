@@ -231,7 +231,7 @@ func (r *Repository) EndorsingList(accountID string, limit uint, offset uint) (c
 }
 
 func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (count int64, rewards []models.AccountReward, err error) {
-	db := r.db.Select("br.*,bmv.reward as baking_rewards, bmv.missed missed_baking, fbrmv.rewards as future_baking_rewards, emv.reward endorsement_rewards ,emv.missed missed_endorsements").
+	db := r.db.Select("br.*, bmv.reward as baking_rewards, bmv.missed missed_baking, fbrmv.count as future_baking_count, emv.reward endorsement_rewards ,emv.missed missed_endorsements").
 		Table("tezos.baking_rewards as br").
 		Joins("left join tezos.future_baking_rights_materialized_view fbrmv on br.baker = fbrmv.delegate and br.cycle = fbrmv.cycle").
 		Joins(" left join tezos.baking_materialized_view bmv on br.baker = bmv.delegate and br.cycle = bmv.cycle").
