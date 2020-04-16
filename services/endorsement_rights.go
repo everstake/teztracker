@@ -6,8 +6,18 @@ import (
 )
 
 func (t *TezTracker) GetAccountFutureEndorsementRights(accountID string, cycle int64, limits Limiter) (count int64, futureRights []models.FutureEndorsementRight, err error) {
-	repo := t.repoProvider.GetFutureEndorsementRight()
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return 0, nil, err
+	}
+
 	cycleFirstBlock := cycle*t.BlocksInCycle() + 1
+	//Return future part of active cycle
+	if lastBlock.MetaCycle == cycle {
+		cycleFirstBlock = lastBlock.MetaLevel + 1
+	}
+
+	repo := t.repoProvider.GetFutureEndorsementRight()
 	filter := models.RightFilter{
 		BlockFilter: models.BlockFilter{
 			FromID: null.IntFrom(cycleFirstBlock),
