@@ -9,7 +9,7 @@ import (
 )
 
 func (t *TezTracker) BakingRightsList(blockLevelOrHash []string, priorityTo int, limiter Limiter) (count int64, blocksWithRights []models.Block, err error) {
-	filter := models.BakingRightFilter{
+	filter := models.RightFilter{
 		PriorityTo: priorityTo,
 	}
 	count = int64(len(blockLevelOrHash))
@@ -87,7 +87,7 @@ func (t *TezTracker) FutureBakingRightsList(priorityTo int, limiter Limiter) (co
 	if rangeEnd > lastKnownRightsBlock {
 		rangeEnd = lastKnownRightsBlock
 	}
-	filter := models.BakingRightFilter{
+	filter := models.RightFilter{
 		PriorityTo: priorityTo,
 	}
 	for ; rangeStart <= rangeEnd; rangeStart++ {
@@ -132,7 +132,7 @@ func (t *TezTracker) GetBlockBakingRights(hashOrLevel string) (rights []models.F
 		}
 		level = block.Level.Int64
 	}
-	filter := models.BakingRightFilter{}
+	filter := models.RightFilter{}
 	filter.BlockLevels = []int64{level}
 	repo := t.repoProvider.GetFutureBakingRight()
 	rights, err = repo.ListDesc(filter)
@@ -142,7 +142,7 @@ func (t *TezTracker) GetBlockBakingRights(hashOrLevel string) (rights []models.F
 func (t *TezTracker) GetAccountFutureBakingRights(accountID string, cycle int64, limits Limiter) (count int64, futureRights []models.FutureBakingRight, err error) {
 	repo := t.repoProvider.GetFutureBakingRight()
 	cycleFirstBlock := cycle*t.BlocksInCycle() + 1
-	filter := models.BakingRightFilter{
+	filter := models.RightFilter{
 		BlockFilter: models.BlockFilter{
 			FromID: null.IntFrom(cycleFirstBlock),
 			ToID:   null.IntFrom(cycleFirstBlock + t.BlocksInCycle()),

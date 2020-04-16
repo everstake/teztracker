@@ -1,6 +1,8 @@
 package services
 
-import "github.com/everstake/teztracker/models"
+import (
+	"github.com/everstake/teztracker/models"
+)
 
 func (t *TezTracker) GetAccountBakingList(accountID string, limits Limiter) (count int64, list []models.AccountBaking, err error) {
 	lastBlock, err := t.repoProvider.GetBlock().Last()
@@ -8,7 +10,7 @@ func (t *TezTracker) GetAccountBakingList(accountID string, limits Limiter) (cou
 		return 0, nil, err
 	}
 
-	count, list, err = t.repoProvider.GetAccount().BakingList(accountID, limits.Limit(), limits.Offset())
+	count, list, err = t.repoProvider.GetBaking().BakingList(accountID, limits.Limit(), limits.Offset())
 	if err != nil {
 		return 0, nil, err
 	}
@@ -27,7 +29,7 @@ func (t *TezTracker) GetAccountFutureBakingList(accountID string) (list []models
 		return list, err
 	}
 
-	list, err = t.repoProvider.GetAccount().FutureBakingList(accountID)
+	list, err = t.repoProvider.GetBaking().FutureBakingList(accountID)
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +49,15 @@ func (t *TezTracker) GetAccountBakedBlocksList(accountID string, cycle int64, li
 		return 0, nil, err
 	}
 
+	for i := range list {
+		list[i].Deposit = BlockSecurityDeposit
+	}
+
 	return count, list, nil
 }
 
 func (t *TezTracker) GetAccountBakingTotal(accountID string) (total models.AccountBaking, err error) {
-	total, err = t.repoProvider.GetAccount().BakingTotal(accountID)
+	total, err = t.repoProvider.GetBaking().BakingTotal(accountID)
 	if err != nil {
 		return total, err
 	}

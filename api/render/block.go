@@ -25,6 +25,7 @@ func Block(b models.Block) *genModels.BlocksRow {
 		ChainID:                  b.ChainID,
 		Hash:                     b.Hash.Ptr(),
 		Reward:                   &b.Reward,
+		Deposit:                  b.Deposit,
 		OperationsHash:           b.OperationsHash,
 		PeriodKind:               b.PeriodKind,
 		CurrentExpectedQuorum:    b.CurrentExpectedQuorum,
@@ -141,4 +142,25 @@ func FutureBlockBakingRights(r models.FutureBlockBakingRight) *genModels.FutureB
 		}
 	}
 	return &resp
+}
+
+func FutureEndorsementRights(br []models.FutureEndorsementRight) []*genModels.EndorsementRightsRow {
+	rights := make([]*genModels.EndorsementRightsRow, len(br))
+	for i, r := range br {
+		rights[i] = FutureEndorsementRight(r)
+	}
+	return rights
+}
+
+func FutureEndorsementRight(r models.FutureEndorsementRight) *genModels.EndorsementRightsRow {
+	return &genModels.EndorsementRightsRow{
+		BlockLevel:   r.Level,
+		Cycle:        r.Cycle,
+		Delegate:     r.Delegate,
+		DelegateName: r.DelegateName,
+		Timestamp:    r.EstimatedTime.Unix(),
+		Reward:       r.Reward,
+		Deposit:      r.Deposit,
+		Slots:        r.Slots,
+	}
 }
