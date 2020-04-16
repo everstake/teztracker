@@ -81,7 +81,7 @@ type VotingProposal struct {
 }
 
 type Protocol struct {
-	Hash string
+	Hash       string
 	StartBlock int64
-	EndBlock int64
+	EndBlock   int64
 }
