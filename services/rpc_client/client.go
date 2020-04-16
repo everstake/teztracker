@@ -17,6 +17,7 @@ import (
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/services/rpc_client/client/baking_rights"
+	"github.com/everstake/teztracker/services/rpc_client/client/endorsing_rights"
 	"github.com/everstake/teztracker/services/rpc_client/client/snapshots"
 	genmodels "github.com/everstake/teztracker/services/rpc_client/models"
 )
@@ -90,6 +91,42 @@ func genRightToModel(m genmodels.BakingRight) models.FutureBakingRight {
 		Priority:      int(m.Priority),
 		Delegate:      m.Delegate,
 		EstimatedTime: time.Time(m.EstimatedTime),
+	}
+}
+
+func (t *Tezos) EndorsementRightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.FutureEndorsementRight, error) {
+	blockToUse := headBlock
+	if currentHead >= blockFrom {
+		blockToUse = strconv.FormatInt(blockFrom, 10)
+	}
+
+	params := endorsing_rights.NewGetEndorsingRightsParamsWithContext(ctx).
+		WithNetwork(t.network).
+		WithBlock(blockToUse)
+
+	levels := []string{}
+	for b := blockFrom; b <= blockTo; b++ {
+		levels = append(levels, strconv.FormatInt(b, 10))
+	}
+	params.SetLevel(levels)
+	resp, err := t.client.EndorsingRights.GetEndorsingRights(params)
+	if err != nil {
+		return nil, err
+	}
+	rights := make([]models.FutureEndorsementRight, len(resp.Payload))
+	for i := range resp.Payload {
+		if resp.Payload[i] != nil {
+			rights[i] = genEndorsementRightToModel(*resp.Payload[i])
+		}
+	}
+	return rights, nil
+}
+
+func genEndorsementRightToModel(m genmodels.EndorsementRight) models.FutureEndorsementRight {
+	return models.FutureEndorsementRight{
+		Level:    m.Level,
+		Slots:    m.Slots,
+		Delegate: m.Delegate,
 	}
 }
 
