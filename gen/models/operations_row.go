@@ -38,7 +38,8 @@ type OperationsRow struct {
 	ClaimedAmount int64 `json:"claimedAmount,omitempty"`
 
 	// confirmations
-	Confirmations int64 `json:"confirmations,omitempty"`
+	// Required: true
+	Confirmations *int64 `json:"confirmations"`
 
 	// consumed gas
 	ConsumedGas int64 `json:"consumedGas,omitempty"`
@@ -171,6 +172,10 @@ func (m *OperationsRow) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateConfirmations(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDoubleOperationDetails(formats); err != nil {
 		res = append(res, err)
 	}
@@ -209,6 +214,15 @@ func (m *OperationsRow) validateBlockHash(formats strfmt.Registry) error {
 func (m *OperationsRow) validateBlockLevel(formats strfmt.Registry) error {
 
 	if err := validate.Required("blockLevel", "body", m.BlockLevel); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *OperationsRow) validateConfirmations(formats strfmt.Registry) error {
+
+	if err := validate.Required("confirmations", "body", m.Confirmations); err != nil {
 		return err
 	}
 
