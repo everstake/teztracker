@@ -8,7 +8,7 @@ func (t *TezTracker) GetAccountEndorsingList(accountID string, limits Limiter) (
 		return 0, list, err
 	}
 
-	count, list, err = t.repoProvider.GetAccount().EndorsingList(accountID, limits.Limit(), limits.Offset())
+	count, list, err = t.repoProvider.GetEndorsing().EndorsingList(accountID, limits.Limit(), limits.Offset())
 	if err != nil {
 		return 0, nil, err
 	}
@@ -22,7 +22,7 @@ func (t *TezTracker) GetAccountEndorsingList(accountID string, limits Limiter) (
 }
 
 func (t *TezTracker) GetAccountEndorsingTotal(accountID string) (total models.AccountEndorsing, err error) {
-	total, err = t.repoProvider.GetAccount().EndorsingTotal(accountID)
+	total, err = t.repoProvider.GetEndorsing().EndorsingTotal(accountID)
 	if err != nil {
 		return total, err
 	}
@@ -51,7 +51,7 @@ func (t *TezTracker) GetAccountFutureEndorsementsList(accountID string) (list []
 		return list, err
 	}
 
-	list, err = t.repoProvider.GetAccount().FutureEndorsingList(accountID)
+	list, err = t.repoProvider.GetEndorsing().FutureEndorsingList(accountID)
 	if err != nil {
 		return nil, err
 	}

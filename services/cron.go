@@ -219,13 +219,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 
 				//TODO refactor
 				unitOfWork := repos.New(db)
-				err := unitOfWork.GetAccount().RefreshAccountBakingView()
-				if err != nil {
-					log.Errorf("materialized view update failed: %s", err.Error())
-					return
-				}
-
-				err = unitOfWork.GetAccount().RefreshAccountFutureBakingView()
+				err := unitOfWork.GetAccount().RefreshAccountFutureBakingView()
 				if err != nil {
 					log.Errorf("materialized view update failed: %s", err.Error())
 					return
