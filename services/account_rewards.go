@@ -18,9 +18,8 @@ func (t *TezTracker) GetAccountRewardsList(accountID string, limits Limiter) (co
 	var blockReward, endorsementReward int64
 	for i := range rewards {
 		//Use FutureBakingRewards for future cycles
-		if rewards[i].Cycle > lastBlock.MetaCycle {
-			rewards[i].BakingRewards = rewards[i].FutureBakingCount * BlockReward
-		}
+		rewards[i].BakingRewards += rewards[i].FutureBakingCount * BlockReward
+		rewards[i].EndorsementRewards += rewards[i].FutureEndorsementCount * EndorsementReward
 
 		rewards[i].Status = getRewardStatus(rewards[i].Cycle, lastBlock.MetaCycle)
 

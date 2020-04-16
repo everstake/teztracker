@@ -168,12 +168,7 @@ func (r *Repository) RefreshView() (err error) {
 }
 
 func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (count int64, rewards []models.AccountReward, err error) {
-	db := r.db.Select("br.*, bmv.reward as baking_rewards, bmv.missed missed_baking, fbrmv.count as future_baking_count, emv.reward endorsement_rewards ,emv.missed missed_endorsements").
-		Table("tezos.baking_rewards as br").
-		Joins("left join tezos.future_baking_rights_materialized_view fbrmv on br.baker = fbrmv.delegate and br.cycle = fbrmv.cycle").
-		Joins(" left join tezos.baking_materialized_view bmv on br.baker = bmv.delegate and br.cycle = bmv.cycle").
-		Joins("left join tezos.endorsements_materialized_view emv on br.baker = emv.delegate and br.cycle = emv.cycle").
-		Model(&models.AccountReward{}).
+	db := r.db.Table("tezos.baking_rewards as br").
 		Where("baker = ?", accountID)
 
 	err = db.Count(&count).Error
@@ -181,7 +176,12 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 		return 0, rewards, err
 	}
 
-	err = db.Order("cycle desc").Limit(limit).
+	err = db.Select("br.*, cbv.reward as baking_rewards, cbv.missed missed_baking, fbrv.count as future_baking_count, cev.reward endorsement_rewards ,cev.missed missed_endorsements, fev.count future_endorsement_count").
+		Joins("left join tezos.baker_future_baking_rights_view fbrv on br.baker = fbrv.delegate and br.cycle = fbrv.cycle").
+		Joins("left join tezos.baker_cycle_bakings_view cbv on br.baker = cbv.delegate and br.cycle = cbv.cycle").
+		Joins("left join tezos.baker_cycle_endorsements_view cev on br.baker = cev.delegate and br.cycle = cev.cycle").
+		Joins("left join tezos.baker_future_endorsement_view fev on br.baker = fev.delegate and br.cycle = fev.cycle").
+		Order("cycle desc").Limit(limit).
 		Offset(offset).
 		Find(&rewards).Error
 
