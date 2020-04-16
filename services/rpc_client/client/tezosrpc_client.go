@@ -13,6 +13,7 @@ import (
 
 	"github.com/everstake/teztracker/services/rpc_client/client/baking_rights"
 	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
+	"github.com/everstake/teztracker/services/rpc_client/client/endorsing_rights"
 	"github.com/everstake/teztracker/services/rpc_client/client/operations"
 	"github.com/everstake/teztracker/services/rpc_client/client/snapshots"
 )
@@ -63,6 +64,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Tezosrpc {
 	cli.BakingRights = baking_rights.New(transport, formats)
 
 	cli.Contracts = contracts.New(transport, formats)
+
+	cli.EndorsingRights = endorsing_rights.New(transport, formats)
 
 	cli.Operations = operations.New(transport, formats)
 
@@ -116,6 +119,8 @@ type Tezosrpc struct {
 
 	Contracts *contracts.Client
 
+	EndorsingRights *endorsing_rights.Client
+
 	Operations *operations.Client
 
 	Snapshots *snapshots.Client
@@ -130,6 +135,8 @@ func (c *Tezosrpc) SetTransport(transport runtime.ClientTransport) {
 	c.BakingRights.SetTransport(transport)
 
 	c.Contracts.SetTransport(transport)
+
+	c.EndorsingRights.SetTransport(transport)
 
 	c.Operations.SetTransport(transport)
 
