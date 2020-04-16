@@ -49,7 +49,7 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 		Ballot:              b.Ballot,
 		Proposal:            b.Proposal,
 		Cycle:               b.Cycle,
-		Confirmations:       b.Confirmations,
+		Confirmations:       &b.Confirmations,
 		EndorsementReward:   b.EndorsementReward,
 		EndorsementDeposit:  b.EndorsementDeposit,
 		ClaimedAmount:       b.ClaimedAmount,

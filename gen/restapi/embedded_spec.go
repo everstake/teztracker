@@ -3017,7 +3017,8 @@ func init() {
         "operationId",
         "operationGroupHash",
         "kind",
-        "blockLevel"
+        "blockLevel",
+        "confirmations"
       ],
       "properties": {
         "amount": {
@@ -6368,7 +6369,8 @@ func init() {
         "operationId",
         "operationGroupHash",
         "kind",
-        "blockLevel"
+        "blockLevel",
+        "confirmations"
       ],
       "properties": {
         "amount": {
