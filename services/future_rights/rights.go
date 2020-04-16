@@ -15,7 +15,7 @@ type BlocksRepo interface {
 }
 
 type RightsRepo interface {
-	List(limit, offset uint, filter models.BakingRightFilter) (rights []models.FutureBakingRight, err error)
+	List(limit, offset uint, filter models.RightFilter) (rights []models.FutureBakingRight, err error)
 	Create(right models.FutureBakingRight) error
 }
 

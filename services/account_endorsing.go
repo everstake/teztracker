@@ -45,6 +45,26 @@ func (t *TezTracker) GetAccountEndorsementsList(accountID string, cycle int64, l
 	return count, list, nil
 }
 
+func (t *TezTracker) GetAccountFutureEndorsementsList(accountID string) (list []models.AccountEndorsing, err error) {
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return list, err
+	}
+
+	list, err = t.repoProvider.GetAccount().FutureEndorsingList(accountID)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range list {
+		list[i].Status = getRewardStatus(list[i].Cycle, lastBlock.MetaCycle)
+		list[i].TotalDeposit = list[i].Count * BlockSecurityDeposit
+		list[i].Reward = list[i].Count * BlockReward
+	}
+
+	return list, nil
+}
+
 func getRewardStatus(cycle, currentCycle int64) (status models.RewardStatus) {
 	switch {
 	case cycle > currentCycle:

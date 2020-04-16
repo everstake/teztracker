@@ -14,7 +14,9 @@ type (
 
 	Repo interface {
 		Last() (found bool, right models.FutureEndorsementRight, err error)
+		List(filter models.RightFilter, limit, offset uint) (rights []models.FutureEndorsementRight, err error)
 		CreateBulk(rights []models.FutureEndorsementRight) error
+		Count(models.RightFilter) (count int64, err error)
 	}
 )
 
@@ -25,7 +27,7 @@ func New(db *gorm.DB) *Repository {
 	}
 }
 
-func (r *Repository) getDb(filter models.BakingRightFilter) *gorm.DB {
+func (r *Repository) getDb(filter models.RightFilter) *gorm.DB {
 	db := r.db.Select("fer.*, baker_name as delegate_name").Table("tezos.future_endorsement_rights as fer").
 		Joins("left join tezos.public_bakers as pb on fer.delegate = pb.delegate")
 	if len(filter.BlockLevels) != 0 {
@@ -46,25 +48,18 @@ func (r *Repository) getDb(filter models.BakingRightFilter) *gorm.DB {
 // List returns a list of rights from the oldest to the newest.
 // limit defines the limit for the maximum number of rights returned.
 // since is used to paginate results based on the level. As the result is ordered descendingly the rights with level < since will be returned.
-func (r *Repository) List(filter models.BakingRightFilter) (rights []models.FutureBakingRight, err error) {
+func (r *Repository) List(filter models.RightFilter, limit, offset uint) (rights []models.FutureEndorsementRight, err error) {
 	db := r.getDb(filter)
-	err = db.Order("level asc, priority asc").
+	err = db.Order("level asc").
+		Offset(offset).
+		Limit(limit).
 		Find(&rights).Error
-	return rights, err
-}
 
-// ListDesc returns a list of rights from the newest to the oldest.
-// limit defines the limit for the maximum number of rights returned.
-// since is used to paginate results based on the level. As the result is ordered descendingly the rights with level < since will be returned.
-func (r *Repository) ListDesc(filter models.BakingRightFilter) (rights []models.FutureBakingRight, err error) {
-	db := r.getDb(filter)
-	err = db.Order("level desc, priority asc").
-		Find(&rights).Error
 	return rights, err
 }
 
 func (r *Repository) Last() (found bool, right models.FutureEndorsementRight, err error) {
-	db := r.getDb(models.BakingRightFilter{})
+	db := r.getDb(models.RightFilter{})
 	if res := db.Order("level desc").Take(&right); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, right, nil
@@ -75,7 +70,7 @@ func (r *Repository) Last() (found bool, right models.FutureEndorsementRight, er
 }
 
 // Find looks up for rights with filter.
-func (r *Repository) Find(filter models.BakingRightFilter) (found bool, right models.FutureBakingRight, err error) {
+func (r *Repository) Find(filter models.RightFilter) (found bool, right models.FutureBakingRight, err error) {
 	if res := r.getDb(filter).Find(&right); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, right, nil
@@ -85,15 +80,19 @@ func (r *Repository) Find(filter models.BakingRightFilter) (found bool, right mo
 	return true, right, nil
 }
 
-// Create creates a FutureBakingRight.
-func (r *Repository) Create(right models.FutureBakingRight) error {
-	return r.db.Model(&right).Create(&right).Error
-}
-
 func (r *Repository) CreateBulk(rights []models.FutureEndorsementRight) error {
 	insertRecords := make([]interface{}, len(rights))
 	for i := range rights {
 		insertRecords[i] = rights[i]
 	}
 	return gormbulk.BulkInsert(r.db, insertRecords, 2000)
+}
+
+func (r *Repository) Count(filter models.RightFilter) (count int64, err error) {
+	err = r.getDb(filter).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

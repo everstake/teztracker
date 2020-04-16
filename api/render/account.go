@@ -75,11 +75,12 @@ func AccountBakingList(accb []models.AccountBaking) []*genModels.AccountBakingRo
 
 func AccountEndorsing(acb models.AccountEndorsing) *genModels.AccountEndorsingRow {
 	return &genModels.AccountEndorsingRow{
-		Slots:   &acb.Count,
-		Cycle:   &acb.Cycle,
-		Status:  string(acb.Status),
-		Missed:  &acb.Missed,
-		Rewards: &acb.Reward,
+		Slots:        &acb.Count,
+		Cycle:        &acb.Cycle,
+		Status:       string(acb.Status),
+		Missed:       &acb.Missed,
+		Rewards:      &acb.Reward,
+		TotalDeposit: &acb.TotalDeposit,
 	}
 }
 

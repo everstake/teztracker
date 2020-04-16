@@ -24,6 +24,7 @@ type (
 		BakingTotal(string) (models.AccountBaking, error)
 		BakingList(accountID string, limit uint, offset uint) (int64, []models.AccountBaking, error)
 		FutureBakingList(accountID string) ([]models.AccountBaking, error)
+		FutureEndorsingList(accountID string) ([]models.AccountEndorsing, error)
 		EndorsingTotal(string) (models.AccountEndorsing, error)
 		EndorsingList(accountID string, limit uint, offset uint) (int64, []models.AccountEndorsing, error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
@@ -239,6 +240,16 @@ func (r *Repository) FutureBakingList(accountID string) (baking []models.Account
 	err = db.Order("cycle desc").Find(&baking).Error
 
 	return baking, err
+}
+
+func (r *Repository) FutureEndorsingList(accountID string) (endorsing []models.AccountEndorsing, err error) {
+	db := r.db.Table("tezos.baker_future_endorsement_view").
+		Model(&models.AccountEndorsing{}).
+		Where("delegate = ?", accountID)
+
+	err = db.Order("cycle desc").Find(&endorsing).Error
+
+	return endorsing, err
 }
 
 func (r *Repository) RefreshAccountFutureBakingView() (err error) {

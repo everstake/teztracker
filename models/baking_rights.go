@@ -13,7 +13,7 @@ type BakingRight struct {
 	EstimatedTime time.Time `json:"estimated_time"`
 }
 
-type BakingRightFilter struct {
+type RightFilter struct {
 	BlockFilter
 	Delegates    []string
 	PriorityFrom int
