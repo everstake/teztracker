@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/everstake/teztracker/repos/future_endorsement_rights"
 	"github.com/everstake/teztracker/repos/voting_periods"
 
 	"github.com/everstake/teztracker/repos/account"
@@ -69,6 +70,10 @@ func (u *Provider) GetOperationCounter() operation_counter.Repo {
 
 func (u *Provider) GetFutureBakingRight() future_baking_rights.Repo {
 	return future_baking_rights.New(u.getDB())
+}
+
+func (u *Provider) GetFutureEndorsementRight() future_endorsement_rights.Repo {
+	return future_endorsement_rights.New(u.getDB())
 }
 
 func (u *Provider) GetSnapshots() snapshots.Repo {
