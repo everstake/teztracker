@@ -6,7 +6,7 @@ import (
 )
 
 // Operation renders an app level model to a gennerated OpenAPI model.
-func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.OperationsRow {
+func Operation(b models.Operation, dbe *models.DoubleOperationEvidence) *genModels.OperationsRow {
 	ts := b.Timestamp.Unix()
 
 	row := genModels.OperationsRow{
@@ -56,7 +56,7 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 		Timestamp:           &ts,
 	}
 	if dbe != nil {
-		row.DoubleBake = &genModels.DoubleBakingDetails{
+		row.DoubleOperationDetails = &genModels.DoubleOperationDetails{
 			BakerReward:       dbe.BakerReward,
 			DenouncedLevel:    dbe.DenouncedLevel,
 			EvidenceBaker:     dbe.EvidenceBaker,
@@ -81,7 +81,7 @@ func Operations(bs []models.Operation) []*genModels.OperationsRow {
 	return operations
 }
 
-func DoubleBakings(bs []models.DoubleBakingEvidence) []*genModels.OperationsRow {
+func DoubleOperations(bs []models.DoubleOperationEvidence) []*genModels.OperationsRow {
 	operations := make([]*genModels.OperationsRow, len(bs))
 	for i := range bs {
 		operations[i] = Operation(bs[i].Operation, &bs[i])

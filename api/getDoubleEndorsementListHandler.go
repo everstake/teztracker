@@ -9,31 +9,31 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type getDoubleBakingsListHandler struct {
+type getDoubleEndorsementListHandler struct {
 	provider DbProvider
 }
 
 // Handle serves the Get Operations List request.
-func (h *getDoubleBakingsListHandler) Handle(params ops.GetDoubleBakingsListParams) middleware.Responder {
+func (h *getDoubleEndorsementListHandler) Handle(params ops.GetDoubleEndorsementsListParams) middleware.Responder {
 	net, err := ToNetwork(params.Network)
 	if err != nil {
-		return ops.NewGetDoubleBakingsListBadRequest()
+		return ops.NewGetDoubleEndorsementsListBadRequest()
 	}
 
 	db, err := h.provider.GetDb(net)
 	if err != nil {
-		return ops.NewGetDoubleBakingsListNotFound()
+		return ops.NewGetDoubleEndorsementsListNotFound()
 	}
 	service := services.New(repos.New(db), net)
 
 	limiter := NewLimiter(params.Limit, params.Offset)
 
-	operations, count, err := service.GetDoubleBakings(params.OperationID, params.BlockID, limiter)
+	operations, count, err := service.GetDoubleEndorsements(params.OperationID, params.BlockID, limiter)
 	if err != nil {
 		logrus.Errorf("failed to get operations: %s", err.Error())
-		return ops.NewGetDoubleBakingsListNotFound()
+		return ops.NewGetDoubleEndorsementsListNotFound()
 
 	}
 
-	return ops.NewGetDoubleBakingsListOK().WithPayload(render.DoubleOperations(operations)).WithXTotalCount(count)
+	return ops.NewGetDoubleEndorsementsListOK().WithPayload(render.DoubleOperations(operations)).WithXTotalCount(count)
 }

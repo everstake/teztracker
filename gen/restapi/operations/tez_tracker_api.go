@@ -123,6 +123,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		OperationsListGetDoubleBakingsListHandler: operations_list.GetDoubleBakingsListHandlerFunc(func(params operations_list.GetDoubleBakingsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation OperationsListGetDoubleBakingsList has not yet been implemented")
 		}),
+		OperationsListGetDoubleEndorsementsListHandler: operations_list.GetDoubleEndorsementsListHandlerFunc(func(params operations_list.GetDoubleEndorsementsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation OperationsListGetDoubleEndorsementsList has not yet been implemented")
+		}),
 		BlocksGetFutureBakingRightsHandler: blocks.GetFutureBakingRightsHandlerFunc(func(params blocks.GetFutureBakingRightsParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetFutureBakingRights has not yet been implemented")
 		}),
@@ -245,6 +248,8 @@ type TezTrackerAPI struct {
 	AccountsGetContractsListHandler accounts.GetContractsListHandler
 	// OperationsListGetDoubleBakingsListHandler sets the operation handler for the get double bakings list operation
 	OperationsListGetDoubleBakingsListHandler operations_list.GetDoubleBakingsListHandler
+	// OperationsListGetDoubleEndorsementsListHandler sets the operation handler for the get double endorsements list operation
+	OperationsListGetDoubleEndorsementsListHandler operations_list.GetDoubleEndorsementsListHandler
 	// BlocksGetFutureBakingRightsHandler sets the operation handler for the get future baking rights operation
 	BlocksGetFutureBakingRightsHandler blocks.GetFutureBakingRightsHandler
 	// AppInfoGetInfoHandler sets the operation handler for the get info operation
@@ -436,6 +441,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.OperationsListGetDoubleBakingsListHandler == nil {
 		unregistered = append(unregistered, "operations_list.GetDoubleBakingsListHandler")
+	}
+
+	if o.OperationsListGetDoubleEndorsementsListHandler == nil {
+		unregistered = append(unregistered, "operations_list.GetDoubleEndorsementsListHandler")
 	}
 
 	if o.BlocksGetFutureBakingRightsHandler == nil {
@@ -717,6 +726,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/double_bakings"] = operations_list.NewGetDoubleBakingsList(o.context, o.OperationsListGetDoubleBakingsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/double_endorsements"] = operations_list.NewGetDoubleEndorsementsList(o.context, o.OperationsListGetDoubleEndorsementsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

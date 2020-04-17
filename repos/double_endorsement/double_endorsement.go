@@ -1,4 +1,4 @@
-package double_baking
+package double_endorsement
 
 import (
 	"github.com/everstake/teztracker/models"

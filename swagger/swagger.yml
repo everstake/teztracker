@@ -1732,6 +1732,77 @@ paths:
           description: Not Found
       tags:
         - OperationsList
+  '/v2/data/{platform}/{network}/double_endorsements':
+    get:
+      operationId: getDoubleEndorsementsList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: block_id
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: integer
+          name: block_level
+          description: Not used
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_id
+          description: Operation hash
+          type: array
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: account_id
+          type: array
+      responses:
+        '200':
+          description: Query compatibility endpoint for operations
+          schema:
+            items:
+              $ref: '#/definitions/OperationsRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - OperationsList
   '/v2/data/{platform}/{network}/operations/avgFees':
     get:
       operationId: getAvgFees
@@ -2435,7 +2506,7 @@ definitions:
       - branch
       - blockId
     type: object
-  DoubleBakingDetails:
+  DoubleOperationDetails:
     properties:
       denounced_level:
         type: integer
@@ -2573,8 +2644,8 @@ definitions:
       reward:
         type: integer
         format: int64
-      doubleBake:
-        $ref: '#/definitions/DoubleBakingDetails'
+      doubleOperationDetails:
+        $ref: '#/definitions/DoubleOperationDetails'
     required:
       - blockHash
       - timestamp

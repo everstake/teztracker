@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/everstake/teztracker/repos/baking"
+	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
 	"github.com/everstake/teztracker/repos/voting_periods"
@@ -92,6 +93,10 @@ func (u *Provider) GetSnapshots() snapshots.Repo {
 
 func (u *Provider) GetDoubleBaking() double_baking.Repo {
 	return double_baking.New(u.getDB())
+}
+
+func (u *Provider) GetDoubleEndorsement() double_endorsement.Repo {
+	return double_endorsement.New(u.getDB())
 }
 
 func (u *Provider) GetVotingPeriod() voting_periods.Repo {

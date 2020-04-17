@@ -11,9 +11,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DoubleBakingDetails double baking details
-// swagger:model DoubleBakingDetails
-type DoubleBakingDetails struct {
+// DoubleOperationDetails double operation details
+// swagger:model DoubleOperationDetails
+type DoubleOperationDetails struct {
 
 	// baker reward
 	BakerReward int64 `json:"baker_reward,omitempty"`
@@ -46,13 +46,13 @@ type DoubleBakingDetails struct {
 	Priority int64 `json:"priority,omitempty"`
 }
 
-// Validate validates this double baking details
-func (m *DoubleBakingDetails) Validate(formats strfmt.Registry) error {
+// Validate validates this double operation details
+func (m *DoubleOperationDetails) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *DoubleBakingDetails) MarshalBinary() ([]byte, error) {
+func (m *DoubleOperationDetails) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -60,8 +60,8 @@ func (m *DoubleBakingDetails) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DoubleBakingDetails) UnmarshalBinary(b []byte) error {
-	var res DoubleBakingDetails
+func (m *DoubleOperationDetails) UnmarshalBinary(b []byte) error {
+	var res DoubleOperationDetails
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
