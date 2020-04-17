@@ -59,31 +59,36 @@ type AccountBalance struct {
 }
 
 type AccountBaking struct {
-	Cycle       int64
-	Count       int64
-	AvgPriority float32
-	Missed      int64
-	Stolen      int64
-	Reward      int64
+	Cycle        int64
+	Status       RewardStatus
+	Count        int64
+	Missed       int64
+	Reward       int64
+	AvgPriority  float32
+	Stolen       int64
+	TotalDeposit int64
 }
 
 type AccountEndorsing struct {
-	Cycle  int64
-	Count  int64
-	Missed int64
-	Reward int64
+	Cycle        int64
+	Status       RewardStatus
+	Count        int64
+	Missed       int64
+	Reward       int64
+	TotalDeposit int64
 }
 
 type AccountReward struct {
-	Status              RewardStatus
-	Cycle               int64
-	Delegators          int64
-	StakingBalance      int64
-	BakingRewards       int64
-	FutureBakingRewards int64
-	EndorsementRewards  int64
-	Fees                int64
-	MissedBaking        int64
-	MissedEndorsements  int64
-	Losses              int64
+	Status                 RewardStatus
+	Cycle                  int64
+	Delegators             int64
+	StakingBalance         int64
+	BakingRewards          int64
+	FutureBakingCount      int64
+	EndorsementRewards     int64
+	FutureEndorsementCount int64
+	Fees                   int64
+	MissedBaking           int64
+	MissedEndorsements     int64
+	Losses                 int64
 }

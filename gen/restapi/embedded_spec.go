@@ -785,6 +785,83 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/baking/{accountId}/future_baking_rights/{cycleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureBakingRightsByCycle",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "cycleId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakingRightsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/baking/{accountId}/total": {
       "get": {
         "produces": [
@@ -1024,6 +1101,133 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureEndorsing",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountEndorsingRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future_endorsement_rights/{cycleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureEndorsementRightsByCycle",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "cycleId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EndorsementRightsRow"
               }
             },
             "headers": {
@@ -2047,6 +2251,109 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/double_endorsements": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "OperationsList"
+        ],
+        "operationId": "getDoubleEndorsementsList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "block_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "block_level",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Operation hash",
+            "name": "operation_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "account_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/future_baking_rights": {
       "get": {
         "produces": [
@@ -2897,7 +3204,8 @@ func init() {
         "stolen",
         "cycle",
         "rewards",
-        "blocks"
+        "blocks",
+        "totalDeposit"
       ],
       "properties": {
         "avgPriority": {
@@ -2920,7 +3228,14 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "status": {
+          "type": "string"
+        },
         "stolen": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "totalDeposit": {
           "type": "integer",
           "format": "int64"
         }
@@ -2943,7 +3258,8 @@ func init() {
         "cycle",
         "missed",
         "rewards",
-        "slots"
+        "slots",
+        "totalDeposit"
       ],
       "properties": {
         "cycle": {
@@ -2959,6 +3275,13 @@ func init() {
           "format": "int64"
         },
         "slots": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "string"
+        },
+        "totalDeposit": {
           "type": "integer",
           "format": "int64"
         }
@@ -3013,6 +3336,9 @@ func init() {
         "stakingBalance": {
           "type": "integer",
           "format": "int64"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -3225,11 +3551,23 @@ func init() {
         "delegate_name": {
           "type": "string"
         },
+        "deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
         "estimated_time": {
           "type": "string",
           "format": "date-time"
         },
+        "level": {
+          "type": "integer",
+          "format": "int64"
+        },
         "priority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         }
@@ -3349,6 +3687,10 @@ func init() {
           "format": "int64"
         },
         "delegations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "deposit": {
           "type": "integer",
           "format": "int64"
         },
@@ -3473,7 +3815,7 @@ func init() {
         }
       }
     },
-    "DoubleBakingDetails": {
+    "DoubleOperationDetails": {
       "properties": {
         "baker_reward": {
           "type": "integer",
@@ -3484,6 +3826,9 @@ func init() {
           "format": "int64"
         },
         "evidence_baker": {
+          "type": "string"
+        },
+        "evidence_baker_name": {
           "type": "string"
         },
         "lost_deposits": {
@@ -3501,7 +3846,47 @@ func init() {
         "offender": {
           "type": "string"
         },
+        "offender_name": {
+          "type": "string"
+        },
         "priority": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "EndorsementRightsRow": {
+      "properties": {
+        "blockLevel": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegate": {
+          "type": "string"
+        },
+        "delegate_name": {
+          "type": "string"
+        },
+        "deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "timestamp": {
           "type": "integer",
           "format": "int64"
         }
@@ -3625,7 +4010,8 @@ func init() {
         "operationId",
         "operationGroupHash",
         "kind",
-        "blockLevel"
+        "blockLevel",
+        "confirmations"
       ],
       "properties": {
         "amount": {
@@ -3646,11 +4032,23 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "claimedAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "confirmations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "consumedGas": {
           "type": "integer",
           "format": "int64"
         },
         "counter": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
           "type": "integer",
           "format": "int64"
         },
@@ -3673,8 +4071,16 @@ func init() {
         "destinationName": {
           "type": "string"
         },
-        "doubleBake": {
-          "$ref": "#/definitions/DoubleBakingDetails"
+        "doubleOperationDetails": {
+          "$ref": "#/definitions/DoubleOperationDetails"
+        },
+        "endorsementDeposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endorsementReward": {
+          "type": "integer",
+          "format": "int64"
         },
         "fee": {
           "type": "integer",
@@ -4712,6 +5118,84 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/baking/{accountId}/future_baking_rights/{cycleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureBakingRightsByCycle",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "cycleId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakingRightsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/baking/{accountId}/total": {
       "get": {
         "produces": [
@@ -4953,6 +5437,134 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureEndorsing",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountEndorsingRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future_endorsement_rights/{cycleId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountFutureEndorsementRightsByCycle",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "cycleId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account future baking",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EndorsementRightsRow"
               }
             },
             "headers": {
@@ -5984,6 +6596,110 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/double_endorsements": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "OperationsList"
+        ],
+        "operationId": "getDoubleEndorsementsList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "block_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi",
+            "description": "Not used",
+            "name": "block_level",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Operation hash",
+            "name": "operation_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "account_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/future_baking_rights": {
       "get": {
         "produces": [
@@ -6840,7 +7556,8 @@ func init() {
         "stolen",
         "cycle",
         "rewards",
-        "blocks"
+        "blocks",
+        "totalDeposit"
       ],
       "properties": {
         "avgPriority": {
@@ -6863,7 +7580,14 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "status": {
+          "type": "string"
+        },
         "stolen": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "totalDeposit": {
           "type": "integer",
           "format": "int64"
         }
@@ -6886,7 +7610,8 @@ func init() {
         "cycle",
         "missed",
         "rewards",
-        "slots"
+        "slots",
+        "totalDeposit"
       ],
       "properties": {
         "cycle": {
@@ -6902,6 +7627,13 @@ func init() {
           "format": "int64"
         },
         "slots": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "string"
+        },
+        "totalDeposit": {
           "type": "integer",
           "format": "int64"
         }
@@ -6956,6 +7688,9 @@ func init() {
         "stakingBalance": {
           "type": "integer",
           "format": "int64"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -7168,11 +7903,23 @@ func init() {
         "delegate_name": {
           "type": "string"
         },
+        "deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
         "estimated_time": {
           "type": "string",
           "format": "date-time"
         },
+        "level": {
+          "type": "integer",
+          "format": "int64"
+        },
         "priority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
           "type": "integer",
           "format": "int64"
         }
@@ -7292,6 +8039,10 @@ func init() {
           "format": "int64"
         },
         "delegations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "deposit": {
           "type": "integer",
           "format": "int64"
         },
@@ -7416,7 +8167,7 @@ func init() {
         }
       }
     },
-    "DoubleBakingDetails": {
+    "DoubleOperationDetails": {
       "properties": {
         "baker_reward": {
           "type": "integer",
@@ -7427,6 +8178,9 @@ func init() {
           "format": "int64"
         },
         "evidence_baker": {
+          "type": "string"
+        },
+        "evidence_baker_name": {
           "type": "string"
         },
         "lost_deposits": {
@@ -7444,7 +8198,47 @@ func init() {
         "offender": {
           "type": "string"
         },
+        "offender_name": {
+          "type": "string"
+        },
         "priority": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "EndorsementRightsRow": {
+      "properties": {
+        "blockLevel": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegate": {
+          "type": "string"
+        },
+        "delegate_name": {
+          "type": "string"
+        },
+        "deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reward": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "timestamp": {
           "type": "integer",
           "format": "int64"
         }
@@ -7569,7 +8363,8 @@ func init() {
         "operationId",
         "operationGroupHash",
         "kind",
-        "blockLevel"
+        "blockLevel",
+        "confirmations"
       ],
       "properties": {
         "amount": {
@@ -7590,11 +8385,23 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "claimedAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "confirmations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "consumedGas": {
           "type": "integer",
           "format": "int64"
         },
         "counter": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
           "type": "integer",
           "format": "int64"
         },
@@ -7617,8 +8424,16 @@ func init() {
         "destinationName": {
           "type": "string"
         },
-        "doubleBake": {
-          "$ref": "#/definitions/DoubleBakingDetails"
+        "doubleOperationDetails": {
+          "$ref": "#/definitions/DoubleOperationDetails"
+        },
+        "endorsementDeposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endorsementReward": {
+          "type": "integer",
+          "format": "int64"
         },
         "fee": {
           "type": "integer",

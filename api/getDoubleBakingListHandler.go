@@ -35,5 +35,5 @@ func (h *getDoubleBakingsListHandler) Handle(params ops.GetDoubleBakingsListPara
 
 	}
 
-	return ops.NewGetDoubleBakingsListOK().WithPayload(render.DoubleBakings(operations)).WithXTotalCount(count)
+	return ops.NewGetDoubleBakingsListOK().WithPayload(render.DoubleOperations(operations)).WithXTotalCount(count)
 }

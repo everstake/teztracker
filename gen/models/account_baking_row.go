@@ -37,9 +37,16 @@ type AccountBakingRow struct {
 	// Required: true
 	Rewards *int64 `json:"rewards"`
 
+	// status
+	Status string `json:"status,omitempty"`
+
 	// stolen
 	// Required: true
 	Stolen *int64 `json:"stolen"`
+
+	// total deposit
+	// Required: true
+	TotalDeposit *int64 `json:"totalDeposit"`
 }
 
 // Validate validates this account baking row
@@ -67,6 +74,10 @@ func (m *AccountBakingRow) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStolen(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTotalDeposit(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -124,6 +135,15 @@ func (m *AccountBakingRow) validateRewards(formats strfmt.Registry) error {
 func (m *AccountBakingRow) validateStolen(formats strfmt.Registry) error {
 
 	if err := validate.Required("stolen", "body", m.Stolen); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AccountBakingRow) validateTotalDeposit(formats strfmt.Registry) error {
+
+	if err := validate.Required("totalDeposit", "body", m.TotalDeposit); err != nil {
 		return err
 	}
 

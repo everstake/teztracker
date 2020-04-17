@@ -17,6 +17,7 @@ import (
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/services/rpc_client/client/baking_rights"
+	"github.com/everstake/teztracker/services/rpc_client/client/endorsing_rights"
 	"github.com/everstake/teztracker/services/rpc_client/client/snapshots"
 	genmodels "github.com/everstake/teztracker/services/rpc_client/models"
 )
@@ -93,6 +94,43 @@ func genRightToModel(m genmodels.BakingRight) models.FutureBakingRight {
 	}
 }
 
+func (t *Tezos) EndorsementRightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.FutureEndorsementRight, error) {
+	blockToUse := headBlock
+	if currentHead >= blockFrom {
+		blockToUse = strconv.FormatInt(blockFrom, 10)
+	}
+
+	params := endorsing_rights.NewGetEndorsingRightsParamsWithContext(ctx).
+		WithNetwork(t.network).
+		WithBlock(blockToUse)
+
+	levels := []string{}
+	for b := blockFrom; b <= blockTo; b++ {
+		levels = append(levels, strconv.FormatInt(b, 10))
+	}
+	params.SetLevel(levels)
+	resp, err := t.client.EndorsingRights.GetEndorsingRights(params)
+	if err != nil {
+		return nil, err
+	}
+	rights := make([]models.FutureEndorsementRight, len(resp.Payload))
+	for i := range resp.Payload {
+		if resp.Payload[i] != nil {
+			rights[i] = genEndorsementRightToModel(*resp.Payload[i])
+		}
+	}
+	return rights, nil
+}
+
+func genEndorsementRightToModel(m genmodels.EndorsementRight) models.FutureEndorsementRight {
+	return models.FutureEndorsementRight{
+		Level:         m.Level,
+		Slots:         m.Slots,
+		Delegate:      m.Delegate,
+		EstimatedTime: time.Time(m.EstimatedTime),
+	}
+}
+
 func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool) (snap models.Snapshot, err error) {
 	blockToUse := headBlock
 	if !useHead {
@@ -127,7 +165,59 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 	return snap, nil
 }
 
-func (t *Tezos) DoubleBakingEvidence(ctx context.Context, blockLevel int, operationHash string) (dee models.DoubleBakingEvidence, err error) {
+func ToDoubleOperationEvidence(op tzblock.Operations) (dee models.DoubleOperationEvidence, err error) {
+	for i := range op.Contents {
+		if op.Contents[i].Op1 != nil {
+			dee.DenouncedLevel = int64(op.Contents[i].Op1.Operations.Level)
+			err = parseDoubleOperationMetaData(&dee, op.Contents[i].Metadata)
+			if err != nil {
+				return dee, err
+			}
+			return dee, nil
+		}
+	}
+	return dee, fmt.Errorf("not a double endorsement evidence")
+}
+
+func parseDoubleOperationMetaData(dee *models.DoubleOperationEvidence, meta *tzblock.ContentsMetadata) (err error) {
+	if dee == nil {
+		return fmt.Errorf("Empty double operation model")
+	}
+
+	if meta == nil {
+		return nil
+	}
+
+	for _, bu := range meta.BalanceUpdates {
+		if strings.EqualFold(bu.Kind, "freezer") {
+			switch strings.ToLower(bu.Category) {
+			case "deposits":
+				dee.Offender = bu.Delegate
+				change, err := strconv.ParseInt(bu.Change, 10, 64)
+				if err != nil {
+					return err
+				}
+				dee.LostDeposits = -change
+			case "rewards":
+				change, err := strconv.ParseInt(bu.Change, 10, 64)
+				if err != nil {
+					return err
+				}
+				if change < 0 {
+					dee.LostRewards = -change
+				} else {
+					dee.BakerReward = change
+					dee.EvidenceBaker = bu.Delegate
+				}
+
+			}
+		}
+	}
+
+	return nil
+}
+
+func (t *Tezos) DoubleOperationEvidence(ctx context.Context, blockLevel int, operationHash string) (dee models.DoubleOperationEvidence, err error) {
 	block, err := t.tzcClient.Get(blockLevel)
 	if err != nil {
 		return dee, err
@@ -135,7 +225,7 @@ func (t *Tezos) DoubleBakingEvidence(ctx context.Context, blockLevel int, operat
 	for i := range block.Operations {
 		for _, op := range block.Operations[i] {
 			if strings.EqualFold(op.Hash, operationHash) {
-				dee, err := ToDoubleBakingEvidence(op)
+				dee, err := ToDoubleOperationEvidence(op)
 				if err != nil {
 					return dee, err
 				}
@@ -146,69 +236,6 @@ func (t *Tezos) DoubleBakingEvidence(ctx context.Context, blockLevel int, operat
 		}
 	}
 	return dee, fmt.Errorf("not found")
-}
-
-func ToDoubleBakingEvidence(op tzblock.Operations) (dee models.DoubleBakingEvidence, err error) {
-	for i := range op.Contents {
-		if op.Contents[i].Bh1 != nil {
-			dee.DenouncedLevel = int64(op.Contents[i].Bh1.Level)
-			dee.Priority = op.Contents[i].Bh1.Priority
-			if meta := op.Contents[i].Metadata; meta != nil {
-				for _, bu := range meta.BalanceUpdates {
-					if strings.EqualFold(bu.Kind, "freezer") {
-						switch strings.ToLower(bu.Category) {
-						case "deposits":
-							dee.Offender = bu.Delegate
-							change, err := strconv.ParseInt(bu.Change, 10, 64)
-							if err != nil {
-								return dee, err
-							}
-							dee.LostDeposits = -change
-						case "rewards":
-							change, err := strconv.ParseInt(bu.Change, 10, 64)
-							if err != nil {
-								return dee, err
-							}
-							if change < 0 {
-								dee.LostRewards = -change
-							} else {
-								dee.BakerReward = change
-								dee.EvidenceBaker = bu.Delegate
-							}
-
-						}
-					}
-				}
-			}
-			return dee, nil
-		}
-	}
-	return dee, fmt.Errorf("not a double baking evidence")
-
-}
-
-func (t *Tezos) DoubleEndorsementEvidenceLevel(ctx context.Context, blockLevel int, operationHash string) (int64, error) {
-	block, err := t.tzcClient.Get(blockLevel)
-	if err != nil {
-		return 0, err
-	}
-	for i := range block.Operations {
-		for _, op := range block.Operations[i] {
-			if strings.EqualFold(op.Hash, operationHash) {
-				return GetDoubleEndorsementEvidenceLevel(op)
-			}
-		}
-	}
-	return 0, fmt.Errorf("not found")
-}
-
-func GetDoubleEndorsementEvidenceLevel(op tzblock.Operations) (int64, error) {
-	for i := range op.Contents {
-		if op.Contents[i].Op1 != nil {
-			return int64(op.Contents[i].Op1.Operations.Level), nil
-		}
-	}
-	return 0, fmt.Errorf("not a double endorsement evidence")
 }
 
 //Todo move models somewhere

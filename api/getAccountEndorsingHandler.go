@@ -82,3 +82,52 @@ func (h *getAccountTotalEndorsingHandler) Handle(params accounts.GetAccountTotal
 
 	return accounts.NewGetAccountTotalEndorsingOK().WithPayload(render.AccountEndorsing(total))
 }
+
+type getAccountFutureEndorsingHandler struct {
+	provider DbProvider
+}
+
+func (h *getAccountFutureEndorsingHandler) Handle(params accounts.GetAccountFutureEndorsingParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountFutureEndorsingBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountFutureEndorsingBadRequest()
+	}
+	service := services.New(repos.New(db), net)
+
+	total, err := service.GetAccountFutureEndorsementsList(params.AccountID)
+	if err != nil {
+		logrus.Errorf("failed to get accounts: %s", err.Error())
+		return accounts.NewGetAccountFutureEndorsingNotFound()
+	}
+
+	return accounts.NewGetAccountFutureEndorsingOK().WithPayload(render.AccountEndorsingList(total))
+}
+
+type getAccountFutureEndorsingRightsHandler struct {
+	provider DbProvider
+}
+
+func (h *getAccountFutureEndorsingRightsHandler) Handle(params accounts.GetAccountFutureEndorsementRightsByCycleParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountFutureEndorsementRightsByCycleBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountFutureEndorsementRightsByCycleBadRequest()
+	}
+	service := services.New(repos.New(db), net)
+	limiter := NewLimiter(params.Limit, params.Offset)
+
+	count, total, err := service.GetAccountFutureEndorsementRights(params.AccountID, params.CycleID, limiter)
+	if err != nil {
+		logrus.Errorf("failed to get future baking rights: %s", err.Error())
+		return accounts.NewGetAccountFutureEndorsementRightsByCycleNotFound()
+	}
+
+	return accounts.NewGetAccountFutureEndorsementRightsByCycleOK().WithPayload(render.FutureEndorsementRights(total)).WithXTotalCount(count)
+}

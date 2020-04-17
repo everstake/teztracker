@@ -7,9 +7,12 @@ package mock_services
 import (
 	account "github.com/everstake/teztracker/repos/account"
 	baker "github.com/everstake/teztracker/repos/baker"
+	baking "github.com/everstake/teztracker/repos/baking"
 	block "github.com/everstake/teztracker/repos/block"
 	double_baking "github.com/everstake/teztracker/repos/double_baking"
+	endorsing "github.com/everstake/teztracker/repos/endorsing"
 	future_baking_rights "github.com/everstake/teztracker/repos/future_baking_rights"
+	future_endorsement_rights "github.com/everstake/teztracker/repos/future_endorsement_rights"
 	operation "github.com/everstake/teztracker/repos/operation"
 	operation_groups "github.com/everstake/teztracker/repos/operation_groups"
 	snapshots "github.com/everstake/teztracker/repos/snapshots"
@@ -101,6 +104,30 @@ func (mr *MockProviderMockRecorder) GetBaker() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBaker", reflect.TypeOf((*MockProvider)(nil).GetBaker))
 }
 
+// GetBaking mocks base method
+func (m *MockProvider) GetBaking() baking.Repo {
+	ret := m.ctrl.Call(m, "GetBaking")
+	ret0, _ := ret[0].(baking.Repo)
+	return ret0
+}
+
+// GetBaking indicates an expected call of GetBaking
+func (mr *MockProviderMockRecorder) GetBaking() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBaking", reflect.TypeOf((*MockProvider)(nil).GetBaking))
+}
+
+// GetEndorsing mocks base method
+func (m *MockProvider) GetEndorsing() endorsing.Repo {
+	ret := m.ctrl.Call(m, "GetEndorsing")
+	ret0, _ := ret[0].(endorsing.Repo)
+	return ret0
+}
+
+// GetEndorsing indicates an expected call of GetEndorsing
+func (mr *MockProviderMockRecorder) GetEndorsing() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEndorsing", reflect.TypeOf((*MockProvider)(nil).GetEndorsing))
+}
+
 // GetFutureBakingRight mocks base method
 func (m *MockProvider) GetFutureBakingRight() future_baking_rights.Repo {
 	ret := m.ctrl.Call(m, "GetFutureBakingRight")
@@ -111,6 +138,18 @@ func (m *MockProvider) GetFutureBakingRight() future_baking_rights.Repo {
 // GetFutureBakingRight indicates an expected call of GetFutureBakingRight
 func (mr *MockProviderMockRecorder) GetFutureBakingRight() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFutureBakingRight", reflect.TypeOf((*MockProvider)(nil).GetFutureBakingRight))
+}
+
+// GetFutureEndorsementRight mocks base method
+func (m *MockProvider) GetFutureEndorsementRight() future_endorsement_rights.Repo {
+	ret := m.ctrl.Call(m, "GetFutureEndorsementRight")
+	ret0, _ := ret[0].(future_endorsement_rights.Repo)
+	return ret0
+}
+
+// GetFutureEndorsementRight indicates an expected call of GetFutureEndorsementRight
+func (mr *MockProviderMockRecorder) GetFutureEndorsementRight() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFutureEndorsementRight", reflect.TypeOf((*MockProvider)(nil).GetFutureEndorsementRight))
 }
 
 // GetSnapshots mocks base method

@@ -44,6 +44,9 @@ type AccountRewardsRow struct {
 	// staking balance
 	// Required: true
 	StakingBalance *int64 `json:"stakingBalance"`
+
+	// status
+	Status string `json:"status,omitempty"`
 }
 
 // Validate validates this account rewards row

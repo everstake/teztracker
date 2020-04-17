@@ -6,7 +6,7 @@ import (
 )
 
 // Operation renders an app level model to a gennerated OpenAPI model.
-func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.OperationsRow {
+func Operation(b models.Operation, dbe *models.DoubleOperationEvidence) *genModels.OperationsRow {
 	ts := b.Timestamp.Unix()
 
 	row := genModels.OperationsRow{
@@ -48,18 +48,25 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 		BlockLevel:          b.BlockLevel.Ptr(),
 		Ballot:              b.Ballot,
 		Proposal:            b.Proposal,
+		Cycle:               b.Cycle,
+		Confirmations:       &b.Confirmations,
+		EndorsementReward:   b.EndorsementReward,
+		EndorsementDeposit:  b.EndorsementDeposit,
+		ClaimedAmount:       b.ClaimedAmount,
 		Timestamp:           &ts,
 	}
 	if dbe != nil {
-		row.DoubleBake = &genModels.DoubleBakingDetails{
-			BakerReward:    dbe.BakerReward,
-			DenouncedLevel: dbe.DenouncedLevel,
-			EvidenceBaker:  dbe.EvidenceBaker,
-			LostDeposits:   dbe.LostDeposits,
-			LostFees:       dbe.LostFees,
-			LostRewards:    dbe.LostRewards,
-			Offender:       dbe.Offender,
-			Priority:       int64(dbe.Priority),
+		row.DoubleOperationDetails = &genModels.DoubleOperationDetails{
+			BakerReward:       dbe.BakerReward,
+			DenouncedLevel:    dbe.DenouncedLevel,
+			EvidenceBaker:     dbe.EvidenceBaker,
+			EvidenceBakerName: dbe.EvidenceBakerName,
+			LostDeposits:      dbe.LostDeposits,
+			LostFees:          dbe.LostFees,
+			LostRewards:       dbe.LostRewards,
+			Offender:          dbe.Offender,
+			OffenderName:      dbe.OffenderName,
+			Priority:          int64(dbe.Priority),
 		}
 	}
 	return &row
@@ -74,7 +81,7 @@ func Operations(bs []models.Operation) []*genModels.OperationsRow {
 	return operations
 }
 
-func DoubleBakings(bs []models.DoubleBakingEvidence) []*genModels.OperationsRow {
+func DoubleOperations(bs []models.DoubleOperationEvidence) []*genModels.OperationsRow {
 	operations := make([]*genModels.OperationsRow, len(bs))
 	for i := range bs {
 		operations[i] = Operation(bs[i].Operation, &bs[i])

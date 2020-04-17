@@ -69,6 +69,15 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetAccountFutureBakingHandler: accounts.GetAccountFutureBakingHandlerFunc(func(params accounts.GetAccountFutureBakingParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountFutureBaking has not yet been implemented")
 		}),
+		AccountsGetAccountFutureBakingRightsByCycleHandler: accounts.GetAccountFutureBakingRightsByCycleHandlerFunc(func(params accounts.GetAccountFutureBakingRightsByCycleParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountFutureBakingRightsByCycle has not yet been implemented")
+		}),
+		AccountsGetAccountFutureEndorsementRightsByCycleHandler: accounts.GetAccountFutureEndorsementRightsByCycleHandlerFunc(func(params accounts.GetAccountFutureEndorsementRightsByCycleParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountFutureEndorsementRightsByCycle has not yet been implemented")
+		}),
+		AccountsGetAccountFutureEndorsingHandler: accounts.GetAccountFutureEndorsingHandlerFunc(func(params accounts.GetAccountFutureEndorsingParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountFutureEndorsing has not yet been implemented")
+		}),
 		AccountsGetAccountRewardsListHandler: accounts.GetAccountRewardsListHandlerFunc(func(params accounts.GetAccountRewardsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountRewardsList has not yet been implemented")
 		}),
@@ -113,6 +122,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		OperationsListGetDoubleBakingsListHandler: operations_list.GetDoubleBakingsListHandlerFunc(func(params operations_list.GetDoubleBakingsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation OperationsListGetDoubleBakingsList has not yet been implemented")
+		}),
+		OperationsListGetDoubleEndorsementsListHandler: operations_list.GetDoubleEndorsementsListHandlerFunc(func(params operations_list.GetDoubleEndorsementsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation OperationsListGetDoubleEndorsementsList has not yet been implemented")
 		}),
 		BlocksGetFutureBakingRightsHandler: blocks.GetFutureBakingRightsHandlerFunc(func(params blocks.GetFutureBakingRightsParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetFutureBakingRights has not yet been implemented")
@@ -200,6 +212,12 @@ type TezTrackerAPI struct {
 	AccountsGetAccountEndorsingListHandler accounts.GetAccountEndorsingListHandler
 	// AccountsGetAccountFutureBakingHandler sets the operation handler for the get account future baking operation
 	AccountsGetAccountFutureBakingHandler accounts.GetAccountFutureBakingHandler
+	// AccountsGetAccountFutureBakingRightsByCycleHandler sets the operation handler for the get account future baking rights by cycle operation
+	AccountsGetAccountFutureBakingRightsByCycleHandler accounts.GetAccountFutureBakingRightsByCycleHandler
+	// AccountsGetAccountFutureEndorsementRightsByCycleHandler sets the operation handler for the get account future endorsement rights by cycle operation
+	AccountsGetAccountFutureEndorsementRightsByCycleHandler accounts.GetAccountFutureEndorsementRightsByCycleHandler
+	// AccountsGetAccountFutureEndorsingHandler sets the operation handler for the get account future endorsing operation
+	AccountsGetAccountFutureEndorsingHandler accounts.GetAccountFutureEndorsingHandler
 	// AccountsGetAccountRewardsListHandler sets the operation handler for the get account rewards list operation
 	AccountsGetAccountRewardsListHandler accounts.GetAccountRewardsListHandler
 	// AccountsGetAccountTotalBakingHandler sets the operation handler for the get account total baking operation
@@ -230,6 +248,8 @@ type TezTrackerAPI struct {
 	AccountsGetContractsListHandler accounts.GetContractsListHandler
 	// OperationsListGetDoubleBakingsListHandler sets the operation handler for the get double bakings list operation
 	OperationsListGetDoubleBakingsListHandler operations_list.GetDoubleBakingsListHandler
+	// OperationsListGetDoubleEndorsementsListHandler sets the operation handler for the get double endorsements list operation
+	OperationsListGetDoubleEndorsementsListHandler operations_list.GetDoubleEndorsementsListHandler
 	// BlocksGetFutureBakingRightsHandler sets the operation handler for the get future baking rights operation
 	BlocksGetFutureBakingRightsHandler blocks.GetFutureBakingRightsHandler
 	// AppInfoGetInfoHandler sets the operation handler for the get info operation
@@ -351,6 +371,18 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "accounts.GetAccountFutureBakingHandler")
 	}
 
+	if o.AccountsGetAccountFutureBakingRightsByCycleHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountFutureBakingRightsByCycleHandler")
+	}
+
+	if o.AccountsGetAccountFutureEndorsementRightsByCycleHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountFutureEndorsementRightsByCycleHandler")
+	}
+
+	if o.AccountsGetAccountFutureEndorsingHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountFutureEndorsingHandler")
+	}
+
 	if o.AccountsGetAccountRewardsListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountRewardsListHandler")
 	}
@@ -409,6 +441,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.OperationsListGetDoubleBakingsListHandler == nil {
 		unregistered = append(unregistered, "operations_list.GetDoubleBakingsListHandler")
+	}
+
+	if o.OperationsListGetDoubleEndorsementsListHandler == nil {
+		unregistered = append(unregistered, "operations_list.GetDoubleEndorsementsListHandler")
 	}
 
 	if o.BlocksGetFutureBakingRightsHandler == nil {
@@ -604,6 +640,21 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/baking/{accountId}/future_baking_rights/{cycleId}"] = accounts.NewGetAccountFutureBakingRightsByCycle(o.context, o.AccountsGetAccountFutureBakingRightsByCycleHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future_endorsement_rights/{cycleId}"] = accounts.NewGetAccountFutureEndorsementRightsByCycle(o.context, o.AccountsGetAccountFutureEndorsementRightsByCycleHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future"] = accounts.NewGetAccountFutureEndorsing(o.context, o.AccountsGetAccountFutureEndorsingHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/rewards/{accountId}"] = accounts.NewGetAccountRewardsList(o.context, o.AccountsGetAccountRewardsListHandler)
 
 	if o.handlers["GET"] == nil {
@@ -675,6 +726,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/double_bakings"] = operations_list.NewGetDoubleBakingsList(o.context, o.OperationsListGetDoubleBakingsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/double_endorsements"] = operations_list.NewGetDoubleEndorsementsList(o.context, o.OperationsListGetDoubleEndorsementsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

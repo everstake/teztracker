@@ -9,7 +9,7 @@ import (
 )
 
 func (t *TezTracker) BakingRightsList(blockLevelOrHash []string, priorityTo int, limiter Limiter) (count int64, blocksWithRights []models.Block, err error) {
-	filter := models.BakingRightFilter{
+	filter := models.RightFilter{
 		PriorityTo: priorityTo,
 	}
 	count = int64(len(blockLevelOrHash))
@@ -87,14 +87,14 @@ func (t *TezTracker) FutureBakingRightsList(priorityTo int, limiter Limiter) (co
 	if rangeEnd > lastKnownRightsBlock {
 		rangeEnd = lastKnownRightsBlock
 	}
-	filter := models.BakingRightFilter{
+	filter := models.RightFilter{
 		PriorityTo: priorityTo,
 	}
 	for ; rangeStart <= rangeEnd; rangeStart++ {
 		filter.BlockLevels = append(filter.BlockLevels, rangeStart)
 	}
 	r := t.repoProvider.GetFutureBakingRight()
-	rights, err := r.List(filter)
+	rights, err := r.List(filter, limiter.Limit(), limiter.Offset())
 	if err != nil {
 		return count, nil, err
 	}
@@ -110,8 +110,8 @@ func (t *TezTracker) FutureBakingRightsList(priorityTo int, limiter Limiter) (co
 		blocksWithRights[len(blocksWithRights)-1].Rights = append(blocksWithRights[len(blocksWithRights)-1].Rights, rights[i])
 
 	}
-	return count, blocksWithRights, nil
 
+	return count, blocksWithRights, nil
 }
 
 // GetBlockEndorsements finds a block and returns endorsements for it.
@@ -132,9 +132,54 @@ func (t *TezTracker) GetBlockBakingRights(hashOrLevel string) (rights []models.F
 		}
 		level = block.Level.Int64
 	}
-	filter := models.BakingRightFilter{}
+	filter := models.RightFilter{}
 	filter.BlockLevels = []int64{level}
 	repo := t.repoProvider.GetFutureBakingRight()
 	rights, err = repo.ListDesc(filter)
 	return rights, int64(len(rights)), err
+}
+
+func (t *TezTracker) GetAccountFutureBakingRights(accountID string, cycle int64, limits Limiter) (count int64, futureRights []models.FutureBakingRight, err error) {
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return 0, nil, err
+	}
+
+	cycleFirstBlock := cycle*t.BlocksInCycle() + 1
+	//Return future part of active cycle
+	if lastBlock.MetaCycle == cycle {
+		cycleFirstBlock = lastBlock.MetaLevel + 1
+	}
+
+	repo := t.repoProvider.GetFutureBakingRight()
+	filter := models.RightFilter{
+		BlockFilter: models.BlockFilter{
+			FromID: null.IntFrom(cycleFirstBlock),
+			ToID:   null.IntFrom(cycleFirstBlock + t.BlocksInCycle()),
+		},
+		PriorityTo: 10,
+		Delegates:  []string{accountID},
+	}
+
+	count, err = repo.Count(filter)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	futureRights, err = repo.List(filter, limits.Limit(), limits.Offset())
+	if err != nil {
+		return 0, nil, err
+	}
+
+	for i := range futureRights {
+		reward := BlockReward
+		if futureRights[i].Priority > 0 {
+			reward = LowPriorityBlockReward
+		}
+
+		futureRights[i].Reward = int64(reward)
+		futureRights[i].Deposit = BlockSecurityDeposit
+	}
+
+	return count, futureRights, nil
 }

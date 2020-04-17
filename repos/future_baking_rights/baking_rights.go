@@ -13,12 +13,13 @@ type (
 	}
 
 	Repo interface {
-		List(filter models.BakingRightFilter) (rights []models.FutureBakingRight, err error)
-		ListDesc(filter models.BakingRightFilter) (rights []models.FutureBakingRight, err error)
+		List(filter models.RightFilter, limit, offset uint) (rights []models.FutureBakingRight, err error)
+		ListDesc(filter models.RightFilter) (rights []models.FutureBakingRight, err error)
 		Last() (found bool, right models.FutureBakingRight, err error)
-		Find(filter models.BakingRightFilter) (found bool, right models.FutureBakingRight, err error)
+		Find(filter models.RightFilter) (found bool, right models.FutureBakingRight, err error)
 		Create(right models.FutureBakingRight) error
 		CreateBulk(rights []models.FutureBakingRight) error
+		Count(models.RightFilter) (count int64, err error)
 	}
 )
 
@@ -29,12 +30,20 @@ func New(db *gorm.DB) *Repository {
 	}
 }
 
-func (r *Repository) getDb(filter models.BakingRightFilter) *gorm.DB {
+func (r *Repository) getDb(filter models.RightFilter) *gorm.DB {
 	db := r.db.Select("fbr.*, baker_name as delegate_name").Table("tezos.future_baking_rights as fbr").
 		Joins("left join tezos.public_bakers as pb on fbr.delegate = pb.delegate")
-	if len(filter.BlockLevels) != 0 {
-		db = db.Where("level IN (?)", filter.BlockLevels)
+
+	//Priority
+	if filter.FromID.Valid && filter.ToID.Valid {
+		db = db.Where("level >= ?", filter.FromID).
+			Where("level <= ?", filter.ToID)
+	} else {
+		if len(filter.BlockLevels) != 0 {
+			db = db.Where("level IN (?)", filter.BlockLevels)
+		}
 	}
+
 	if len(filter.Delegates) != 0 {
 		db = db.Where("fbr.delegate IN (?)", filter.Delegates)
 	}
@@ -50,17 +59,20 @@ func (r *Repository) getDb(filter models.BakingRightFilter) *gorm.DB {
 // List returns a list of rights from the oldest to the newest.
 // limit defines the limit for the maximum number of rights returned.
 // since is used to paginate results based on the level. As the result is ordered descendingly the rights with level < since will be returned.
-func (r *Repository) List(filter models.BakingRightFilter) (rights []models.FutureBakingRight, err error) {
+func (r *Repository) List(filter models.RightFilter, limit, offset uint) (rights []models.FutureBakingRight, err error) {
 	db := r.getDb(filter)
 	err = db.Order("level asc, priority asc").
+		Offset(offset).
+		Limit(limit).
 		Find(&rights).Error
+
 	return rights, err
 }
 
 // ListDesc returns a list of rights from the newest to the oldest.
 // limit defines the limit for the maximum number of rights returned.
 // since is used to paginate results based on the level. As the result is ordered descendingly the rights with level < since will be returned.
-func (r *Repository) ListDesc(filter models.BakingRightFilter) (rights []models.FutureBakingRight, err error) {
+func (r *Repository) ListDesc(filter models.RightFilter) (rights []models.FutureBakingRight, err error) {
 	db := r.getDb(filter)
 	err = db.Order("level desc, priority asc").
 		Find(&rights).Error
@@ -68,7 +80,7 @@ func (r *Repository) ListDesc(filter models.BakingRightFilter) (rights []models.
 }
 
 func (r *Repository) Last() (found bool, right models.FutureBakingRight, err error) {
-	db := r.getDb(models.BakingRightFilter{})
+	db := r.getDb(models.RightFilter{})
 	if res := db.Order("level desc, priority asc").Take(&right); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, right, nil
@@ -79,7 +91,7 @@ func (r *Repository) Last() (found bool, right models.FutureBakingRight, err err
 }
 
 // Find looks up for rights with filter.
-func (r *Repository) Find(filter models.BakingRightFilter) (found bool, right models.FutureBakingRight, err error) {
+func (r *Repository) Find(filter models.RightFilter) (found bool, right models.FutureBakingRight, err error) {
 	if res := r.getDb(filter).Find(&right); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, right, nil
@@ -100,4 +112,13 @@ func (r *Repository) CreateBulk(rights []models.FutureBakingRight) error {
 		insertRecords[i] = rights[i]
 	}
 	return gormbulk.BulkInsert(r.db, insertRecords, 2000)
+}
+
+func (r *Repository) Count(filter models.RightFilter) (count int64, err error) {
+	err = r.getDb(filter).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

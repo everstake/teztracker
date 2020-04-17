@@ -4,6 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/everstake/teztracker/repos/baking"
+	"github.com/everstake/teztracker/repos/double_endorsement"
+	"github.com/everstake/teztracker/repos/endorsing"
+	"github.com/everstake/teztracker/repos/future_endorsement_rights"
 	"github.com/everstake/teztracker/repos/voting_periods"
 
 	"github.com/everstake/teztracker/repos/account"
@@ -63,6 +67,14 @@ func (u *Provider) GetBaker() baker.Repo {
 	return baker.New(u.getDB())
 }
 
+func (u *Provider) GetBaking() baking.Repo {
+	return baking.New(u.getDB())
+}
+
+func (u *Provider) GetEndorsing() endorsing.Repo {
+	return endorsing.New(u.getDB())
+}
+
 func (u *Provider) GetOperationCounter() operation_counter.Repo {
 	return operation_counter.New(u.getDB())
 }
@@ -71,12 +83,20 @@ func (u *Provider) GetFutureBakingRight() future_baking_rights.Repo {
 	return future_baking_rights.New(u.getDB())
 }
 
+func (u *Provider) GetFutureEndorsementRight() future_endorsement_rights.Repo {
+	return future_endorsement_rights.New(u.getDB())
+}
+
 func (u *Provider) GetSnapshots() snapshots.Repo {
 	return snapshots.New(u.getDB())
 }
 
 func (u *Provider) GetDoubleBaking() double_baking.Repo {
 	return double_baking.New(u.getDB())
+}
+
+func (u *Provider) GetDoubleEndorsement() double_endorsement.Repo {
+	return double_endorsement.New(u.getDB())
 }
 
 func (u *Provider) GetVotingPeriod() voting_periods.Repo {

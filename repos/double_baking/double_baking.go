@@ -12,27 +12,30 @@ type (
 	}
 
 	Repo interface {
-		List(options models.DoubleBakingEvidenceQueryOptions) (count int64, evidences []models.DoubleBakingEvidence, err error)
-		Last() (found bool, evidence models.DoubleBakingEvidence, err error)
-		Create(evidence models.DoubleBakingEvidence) error
+		List(options models.DoubleOperationEvidenceQueryOptions) (count int64, evidences []models.DoubleOperationEvidence, err error)
+		Last() (found bool, evidence models.DoubleOperationEvidence, err error)
+		Create(evidence models.DoubleOperationEvidence) error
 	}
 )
 
 // New creates an instance of repository using the provided db.
 func New(db *gorm.DB) *Repository {
 	return &Repository{
-		db: db.Model(&models.DoubleBakingEvidence{}),
+		db: db.Model(&models.DoubleOperationEvidence{}),
 	}
 }
 
-func (r *Repository) getDb(options models.DoubleBakingEvidenceQueryOptions) *gorm.DB {
-	db := r.db.Model(&models.DoubleBakingEvidence{})
+func (r *Repository) getDb(options models.DoubleOperationEvidenceQueryOptions) *gorm.DB {
+	db := r.db.Select("*").Model(&models.DoubleOperationEvidence{}).
+		Where("doe_type = ?", options.Type).
+		Joins("left join tezos.public_bakers as off on doe_offender = off.delegate").
+		Joins("left join tezos.public_bakers as evd on doe_evidence_baker = evd.delegate")
 	if options.LoadOperation {
 		db = db.Preload("Operation")
 	}
 
 	if len(options.BlockIDs) != 0 {
-		db = db.Where("dbe_block_hash IN (?)", options.BlockIDs)
+		db = db.Where("doe_block_hash IN (?)", options.BlockIDs)
 	}
 	if len(options.OperationHashes) != 0 {
 		db = db.Joins("natural join tezos.operations")
@@ -42,7 +45,7 @@ func (r *Repository) getDb(options models.DoubleBakingEvidenceQueryOptions) *gor
 }
 
 // List returns a list of evidences from the newest to oldest.
-func (r *Repository) List(options models.DoubleBakingEvidenceQueryOptions) (count int64, evidences []models.DoubleBakingEvidence, err error) {
+func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (count int64, evidences []models.DoubleOperationEvidence, err error) {
 	db := r.getDb(options)
 	if err := db.Count(&count).Error; err != nil {
 		return 0, nil, err
@@ -60,9 +63,11 @@ func (r *Repository) List(options models.DoubleBakingEvidenceQueryOptions) (coun
 	return count, evidences, err
 }
 
-func (r *Repository) Last() (found bool, evidence models.DoubleBakingEvidence, err error) {
-	db := r.db.Model(&evidence)
-	if res := db.Order("operation_id desc").Take(&evidence); res.Error != nil {
+func (r *Repository) Last() (found bool, evidence models.DoubleOperationEvidence, err error) {
+	db := r.getDb(models.DoubleOperationEvidenceQueryOptions{})
+
+	if res := db.Where("doe_type = ?", models.DoubleOperationTypeBaking).
+		Order("operation_id desc").Take(&evidence); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, evidence, nil
 		}
@@ -71,7 +76,7 @@ func (r *Repository) Last() (found bool, evidence models.DoubleBakingEvidence, e
 	return true, evidence, nil
 }
 
-// Create creates a DoubleBakingEvidence.
-func (r *Repository) Create(evidence models.DoubleBakingEvidence) error {
+// Create creates a DoubleOperationEvidence.
+func (r *Repository) Create(evidence models.DoubleOperationEvidence) error {
 	return r.db.Model(&evidence).Create(&evidence).Error
 }
