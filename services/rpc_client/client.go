@@ -124,9 +124,10 @@ func (t *Tezos) EndorsementRightsFor(ctx context.Context, blockFrom, blockTo, cu
 
 func genEndorsementRightToModel(m genmodels.EndorsementRight) models.FutureEndorsementRight {
 	return models.FutureEndorsementRight{
-		Level:    m.Level,
-		Slots:    m.Slots,
-		Delegate: m.Delegate,
+		Level:         m.Level,
+		Slots:         m.Slots,
+		Delegate:      m.Delegate,
+		EstimatedTime: time.Time(m.EstimatedTime),
 	}
 }
 

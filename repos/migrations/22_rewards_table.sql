@@ -25,12 +25,11 @@ EXECUTE PROCEDURE tezos.baking_rewards();
 
 CREATE OR REPLACE VIEW tezos.frozen_endorsement_rewards as
 select delegate,sum(reward) rewards, sum(count) count
-from tezos.endorsements_materialized_view  where cycle >= (select meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
+from tezos.baker_cycle_endorsements_view  where cycle >= (select meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
 
-CREATE OR REPLACE VIEW tezos.frozen_baking_rewards as
+ CREATE OR REPLACE VIEW tezos.frozen_baking_rewards as
 select delegate,sum(reward) rewards, sum(count) count
-from tezos.baking_materialized_view where cycle >= (select meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
-drop materialized view tezos.baker_view;
+from tezos.baker_cycle_bakings_view where cycle >= (select meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
 
 --Add frozen rewards and count
 drop materialized view tezos.baker_view;
