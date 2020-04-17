@@ -19,7 +19,6 @@ const (
 	TokensPerRoll              = 8000
 	TotalLocked                = (BlockSecurityDeposit + EndorsementSecurityDeposit*BlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
 	BlockLockEstimate          = BlockReward + BlockSecurityDeposit + BlockEndorsers*(EndorsementReward+EndorsementSecurityDeposit)
-	StakingRatioCacheKey       = "staking_ratio"
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
@@ -152,10 +151,6 @@ func (t *TezTracker) getLockedBalance() (int64, error) {
 
 // GetStakingRatio calculates the rough ratio of staked balance to the total supply.
 func (t *TezTracker) GetStakingRatio() (float64, error) {
-	if ration, isFound := t.Cache.Get(StakingRatioCacheKey); isFound {
-		return ration.(float64), nil
-	}
-
 	lockedBalanceEstimate, err := t.getLockedBalance()
 	if err != nil {
 		return 0, err
@@ -195,8 +190,6 @@ func (t *TezTracker) GetStakingRatio() (float64, error) {
 
 	stakedBalance = stakedBalance - bakingRewards - endorsementRewards
 	ratio := float64(stakedBalance) / float64(supply)
-
-	t.Cache.Set(StakingRatioCacheKey, ratio, cacheTTL)
 
 	return ratio, nil
 }

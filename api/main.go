@@ -5,6 +5,7 @@ import (
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services/cmc"
 	"github.com/jinzhu/gorm"
+	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,7 +21,7 @@ func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
 	serv.BlocksGetBlockEndorsementsHandler = &getBlockEndorsementsHandler{db}
 	serv.BlocksGetBlockHandler = &getBlockHandler{db}
 	serv.OperationsListGetOperationsListHandler = &getOperationListHandler{db}
-	serv.AppInfoGetInfoHandler = &getInfoHandler{cmc.NewCoinGecko(), db}
+	serv.AppInfoGetInfoHandler = &getInfoHandler{cmc.NewCoinGecko(), db, cache.New(cacheTTL, cacheTTL)}
 	//Account
 	serv.AccountsGetAccountsListHandler = &getAccountListHandler{db}
 	serv.AccountsGetAccountHandler = &getAccountHandler{db}
