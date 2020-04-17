@@ -46,7 +46,7 @@ func (t *TezTracker) PublicBakerList(limits Limiter) (bakers []models.Baker, cou
 	}
 
 	for i := range bakers {
-		bakers[i].StakingCapacity = t.calcBakerCapacity(bakers[i].Balance, snap.Rolls)
+		bakers[i].StakingCapacity = t.calcBakerCapacity(bakers[i], snap.Rolls)
 	}
 
 	return bakers, count, nil
@@ -64,14 +64,14 @@ func (t *TezTracker) BakerList(limits Limiter) (bakers []models.Baker, count int
 }
 
 //Used BakingBad capacity formula
-func (t *TezTracker) calcBakerCapacity(bakerBalance, totalRolls int64) int64 {
-	bakerBalanceF := float64(bakerBalance)
+func (t *TezTracker) calcBakerCapacity(bi models.Baker, totalRolls int64) int64 {
+	bakerBalanceF := float64(bi.Balance - bi.FrozenEndorsementRewards - bi.FrozenBakingRewards)
 	totalRollsF := float64(totalRolls)
 
 	bakerShare := bakerBalanceF / float64(TotalLocked)
 
 	bakerRollsCapacity := totalRollsF * bakerShare
-	return int64(bakerRollsCapacity * float64(TokensPerRoll))
+	return int64(bakerRollsCapacity * float64(TokensPerRoll) * float64(XTZ))
 }
 
 func (t *TezTracker) GetCurrentCycle() (int64, error) {
@@ -114,49 +114,23 @@ func (t *TezTracker) GetBakerInfo(accountID string) (bi *models.Baker, err error
 	}
 
 	//Get last snapshot
-	_, snap, err := t.repoProvider.GetSnapshots().Find(block.MetaCycle - PreservedCycles)
+	_, snap, err := t.repoProvider.GetSnapshots().Find(block.MetaCycle - PreservedCycles - 2)
 	if err != nil {
 		return nil, err
 	}
 
-	baker.StakingCapacity = t.calcBakerCapacity(baker.Balance, snap.Rolls)
+	baker.StakingCapacity = t.calcBakerCapacity(baker, snap.Rolls)
 
 	return &baker, nil
 }
 
 func (t *TezTracker) calcDepositRewards(bi *models.BakerStats, accountID string) (err error) {
-	r := t.repoProvider.GetBaker()
-	curCycle, err := t.GetCurrentCycle()
-	if err != nil {
-		return err
-	}
 
-	fpb := getFirstPreservedBlock(curCycle, t.BlocksInCycle())
-	counter, err := r.BlocksCountBakedBy([]string{accountID}, fpb)
-	if err != nil {
-		return err
-	}
+	bi.BakingDeposits = bi.BakingCount * BlockSecurityDeposit
+	bi.BakingRewards = bi.FrozenBakingRewards
 
-	var blocksCount int64
-	if len(counter) == 1 {
-		blocksCount = counter[0].Count
-	}
-
-	bi.BakingDeposits = blocksCount * BlockSecurityDeposit
-	bi.BakingRewards = blocksCount * BlockReward
-
-	endCounter, err := r.EndorsementsCountBy([]string{accountID}, fpb)
-	if err != nil {
-		return err
-	}
-	var endorsementCount int64
-	var endorsementWeight float64
-	if len(endCounter) == 1 {
-		endorsementCount = endCounter[0].Count
-		endorsementWeight = endCounter[0].Weight
-	}
-	bi.EndorsementDeposits = endorsementCount * EndorsementSecurityDeposit
-	bi.EndorsementRewards = int64(endorsementWeight * EndorsementReward)
+	bi.EndorsementDeposits = bi.EndorsementCount * EndorsementSecurityDeposit
+	bi.EndorsementRewards = bi.FrozenEndorsementRewards
 
 	return nil
 }
@@ -199,6 +173,22 @@ func (t *TezTracker) GetStakingRatio() (float64, error) {
 		return 0, nil
 	}
 
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return 0, nil
+	}
+
+	bakingRewards, err := br.TotalBakingRewards("", lastBlock.MetaCycle-PreservedCycles, lastBlock.MetaCycle)
+	if err != nil {
+		return 0, nil
+	}
+
+	endorsementRewards, err := br.TotalEndorsementRewards("", lastBlock.MetaCycle-PreservedCycles, lastBlock.MetaCycle)
+	if err != nil {
+		return 0, nil
+	}
+
+	stakedBalance = stakedBalance - bakingRewards - endorsementRewards
 	ratio := float64(stakedBalance) / float64(supply)
 
 	return ratio, nil
