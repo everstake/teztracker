@@ -3907,7 +3907,8 @@ func init() {
         "operationId",
         "operationGroupHash",
         "kind",
-        "blockLevel"
+        "blockLevel",
+        "confirmations"
       ],
       "properties": {
         "amount": {
@@ -3928,11 +3929,23 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "claimedAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "confirmations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "consumedGas": {
           "type": "integer",
           "format": "int64"
         },
         "counter": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
           "type": "integer",
           "format": "int64"
         },
@@ -3957,6 +3970,14 @@ func init() {
         },
         "doubleBake": {
           "$ref": "#/definitions/DoubleBakingDetails"
+        },
+        "endorsementDeposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endorsementReward": {
+          "type": "integer",
+          "format": "int64"
         },
         "fee": {
           "type": "integer",
@@ -8135,7 +8156,8 @@ func init() {
         "operationId",
         "operationGroupHash",
         "kind",
-        "blockLevel"
+        "blockLevel",
+        "confirmations"
       ],
       "properties": {
         "amount": {
@@ -8156,11 +8178,23 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "claimedAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "confirmations": {
+          "type": "integer",
+          "format": "int64"
+        },
         "consumedGas": {
           "type": "integer",
           "format": "int64"
         },
         "counter": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
           "type": "integer",
           "format": "int64"
         },
@@ -8185,6 +8219,14 @@ func init() {
         },
         "doubleBake": {
           "$ref": "#/definitions/DoubleBakingDetails"
+        },
+        "endorsementDeposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endorsementReward": {
+          "type": "integer",
+          "format": "int64"
         },
         "fee": {
           "type": "integer",

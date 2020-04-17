@@ -48,6 +48,11 @@ func Operation(b models.Operation, dbe *models.DoubleBakingEvidence) *genModels.
 		BlockLevel:          b.BlockLevel.Ptr(),
 		Ballot:              b.Ballot,
 		Proposal:            b.Proposal,
+		Cycle:               b.Cycle,
+		Confirmations:       &b.Confirmations,
+		EndorsementReward:   b.EndorsementReward,
+		EndorsementDeposit:  b.EndorsementDeposit,
+		ClaimedAmount:       b.ClaimedAmount,
 		Timestamp:           &ts,
 	}
 	if dbe != nil {
