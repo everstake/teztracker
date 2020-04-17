@@ -39,7 +39,7 @@ func (t *TezTracker) GetAccountEndorsementsList(accountID string, cycle int64, l
 	}
 
 	for i := range list {
-		list[i].Deposit = EndorsementSecurityDeposit
+		list[i].EndorsementDeposit = EndorsementSecurityDeposit
 	}
 
 	return count, list, nil
