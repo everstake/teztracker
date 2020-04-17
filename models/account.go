@@ -77,3 +77,18 @@ type AccountEndorsing struct {
 	Reward       int64
 	TotalDeposit int64
 }
+
+type AccountReward struct {
+	Status                 RewardStatus
+	Cycle                  int64
+	Delegators             int64
+	StakingBalance         int64
+	BakingRewards          int64
+	FutureBakingCount      int64
+	EndorsementRewards     int64
+	FutureEndorsementCount int64
+	Fees                   int64
+	MissedBaking           int64
+	MissedEndorsements     int64
+	Losses                 int64
+}
