@@ -15,6 +15,8 @@ import (
 	"github.com/everstake/teztracker/repos/operation_groups"
 	"github.com/everstake/teztracker/repos/snapshots"
 	"github.com/everstake/teztracker/repos/voting_periods"
+	"github.com/patrickmn/go-cache"
+	"time"
 )
 
 //go:generate mockgen -source ./main.go -destination ./mock_service/main.go Provider
@@ -23,6 +25,7 @@ type (
 	TezTracker struct {
 		repoProvider Provider
 		net          models.Network
+		Cache        *cache.Cache
 	}
 
 	// Provider is the abstract interface to get any repository.
@@ -50,10 +53,13 @@ type (
 
 // New creates a new TexTracker service using the repository provider.
 func New(rp Provider, net models.Network) *TezTracker {
-	return &TezTracker{repoProvider: rp, net: net}
+	return &TezTracker{repoProvider: rp, net: net, Cache: cache.New(cacheTTL, cacheTTL)}
 }
 
-const BlocksInMainnetCycle = 4096
+const (
+	BlocksInMainnetCycle = 4096
+	cacheTTL             = 1 * time.Minute
+)
 
 func (t *TezTracker) BlocksInCycle() int64 {
 	if t.net == models.NetworkMain {
