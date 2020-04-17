@@ -53,7 +53,9 @@ func New(rp Provider, net models.Network) *TezTracker {
 	return &TezTracker{repoProvider: rp, net: net}
 }
 
-const BlocksInMainnetCycle = 4096
+const (
+	BlocksInMainnetCycle = 4096
+)
 
 func (t *TezTracker) BlocksInCycle() int64 {
 	if t.net == models.NetworkMain {
