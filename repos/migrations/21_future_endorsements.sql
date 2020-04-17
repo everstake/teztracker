@@ -7,6 +7,11 @@ CREATE TABLE tezos.future_endorsement_rights (
     PRIMARY KEY (level, delegate, cycle)
 );
 
-
 CREATE INDEX future_endorsement_rights_delegate_cycle_idx
     ON tezos.future_endorsement_rights USING btree (delegate,cycle);
+
+CREATE VIEW tezos.baker_future_endorsement_view as
+select delegate, cycle, sum(array_length(slots, 1)) as count
+from tezos.future_endorsement_rights
+where level > (select level from tezos.blocks order by level desc limit 1)
+group by delegate, cycle;

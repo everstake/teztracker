@@ -5,13 +5,6 @@ import (
 	"time"
 )
 
-type RightFilter struct {
-	BlockFilter
-	Delegates    []string
-	PriorityFrom int
-	PriorityTo   int
-}
-
 type FutureEndorsementRight struct {
 	Level         int64         `json:"level"`
 	Delegate      string        `json:"delegate"`
@@ -19,6 +12,8 @@ type FutureEndorsementRight struct {
 	Cycle         int64         `json:"cycle"`
 	Slots         pq.Int64Array `json:"slots" gorm: "type:integer[]"`
 	EstimatedTime time.Time     `json:"estimated_time"`
+	Reward        int64         `json:"reward"  gorm:"-"`
+	Deposit       int64         `json:"deposit"  gorm:"-"`
 }
 
 type FutureBlockEndorsementRight struct {

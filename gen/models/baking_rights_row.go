@@ -23,13 +23,22 @@ type BakingRightsRow struct {
 	// delegate name
 	DelegateName string `json:"delegate_name,omitempty"`
 
+	// deposit
+	Deposit int64 `json:"deposit,omitempty"`
+
 	// estimated time
 	// Format: date-time
 	EstimatedTime strfmt.DateTime `json:"estimated_time,omitempty"`
 
+	// level
+	Level int64 `json:"level,omitempty"`
+
 	// priority
 	// Required: true
 	Priority *int64 `json:"priority"`
+
+	// reward
+	Reward int64 `json:"reward,omitempty"`
 }
 
 // Validate validates this baking rights row

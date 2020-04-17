@@ -50,6 +50,9 @@ type BlocksRow struct {
 	// delegations
 	Delegations int64 `json:"delegations,omitempty"`
 
+	// deposit
+	Deposit int64 `json:"deposit,omitempty"`
+
 	// double baking evidence
 	DoubleBakingEvidence int64 `json:"double_baking_evidence,omitempty"`
 

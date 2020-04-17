@@ -38,6 +38,15 @@ const (
 	AccountTypeContract
 )
 
+type RewardStatus string
+
+const (
+	StatusPending  RewardStatus = "pending"
+	StatusActive   RewardStatus = "active"
+	StatusFrozen   RewardStatus = "frozen"
+	StatusUnfrozen RewardStatus = "unfrozen"
+)
+
 type AccountFilter struct {
 	Type     AccountType
 	Delegate string
@@ -47,4 +56,24 @@ type AccountFilter struct {
 type AccountBalance struct {
 	Time    time.Time
 	Balance int64
+}
+
+type AccountBaking struct {
+	Cycle        int64
+	Status       RewardStatus
+	Count        int64
+	Missed       int64
+	Reward       int64
+	AvgPriority  float32
+	Stolen       int64
+	TotalDeposit int64
+}
+
+type AccountEndorsing struct {
+	Cycle        int64
+	Status       RewardStatus
+	Count        int64
+	Missed       int64
+	Reward       int64
+	TotalDeposit int64
 }

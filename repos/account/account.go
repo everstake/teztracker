@@ -26,7 +26,9 @@ type (
 	}
 )
 
-const accountMaterializedView = "tezos.account_materialized_view"
+const (
+	accountMaterializedView = "tezos.account_materialized_view"
+)
 
 // New creates an instance of repository using the provided db.
 func New(db *gorm.DB) *Repository {

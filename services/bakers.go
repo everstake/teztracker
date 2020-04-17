@@ -10,6 +10,7 @@ const (
 	BlockSecurityDeposit       = 512 * XTZ
 	EndorsementSecurityDeposit = 64 * XTZ
 	BlockReward                = 40 * XTZ
+	LowPriorityBlockReward     = 6 * XTZ
 	EndorsementReward          = 1.25 * XTZ
 	BlockEndorsers             = 32
 	TokensPerRoll              = 8000
