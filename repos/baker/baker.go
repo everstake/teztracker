@@ -140,7 +140,7 @@ func (r *Repository) TotalBakingRewards(accountId string, fromCycle, toCycle int
 		Rewards int64
 	}{}
 
-	db := r.db.Table("tezos.baking_materialized_view").
+	db := r.db.Table("tezos.baker_cycle_bakings_view").
 		Select("SUM(reward) rewards").
 		Where("cycle >= ?", fromCycle).
 		Where("cycle <= ?", toCycle)
@@ -161,7 +161,7 @@ func (r *Repository) TotalEndorsementRewards(accountId string, fromCycle, toCycl
 		Rewards int64
 	}{}
 
-	db := r.db.Table("tezos.endorsements_materialized_view").
+	db := r.db.Table("tezos.baker_cycle_endorsements_view").
 		Select("SUM(reward) rewards").
 		Where("cycle >= ?", fromCycle).
 		Where("cycle <= ?", toCycle)
