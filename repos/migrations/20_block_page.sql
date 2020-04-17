@@ -42,3 +42,6 @@ CREATE OR REPLACE VIEW tezos.block_aggregation_view
 
 create index concurrently balance_updates_source_hash_index
   on tezos.balance_updates (source_hash) where category='rewards' and source='block';
+
+create index concurrently ix_balance_updates_operation_group_hash_deposits
+  on tezos.balance_updates (operation_group_hash, category) where category = 'deposits' and operation_group_hash IS NOT NULL;

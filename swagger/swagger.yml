@@ -662,55 +662,6 @@ paths:
           description: Not Found
       tags:
         - Accounts
-  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}':
-    get:
-      operationId: getAccountEndorsingList
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: platform
-          description: Not used
-          required: true
-          type: string
-        - in: path
-          name: network
-          description: Not used
-          required: true
-          type: string
-        - in: path
-          name: accountId
-          required: true
-          type: string
-        - in: query
-          name: limit
-          type: integer
-          default: 20
-          minimum: 1
-          maximum: 500
-        - in: query
-          name: offset
-          description: Offset
-          type: integer
-          default: 0
-          minimum: 0
-      responses:
-        '200':
-          description: Query compatibility endpoint for account baking
-          schema:
-            items:
-              $ref: '#/definitions/AccountEndorsingRow'
-            type: array
-          headers:
-            X-Total-Count:
-              description: The total number of data entries.
-              type: integer
-        '400':
-          description: Bad request
-        '404':
-          description: Not Found
-      tags:
-        - Accounts
   '/v2/data/{platform}/{network}/accounts/baking/{accountId}/total':
     get:
       operationId: getAccountTotalBaking
@@ -736,70 +687,6 @@ paths:
           description: Query compatibility endpoint for account baking
           schema:
               $ref: '#/definitions/AccountBakingRow'
-        '400':
-          description: Bad request
-        '404':
-          description: Not Found
-      tags:
-        - Accounts
-  '/v2/data/{platform}/{network}/accounts/baking/{accountId}/future':
-    get:
-      operationId: getAccountFutureBaking
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: platform
-          description: Not used
-          required: true
-          type: string
-        - in: path
-          name: network
-          description: Not used
-          required: true
-          type: string
-        - in: path
-          name: accountId
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Query compatibility endpoint for account future baking
-          schema:
-            items:
-              $ref: '#/definitions/AccountBakingRow'
-            type: array
-        '400':
-          description: Bad request
-        '404':
-          description: Not Found
-      tags:
-        - Accounts
-  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/total':
-    get:
-      operationId: getAccountTotalEndorsing
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: platform
-          description: Not used
-          required: true
-          type: string
-        - in: path
-          name: network
-          description: Not used
-          required: true
-          type: string
-        - in: path
-          name: accountId
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Query compatibility endpoint for account baking
-          schema:
-            $ref: '#/definitions/AccountEndorsingRow'
         '400':
           description: Bad request
         '404':
@@ -850,9 +737,175 @@ paths:
               $ref: '#/definitions/BlocksRow'
             type: array
           headers:
-              X-Total-Count:
-                description: The total number of data entries.
-                type: integer
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/baking/{accountId}/future':
+    get:
+      operationId: getAccountFutureBaking
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account future baking
+          schema:
+            items:
+              $ref: '#/definitions/AccountBakingRow'
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/baking/{accountId}/future_baking_rights/{cycleId}':
+    get:
+      operationId: getAccountFutureBakingRightsByCycle
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: path
+          name: cycleId
+          required: true
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for account future baking
+          schema:
+            items:
+              $ref: '#/definitions/BakingRightsRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}':
+    get:
+      operationId: getAccountEndorsingList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for account baking
+          schema:
+            items:
+              $ref: '#/definitions/AccountEndorsingRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/total':
+    get:
+      operationId: getAccountTotalEndorsing
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account baking
+          schema:
+            $ref: '#/definitions/AccountEndorsingRow'
         '400':
           description: Bad request
         '404':
@@ -901,6 +954,92 @@ paths:
           schema:
             items:
               $ref: '#/definitions/OperationsRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future':
+    get:
+      operationId: getAccountFutureEndorsing
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account future baking
+          schema:
+            items:
+              $ref: '#/definitions/AccountEndorsingRow'
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future_endorsement_rights/{cycleId}':
+    get:
+      operationId: getAccountFutureEndorsementRightsByCycle
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: path
+          name: cycleId
+          required: true
+          type: integer
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for account future baking
+          schema:
+            items:
+              $ref: '#/definitions/EndorsementRightsRow'
             type: array
           headers:
             X-Total-Count:
@@ -2332,6 +2471,9 @@ definitions:
       reward:
         format: int64
         type: integer
+      deposit:
+        format: int64
+        type: integer
     required:
       - timestamp
       - validationPass
@@ -2413,6 +2555,15 @@ definitions:
       counter:
         type: integer
         format: int64
+      cycle:
+        type: integer
+        format: int64
+      confirmations:
+        type: integer
+        format: int64
+      claimedAmount:
+        type: integer
+        format: int64
       delegatable:
         type: boolean
       delegate:
@@ -2426,6 +2577,12 @@ definitions:
         type: string
       destinationName:
         type: string
+      endorsementDeposit:
+        type: integer
+        format: int64
+      endorsementReward:
+        type: integer
+        format: int64
       fee:
         type: integer
         format: int64
@@ -2496,6 +2653,7 @@ definitions:
       - operationGroupHash
       - kind
       - blockLevel
+      - confirmations
     type: object
   BakingRightsPerBlock:
     properties:
@@ -2525,6 +2683,9 @@ definitions:
           $ref: '#/definitions/BakingRightsRow'
   BakingRightsRow:
     properties:
+      level:
+        format: int64
+        type: integer
       priority:
         format: int64
         type: integer
@@ -2535,6 +2696,12 @@ definitions:
       estimated_time:
         type: string
         format: date-time
+      reward:
+        format: int64
+        type: integer
+      deposit:
+        format: int64
+        type: integer
     required:
       - priority
   Snapshots:
@@ -2710,6 +2877,11 @@ definitions:
       rewards:
         type: integer
         format: int64
+      status:
+        type: string
+      totalDeposit:
+        type: integer
+        format: int64
     required:
       - avgPriority
       - missed
@@ -2717,6 +2889,7 @@ definitions:
       - cycle
       - rewards
       - blocks
+      - totalDeposit
   AccountEndorsingRow:
     properties:
       cycle:
@@ -2731,11 +2904,43 @@ definitions:
       rewards:
         type: integer
         format: int64
+      status:
+        type: string
+      totalDeposit:
+        type: integer
+        format: int64
     required:
       - cycle
       - missed
       - rewards
       - slots
+      - totalDeposit
+  EndorsementRightsRow:
+    properties:
+      cycle:
+        type: integer
+        format: int64
+      blockLevel:
+        type: integer
+        format: int64
+      delegate:
+        type: string
+      delegate_name:
+        type: string
+      slots:
+        type: array
+        items:
+          type: integer
+          format: int64
+      reward:
+        type: integer
+        format: int64
+      deposit:
+        type: integer
+        format: int64
+      timestamp:
+        type: integer
+        format: int64
   AccountRewardsRow:
     properties:
       cycle:
@@ -2759,6 +2964,8 @@ definitions:
       fees:
         type: integer
         format: int64
+      status:
+        type: string
     required:
       - cycle
       - delegators

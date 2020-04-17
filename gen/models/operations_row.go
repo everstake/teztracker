@@ -34,11 +34,21 @@ type OperationsRow struct {
 	// Required: true
 	BlockLevel *int64 `json:"blockLevel"`
 
+	// claimed amount
+	ClaimedAmount int64 `json:"claimedAmount,omitempty"`
+
+	// confirmations
+	// Required: true
+	Confirmations *int64 `json:"confirmations"`
+
 	// consumed gas
 	ConsumedGas int64 `json:"consumedGas,omitempty"`
 
 	// counter
 	Counter int64 `json:"counter,omitempty"`
+
+	// cycle
+	Cycle int64 `json:"cycle,omitempty"`
 
 	// delegatable
 	Delegatable bool `json:"delegatable,omitempty"`
@@ -60,6 +70,12 @@ type OperationsRow struct {
 
 	// double operation details
 	DoubleOperationDetails *DoubleOperationDetails `json:"doubleOperationDetails,omitempty"`
+
+	// endorsement deposit
+	EndorsementDeposit int64 `json:"endorsementDeposit,omitempty"`
+
+	// endorsement reward
+	EndorsementReward int64 `json:"endorsementReward,omitempty"`
 
 	// fee
 	Fee int64 `json:"fee,omitempty"`
@@ -156,6 +172,10 @@ func (m *OperationsRow) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateConfirmations(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDoubleOperationDetails(formats); err != nil {
 		res = append(res, err)
 	}
@@ -194,6 +214,15 @@ func (m *OperationsRow) validateBlockHash(formats strfmt.Registry) error {
 func (m *OperationsRow) validateBlockLevel(formats strfmt.Registry) error {
 
 	if err := validate.Required("blockLevel", "body", m.BlockLevel); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *OperationsRow) validateConfirmations(formats strfmt.Registry) error {
+
+	if err := validate.Required("confirmations", "body", m.Confirmations); err != nil {
 		return err
 	}
 
