@@ -19,5 +19,5 @@ CREATE TABLE tezos.double_operation_evidences (
 INSERT INTO tezos.double_operation_evidences(operation_id, doe_block_hash, doe_block_level, doe_denounced_level,
                                              doe_offender, doe_priority, doe_evidence_baker, doe_baker_reward,
                                              doe_lost_deposits, doe_lost_rewards, doe_lost_fees, doe_type)
-SELECT *, 'baking'
+SELECT *, 'double_baking_evidence'
 from tezos.double_baking_evidences;

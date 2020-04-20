@@ -56,9 +56,10 @@ EXECUTE PROCEDURE tezos.baker_bakings();
 alter table tezos.future_baking_rights
 	add cycle integer;
 
+ALTER TABLE tezos.future_baking_rights DROP CONSTRAINT future_baking_rights_pkey;
 
 alter table tezos.future_baking_rights
-    add constraint future_baking_rights_pk
+    add constraint future_baking_rights_pkey
 	    primary key (cycle, level, delegate, priority);
 
 CREATE VIEW tezos.baker_future_baking_rights_view as
