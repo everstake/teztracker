@@ -176,7 +176,7 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 		return 0, rewards, err
 	}
 
-	err = db.Select("br.*, cbv.reward as baking_rewards, cbv.missed missed_baking, fbrv.count as future_baking_count, cev.reward endorsement_rewards ,cev.missed missed_endorsements, fev.count future_endorsement_count").
+	err = db.Select("br.*, cbv.reward as baking_rewards, cbv.missed missed_baking, cbv.fees, fbrv.count as future_baking_count, cev.reward endorsement_rewards ,cev.missed missed_endorsements, fev.count future_endorsement_count").
 		Joins("left join tezos.baker_future_baking_rights_view fbrv on br.baker = fbrv.delegate and br.cycle = fbrv.cycle").
 		Joins("left join tezos.baker_cycle_bakings_view cbv on br.baker = cbv.delegate and br.cycle = cbv.cycle").
 		Joins("left join tezos.baker_cycle_endorsements_view cev on br.baker = cev.delegate and br.cycle = cev.cycle").
