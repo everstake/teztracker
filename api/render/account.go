@@ -67,6 +67,7 @@ func AccountReward(acb models.AccountReward) *genModels.AccountRewardsRow {
 		Status:         string(acb.Status),
 		Delegators:     &acb.Delegators,
 		Baking:         &acb.BakingRewards,
+		Fees:           &acb.Fees,
 		StakingBalance: &acb.StakingBalance,
 		Endorsements:   &acb.EndorsementRewards,
 		Losses:         &acb.Losses,
