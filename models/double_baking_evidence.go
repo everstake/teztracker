@@ -3,8 +3,8 @@ package models
 type DoubleOperationType string
 
 const (
-	DoubleOperationTypeBaking      DoubleOperationType = "baking"
-	DoubleOperationTypeEndorsement DoubleOperationType = "endorsement"
+	DoubleOperationTypeBaking      DoubleOperationType = "double_baking_evidence"
+	DoubleOperationTypeEndorsement DoubleOperationType = "double_endorsement_evidence"
 )
 
 type DoubleOperationEvidence struct {
@@ -28,6 +28,7 @@ type DoubleOperationEvidence struct {
 type DoubleOperationEvidenceQueryOptions struct {
 	BlockIDs        []string
 	OperationHashes []string
+	OperationIDs    []int64
 	Type            DoubleOperationType
 	LoadOperation   bool
 	Limit           uint

@@ -139,10 +139,10 @@ func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, li
 	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs, false)
 
 	if since > 0 {
-		db = db.Where("operation_id < ?", since)
+		db = db.Where("operations.operation_id < ?", since)
 	}
 
-	db = db.Order("operation_id desc").
+	db = db.Order("operations.operation_id desc").
 		Limit(limit).
 		Offset(offset)
 
