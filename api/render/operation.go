@@ -76,7 +76,7 @@ func Operation(b models.Operation, dbe *models.DoubleOperationEvidence) *genMode
 func Operations(bs []models.Operation) []*genModels.OperationsRow {
 	operations := make([]*genModels.OperationsRow, len(bs))
 	for i := range bs {
-		operations[i] = Operation(bs[i], nil)
+		operations[i] = Operation(bs[i], bs[i].DoubleOperationEvidence)
 	}
 	return operations
 }

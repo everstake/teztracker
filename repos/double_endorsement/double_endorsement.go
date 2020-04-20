@@ -41,6 +41,10 @@ func (r *Repository) getDb(options models.DoubleOperationEvidenceQueryOptions) *
 		db = db.Joins("natural join tezos.operations")
 		db = db.Where("operations.operation_group_hash in (?)", options.OperationHashes)
 	}
+	if len(options.OperationIDs) != 0 {
+		db = db.Where("double_operation_evidences.operation_id in (?)", options.OperationIDs)
+	}
+
 	return db
 }
 
@@ -66,7 +70,7 @@ func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (c
 func (r *Repository) Last() (found bool, evidence models.DoubleOperationEvidence, err error) {
 	db := r.getDb(models.DoubleOperationEvidenceQueryOptions{})
 
-	if res := db.Where("doe_type = ?", models.DoubleOperationTypeBaking).
+	if res := db.Where("doe_type = ?", models.DoubleOperationTypeEndorsement).
 		Order("operation_id desc").Take(&evidence); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, evidence, nil

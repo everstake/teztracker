@@ -26,7 +26,26 @@ func (t *TezTracker) GetOperations(ids, kinds, inBlocks, accountIDs []string, li
 	}
 
 	for i := range operations {
+		switch operations[i].Kind.String {
+		case string(models.DoubleOperationTypeEndorsement), string(models.DoubleOperationTypeBaking):
+			r := t.repoProvider.GetDoubleEndorsement()
+			options := models.DoubleOperationEvidenceQueryOptions{
+				OperationIDs: []int64{operations[i].OperationID.Int64},
+				Type:         models.DoubleOperationType(operations[i].Kind.String),
+				Limit:        limits.Limit(),
+				Offset:       limits.Offset(),
+			}
+			count, doubleOperation, err := r.List(options)
+			if err != nil {
+				return nil, 0, err
+			}
+			if count == 1 {
+				operations[i].DoubleOperationEvidence = &doubleOperation[0]
+			}
+		}
+
 		operations[i].Confirmations = lastBlock.MetaLevel - operations[i].BlockLevel.Int64
+
 	}
 
 	return operations, count, err
@@ -54,11 +73,11 @@ func (t *TezTracker) GetBlockEndorsements(hashOrLevel string) (operations []mode
 }
 
 // GetOperations gets the operations filtering by operation kinds and blocks wiht pagination.
-func (t *TezTracker) GetDoubleBakings(ids, inBlocks []string, limits Limiter) (operations []models.DoubleOperationEvidence, count int64, err error) {
+func (t *TezTracker) GetDoubleBakings(hashes, inBlocks []string, limits Limiter) (operations []models.DoubleOperationEvidence, count int64, err error) {
 	r := t.repoProvider.GetDoubleBaking()
 	options := models.DoubleOperationEvidenceQueryOptions{
 		BlockIDs:        inBlocks,
-		OperationHashes: ids,
+		OperationHashes: hashes,
 		Type:            models.DoubleOperationTypeBaking,
 		LoadOperation:   true,
 		Limit:           limits.Limit(),
@@ -69,11 +88,11 @@ func (t *TezTracker) GetDoubleBakings(ids, inBlocks []string, limits Limiter) (o
 }
 
 // GetOperations gets the operations filtering by operation kinds and blocks wiht pagination.
-func (t *TezTracker) GetDoubleEndorsements(ids, inBlocks []string, limits Limiter) (operations []models.DoubleOperationEvidence, count int64, err error) {
+func (t *TezTracker) GetDoubleEndorsements(hashes, inBlocks []string, limits Limiter) (operations []models.DoubleOperationEvidence, count int64, err error) {
 	r := t.repoProvider.GetDoubleEndorsement()
 	options := models.DoubleOperationEvidenceQueryOptions{
 		BlockIDs:        inBlocks,
-		OperationHashes: ids,
+		OperationHashes: hashes,
 		Type:            models.DoubleOperationTypeEndorsement,
 		LoadOperation:   true,
 		Limit:           limits.Limit(),
