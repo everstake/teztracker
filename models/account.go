@@ -92,3 +92,10 @@ type AccountReward struct {
 	MissedEndorsements     int64
 	Losses                 int64
 }
+
+type AccountDelegator struct {
+	AccountId string
+	Cycle     int64
+	Balance   int64
+	Share     float64
+}

@@ -73,3 +73,20 @@ func AccountReward(acb models.AccountReward) *genModels.AccountRewardsRow {
 		Losses:         &acb.Losses,
 	}
 }
+
+func AccountDelegators(acd []models.AccountDelegator) []*genModels.BakerDelegator {
+	accd := make([]*genModels.BakerDelegator, len(acd))
+	for i := range acd {
+		accd[i] = AccountDelegator(acd[i])
+	}
+	return accd
+}
+
+func AccountDelegator(acb models.AccountDelegator) *genModels.BakerDelegator {
+	return &genModels.BakerDelegator{
+		Balance:   &acb.Balance,
+		Cycle:     &acb.Cycle,
+		Delegator: &acb.AccountId,
+		Share:     &acb.Share,
+	}
+}
