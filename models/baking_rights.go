@@ -29,7 +29,7 @@ type FutureBakingRight struct {
 	Cycle         int64     `json:"cycle"`
 	Priority      int       `json:"priority"`
 	EstimatedTime time.Time `json:"estimated_time"`
-	Deposit       int64     `json:"deposit"`
+	Deposit       int64     `json:"deposit" gorm:"-"`
 	Reward        int64     `json:"reward"`
 }
 

@@ -176,7 +176,7 @@ func ToDoubleOperationEvidence(op tzblock.Operations) (dee models.DoubleOperatio
 			return dee, nil
 		}
 	}
-	return dee, fmt.Errorf("not a double endorsement evidence")
+	return dee, fmt.Errorf("not a double operation evidence")
 }
 
 func parseDoubleOperationMetaData(dee *models.DoubleOperationEvidence, meta *tzblock.ContentsMetadata) (err error) {
