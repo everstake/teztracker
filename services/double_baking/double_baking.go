@@ -9,7 +9,7 @@ import (
 )
 
 type EvidenceRepo interface {
-	Last() (found bool, evidence models.DoubleOperationEvidence, err error)
+	Last() (found bool, evidence models.DoubleOperationEvidenceExtended, err error)
 	Create(evidence models.DoubleOperationEvidence) error
 }
 

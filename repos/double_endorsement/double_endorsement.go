@@ -12,8 +12,8 @@ type (
 	}
 
 	Repo interface {
-		List(options models.DoubleOperationEvidenceQueryOptions) (count int64, evidences []models.DoubleOperationEvidence, err error)
-		Last() (found bool, evidence models.DoubleOperationEvidence, err error)
+		List(options models.DoubleOperationEvidenceQueryOptions) (count int64, evidences []models.DoubleOperationEvidenceExtended, err error)
+		Last() (found bool, evidence models.DoubleOperationEvidenceExtended, err error)
 		Create(evidence models.DoubleOperationEvidence) error
 	}
 )
@@ -26,7 +26,7 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb(options models.DoubleOperationEvidenceQueryOptions) *gorm.DB {
-	db := r.db.Select("*").Model(&models.DoubleOperationEvidence{}).
+	db := r.db.Select("*").Table("tezos.double_operation_evidences").
 		Where("doe_type = ?", options.Type).
 		Joins("left join tezos.public_bakers as off on doe_offender = off.delegate").
 		Joins("left join tezos.public_bakers as evd on doe_evidence_baker = evd.delegate")
@@ -49,7 +49,7 @@ func (r *Repository) getDb(options models.DoubleOperationEvidenceQueryOptions) *
 }
 
 // List returns a list of evidences from the newest to oldest.
-func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (count int64, evidences []models.DoubleOperationEvidence, err error) {
+func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (count int64, evidences []models.DoubleOperationEvidenceExtended, err error) {
 	db := r.getDb(options)
 	if err := db.Count(&count).Error; err != nil {
 		return 0, nil, err
@@ -67,11 +67,10 @@ func (r *Repository) List(options models.DoubleOperationEvidenceQueryOptions) (c
 	return count, evidences, err
 }
 
-func (r *Repository) Last() (found bool, evidence models.DoubleOperationEvidence, err error) {
-	db := r.getDb(models.DoubleOperationEvidenceQueryOptions{})
+func (r *Repository) Last() (found bool, evidence models.DoubleOperationEvidenceExtended, err error) {
+	db := r.getDb(models.DoubleOperationEvidenceQueryOptions{Type: models.DoubleOperationTypeEndorsement})
 
-	if res := db.Where("doe_type = ?", models.DoubleOperationTypeEndorsement).
-		Order("operation_id desc").Take(&evidence); res.Error != nil {
+	if res := db.Order("operation_id desc").Take(&evidence); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, evidence, nil
 		}

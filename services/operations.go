@@ -40,7 +40,7 @@ func (t *TezTracker) GetOperations(ids, kinds, inBlocks, accountIDs []string, li
 				return nil, 0, err
 			}
 			if count == 1 {
-				operations[i].DoubleOperationEvidence = &doubleOperation[0]
+				operations[i].DoubleOperationEvidenceExtended = &doubleOperation[0]
 			}
 		}
 
@@ -73,7 +73,7 @@ func (t *TezTracker) GetBlockEndorsements(hashOrLevel string) (operations []mode
 }
 
 // GetOperations gets the operations filtering by operation kinds and blocks wiht pagination.
-func (t *TezTracker) GetDoubleBakings(hashes, inBlocks []string, limits Limiter) (operations []models.DoubleOperationEvidence, count int64, err error) {
+func (t *TezTracker) GetDoubleBakings(hashes, inBlocks []string, limits Limiter) (operations []models.DoubleOperationEvidenceExtended, count int64, err error) {
 	r := t.repoProvider.GetDoubleBaking()
 	options := models.DoubleOperationEvidenceQueryOptions{
 		BlockIDs:        inBlocks,
@@ -88,7 +88,7 @@ func (t *TezTracker) GetDoubleBakings(hashes, inBlocks []string, limits Limiter)
 }
 
 // GetOperations gets the operations filtering by operation kinds and blocks wiht pagination.
-func (t *TezTracker) GetDoubleEndorsements(hashes, inBlocks []string, limits Limiter) (operations []models.DoubleOperationEvidence, count int64, err error) {
+func (t *TezTracker) GetDoubleEndorsements(hashes, inBlocks []string, limits Limiter) (operations []models.DoubleOperationEvidenceExtended, count int64, err error) {
 	r := t.repoProvider.GetDoubleEndorsement()
 	options := models.DoubleOperationEvidenceQueryOptions{
 		BlockIDs:        inBlocks,
