@@ -23,6 +23,8 @@ type (
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
 		RewardsList(accountID string, limit uint, offset uint) (count int64, rewards []models.AccountReward, err error)
+		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
+		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
 		RefreshView() error
 	}
 )
@@ -186,4 +188,30 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 		Find(&rewards).Error
 
 	return count, rewards, err
+}
+
+func (r *Repository) CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error) {
+	err = r.db.Table("tezos.baking_rewards as br").
+		Where("baker = ?", accountID).
+		Where("cycle = ?", cycleID).
+		Find(&reward).Error
+	if err != nil {
+		return reward, err
+	}
+
+	return reward, nil
+}
+
+func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error) {
+	err = r.db.Table("tezos.delegators_by_cycle").
+		Where("delegate_value = ?", accountID).
+		Where("cycle = ?", cycle).
+		Order("balance desc").
+		Limit(limit).
+		Offset(offset).Find(&delegators).Error
+	if err != nil {
+		return delegators, err
+	}
+
+	return delegators, nil
 }

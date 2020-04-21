@@ -10,6 +10,7 @@ import (
 	baking "github.com/everstake/teztracker/repos/baking"
 	block "github.com/everstake/teztracker/repos/block"
 	double_baking "github.com/everstake/teztracker/repos/double_baking"
+	double_endorsement "github.com/everstake/teztracker/repos/double_endorsement"
 	endorsing "github.com/everstake/teztracker/repos/endorsing"
 	future_baking_rights "github.com/everstake/teztracker/repos/future_baking_rights"
 	future_endorsement_rights "github.com/everstake/teztracker/repos/future_endorsement_rights"
@@ -174,6 +175,18 @@ func (m *MockProvider) GetDoubleBaking() double_baking.Repo {
 // GetDoubleBaking indicates an expected call of GetDoubleBaking
 func (mr *MockProviderMockRecorder) GetDoubleBaking() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDoubleBaking", reflect.TypeOf((*MockProvider)(nil).GetDoubleBaking))
+}
+
+// GetDoubleEndorsement mocks base method
+func (m *MockProvider) GetDoubleEndorsement() double_endorsement.Repo {
+	ret := m.ctrl.Call(m, "GetDoubleEndorsement")
+	ret0, _ := ret[0].(double_endorsement.Repo)
+	return ret0
+}
+
+// GetDoubleEndorsement indicates an expected call of GetDoubleEndorsement
+func (mr *MockProviderMockRecorder) GetDoubleEndorsement() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDoubleEndorsement", reflect.TypeOf((*MockProvider)(nil).GetDoubleEndorsement))
 }
 
 // GetVotingPeriod mocks base method
