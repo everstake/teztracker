@@ -6,6 +6,7 @@ import (
 	"github.com/everstake/teztracker/repos/baker"
 	"github.com/everstake/teztracker/repos/baking"
 	"github.com/everstake/teztracker/repos/block"
+	"github.com/everstake/teztracker/repos/chart"
 	"github.com/everstake/teztracker/repos/double_baking"
 	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
@@ -40,6 +41,7 @@ type (
 		GetDoubleBaking() double_baking.Repo
 		GetDoubleEndorsement() double_endorsement.Repo
 		GetVotingPeriod() voting_periods.Repo
+		GetChart() chart.Repo
 	}
 
 	Limiter interface {

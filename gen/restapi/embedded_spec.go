@@ -2036,6 +2036,90 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/charts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getChartsInfo",
+        "parameters": [
+          {
+            "enum": [
+              "tezos"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "mainnet",
+              "babylonnet",
+              "carthagenet"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": [
+              "D"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "name": "columns",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ChartsData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/contracts": {
       "get": {
         "produces": [
@@ -3810,6 +3894,45 @@ func init() {
           "format": "int64"
         },
         "volume": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "ChartsData": {
+      "required": [
+        "timestamp"
+      ],
+      "properties": {
+        "activations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "averageDelay": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blocks": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegationVolume": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "fees": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "operations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "transactionVolume": {
           "type": "integer",
           "format": "int64"
         }
@@ -6379,6 +6502,90 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/charts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getChartsInfo",
+        "parameters": [
+          {
+            "enum": [
+              "tezos"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "mainnet",
+              "babylonnet",
+              "carthagenet"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": [
+              "D"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "name": "columns",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ChartsData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/contracts": {
       "get": {
         "produces": [
@@ -8162,6 +8369,45 @@ func init() {
           "format": "int64"
         },
         "volume": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "ChartsData": {
+      "required": [
+        "timestamp"
+      ],
+      "properties": {
+        "activations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "averageDelay": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blocks": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegationVolume": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "fees": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "operations": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "transactionVolume": {
           "type": "integer",
           "format": "int64"
         }

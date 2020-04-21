@@ -25,3 +25,26 @@ func Info(mi models.MarketInfo, ratio float64, blocks int64) *genModels.Info {
 		BlocksInCycle:     blocks,
 	}
 }
+
+func ChartData(chd []models.ChartData) []*genModels.ChartsData {
+	chds := make([]*genModels.ChartsData, len(chd))
+	for i := range chd {
+		chds[i] = ChartElement(chd[i])
+	}
+	return chds
+}
+
+func ChartElement(chd models.ChartData) *genModels.ChartsData {
+	tm := chd.Timestamp.Unix()
+
+	return &genModels.ChartsData{
+		Timestamp:         &tm,
+		Activations:       chd.Activations,
+		AverageDelay:      chd.AverageDelay,
+		Blocks:            chd.Blocks,
+		DelegationVolume:  chd.DelegationVolume,
+		Fees:              chd.Fees,
+		Operations:        chd.Operations,
+		TransactionVolume: chd.TransactionVolume,
+	}
+}
