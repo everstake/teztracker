@@ -29,8 +29,8 @@ type FutureBakingRight struct {
 	Cycle         int64     `json:"cycle"`
 	Priority      int       `json:"priority"`
 	EstimatedTime time.Time `json:"estimated_time"`
-	Deposit       int64     `json:"deposit"`
-	Reward        int64     `json:"reward"`
+	Deposit       int64     `json:"deposit" gorm:"-"`
+	Reward        int64     `json:"reward"  gorm:"-"`
 }
 
 type FutureBlockBakingRight struct {
