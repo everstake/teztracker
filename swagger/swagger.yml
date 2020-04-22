@@ -2963,6 +2963,9 @@ definitions:
       balance:
         type: integer
         format: int64
+    required:
+      - timestamp
+      - balance
   AccountBakingRow:
     properties:
       cycle:
@@ -3121,6 +3124,9 @@ definitions:
         type: integer
         format: int64
       delegationVolume:
+        type: integer
+        format: int64
+      bakers:
         type: integer
         format: int64
     required:

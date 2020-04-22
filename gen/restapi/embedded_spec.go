@@ -3404,6 +3404,10 @@ func init() {
       }
     },
     "AccountBalance": {
+      "required": [
+        "timestamp",
+        "balance"
+      ],
       "properties": {
         "balance": {
           "type": "integer",
@@ -4013,6 +4017,10 @@ func init() {
         "averageDelay": {
           "type": "number",
           "format": "float64"
+        },
+        "bakers": {
+          "type": "integer",
+          "format": "int64"
         },
         "blocks": {
           "type": "integer",
@@ -7982,6 +7990,10 @@ func init() {
       }
     },
     "AccountBalance": {
+      "required": [
+        "timestamp",
+        "balance"
+      ],
       "properties": {
         "balance": {
           "type": "integer",
@@ -8591,6 +8603,10 @@ func init() {
         "averageDelay": {
           "type": "number",
           "format": "float64"
+        },
+        "bakers": {
+          "type": "integer",
+          "format": "int64"
         },
         "blocks": {
           "type": "integer",

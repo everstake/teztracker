@@ -8,3 +8,6 @@ select operations.*, acch.balance delegation_amount
 from tezos.operations
   left join tezos.accounts_history acch on operations.source = acch.account_id and operations.block_level = acch.block_level
 where kind = 'delegation';
+
+create index accounts_history_asof_index
+	on tezos.accounts_history (asof);

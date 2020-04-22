@@ -8,7 +8,9 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // AccountBalance account balance
@@ -16,14 +18,47 @@ import (
 type AccountBalance struct {
 
 	// balance
-	Balance int64 `json:"balance,omitempty"`
+	// Required: true
+	Balance *int64 `json:"balance"`
 
 	// timestamp
-	Timestamp int64 `json:"timestamp,omitempty"`
+	// Required: true
+	Timestamp *int64 `json:"timestamp"`
 }
 
 // Validate validates this account balance
 func (m *AccountBalance) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateBalance(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *AccountBalance) validateBalance(formats strfmt.Registry) error {
+
+	if err := validate.Required("balance", "body", m.Balance); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AccountBalance) validateTimestamp(formats strfmt.Registry) error {
+
+	if err := validate.Required("timestamp", "body", m.Timestamp); err != nil {
+		return err
+	}
+
 	return nil
 }
 

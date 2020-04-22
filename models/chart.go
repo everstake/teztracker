@@ -11,4 +11,5 @@ type ChartData struct {
 	Fees              int64
 	Operations        int64
 	TransactionVolume int64
+	Bakers            int64
 }
