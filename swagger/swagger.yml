@@ -235,6 +235,42 @@ paths:
           description: Internal error
       tags:
         - App Info
+  '/v2/data/{platform}/{network}/charts/bakers':
+    get:
+      operationId: getBakerChartInfo
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+          enum: [tezos]
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+          enum: [mainnet, babylonnet, carthagenet]
+        - in: query
+          name: limit
+          type: integer
+          format: int64
+          default: 20
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application info endpoint
+          schema:
+            items:
+              $ref: '#/definitions/BakerChartData'
+            type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - App Info
   '/v2/data/{platform}/{network}/accounts':
     get:
       operationId: getAccountsList
@@ -3131,3 +3167,12 @@ definitions:
         format: int64
     required:
       - timestamp
+  BakerChartData:
+    properties:
+      baker:
+        type: string
+      baker_name:
+        type: string
+      rolls:
+        type: integer
+        format: int64

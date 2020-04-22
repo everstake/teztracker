@@ -47,3 +47,28 @@ func (h *getChartsInfoHandler) Handle(params info.GetChartsInfoParams) middlewar
 
 	return info.NewGetChartsInfoOK().WithPayload(render.ChartData(chartData))
 }
+
+type getBakerChartHandler struct {
+	provider DbProvider
+}
+
+func (h *getBakerChartHandler) Handle(params info.GetBakerChartInfoParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return info.NewGetBakerChartInfoBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return info.NewGetBakerChartInfoBadRequest()
+	}
+
+	limiter := NewLimiter(params.Limit, nil)
+	service := services.New(repos.New(db), net)
+
+	data, err := service.GetBakerChartInfo(limiter)
+	if err != nil {
+		return info.NewGetBakerChartInfoInternalServerError()
+	}
+
+	return info.NewGetBakerChartInfoOK().WithPayload(render.BakerChartData(data))
+}

@@ -49,3 +49,20 @@ func ChartElement(chd models.ChartData) *genModels.ChartsData {
 		Bakers:            chd.Bakers,
 	}
 }
+
+func BakerChartData(chd []models.BakerChartData) []*genModels.BakerChartData {
+	chds := make([]*genModels.BakerChartData, len(chd))
+	for i := range chd {
+		chds[i] = BakerChartElement(chd[i])
+	}
+	return chds
+}
+
+func BakerChartElement(chd models.BakerChartData) *genModels.BakerChartData {
+
+	return &genModels.BakerChartData{
+		Baker:     chd.Baker,
+		BakerName: chd.BakerName,
+		Rolls:     chd.Rolls,
+	}
+}
