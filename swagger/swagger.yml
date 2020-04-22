@@ -3105,3 +3105,6 @@ definitions:
       rolls:
         type: integer
         format: int64
+      percent :
+        type: number
+        format: float64

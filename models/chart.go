@@ -18,4 +18,5 @@ type BakerChartData struct {
 	Baker     string
 	BakerName string
 	Rolls     int64
+	Percent   float64
 }

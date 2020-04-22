@@ -3574,6 +3574,10 @@ func init() {
         "baker_name": {
           "type": "string"
         },
+        "percent": {
+          "type": "number",
+          "format": "float64"
+        },
         "rolls": {
           "type": "integer",
           "format": "int64"
@@ -8129,6 +8133,10 @@ func init() {
         },
         "baker_name": {
           "type": "string"
+        },
+        "percent": {
+          "type": "number",
+          "format": "float64"
         },
         "rolls": {
           "type": "integer",

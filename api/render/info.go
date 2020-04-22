@@ -64,5 +64,6 @@ func BakerChartElement(chd models.BakerChartData) *genModels.BakerChartData {
 		Baker:     chd.Baker,
 		BakerName: chd.BakerName,
 		Rolls:     chd.Rolls,
+		Percent:   chd.Percent,
 	}
 }

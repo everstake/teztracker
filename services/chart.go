@@ -64,6 +64,12 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 
 func (t *TezTracker) GetBakerChartInfo(limits Limiter) (data []models.BakerChartData, err error) {
 	br := t.repoProvider.GetBaker()
+	stakedBalance, err := br.TotalStakingBalance()
+	if err != nil {
+		return nil, err
+	}
+
+	totalRolls := stakedBalance / TokensPerRoll / XTZ
 
 	bakers, err := br.List(limits.Limit(), 0)
 	if err != nil {
@@ -71,10 +77,12 @@ func (t *TezTracker) GetBakerChartInfo(limits Limiter) (data []models.BakerChart
 	}
 
 	for i := range bakers {
+		percent := float64(bakers[i].Rolls) / float64(totalRolls)
 		data = append(data, models.BakerChartData{
 			Baker:     bakers[i].AccountID,
 			BakerName: bakers[i].Name,
 			Rolls:     bakers[i].Rolls,
+			Percent:   percent,
 		})
 	}
 
