@@ -120,6 +120,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		BlocksGetBlocksListHandler: blocks.GetBlocksListHandlerFunc(func(params blocks.GetBlocksListParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBlocksList has not yet been implemented")
 		}),
+		AppInfoGetChartsInfoHandler: app_info.GetChartsInfoHandlerFunc(func(params app_info.GetChartsInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetChartsInfo has not yet been implemented")
+		}),
 		AccountsGetContractsListHandler: accounts.GetContractsListHandlerFunc(func(params accounts.GetContractsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetContractsList has not yet been implemented")
 		}),
@@ -249,6 +252,8 @@ type TezTrackerAPI struct {
 	BlocksGetBlocksHeadHandler blocks.GetBlocksHeadHandler
 	// BlocksGetBlocksListHandler sets the operation handler for the get blocks list operation
 	BlocksGetBlocksListHandler blocks.GetBlocksListHandler
+	// AppInfoGetChartsInfoHandler sets the operation handler for the get charts info operation
+	AppInfoGetChartsInfoHandler app_info.GetChartsInfoHandler
 	// AccountsGetContractsListHandler sets the operation handler for the get contracts list operation
 	AccountsGetContractsListHandler accounts.GetContractsListHandler
 	// OperationsListGetDoubleBakingsListHandler sets the operation handler for the get double bakings list operation
@@ -442,6 +447,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.BlocksGetBlocksListHandler == nil {
 		unregistered = append(unregistered, "blocks.GetBlocksListHandler")
+	}
+
+	if o.AppInfoGetChartsInfoHandler == nil {
+		unregistered = append(unregistered, "app_info.GetChartsInfoHandler")
 	}
 
 	if o.AccountsGetContractsListHandler == nil {
@@ -730,6 +739,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/blocks"] = blocks.NewGetBlocksList(o.context, o.BlocksGetBlocksListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/charts"] = app_info.NewGetChartsInfo(o.context, o.AppInfoGetChartsInfoHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

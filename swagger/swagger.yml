@@ -183,6 +183,58 @@ paths:
           description: Internal error
       tags:
         - App Info
+  '/v2/data/{platform}/{network}/charts':
+    get:
+      operationId: getChartsInfo
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+          enum: [tezos]
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+          enum: [mainnet, babylonnet, carthagenet]
+        - in: query
+          name: from
+          type: integer
+          format: int64
+          required: true
+        - in: query
+          name: to
+          type: integer
+          format: int64
+          required: true
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [D]
+        - in: query
+          name: columns
+          required: true
+          type: array
+          items:
+            type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application info endpoint
+          schema:
+            items:
+              $ref: '#/definitions/ChartsData'
+            type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - App Info
   '/v2/data/{platform}/{network}/accounts':
     get:
       operationId: getAccountsList
@@ -3045,3 +3097,31 @@ definitions:
       - balance
       - share
       - cycle
+  ChartsData:
+    properties:
+      timestamp:
+        type: integer
+        format: int64
+      blocks:
+        type: integer
+        format: int64
+      transactionVolume:
+        type: integer
+        format: int64
+      operations:
+        type: integer
+        format: int64
+      averageDelay:
+        type: integer
+        format: int64
+      fees:
+        type: integer
+        format: int64
+      activations:
+        type: integer
+        format: int64
+      delegationVolume:
+        type: integer
+        format: int64
+    required:
+      - timestamp
