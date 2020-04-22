@@ -2909,6 +2909,9 @@ definitions:
       balance:
         type: integer
         format: int64
+    required:
+      - timestamp
+      - balance
   AccountBakingRow:
     properties:
       cycle:
