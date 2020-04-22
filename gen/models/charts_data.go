@@ -26,6 +26,9 @@ type ChartsData struct {
 	// bakers
 	Bakers int64 `json:"bakers,omitempty"`
 
+	// block priority counter
+	BlockPriorityCounter *BlockPriorityCounter `json:"blockPriorityCounter,omitempty"`
+
 	// blocks
 	Blocks int64 `json:"blocks,omitempty"`
 
@@ -50,6 +53,10 @@ type ChartsData struct {
 func (m *ChartsData) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateBlockPriorityCounter(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateTimestamp(formats); err != nil {
 		res = append(res, err)
 	}
@@ -57,6 +64,24 @@ func (m *ChartsData) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ChartsData) validateBlockPriorityCounter(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.BlockPriorityCounter) { // not required
+		return nil
+	}
+
+	if m.BlockPriorityCounter != nil {
+		if err := m.BlockPriorityCounter.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("blockPriorityCounter")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

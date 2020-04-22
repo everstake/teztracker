@@ -56,6 +56,20 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 			if err != nil {
 				return data, err
 			}
+		case "blocks_priority":
+			blockPriority, err := repo.BlocksPriority(from, to, period)
+			if err != nil {
+				return data, err
+			}
+
+			for i := range blockPriority {
+				data = append(data, models.ChartData{
+					Timestamp:     blockPriority[i].Timestamp,
+					Blocks:        blockPriority[i].Blocks,
+					BlockPriority: &blockPriority[i],
+				})
+			}
+
 		}
 	}
 

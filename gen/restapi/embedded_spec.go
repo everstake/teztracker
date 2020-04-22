@@ -3783,6 +3783,27 @@ func init() {
         }
       }
     },
+    "BlockPriorityCounter": {
+      "required": [
+        "zeroPriority",
+        "firstPriority",
+        "secondPriority"
+      ],
+      "properties": {
+        "firstPriority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "secondPriority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "zeroPriority": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "BlockResult": {
       "type": "object",
       "required": [
@@ -3996,6 +4017,9 @@ func init() {
         "bakers": {
           "type": "integer",
           "format": "int64"
+        },
+        "blockPriorityCounter": {
+          "$ref": "#/definitions/BlockPriorityCounter"
         },
         "blocks": {
           "type": "integer",
@@ -8343,6 +8367,27 @@ func init() {
         }
       }
     },
+    "BlockPriorityCounter": {
+      "required": [
+        "zeroPriority",
+        "firstPriority",
+        "secondPriority"
+      ],
+      "properties": {
+        "firstPriority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "secondPriority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "zeroPriority": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "BlockResult": {
       "type": "object",
       "required": [
@@ -8556,6 +8601,9 @@ func init() {
         "bakers": {
           "type": "integer",
           "format": "int64"
+        },
+        "blockPriorityCounter": {
+          "$ref": "#/definitions/BlockPriorityCounter"
         },
         "blocks": {
           "type": "integer",

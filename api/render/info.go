@@ -37,7 +37,7 @@ func ChartData(chd []models.ChartData) []*genModels.ChartsData {
 func ChartElement(chd models.ChartData) *genModels.ChartsData {
 	tm := chd.Timestamp.Unix()
 
-	return &genModels.ChartsData{
+	data := &genModels.ChartsData{
 		Timestamp:         &tm,
 		Activations:       chd.Activations,
 		AverageDelay:      chd.AverageDelay,
@@ -48,6 +48,16 @@ func ChartElement(chd models.ChartData) *genModels.ChartsData {
 		TransactionVolume: chd.TransactionVolume,
 		Bakers:            chd.Bakers,
 	}
+
+	if chd.BlockPriority != nil {
+		data.BlockPriorityCounter = &genModels.BlockPriorityCounter{
+			FirstPriority:  &chd.BlockPriority.FirstPriority,
+			SecondPriority: &chd.BlockPriority.SecondPriority,
+			ZeroPriority:   &chd.BlockPriority.ZeroPriority,
+		}
+	}
+
+	return data
 }
 
 func BakerChartData(chd []models.BakerChartData) []*genModels.BakerChartData {

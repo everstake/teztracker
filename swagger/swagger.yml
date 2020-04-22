@@ -3094,6 +3094,8 @@ definitions:
       bakers:
         type: integer
         format: int64
+      blockPriorityCounter:
+        $ref: '#/definitions/BlockPriorityCounter'
     required:
       - timestamp
   BakerChartData:
@@ -3108,3 +3110,18 @@ definitions:
       percent :
         type: number
         format: float64
+  BlockPriorityCounter:
+    properties:
+      zeroPriority:
+        type: integer
+        format: int64
+      firstPriority:
+        type: integer
+        format: int64
+      secondPriority:
+        type: integer
+        format: int64
+    required:
+      - zeroPriority
+      - firstPriority
+      - secondPriority
