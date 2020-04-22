@@ -21,6 +21,9 @@ type BakerChartData struct {
 	// baker name
 	BakerName string `json:"baker_name,omitempty"`
 
+	// percent
+	Percent float64 `json:"percent,omitempty"`
+
 	// rolls
 	Rolls int64 `json:"rolls,omitempty"`
 }
