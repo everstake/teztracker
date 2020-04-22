@@ -35,7 +35,7 @@ func (h *getChartsInfoHandler) Handle(params info.GetChartsInfoParams) middlewar
 	}
 
 	for key := range columns {
-		if err := validate.Enum(fmt.Sprintf("%s.%v", "column", key), "query", columns[key], []interface{}{"blocks", "volume", "operations", "avg_block_delay", "fees", "activations", "delegation_volume"}); err != nil {
+		if err := validate.Enum(fmt.Sprintf("%s.%v", "column", key), "query", columns[key], []interface{}{"blocks", "volume", "operations", "avg_block_delay", "fees", "activations", "delegation_volume", "bakers"}); err != nil {
 			return info.NewGetChartsInfoBadRequest()
 		}
 	}

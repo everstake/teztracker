@@ -51,6 +51,11 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 			if err != nil {
 				return data, err
 			}
+		case "bakers":
+			data, err = repo.Bakers(from, to, period)
+			if err != nil {
+				return data, err
+			}
 		}
 	}
 

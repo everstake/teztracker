@@ -23,6 +23,9 @@ type ChartsData struct {
 	// average delay
 	AverageDelay float64 `json:"averageDelay,omitempty"`
 
+	// bakers
+	Bakers int64 `json:"bakers,omitempty"`
+
 	// blocks
 	Blocks int64 `json:"blocks,omitempty"`
 

@@ -3055,5 +3055,8 @@ definitions:
       delegationVolume:
         type: integer
         format: int64
+      bakers:
+        type: integer
+        format: int64
     required:
       - timestamp
