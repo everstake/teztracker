@@ -13,3 +13,9 @@ type ChartData struct {
 	TransactionVolume int64
 	Bakers            int64
 }
+
+type BakerChartData struct {
+	Baker     string
+	BakerName string
+	Rolls     int64
+}

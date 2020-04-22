@@ -93,6 +93,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		FeesGetAvgFeesHandler: fees.GetAvgFeesHandlerFunc(func(params fees.GetAvgFeesParams) middleware.Responder {
 			return middleware.NotImplemented("operation FeesGetAvgFees has not yet been implemented")
 		}),
+		AppInfoGetBakerChartInfoHandler: app_info.GetBakerChartInfoHandlerFunc(func(params app_info.GetBakerChartInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetBakerChartInfo has not yet been implemented")
+		}),
 		AccountsGetBakersListHandler: accounts.GetBakersListHandlerFunc(func(params accounts.GetBakersListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetBakersList has not yet been implemented")
 		}),
@@ -231,6 +234,8 @@ type TezTrackerAPI struct {
 	AccountsGetAccountsListHandler accounts.GetAccountsListHandler
 	// FeesGetAvgFeesHandler sets the operation handler for the get avg fees operation
 	FeesGetAvgFeesHandler fees.GetAvgFeesHandler
+	// AppInfoGetBakerChartInfoHandler sets the operation handler for the get baker chart info operation
+	AppInfoGetBakerChartInfoHandler app_info.GetBakerChartInfoHandler
 	// AccountsGetBakersListHandler sets the operation handler for the get bakers list operation
 	AccountsGetBakersListHandler accounts.GetBakersListHandler
 	// BlocksGetBakingRightsHandler sets the operation handler for the get baking rights operation
@@ -406,6 +411,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.FeesGetAvgFeesHandler == nil {
 		unregistered = append(unregistered, "fees.GetAvgFeesHandler")
+	}
+
+	if o.AppInfoGetBakerChartInfoHandler == nil {
+		unregistered = append(unregistered, "app_info.GetBakerChartInfoHandler")
 	}
 
 	if o.AccountsGetBakersListHandler == nil {
@@ -685,6 +694,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/operations/avgFees"] = fees.NewGetAvgFees(o.context, o.FeesGetAvgFeesHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/charts/bakers"] = app_info.NewGetBakerChartInfo(o.context, o.AppInfoGetBakerChartInfoHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

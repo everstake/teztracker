@@ -2120,6 +2120,65 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/charts/bakers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getBakerChartInfo",
+        "parameters": [
+          {
+            "enum": [
+              "tezos"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "mainnet",
+              "babylonnet",
+              "carthagenet"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakerChartData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/contracts": {
       "get": {
         "produces": [
@@ -3502,6 +3561,20 @@ func init() {
           "type": "string"
         },
         "transactions": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "BakerChartData": {
+      "properties": {
+        "baker": {
+          "type": "string"
+        },
+        "baker_name": {
+          "type": "string"
+        },
+        "rolls": {
           "type": "integer",
           "format": "int64"
         }
@@ -6594,6 +6667,65 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/charts/bakers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getBakerChartInfo",
+        "parameters": [
+          {
+            "enum": [
+              "tezos"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "mainnet",
+              "babylonnet",
+              "carthagenet"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakerChartData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/contracts": {
       "get": {
         "produces": [
@@ -7985,6 +8117,20 @@ func init() {
           "type": "string"
         },
         "transactions": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "BakerChartData": {
+      "properties": {
+        "baker": {
+          "type": "string"
+        },
+        "baker_name": {
+          "type": "string"
+        },
+        "rolls": {
           "type": "integer",
           "format": "int64"
         }
