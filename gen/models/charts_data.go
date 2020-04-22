@@ -21,7 +21,7 @@ type ChartsData struct {
 	Activations int64 `json:"activations,omitempty"`
 
 	// average delay
-	AverageDelay int64 `json:"averageDelay,omitempty"`
+	AverageDelay float64 `json:"averageDelay,omitempty"`
 
 	// blocks
 	Blocks int64 `json:"blocks,omitempty"`

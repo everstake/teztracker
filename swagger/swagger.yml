@@ -3112,8 +3112,8 @@ definitions:
         type: integer
         format: int64
       averageDelay:
-        type: integer
-        format: int64
+        type: number
+        format: float64
       fees:
         type: integer
         format: int64

@@ -5,7 +5,7 @@ import "time"
 type ChartData struct {
 	Timestamp         time.Time
 	Activations       int64
-	AverageDelay      int64
+	AverageDelay      float64
 	Blocks            int64
 	DelegationVolume  int64
 	Fees              int64
