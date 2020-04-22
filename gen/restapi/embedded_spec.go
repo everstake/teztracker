@@ -3909,8 +3909,8 @@ func init() {
           "format": "int64"
         },
         "averageDelay": {
-          "type": "integer",
-          "format": "int64"
+          "type": "number",
+          "format": "float64"
         },
         "blocks": {
           "type": "integer",
@@ -8384,8 +8384,8 @@ func init() {
           "format": "int64"
         },
         "averageDelay": {
-          "type": "integer",
-          "format": "int64"
+          "type": "number",
+          "format": "float64"
         },
         "blocks": {
           "type": "integer",

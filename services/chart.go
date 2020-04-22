@@ -1,6 +1,8 @@
 package services
 
-import "github.com/everstake/teztracker/models"
+import (
+	"github.com/everstake/teztracker/models"
+)
 
 func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []string) (data []models.ChartData, err error) {
 	repo := t.repoProvider.GetChart()
@@ -28,7 +30,12 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 			if err != nil {
 				return data, err
 			}
-		case "avg_delay":
+		case "avg_block_delay":
+			data, err = repo.AvgBlockDelay(from, to, period)
+			if err != nil {
+				return data, err
+			}
+
 		case "fees":
 			data, err = repo.FeesVolume(from, to, period)
 			if err != nil {
@@ -36,6 +43,11 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 			}
 		case "activations":
 			data, err = repo.ActivationsNumber(from, to, period)
+			if err != nil {
+				return data, err
+			}
+		case "delegation_volume":
+			data, err = repo.DelegationVolume(from, to, period)
 			if err != nil {
 				return data, err
 			}
