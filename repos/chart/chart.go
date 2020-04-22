@@ -91,7 +91,6 @@ func (r *Repository) ActivationsNumber(from, to int64, period string) (data []mo
 	err = r.db.Select(fmt.Sprintf("date_trunc('%s', timestamp) as timestamp, count(1) activations", period)).
 		Table("tezos.operations").
 		Where("kind = 'activate_account'").
-		Where("status = 'applied'").
 		Where("timestamp >= to_timestamp(?)", from).
 		Where("timestamp <= to_timestamp(?)", to).
 		Group(fmt.Sprintf("date_trunc('%s', timestamp)", period)).Find(&data).Error
