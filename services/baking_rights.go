@@ -94,7 +94,8 @@ func (t *TezTracker) FutureBakingRightsList(priorityTo int, limiter Limiter) (co
 		filter.BlockLevels = append(filter.BlockLevels, rangeStart)
 	}
 	r := t.repoProvider.GetFutureBakingRight()
-	rights, err := r.List(filter, limiter.Limit(), limiter.Offset())
+	//Not use limit here
+	rights, err := r.List(filter, 0, limiter.Offset())
 	if err != nil {
 		return count, nil, err
 	}
