@@ -1,3 +1,17 @@
+CREATE TABLE tezos.delegators_by_cycle(
+    account_id varchar NOT NULL,
+    cycle integer NOT NULL,
+    level integer NOT NULL,
+    delegate_value varchar NOT NULL,
+    balance numeric NOT NULL,
+    PRIMARY KEY (account_id, cycle, delegate_value)
+);
+
+CREATE VIEW tezos.baker_delegators_by_cycle AS
+select delegate_value baker, cycle, sum(balance) staking_balance, count(1) delegators
+from tezos.delegators_by_cycle
+group by delegate_value, cycle;
+
 CREATE OR REPLACE FUNCTION tezos.baking_rewards()
  RETURNS trigger LANGUAGE plpgsql
 AS $$
@@ -7,8 +21,7 @@ select delegate_value, NEW.snp_cycle, count(1), sum(balance)
 from (select account_id, max(block_level) block_level
       from tezos.accounts_history
              left join tezos.snapshots on NEW.snp_cycle = snp_cycle
-      where cycle <= (NEW.snp_cycle - 7)
-        and block_level <= snp_block_level
+      where block_level <= snp_block_level
       group by account_id) s
        left join tezos.accounts_history ah on s.account_id = ah.account_id and s.block_level = ah.block_level
 where delegate_value is not null
@@ -22,6 +35,30 @@ CREATE TRIGGER baker_rewards_insert
   ON tezos.snapshots
   FOR EACH ROW
 EXECUTE PROCEDURE tezos.baking_rewards();
+
+CREATE OR REPLACE FUNCTION tezos.delegators_by_cycle()
+ RETURNS trigger LANGUAGE plpgsql
+AS $$
+BEGIN
+  insert into tezos.delegators_by_cycle
+  select s.account_id, NEW.snp_cycle, s.block_level, delegate_value, balance
+  from (select account_id, max(block_level) block_level
+        from tezos.accounts_history
+               left join tezos.snapshots on NEW.snp_cycle = snp_cycle
+        where block_level <= snp_block_level
+        group by account_id) s
+         left join tezos.accounts_history ah on s.account_id = ah.account_id and s.block_level = ah.block_level
+  where delegate_value is not null
+    and s.account_id <> delegate_value
+    and balance > 0;
+RETURN NEW;
+END $$;
+
+CREATE TRIGGER delegators_by_cycle_insert
+  AFTER INSERT
+  ON tezos.snapshots
+  FOR EACH ROW
+EXECUTE PROCEDURE tezos.delegators_by_cycle();
 
 CREATE OR REPLACE VIEW tezos.frozen_endorsement_rewards as
 select delegate,sum(reward) rewards, sum(count) count
@@ -69,4 +106,8 @@ left join tezos.frozen_endorsement_rewards as fer on account_id = fer.delegate;
 create unique index unique_index
   on tezos.baker_view (account_id);
 
+create index accounts_history_block_level_index
+	on tezos.accounts_history (block_level desc);
 
+create index accounts_history_delegate_value_index
+	on tezos.accounts_history (delegate_value) where delegate_value is not null;
