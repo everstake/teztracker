@@ -12,15 +12,15 @@ type ChartData struct {
 	Operations        int64
 	TransactionVolume int64
 	Bakers            int64
-	BlockPriority     *BlockPriority
 }
 
 type BlockPriority struct {
-	Timestamp      time.Time
+	Cycle          int64
 	Blocks         int64
 	ZeroPriority   int64
 	FirstPriority  int64
 	SecondPriority int64
+	ThirdPriority  int64
 }
 
 type BakerChartData struct {

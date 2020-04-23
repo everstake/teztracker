@@ -2179,6 +2179,65 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/charts/blocks_priority": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getBlocksPriorityChartInfo",
+        "parameters": [
+          {
+            "enum": [
+              "tezos"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "mainnet",
+              "babylonnet",
+              "carthagenet"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlockPriorityChartData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/contracts": {
       "get": {
         "produces": [
@@ -3783,18 +3842,33 @@ func init() {
         }
       }
     },
-    "BlockPriorityCounter": {
+    "BlockPriorityChartData": {
       "required": [
+        "cycle",
+        "blocks",
         "zeroPriority",
         "firstPriority",
-        "secondPriority"
+        "secondPriority",
+        "thirdPriority"
       ],
       "properties": {
+        "blocks": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
         "firstPriority": {
           "type": "integer",
           "format": "int64"
         },
         "secondPriority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "thirdPriority": {
           "type": "integer",
           "format": "int64"
         },
@@ -4017,9 +4091,6 @@ func init() {
         "bakers": {
           "type": "integer",
           "format": "int64"
-        },
-        "blockPriorityCounter": {
-          "$ref": "#/definitions/BlockPriorityCounter"
         },
         "blocks": {
           "type": "integer",
@@ -6754,6 +6825,65 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/charts/blocks_priority": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getBlocksPriorityChartInfo",
+        "parameters": [
+          {
+            "enum": [
+              "tezos"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "mainnet",
+              "babylonnet",
+              "carthagenet"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "default": 10,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BlockPriorityChartData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/contracts": {
       "get": {
         "produces": [
@@ -8367,18 +8497,33 @@ func init() {
         }
       }
     },
-    "BlockPriorityCounter": {
+    "BlockPriorityChartData": {
       "required": [
+        "cycle",
+        "blocks",
         "zeroPriority",
         "firstPriority",
-        "secondPriority"
+        "secondPriority",
+        "thirdPriority"
       ],
       "properties": {
+        "blocks": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
         "firstPriority": {
           "type": "integer",
           "format": "int64"
         },
         "secondPriority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "thirdPriority": {
           "type": "integer",
           "format": "int64"
         },
@@ -8601,9 +8746,6 @@ func init() {
         "bakers": {
           "type": "integer",
           "format": "int64"
-        },
-        "blockPriorityCounter": {
-          "$ref": "#/definitions/BlockPriorityCounter"
         },
         "blocks": {
           "type": "integer",
