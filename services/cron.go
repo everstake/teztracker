@@ -188,17 +188,20 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 	func() {
 		var jobIsRunning uint32
 
-		dur := 60 * time.Second
-		log.Infof("Sheduling account materialized view update every %s", dur)
+		dur := 12 * time.Hour
+		log.Infof("Sheduling insert whale accounts every %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
 			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
 				defer atomic.StoreUint32(&jobIsRunning, 0)
-
 				unitOfWork := repos.New(db)
-				err := unitOfWork.GetAccount().RefreshView()
+
+				year, months, day := time.Now().Date()
+				startOfDay := time.Date(year, months, day, 0, 0, 0, 0, time.Local)
+
+				err := unitOfWork.GetChart().InsertWhaleAccounts(startOfDay.Unix())
 				if err != nil {
-					log.Errorf("materialized view update failed: %s", err.Error())
+					log.Errorf("insert whale accounts failed: %s", err.Error())
 					return
 				}
 			} else {

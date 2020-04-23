@@ -12,6 +12,7 @@ type ChartData struct {
 	Operations        int64
 	TransactionVolume int64
 	Bakers            int64
+	WhaleAccounts     int64
 }
 
 type BlockPriority struct {

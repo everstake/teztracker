@@ -44,6 +44,9 @@ type ChartsData struct {
 
 	// transaction volume
 	TransactionVolume int64 `json:"transactionVolume,omitempty"`
+
+	// whale accounts
+	WhaleAccounts int64 `json:"whale_accounts,omitempty"`
 }
 
 // Validate validates this charts data
