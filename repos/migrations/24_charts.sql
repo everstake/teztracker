@@ -15,3 +15,19 @@ from tezos.blocks;
 
 create index accounts_history_asof_index
 	on tezos.accounts_history (asof);
+
+CREATE OR REPLACE FUNCTION insert_whale_stat(data integer) RETURNS integer AS
+$$
+BEGIN
+  INSERT INTO tezos.whale_accounts_periods
+  select  date_trunc('day', to_timestamp(data)), count(1)
+  from (select account_id, max(block_level) block_level
+        from tezos.accounts_history
+        where asof <= to_timestamp(data)
+        group by account_id) r
+         left join tezos.accounts_history ah on r.account_id = ah.account_id
+    and r.block_level = ah.block_level
+  where balance >= 500000000000;
+  RETURN null;
+END;
+$$ LANGUAGE plpgsql;

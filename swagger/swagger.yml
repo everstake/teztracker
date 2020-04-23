@@ -3201,6 +3201,9 @@ definitions:
       bakers:
         type: integer
         format: int64
+      whale_accounts:
+        type: integer
+        format: int64
     required:
       - timestamp
   BakerChartData:

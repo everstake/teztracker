@@ -4217,6 +4217,10 @@ func init() {
         "transactionVolume": {
           "type": "integer",
           "format": "int64"
+        },
+        "whale_accounts": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -8973,6 +8977,10 @@ func init() {
           "format": "int64"
         },
         "transactionVolume": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "whale_accounts": {
           "type": "integer",
           "format": "int64"
         }

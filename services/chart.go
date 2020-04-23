@@ -35,7 +35,6 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 			if err != nil {
 				return data, err
 			}
-
 		case "fees":
 			data, err = repo.FeesVolume(from, to, period)
 			if err != nil {
@@ -56,6 +55,12 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 			if err != nil {
 				return data, err
 			}
+		case "whale_accounts":
+			data, err = repo.WhaleAccounts(from, to, period)
+			if err != nil {
+				return data, err
+			}
+
 		}
 	}
 

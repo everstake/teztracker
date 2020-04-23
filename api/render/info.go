@@ -47,6 +47,7 @@ func ChartElement(chd models.ChartData) *genModels.ChartsData {
 		Operations:        chd.Operations,
 		TransactionVolume: chd.TransactionVolume,
 		Bakers:            chd.Bakers,
+		WhaleAccounts:     chd.WhaleAccounts,
 	}
 
 	return data
