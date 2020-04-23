@@ -72,3 +72,28 @@ func (h *getBakerChartHandler) Handle(params info.GetBakerChartInfoParams) middl
 
 	return info.NewGetBakerChartInfoOK().WithPayload(render.BakerChartData(data))
 }
+
+type getBlocksPriorityHandler struct {
+	provider DbProvider
+}
+
+func (h *getBlocksPriorityHandler) Handle(params info.GetBlocksPriorityChartInfoParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return info.NewGetBlocksPriorityChartInfoBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return info.NewGetBlocksPriorityChartInfoBadRequest()
+	}
+
+	limiter := NewLimiter(params.Limit, nil)
+	service := services.New(repos.New(db), net)
+
+	data, err := service.GetBlocksPriorityByCycle(limiter)
+	if err != nil {
+		return info.NewGetBlocksPriorityChartInfoInternalServerError()
+	}
+
+	return info.NewGetBlocksPriorityChartInfoOK().WithPayload(render.BlocksPriorityChartData(data))
+}

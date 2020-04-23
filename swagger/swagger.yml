@@ -271,6 +271,42 @@ paths:
           description: Internal error
       tags:
         - App Info
+  '/v2/data/{platform}/{network}/charts/blocks_priority':
+    get:
+      operationId: getBlocksPriorityChartInfo
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+          enum: [tezos]
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+          enum: [mainnet, babylonnet, carthagenet]
+        - in: query
+          name: limit
+          type: integer
+          format: int64
+          default: 10
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application info endpoint
+          schema:
+            items:
+              $ref: '#/definitions/BlockPriorityChartData'
+            type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - App Info
   '/v2/data/{platform}/{network}/accounts':
     get:
       operationId: getAccountsList
@@ -3165,8 +3201,6 @@ definitions:
       bakers:
         type: integer
         format: int64
-      blockPriorityCounter:
-        $ref: '#/definitions/BlockPriorityCounter'
     required:
       - timestamp
   BakerChartData:
@@ -3181,8 +3215,14 @@ definitions:
       percent :
         type: number
         format: float64
-  BlockPriorityCounter:
+  BlockPriorityChartData:
     properties:
+      cycle:
+        type: integer
+        format: int64
+      blocks:
+        type: integer
+        format: int64
       zeroPriority:
         type: integer
         format: int64
@@ -3192,7 +3232,13 @@ definitions:
       secondPriority:
         type: integer
         format: int64
+      thirdPriority:
+        type: integer
+        format: int64
     required:
+      - cycle
+      - blocks
       - zeroPriority
       - firstPriority
       - secondPriority
+      - thirdPriority

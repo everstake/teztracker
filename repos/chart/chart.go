@@ -21,7 +21,6 @@ type (
 		AvgBlockDelay(from, to int64, period string) (data []models.ChartData, err error)
 		DelegationVolume(from, to int64, period string) (data []models.ChartData, err error)
 		Bakers(from, to int64, period string) (data []models.ChartData, err error)
-		BlocksPriority(from, to int64, period string) (data []models.BlockPriority, err error)
 	}
 )
 
@@ -132,19 +131,6 @@ func (r *Repository) DelegationVolume(from, to int64, period string) (data []mod
 func (r *Repository) Bakers(from, to int64, period string) (data []models.ChartData, err error) {
 	err = r.db.Select(fmt.Sprintf("date_trunc('%s', timestamp) as timestamp, count(distinct (baker)) bakers", period)).
 		Table("tezos.blocks").
-		Where("timestamp >= to_timestamp(?)", from).
-		Where("timestamp <= to_timestamp(?)", to).
-		Group(fmt.Sprintf("date_trunc('%s', timestamp)", period)).Find(&data).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
-
-func (r *Repository) BlocksPriority(from, to int64, period string) (data []models.BlockPriority, err error) {
-	err = r.db.Select(fmt.Sprintf("date_trunc('%s', timestamp) as timestamp, count(1) blocks, sum(zero_priority) zero_priority, sum(first_priority) first_priority, sum(second_priority) second_priority", period)).
-		Table("tezos.block_priority_counter_view").
 		Where("timestamp >= to_timestamp(?)", from).
 		Where("timestamp <= to_timestamp(?)", to).
 		Group(fmt.Sprintf("date_trunc('%s', timestamp)", period)).Find(&data).Error

@@ -123,6 +123,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		BlocksGetBlocksListHandler: blocks.GetBlocksListHandlerFunc(func(params blocks.GetBlocksListParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBlocksList has not yet been implemented")
 		}),
+		AppInfoGetBlocksPriorityChartInfoHandler: app_info.GetBlocksPriorityChartInfoHandlerFunc(func(params app_info.GetBlocksPriorityChartInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetBlocksPriorityChartInfo has not yet been implemented")
+		}),
 		AppInfoGetChartsInfoHandler: app_info.GetChartsInfoHandlerFunc(func(params app_info.GetChartsInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetChartsInfo has not yet been implemented")
 		}),
@@ -257,6 +260,8 @@ type TezTrackerAPI struct {
 	BlocksGetBlocksHeadHandler blocks.GetBlocksHeadHandler
 	// BlocksGetBlocksListHandler sets the operation handler for the get blocks list operation
 	BlocksGetBlocksListHandler blocks.GetBlocksListHandler
+	// AppInfoGetBlocksPriorityChartInfoHandler sets the operation handler for the get blocks priority chart info operation
+	AppInfoGetBlocksPriorityChartInfoHandler app_info.GetBlocksPriorityChartInfoHandler
 	// AppInfoGetChartsInfoHandler sets the operation handler for the get charts info operation
 	AppInfoGetChartsInfoHandler app_info.GetChartsInfoHandler
 	// AccountsGetContractsListHandler sets the operation handler for the get contracts list operation
@@ -456,6 +461,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.BlocksGetBlocksListHandler == nil {
 		unregistered = append(unregistered, "blocks.GetBlocksListHandler")
+	}
+
+	if o.AppInfoGetBlocksPriorityChartInfoHandler == nil {
+		unregistered = append(unregistered, "app_info.GetBlocksPriorityChartInfoHandler")
 	}
 
 	if o.AppInfoGetChartsInfoHandler == nil {
@@ -753,6 +762,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/blocks"] = blocks.NewGetBlocksList(o.context, o.BlocksGetBlocksListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/charts/blocks_priority"] = app_info.NewGetBlocksPriorityChartInfo(o.context, o.AppInfoGetBlocksPriorityChartInfoHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

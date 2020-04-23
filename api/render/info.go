@@ -49,14 +49,6 @@ func ChartElement(chd models.ChartData) *genModels.ChartsData {
 		Bakers:            chd.Bakers,
 	}
 
-	if chd.BlockPriority != nil {
-		data.BlockPriorityCounter = &genModels.BlockPriorityCounter{
-			FirstPriority:  &chd.BlockPriority.FirstPriority,
-			SecondPriority: &chd.BlockPriority.SecondPriority,
-			ZeroPriority:   &chd.BlockPriority.ZeroPriority,
-		}
-	}
-
 	return data
 }
 
@@ -75,5 +67,25 @@ func BakerChartElement(chd models.BakerChartData) *genModels.BakerChartData {
 		BakerName: chd.BakerName,
 		Rolls:     chd.Rolls,
 		Percent:   chd.Percent,
+	}
+}
+
+func BlocksPriorityChartData(chd []models.BlockPriority) []*genModels.BlockPriorityChartData {
+	chds := make([]*genModels.BlockPriorityChartData, len(chd))
+	for i := range chd {
+		chds[i] = BlocksPriorityChartElement(chd[i])
+	}
+	return chds
+}
+
+func BlocksPriorityChartElement(chd models.BlockPriority) *genModels.BlockPriorityChartData {
+
+	return &genModels.BlockPriorityChartData{
+		Cycle:          &chd.Cycle,
+		Blocks:         &chd.Blocks,
+		FirstPriority:  &chd.FirstPriority,
+		SecondPriority: &chd.SecondPriority,
+		ZeroPriority:   &chd.ZeroPriority,
+		ThirdPriority:  &chd.ThirdPriority,
 	}
 }

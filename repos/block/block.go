@@ -2,7 +2,6 @@ package block
 
 import (
 	"fmt"
-
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
@@ -22,6 +21,7 @@ type (
 		FindExtended(filter models.Block) (found bool, block models.Block, err error)
 		ListExtended(limit, offset uint, since uint64) (blocks []models.Block, err error)
 		BakedBlocksList(accountID string, cycle int64, limit uint, offset uint) (int64, []models.Block, error)
+		BlocksPriority(limit uint) ([]models.BlockPriority, error)
 	}
 )
 
@@ -154,4 +154,18 @@ func (r *Repository) BakedBlocksList(accountID string, cycle int64, limit uint, 
 		Find(&blocks).Error
 
 	return count, blocks, err
+}
+
+func (r *Repository) BlocksPriority(limit uint) (data []models.BlockPriority, err error) {
+	err = r.db.Select("meta_cycle as cycle, count(1) blocks, sum(zero_priority) zero_priority, sum(first_priority) first_priority, sum(second_priority) second_priority, sum(third_priority) third_priority").
+		Table("tezos.block_priority_counter_view").
+		Group("meta_cycle").
+		Order("meta_cycle desc").
+		Limit(10).
+		Find(&data).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
