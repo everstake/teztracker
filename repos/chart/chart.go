@@ -155,8 +155,9 @@ func (r *Repository) InsertWhaleAccounts(dayTime int64) (err error) {
 func (r *Repository) WhaleAccounts(from, to int64, period string) (data []models.ChartData, err error) {
 	err = r.db.Select("day as timestamp, whale_accounts").
 		Table("tezos.whale_accounts_periods").
-		Where("day >= to_timestamp(?)", from).
-		Where("day <= to_timestamp(?)", to).
+		Where("date_part('epoch',day)::int >= ?", from).
+		Where("date_part('epoch',day)::int <= ?", to).
+		Order("day asc").
 		Find(&data).Error
 	if err != nil {
 		return nil, err
