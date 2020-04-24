@@ -29,6 +29,7 @@ type Account struct {
 	IsRevealed         bool                  `json:"is_revealed"`
 	Transactions       int64                 `json:"transactions"`
 	Operations         int64                 `json:"operations"`
+	Index              int64                 `json:"index"`
 }
 
 type AccountType int
@@ -37,6 +38,13 @@ const (
 	AccountTypeBoth AccountType = iota
 	AccountTypeAccount
 	AccountTypeContract
+)
+
+type AccountOrderField int
+
+const (
+	AccountOrderFieldBalance AccountOrderField = iota
+	AccountOrderFieldCreatedAt
 )
 
 type RewardStatus string
@@ -50,6 +58,7 @@ const (
 
 type AccountFilter struct {
 	Type     AccountType
+	OrderBy  AccountOrderField
 	Delegate string
 	After    string
 }

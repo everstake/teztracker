@@ -77,8 +77,13 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		db = db.Where("amv.account_id like 'KT1%'")
 	}
 
-	db = db.Order("created_at desc").
-		Limit(limit).
+	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
+		db = db.Order("created_at desc")
+	} else if filter.OrderBy == models.AccountOrderFieldBalance {
+		db = db.Order("accounts.balance desc")
+	}
+
+	db = db.Limit(limit).
 		Offset(offset)
 
 	err = db.Find(&accounts).Error

@@ -1364,6 +1364,76 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/top_balance": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountsTopBalanceList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "after_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for accounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/{accountId}": {
       "get": {
         "produces": [
@@ -3727,6 +3797,10 @@ func init() {
         },
         "delegateValue": {
           "type": "string"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int64"
         },
         "is_baker": {
           "type": "boolean"
@@ -6178,6 +6252,77 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/top_balance": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountsTopBalanceList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "after_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for accounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/{accountId}": {
       "get": {
         "produces": [
@@ -8556,6 +8701,10 @@ func init() {
         },
         "delegateValue": {
           "type": "string"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int64"
         },
         "is_baker": {
           "type": "boolean"
