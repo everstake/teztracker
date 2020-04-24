@@ -2464,6 +2464,8 @@ definitions:
         type: boolean
       storage:
         type: string
+      is_baker:
+        type: boolean
       bakerInfo:
         $ref: '#/definitions/BakerInfo'
       createdAt:
@@ -2490,6 +2492,7 @@ definitions:
       - blockLevel
       - blockId
       - revealed
+      - is_baker
     type: object
   BakersRow:
     properties:

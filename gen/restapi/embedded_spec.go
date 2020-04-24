@@ -3687,7 +3687,8 @@ func init() {
         "counter",
         "blockLevel",
         "blockId",
-        "revealed"
+        "revealed",
+        "is_baker"
       ],
       "properties": {
         "accountId": {
@@ -3726,6 +3727,9 @@ func init() {
         },
         "delegateValue": {
           "type": "string"
+        },
+        "is_baker": {
+          "type": "boolean"
         },
         "lastActive": {
           "type": "integer",
@@ -8512,7 +8516,8 @@ func init() {
         "counter",
         "blockLevel",
         "blockId",
-        "revealed"
+        "revealed",
+        "is_baker"
       ],
       "properties": {
         "accountId": {
@@ -8551,6 +8556,9 @@ func init() {
         },
         "delegateValue": {
           "type": "string"
+        },
+        "is_baker": {
+          "type": "boolean"
         },
         "lastActive": {
           "type": "integer",
