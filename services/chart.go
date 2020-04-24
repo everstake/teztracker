@@ -17,50 +17,25 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 		switch columns[i] {
 		case "blocks":
 			data, err = repo.BlocksNumber(from, to, period)
-			if err != nil {
-				return data, err
-			}
 		case "volume":
 			data, err = repo.TransactionsVolume(from, to, period)
-			if err != nil {
-				return data, err
-			}
 		case "operations":
 			data, err = repo.OperationsNumber(from, to, period)
-			if err != nil {
-				return data, err
-			}
 		case "avg_block_delay":
 			data, err = repo.AvgBlockDelay(from, to, period)
-			if err != nil {
-				return data, err
-			}
 		case "fees":
 			data, err = repo.FeesVolume(from, to, period)
-			if err != nil {
-				return data, err
-			}
 		case "activations":
 			data, err = repo.ActivationsNumber(from, to, period)
-			if err != nil {
-				return data, err
-			}
 		case "delegation_volume":
 			data, err = repo.DelegationVolume(from, to, period)
-			if err != nil {
-				return data, err
-			}
 		case "bakers":
 			data, err = repo.Bakers(from, to, period)
-			if err != nil {
-				return data, err
-			}
 		case "whale_accounts":
 			data, err = repo.WhaleAccounts(from, to, period)
-			if err != nil {
-				return data, err
-			}
-
+		}
+		if err != nil {
+			return data, err
 		}
 	}
 
