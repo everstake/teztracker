@@ -28,6 +28,7 @@ func Account(a models.Account) *genModels.AccountsRow {
 		Transactions:    a.Transactions,
 		Operations:      a.Operations,
 		Revealed:        &a.IsRevealed,
+		Index:           a.Index,
 	}
 }
 

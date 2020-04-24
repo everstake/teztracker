@@ -38,6 +38,34 @@ func (h *getAccountListHandler) Handle(params accounts.GetAccountsListParams) mi
 	return accounts.NewGetAccountsListOK().WithPayload(render.Accounts(accs)).WithXTotalCount(count)
 }
 
+type getAccountTopBalanceListHandler struct {
+	provider DbProvider
+}
+
+// Handle serves the Get Account List request.
+func (h *getAccountTopBalanceListHandler) Handle(params accounts.GetAccountsTopBalanceListParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountsTopBalanceListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountsTopBalanceListNotFound()
+	}
+	service := services.New(repos.New(db), net)
+	limiter := NewLimiter(params.Limit, params.Offset)
+	before := ""
+	if params.AfterID != nil {
+		before = *params.AfterID
+	}
+	accs, count, err := service.AccountTopBalanceList(before, limiter)
+	if err != nil {
+		logrus.Errorf("failed to get accounts: %s", err.Error())
+		return accounts.NewGetAccountsTopBalanceListNotFound()
+	}
+	return accounts.NewGetAccountsTopBalanceListOK().WithPayload(render.Accounts(accs)).WithXTotalCount(count)
+}
+
 type getAccountBalanceListHandler struct {
 	provider DbProvider
 }

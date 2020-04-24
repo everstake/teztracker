@@ -27,6 +27,7 @@ func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
 	serv.AppInfoGetBlocksPriorityChartInfoHandler = &getBlocksPriorityHandler{db}
 	//Account
 	serv.AccountsGetAccountsListHandler = &getAccountListHandler{db}
+	serv.AccountsGetAccountsTopBalanceListHandler = &getAccountTopBalanceListHandler{db}
 	serv.AccountsGetAccountHandler = &getAccountHandler{db}
 	serv.AccountsGetAccountBalanceListHandler = &getAccountBalanceListHandler{db}
 	serv.AccountsGetAccountBakingListHandler = &getAccountBakingListHandler{db}

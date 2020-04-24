@@ -56,6 +56,9 @@ type AccountsRow struct {
 	// delegate value
 	DelegateValue string `json:"delegateValue,omitempty"`
 
+	// index
+	Index int64 `json:"index,omitempty"`
+
 	// is baker
 	// Required: true
 	IsBaker *bool `json:"is_baker"`
