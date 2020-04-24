@@ -12,6 +12,11 @@ type Baker struct {
 	BakerStats
 }
 
+type PublicBakerSearch struct {
+	Delegate  string
+	BakerName string
+}
+
 type BakerStats struct {
 	Name                     string    `json:"name"`
 	Fee                      int64     `json:"fee"`

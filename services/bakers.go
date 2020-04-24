@@ -52,6 +52,15 @@ func (t *TezTracker) PublicBakerList(limits Limiter) (bakers []models.Baker, cou
 	return bakers, count, nil
 }
 
+func (t *TezTracker) PublicBakersSearchList() (list []models.PublicBakerSearch, err error) {
+	list, err = t.repoProvider.GetBaker().PublicBakersSearchList()
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
+
 func (t *TezTracker) BakerList(limits Limiter) (bakers []models.Baker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.Count()
