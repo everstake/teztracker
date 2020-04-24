@@ -31,6 +31,14 @@ func PublicBakers(ams []models.Baker) []genModels.PublicBaker {
 	return accs
 }
 
+func PublicBakersSearch(ams []models.PublicBakerSearch) []*genModels.PublicBakerSearch {
+	accs := make([]*genModels.PublicBakerSearch, len(ams))
+	for i := range ams {
+		accs[i] = &genModels.PublicBakerSearch{AccountID: ams[i].Delegate, Name: ams[i].BakerName}
+	}
+	return accs
+}
+
 // BakerInfo renders a baker info details.
 func BakerInfo(bi *models.Baker) *genModels.BakerInfo {
 	if bi == nil {

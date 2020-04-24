@@ -174,6 +174,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetPublicBakersListHandler: accounts.GetPublicBakersListHandlerFunc(func(params accounts.GetPublicBakersListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetPublicBakersList has not yet been implemented")
 		}),
+		AccountsGetPublicBakersListForSearchHandler: accounts.GetPublicBakersListForSearchHandlerFunc(func(params accounts.GetPublicBakersListForSearchParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetPublicBakersListForSearch has not yet been implemented")
+		}),
 		GetSnapshotsHandler: GetSnapshotsHandlerFunc(func(params GetSnapshotsParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetSnapshots has not yet been implemented")
 		}),
@@ -294,6 +297,8 @@ type TezTrackerAPI struct {
 	VotingGetProtocolsListHandler voting.GetProtocolsListHandler
 	// AccountsGetPublicBakersListHandler sets the operation handler for the get public bakers list operation
 	AccountsGetPublicBakersListHandler accounts.GetPublicBakersListHandler
+	// AccountsGetPublicBakersListForSearchHandler sets the operation handler for the get public bakers list for search operation
+	AccountsGetPublicBakersListForSearchHandler accounts.GetPublicBakersListForSearchHandler
 	// GetSnapshotsHandler sets the operation handler for the get snapshots operation
 	GetSnapshotsHandler GetSnapshotsHandler
 
@@ -529,6 +534,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetPublicBakersListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetPublicBakersListHandler")
+	}
+
+	if o.AccountsGetPublicBakersListForSearchHandler == nil {
+		unregistered = append(unregistered, "accounts.GetPublicBakersListForSearchHandler")
 	}
 
 	if o.GetSnapshotsHandler == nil {
@@ -847,6 +856,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/public_bakers"] = accounts.NewGetPublicBakersList(o.context, o.AccountsGetPublicBakersListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/public_bakers/search"] = accounts.NewGetPublicBakersListForSearch(o.context, o.AccountsGetPublicBakersListForSearchHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
