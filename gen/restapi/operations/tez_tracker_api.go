@@ -96,6 +96,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		FeesGetAvgFeesHandler: fees.GetAvgFeesHandlerFunc(func(params fees.GetAvgFeesParams) middleware.Responder {
 			return middleware.NotImplemented("operation FeesGetAvgFees has not yet been implemented")
 		}),
+		AppInfoGetBakerChartInfoHandler: app_info.GetBakerChartInfoHandlerFunc(func(params app_info.GetBakerChartInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetBakerChartInfo has not yet been implemented")
+		}),
 		AccountsGetBakersListHandler: accounts.GetBakersListHandlerFunc(func(params accounts.GetBakersListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetBakersList has not yet been implemented")
 		}),
@@ -119,6 +122,12 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		BlocksGetBlocksListHandler: blocks.GetBlocksListHandlerFunc(func(params blocks.GetBlocksListParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBlocksList has not yet been implemented")
+		}),
+		AppInfoGetBlocksPriorityChartInfoHandler: app_info.GetBlocksPriorityChartInfoHandlerFunc(func(params app_info.GetBlocksPriorityChartInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetBlocksPriorityChartInfo has not yet been implemented")
+		}),
+		AppInfoGetChartsInfoHandler: app_info.GetChartsInfoHandlerFunc(func(params app_info.GetChartsInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetChartsInfo has not yet been implemented")
 		}),
 		AccountsGetContractsListHandler: accounts.GetContractsListHandlerFunc(func(params accounts.GetContractsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetContractsList has not yet been implemented")
@@ -233,6 +242,8 @@ type TezTrackerAPI struct {
 	AccountsGetAccountsListHandler accounts.GetAccountsListHandler
 	// FeesGetAvgFeesHandler sets the operation handler for the get avg fees operation
 	FeesGetAvgFeesHandler fees.GetAvgFeesHandler
+	// AppInfoGetBakerChartInfoHandler sets the operation handler for the get baker chart info operation
+	AppInfoGetBakerChartInfoHandler app_info.GetBakerChartInfoHandler
 	// AccountsGetBakersListHandler sets the operation handler for the get bakers list operation
 	AccountsGetBakersListHandler accounts.GetBakersListHandler
 	// BlocksGetBakingRightsHandler sets the operation handler for the get baking rights operation
@@ -249,6 +260,10 @@ type TezTrackerAPI struct {
 	BlocksGetBlocksHeadHandler blocks.GetBlocksHeadHandler
 	// BlocksGetBlocksListHandler sets the operation handler for the get blocks list operation
 	BlocksGetBlocksListHandler blocks.GetBlocksListHandler
+	// AppInfoGetBlocksPriorityChartInfoHandler sets the operation handler for the get blocks priority chart info operation
+	AppInfoGetBlocksPriorityChartInfoHandler app_info.GetBlocksPriorityChartInfoHandler
+	// AppInfoGetChartsInfoHandler sets the operation handler for the get charts info operation
+	AppInfoGetChartsInfoHandler app_info.GetChartsInfoHandler
 	// AccountsGetContractsListHandler sets the operation handler for the get contracts list operation
 	AccountsGetContractsListHandler accounts.GetContractsListHandler
 	// OperationsListGetDoubleBakingsListHandler sets the operation handler for the get double bakings list operation
@@ -412,6 +427,10 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "fees.GetAvgFeesHandler")
 	}
 
+	if o.AppInfoGetBakerChartInfoHandler == nil {
+		unregistered = append(unregistered, "app_info.GetBakerChartInfoHandler")
+	}
+
 	if o.AccountsGetBakersListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetBakersListHandler")
 	}
@@ -442,6 +461,14 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.BlocksGetBlocksListHandler == nil {
 		unregistered = append(unregistered, "blocks.GetBlocksListHandler")
+	}
+
+	if o.AppInfoGetBlocksPriorityChartInfoHandler == nil {
+		unregistered = append(unregistered, "app_info.GetBlocksPriorityChartInfoHandler")
+	}
+
+	if o.AppInfoGetChartsInfoHandler == nil {
+		unregistered = append(unregistered, "app_info.GetChartsInfoHandler")
 	}
 
 	if o.AccountsGetContractsListHandler == nil {
@@ -694,6 +721,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/charts/bakers"] = app_info.NewGetBakerChartInfo(o.context, o.AppInfoGetBakerChartInfoHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/bakers"] = accounts.NewGetBakersList(o.context, o.AccountsGetBakersListHandler)
 
 	if o.handlers["GET"] == nil {
@@ -730,6 +762,16 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/blocks"] = blocks.NewGetBlocksList(o.context, o.BlocksGetBlocksListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/charts/blocks_priority"] = app_info.NewGetBlocksPriorityChartInfo(o.context, o.AppInfoGetBlocksPriorityChartInfoHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/charts"] = app_info.NewGetChartsInfo(o.context, o.AppInfoGetChartsInfoHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

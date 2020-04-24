@@ -47,9 +47,10 @@ func AccountBalances(acb []models.AccountBalance) []*genModels.AccountBalance {
 }
 
 func AccountBalance(acb models.AccountBalance) *genModels.AccountBalance {
+	tm := acb.Time.Unix()
 	return &genModels.AccountBalance{
-		Balance:   acb.Balance,
-		Timestamp: acb.Time.Unix(),
+		Balance:   &acb.Balance,
+		Timestamp: &tm,
 	}
 }
 

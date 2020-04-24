@@ -183,6 +183,130 @@ paths:
           description: Internal error
       tags:
         - App Info
+  '/v2/data/{platform}/{network}/charts':
+    get:
+      operationId: getChartsInfo
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+          enum: [tezos]
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+          enum: [mainnet, babylonnet, carthagenet]
+        - in: query
+          name: from
+          type: integer
+          format: int64
+          required: true
+        - in: query
+          name: to
+          type: integer
+          format: int64
+          required: true
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [D]
+        - in: query
+          name: columns
+          required: true
+          type: array
+          items:
+            type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application info endpoint
+          schema:
+            items:
+              $ref: '#/definitions/ChartsData'
+            type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - App Info
+  '/v2/data/{platform}/{network}/charts/bakers':
+    get:
+      operationId: getBakerChartInfo
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+          enum: [tezos]
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+          enum: [mainnet, babylonnet, carthagenet]
+        - in: query
+          name: limit
+          type: integer
+          format: int64
+          default: 20
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application info endpoint
+          schema:
+            items:
+              $ref: '#/definitions/BakerChartData'
+            type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - App Info
+  '/v2/data/{platform}/{network}/charts/blocks_priority':
+    get:
+      operationId: getBlocksPriorityChartInfo
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+          enum: [tezos]
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+          enum: [mainnet, babylonnet, carthagenet]
+        - in: query
+          name: limit
+          type: integer
+          format: int64
+          default: 10
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application info endpoint
+          schema:
+            items:
+              $ref: '#/definitions/BlockPriorityChartData'
+            type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - App Info
   '/v2/data/{platform}/{network}/accounts':
     get:
       operationId: getAccountsList
@@ -2911,6 +3035,9 @@ definitions:
       balance:
         type: integer
         format: int64
+    required:
+      - timestamp
+      - balance
   AccountBakingRow:
     properties:
       cycle:
@@ -3045,3 +3172,76 @@ definitions:
       - balance
       - share
       - cycle
+  ChartsData:
+    properties:
+      timestamp:
+        type: integer
+        format: int64
+      blocks:
+        type: integer
+        format: int64
+      transactionVolume:
+        type: integer
+        format: int64
+      operations:
+        type: integer
+        format: int64
+      averageDelay:
+        type: number
+        format: float64
+      fees:
+        type: integer
+        format: int64
+      activations:
+        type: integer
+        format: int64
+      delegationVolume:
+        type: integer
+        format: int64
+      bakers:
+        type: integer
+        format: int64
+      whale_accounts:
+        type: integer
+        format: int64
+    required:
+      - timestamp
+  BakerChartData:
+    properties:
+      baker:
+        type: string
+      baker_name:
+        type: string
+      rolls:
+        type: integer
+        format: int64
+      percent :
+        type: number
+        format: float64
+  BlockPriorityChartData:
+    properties:
+      cycle:
+        type: integer
+        format: int64
+      blocks:
+        type: integer
+        format: int64
+      zeroPriority:
+        type: integer
+        format: int64
+      firstPriority:
+        type: integer
+        format: int64
+      secondPriority:
+        type: integer
+        format: int64
+      thirdPriority:
+        type: integer
+        format: int64
+    required:
+      - cycle
+      - blocks
+      - zeroPriority
+      - firstPriority
+      - secondPriority
+      - thirdPriority
