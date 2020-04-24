@@ -61,10 +61,14 @@ func (r *Repository) getDb(filter models.RightFilter) *gorm.DB {
 // since is used to paginate results based on the level. As the result is ordered descendingly the rights with level < since will be returned.
 func (r *Repository) List(filter models.RightFilter, limit, offset uint) (rights []models.FutureBakingRight, err error) {
 	db := r.getDb(filter)
-	err = db.Order("level asc, priority asc").
-		Offset(offset).
-		Limit(limit).
-		Find(&rights).Error
+	db = db.Order("level asc, priority asc").
+		Offset(offset)
+
+	if limit > 0 {
+		db = db.Limit(limit)
+	}
+
+	err = db.Find(&rights).Error
 
 	return rights, err
 }

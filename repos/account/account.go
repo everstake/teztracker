@@ -23,6 +23,8 @@ type (
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
 		RewardsList(accountID string, limit uint, offset uint) (count int64, rewards []models.AccountReward, err error)
+		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
+		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
 		RefreshView() error
 	}
 )
@@ -176,7 +178,7 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 		return 0, rewards, err
 	}
 
-	err = db.Select("br.*, cbv.reward as baking_rewards, cbv.missed missed_baking, fbrv.count as future_baking_count, cev.reward endorsement_rewards ,cev.missed missed_endorsements, fev.count future_endorsement_count").
+	err = db.Select("br.*, cbv.reward as baking_rewards, cbv.missed missed_baking, cbv.fees, fbrv.count as future_baking_count, cev.reward endorsement_rewards ,cev.missed missed_endorsements, fev.count future_endorsement_count").
 		Joins("left join tezos.baker_future_baking_rights_view fbrv on br.baker = fbrv.delegate and br.cycle = fbrv.cycle").
 		Joins("left join tezos.baker_cycle_bakings_view cbv on br.baker = cbv.delegate and br.cycle = cbv.cycle").
 		Joins("left join tezos.baker_cycle_endorsements_view cev on br.baker = cev.delegate and br.cycle = cev.cycle").
@@ -186,4 +188,30 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 		Find(&rewards).Error
 
 	return count, rewards, err
+}
+
+func (r *Repository) CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error) {
+	err = r.db.Table("tezos.baking_rewards as br").
+		Where("baker = ?", accountID).
+		Where("cycle = ?", cycleID).
+		Find(&reward).Error
+	if err != nil {
+		return reward, err
+	}
+
+	return reward, nil
+}
+
+func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error) {
+	err = r.db.Table("tezos.delegators_by_cycle").
+		Where("delegate_value = ?", accountID).
+		Where("cycle = ?", cycle).
+		Order("balance desc").
+		Limit(limit).
+		Offset(offset).Find(&delegators).Error
+	if err != nil {
+		return delegators, err
+	}
+
+	return delegators, nil
 }

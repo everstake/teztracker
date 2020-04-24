@@ -60,6 +60,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetAccountDelegatorsHandler: accounts.GetAccountDelegatorsHandlerFunc(func(params accounts.GetAccountDelegatorsParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountDelegators has not yet been implemented")
 		}),
+		AccountsGetAccountDelegatorsByCycleListHandler: accounts.GetAccountDelegatorsByCycleListHandlerFunc(func(params accounts.GetAccountDelegatorsByCycleListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountDelegatorsByCycleList has not yet been implemented")
+		}),
 		AccountsGetAccountEndorsementsByCycleListHandler: accounts.GetAccountEndorsementsByCycleListHandlerFunc(func(params accounts.GetAccountEndorsementsByCycleListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountEndorsementsByCycleList has not yet been implemented")
 		}),
@@ -215,6 +218,8 @@ type TezTrackerAPI struct {
 	AccountsGetAccountBalanceListHandler accounts.GetAccountBalanceListHandler
 	// AccountsGetAccountDelegatorsHandler sets the operation handler for the get account delegators operation
 	AccountsGetAccountDelegatorsHandler accounts.GetAccountDelegatorsHandler
+	// AccountsGetAccountDelegatorsByCycleListHandler sets the operation handler for the get account delegators by cycle list operation
+	AccountsGetAccountDelegatorsByCycleListHandler accounts.GetAccountDelegatorsByCycleListHandler
 	// AccountsGetAccountEndorsementsByCycleListHandler sets the operation handler for the get account endorsements by cycle list operation
 	AccountsGetAccountEndorsementsByCycleListHandler accounts.GetAccountEndorsementsByCycleListHandler
 	// AccountsGetAccountEndorsingListHandler sets the operation handler for the get account endorsing list operation
@@ -372,6 +377,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetAccountDelegatorsHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountDelegatorsHandler")
+	}
+
+	if o.AccountsGetAccountDelegatorsByCycleListHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountDelegatorsByCycleListHandler")
 	}
 
 	if o.AccountsGetAccountEndorsementsByCycleListHandler == nil {
@@ -648,6 +657,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}/delegators"] = accounts.NewGetAccountDelegators(o.context, o.AccountsGetAccountDelegatorsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}/delegators/{cycleId}"] = accounts.NewGetAccountDelegatorsByCycleList(o.context, o.AccountsGetAccountDelegatorsByCycleListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

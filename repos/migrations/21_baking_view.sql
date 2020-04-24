@@ -5,18 +5,20 @@ CREATE TABLE tezos.baker_bakings(
   priority integer,
   baked integer,
   reward integer,
+  fees numeric,
   missed integer,
   stolen integer,
   PRIMARY KEY (delegate,cycle,level));
 
-CREATE VIEW tezos.baker_cycle_bakings_view as
+CREATE OR REPLACE VIEW tezos.baker_cycle_bakings_view as
 select cycle,
        delegate,
        avg(priority) avg_priority,
-       sum(reward)          reward,
+       sum(reward)       reward,
        sum(baked)        count,
        sum(missed)       missed,
-       sum(stolen)       stolen
+       sum(stolen)       stolen,
+       sum(fees)         fees
 from tezos.baker_bakings
 group by cycle, delegate;
 
@@ -33,11 +35,13 @@ select cycle,
        CASE WHEN baker = br.delegate THEN bl.priority ELSE NULL END        as priority,
        CASE WHEN baker = br.delegate THEN 1 ELSE 0 END                     as baked,
        CASE WHEN baker = br.delegate THEN bu.change ELSE 0 END             as reward,
+       CASE WHEN baker = br.delegate THEN bav.fees ELSE 0 END              as fees,
        CASE WHEN bl.priority > br.priority THEN 1 ELSE 0 END               as missed,
        CASE WHEN br.priority > 0 and baker = br.delegate THEN 1 ELSE 0 END as stolen
 from tezos.baking_rights br
        left join tezos.blocks bl on (br.level = bl.meta_level)
        left join tezos.balance_updates bu on source_hash = hash
+       left join tezos.block_aggregation_view bav on bav.level = bl.level
 where category = 'rewards'
   and change > 0
   and source = 'block'

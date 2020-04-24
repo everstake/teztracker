@@ -1224,6 +1224,60 @@ paths:
           description: Not Found
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/{accountId}/delegators/{cycleId}':
+    get:
+      operationId: getAccountDelegatorsByCycleList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: path
+          name: cycleId
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 500
+        - in: query
+          name: offset
+          description: Offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for account rewards
+          schema:
+            items:
+              $ref: '#/definitions/BakerDelegator'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/blocks':
     get:
       operationId: getBlocksList
@@ -3101,6 +3155,23 @@ definitions:
       - baking
       - losses
       - fees
+  BakerDelegator:
+    properties:
+      delegator:
+        type: string
+      cycle:
+        type: integer
+        format: int64
+      balance:
+        type: integer
+        format: int64
+      share:
+        type: number
+    required:
+      - delegator
+      - balance
+      - share
+      - cycle
   ChartsData:
     properties:
       timestamp:
