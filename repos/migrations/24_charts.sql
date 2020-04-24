@@ -16,6 +16,13 @@ from tezos.blocks;
 create index accounts_history_asof_index
 	on tezos.accounts_history (asof);
 
+CREATE TABLE tezos.whale_accounts_periods
+(
+  day            timestamp without time zone,
+  whale_accounts integer,
+  PRIMARY KEY (day)
+);
+
 CREATE OR REPLACE FUNCTION insert_whale_stat(data integer) RETURNS integer AS
 $$
 BEGIN
