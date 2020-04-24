@@ -15,6 +15,7 @@ func Account(a models.Account) *genModels.AccountsRow {
 		Spendable:       a.Spendable.Ptr(),
 		DelegateSetable: a.DelegateSetable.Ptr(),
 		DelegateValue:   a.DelegateValue,
+		DelegateName:    a.DelegateName,
 		Counter:         a.Counter.Ptr(),
 		Script:          a.Script,
 		Storage:         a.Storage,
