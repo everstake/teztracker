@@ -2421,6 +2421,8 @@ definitions:
         type: boolean
       delegateValue:
         type: string
+      delegateName:
+        type: string
       manager:
         type: string
       script:

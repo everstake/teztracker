@@ -14,6 +14,7 @@ type Account struct {
 	Spendable          null.Bool             `json:"spendable"`
 	DelegateSetable    null.Bool             `json:"delegate_setable"`
 	DelegateValue      string                `json:"delegate_value"`
+	DelegateName       string                `json:"delegate_name"`
 	Counter            null.Int              `json:"counter"`
 	Script             string                `json:"script"`
 	Storage            string                `json:"storage"`

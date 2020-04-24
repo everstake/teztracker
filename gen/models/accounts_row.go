@@ -46,6 +46,9 @@ type AccountsRow struct {
 	// created at
 	CreatedAt int64 `json:"createdAt,omitempty"`
 
+	// delegate name
+	DelegateName string `json:"delegateName,omitempty"`
+
 	// delegate setable
 	// Required: true
 	DelegateSetable *bool `json:"delegateSetable"`

@@ -3668,6 +3668,9 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "delegateName": {
+          "type": "string"
+        },
         "delegateSetable": {
           "type": "boolean"
         },
@@ -8429,6 +8432,9 @@ func init() {
         "createdAt": {
           "type": "integer",
           "format": "int64"
+        },
+        "delegateName": {
+          "type": "string"
         },
         "delegateSetable": {
           "type": "boolean"

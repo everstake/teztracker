@@ -65,9 +65,10 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		return 0, nil, err
 	}
 
-	db = r.db.Select("accounts.*, created_at, last_active, account_name").
+	db = r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name").
 		Table("tezos.account_materialized_view as amv").
-		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id")
+		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id").
+		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate")
 
 	if filter.Type == models.AccountTypeAccount {
 		db = db.Where("amv.account_id like 'tz%'")
@@ -92,9 +93,11 @@ func (r *Repository) Count(filter models.Account) (count int64, err error) {
 
 // Filter returns a list of accounts that sutisfies the filter.
 func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error) {
-	err = r.db.Select("accounts.*, created_at, last_active, account_name").Model(&filter).
-		Where(&filter).
+	err = r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name").
+		Model(&filter).
 		Joins("natural join tezos.account_materialized_view").
+		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate").
+		Where(&filter).
 		Order("account_id asc").
 		Limit(limit).
 		Offset(offset).
@@ -104,9 +107,10 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 
 // Find looks up for an account with filter.
 func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
-	if res := r.db.Select("accounts.*, created_at, last_active").
+	if res := r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name").
 		Model(&filter).
 		Joins("natural join tezos.account_materialized_view").
+		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate").
 		Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
