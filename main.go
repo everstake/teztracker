@@ -31,9 +31,6 @@ func main() {
 	if cfg.Mainnet.SqlConnectionString != "" {
 		networks[models.NetworkMain] = cfg.Mainnet
 	}
-	if cfg.Babylonnet.SqlConnectionString != "" {
-		networks[models.NetworkBabylon] = cfg.Babylonnet
-	}
 	if cfg.Carthagenet.SqlConnectionString != "" {
 		networks[models.NetworkCarthage] = cfg.Carthagenet
 	}
@@ -80,9 +77,9 @@ func main() {
 			if err != nil {
 				log.Fatalln(err)
 			}
-			// Using models.NetworkMain instead of k due to stupid nodes configuration for babylonnet.
+			// Using models.NetworkMain instead of k due to stupid nodes configuration for carthagenet.
 			// todo: if something is not workign for testnets, check this one.
-			services.AddToCron(cron, cfg, db, rpc, models.NetworkMain, k == models.NetworkBabylon || k == models.NetworkCarthage)
+			services.AddToCron(cron, cfg, db, rpc, models.NetworkMain, k == models.NetworkCarthage)
 		}
 
 		cron.Start()

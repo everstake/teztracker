@@ -14,7 +14,6 @@ FROM openjdk:13-alpine
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=0 /tmp/conseil.jar conseil.jar
-COPY --from=0 /src/src/main/resources/metadata/tezos.babylonnet.conf /root/tezos.babylonnet.conf
 COPY --from=0 /src/src/main/resources/metadata/tezos.mainnet.conf /root/tezos.mainnet.conf
 COPY --from=0 /src/src/main/resources/metadata/tezos.carthagenet.conf /root/tezos.carthagenet.conf
 COPY --from=0 /src/src/main/resources/metadata.conf /root/metadata.conf

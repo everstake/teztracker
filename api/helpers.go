@@ -33,8 +33,6 @@ func ToNetwork(net string) (models.Network, error) {
 	switch strings.ToLower(net) {
 	case "main", "mainnet":
 		return models.NetworkMain, nil
-	case "babylon", "babylonnet":
-		return models.NetworkBabylon, nil
 	case "carthage", "carthagenet":
 		return models.NetworkCarthage, nil
 	}
