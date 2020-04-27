@@ -613,6 +613,39 @@ paths:
           description: Not Found
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/public_bakers/search':
+    get:
+      operationId: getPublicBakersListForSearch
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query Endpoint for getting list of baker accounts with name for search.
+          schema:
+            items:
+              $ref: '#/definitions/PublicBakerSearch'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/accounts/{accountId}':
     get:
       operationId: getAccount
@@ -2467,6 +2500,12 @@ definitions:
   PublicBaker:
     $ref: >-
       #/definitions/BakersRow
+  PublicBakerSearch:
+    properties:
+      accountId:
+        type: string
+      name:
+        type: string
   BakerInfo:
     properties:
       name:

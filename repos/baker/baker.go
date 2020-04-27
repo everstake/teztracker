@@ -27,6 +27,7 @@ type (
 		PublicBakersList(limit, offset uint) (bakers []models.Baker, err error)
 		BakerRegistryList() ([]models.BakerRegistry, error)
 		SavePublicBaker(models.BakerRegistry) error
+		PublicBakersSearchList() ([]models.PublicBakerSearch, error)
 
 		TotalBakingRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
 		TotalEndorsementRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
@@ -229,6 +230,14 @@ func (r *Repository) PublicBakersList(limit, offset uint) (bakers []models.Baker
 	return bakers, nil
 }
 
+func (r *Repository) PublicBakersSearchList() (list []models.PublicBakerSearch, err error) {
+	err = r.db.Table("tezos.public_bakers").Find(&list).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
 func (r *Repository) SavePublicBaker(baker models.BakerRegistry) (err error) {
 	if r.db.First(&models.BakerRegistry{}, "delegate = ?", baker.Delegate).RecordNotFound() {
 		err = r.db.Create(&baker).Error

@@ -3409,6 +3409,56 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/public_bakers/search": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getPublicBakersListForSearch",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query Endpoint for getting list of baker accounts with name for search.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PublicBakerSearch"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/snapshots": {
       "get": {
         "produces": [
@@ -4715,6 +4765,16 @@ func init() {
     },
     "PublicBaker": {
       "$ref": "#/definitions/BakersRow"
+    },
+    "PublicBakerSearch": {
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "Snapshots": {
       "properties": {
@@ -8166,6 +8226,56 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/public_bakers/search": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getPublicBakersListForSearch",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query Endpoint for getting list of baker accounts with name for search.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PublicBakerSearch"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/snapshots": {
       "get": {
         "produces": [
@@ -9474,6 +9584,16 @@ func init() {
     },
     "PublicBaker": {
       "$ref": "#/definitions/BakersRow"
+    },
+    "PublicBakerSearch": {
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "Snapshots": {
       "properties": {

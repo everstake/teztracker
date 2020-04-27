@@ -59,3 +59,30 @@ func (h *getPublicBakerListHandler) Handle(params accounts.GetPublicBakersListPa
 
 	return accounts.NewGetPublicBakersListOK().WithPayload(render.PublicBakers(accs)).WithXTotalCount(count)
 }
+
+type getPublicBakerSearchListHandler struct {
+	provider DbProvider
+}
+
+// Handle serves the Get Baker List request.
+func (h *getPublicBakerSearchListHandler) Handle(params accounts.GetPublicBakersListForSearchParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetPublicBakersListForSearchBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetPublicBakersListForSearchBadRequest()
+	}
+	service := services.New(repos.New(db), net)
+
+	accs, err := service.PublicBakersSearchList()
+	if err != nil {
+		logrus.Errorf("failed to get public bakers search list: %s", err.Error())
+		return accounts.NewGetPublicBakersListForSearchNotFound()
+	}
+
+	return accounts.NewGetPublicBakersListForSearchOK().WithPayload(render.PublicBakersSearch(accs))
+}
+
+//PublicBakerSearch
