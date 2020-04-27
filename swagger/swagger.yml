@@ -169,7 +169,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, babylonnet, carthagenet]
+          enum: [mainnet, carthagenet]
       produces:
         - application/json
       responses:
@@ -198,7 +198,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, babylonnet, carthagenet]
+          enum: [mainnet, carthagenet]
         - in: query
           name: from
           type: integer
@@ -250,7 +250,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, babylonnet, carthagenet]
+          enum: [mainnet, carthagenet]
         - in: query
           name: limit
           type: integer
@@ -286,7 +286,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, babylonnet, carthagenet]
+          enum: [mainnet, carthagenet]
         - in: query
           name: limit
           type: integer
