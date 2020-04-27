@@ -15,17 +15,20 @@ func Account(a models.Account) *genModels.AccountsRow {
 		Spendable:       a.Spendable.Ptr(),
 		DelegateSetable: a.DelegateSetable.Ptr(),
 		DelegateValue:   a.DelegateValue,
+		DelegateName:    a.DelegateName,
 		Counter:         a.Counter.Ptr(),
 		Script:          a.Script,
 		Storage:         a.Storage,
 		Balance:         a.Balance.Ptr(),
 		BlockLevel:      a.BlockLevel.Ptr(),
+		IsBaker:         &a.IsBaker,
 		BakerInfo:       BakerInfo(a.BakerInfo),
 		CreatedAt:       a.CreatedAt.Unix(),
 		LastActive:      a.LastActive.Unix(),
 		Transactions:    a.Transactions,
 		Operations:      a.Operations,
 		Revealed:        &a.IsRevealed,
+		Index:           a.Index,
 	}
 }
 

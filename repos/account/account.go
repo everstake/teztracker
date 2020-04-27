@@ -65,9 +65,11 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		return 0, nil, err
 	}
 
-	db = r.db.Select("accounts.*, created_at, last_active, account_name").
+	db = r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name, CASE WHEN (bv.account_id IS NOT NULL) THEN TRUE ELSE FALSE	END as is_baker").
 		Table("tezos.account_materialized_view as amv").
-		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id")
+		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id").
+		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate").
+		Joins("left join tezos.baker_view bv on accounts.account_id = bv.account_id")
 
 	if filter.Type == models.AccountTypeAccount {
 		db = db.Where("amv.account_id like 'tz%'")
@@ -75,8 +77,13 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		db = db.Where("amv.account_id like 'KT1%'")
 	}
 
-	db = db.Order("created_at desc").
-		Limit(limit).
+	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
+		db = db.Order("created_at desc")
+	} else if filter.OrderBy == models.AccountOrderFieldBalance {
+		db = db.Order("accounts.balance desc")
+	}
+
+	db = db.Limit(limit).
 		Offset(offset)
 
 	err = db.Find(&accounts).Error
@@ -92,9 +99,11 @@ func (r *Repository) Count(filter models.Account) (count int64, err error) {
 
 // Filter returns a list of accounts that sutisfies the filter.
 func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error) {
-	err = r.db.Select("accounts.*, created_at, last_active, account_name").Model(&filter).
-		Where(&filter).
+	err = r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name").
+		Model(&filter).
 		Joins("natural join tezos.account_materialized_view").
+		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate").
+		Where(&filter).
 		Order("account_id asc").
 		Limit(limit).
 		Offset(offset).
@@ -104,9 +113,10 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 
 // Find looks up for an account with filter.
 func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
-	if res := r.db.Select("accounts.*, created_at, last_active").
+	if res := r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name").
 		Model(&filter).
 		Joins("natural join tezos.account_materialized_view").
+		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate").
 		Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
@@ -139,7 +149,8 @@ func (r *Repository) Balances(accountId string, from time.Time, to time.Time) (b
 	err = r.db.Table("tezos.accounts_history as ah").
 		Select("ah.asof as time, balance").
 		Joins("right join (?) as s on s.asof = ah.asof", db.QueryExpr()).
-		Where("account_id = ?", accountId).Scan(&bal).Error
+		Where("account_id = ?", accountId).
+		Order("ah.asof asc").Scan(&bal).Error
 	if err != nil {
 		return bal, err
 	}
@@ -151,6 +162,7 @@ func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, 
 		Select("asof as time, balance").
 		Where("account_id = ?", accountId).
 		Where("asof < ?", from).
+		Order("asof desc").
 		First(&balance); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, balance, nil

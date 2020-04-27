@@ -10,10 +10,29 @@ import (
 func (t *TezTracker) AccountList(before string, limits Limiter) (accs []models.Account, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
-		Type:  models.AccountTypeAccount,
-		After: before,
+		Type:    models.AccountTypeAccount,
+		OrderBy: models.AccountOrderFieldCreatedAt,
+		After:   before,
 	}
 	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
+	return accs, count, err
+}
+
+func (t *TezTracker) AccountTopBalanceList(before string, limits Limiter) (accs []models.Account, count int64, err error) {
+	r := t.repoProvider.GetAccount()
+	filter := models.AccountFilter{
+		Type:    models.AccountTypeBoth,
+		OrderBy: models.AccountOrderFieldBalance,
+		After:   before,
+	}
+	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
+	if err != nil {
+		return accs, count, err
+	}
+
+	for i := range accs {
+		accs[i].Index = int64(int(limits.Offset()) + i + 1)
+	}
 	return accs, count, err
 }
 
@@ -21,8 +40,9 @@ func (t *TezTracker) AccountList(before string, limits Limiter) (accs []models.A
 func (t *TezTracker) ContractList(before string, limits Limiter) (accs []models.Account, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
-		Type:  models.AccountTypeContract,
-		After: before,
+		Type:    models.AccountTypeContract,
+		OrderBy: models.AccountOrderFieldCreatedAt,
+		After:   before,
 	}
 	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
 	return accs, count, err

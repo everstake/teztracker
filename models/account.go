@@ -14,6 +14,7 @@ type Account struct {
 	Spendable          null.Bool             `json:"spendable"`
 	DelegateSetable    null.Bool             `json:"delegate_setable"`
 	DelegateValue      string                `json:"delegate_value"`
+	DelegateName       string                `json:"delegate_name"`
 	Counter            null.Int              `json:"counter"`
 	Script             string                `json:"script"`
 	Storage            string                `json:"storage"`
@@ -28,6 +29,7 @@ type Account struct {
 	IsRevealed         bool                  `json:"is_revealed"`
 	Transactions       int64                 `json:"transactions"`
 	Operations         int64                 `json:"operations"`
+	Index              int64                 `json:"index"`
 }
 
 type AccountType int
@@ -36,6 +38,13 @@ const (
 	AccountTypeBoth AccountType = iota
 	AccountTypeAccount
 	AccountTypeContract
+)
+
+type AccountOrderField int
+
+const (
+	AccountOrderFieldBalance AccountOrderField = iota
+	AccountOrderFieldCreatedAt
 )
 
 type RewardStatus string
@@ -49,6 +58,7 @@ const (
 
 type AccountFilter struct {
 	Type     AccountType
+	OrderBy  AccountOrderField
 	Delegate string
 	After    string
 }

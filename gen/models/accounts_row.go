@@ -46,12 +46,22 @@ type AccountsRow struct {
 	// created at
 	CreatedAt int64 `json:"createdAt,omitempty"`
 
+	// delegate name
+	DelegateName string `json:"delegateName,omitempty"`
+
 	// delegate setable
 	// Required: true
 	DelegateSetable *bool `json:"delegateSetable"`
 
 	// delegate value
 	DelegateValue string `json:"delegateValue,omitempty"`
+
+	// index
+	Index int64 `json:"index,omitempty"`
+
+	// is baker
+	// Required: true
+	IsBaker *bool `json:"is_baker"`
 
 	// last active
 	LastActive int64 `json:"lastActive,omitempty"`
@@ -110,6 +120,10 @@ func (m *AccountsRow) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDelegateSetable(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIsBaker(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -197,6 +211,15 @@ func (m *AccountsRow) validateCounter(formats strfmt.Registry) error {
 func (m *AccountsRow) validateDelegateSetable(formats strfmt.Registry) error {
 
 	if err := validate.Required("delegateSetable", "body", m.DelegateSetable); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AccountsRow) validateIsBaker(formats strfmt.Registry) error {
+
+	if err := validate.Required("is_baker", "body", m.IsBaker); err != nil {
 		return err
 	}
 
