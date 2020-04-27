@@ -2207,7 +2207,6 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet",
               "carthagenet"
             ],
             "type": "string",
@@ -2291,7 +2290,6 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet",
               "carthagenet"
             ],
             "type": "string",
@@ -2350,7 +2348,6 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet",
               "carthagenet"
             ],
             "type": "string",
@@ -2800,7 +2797,6 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet",
               "carthagenet"
             ],
             "type": "string",
@@ -7102,7 +7098,6 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet",
               "carthagenet"
             ],
             "type": "string",
@@ -7186,7 +7181,6 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet",
               "carthagenet"
             ],
             "type": "string",
@@ -7245,7 +7239,6 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet",
               "carthagenet"
             ],
             "type": "string",
@@ -7699,7 +7692,6 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "babylonnet",
               "carthagenet"
             ],
             "type": "string",
