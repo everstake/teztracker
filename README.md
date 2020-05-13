@@ -63,6 +63,9 @@ Run the Conseil instance
     cd teztracker
     
    If support for multiple networks is needed add SQLCONNECTIONSTRING with required tezos net instead of MAINNET.
+   
+   Manualy exec sql migrations from `/repos/migrations` on PostgreSQL Conseil DB.
+   
    From the root of the teztracker folder, execute the following command to build teztracker on Docker:
    
     docker-compose build api-server
