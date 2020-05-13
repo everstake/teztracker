@@ -1,11 +1,11 @@
 # TezTracker
-  TezTracker is a open-source [Tezos](https://tezos.com) explorer based on Conseil indexer. Developed and supported by [Everstake](https://everstake.one) team. 
+  TezTracker is an open-source [Tezos](https://tezos.com) explorer based on the Conseil indexer. Developed and supported by [Everstake](https://everstake.one) team. 
   
 ## Local deployment
 ### Environment variables
-All project variables should be configured be environment.
+All the project variables should be configured by the environment.
 
-Environment variables divides into 2 groups:
+Environment variables are divided into 2 groups:
 1. Conseil variables
 
 	  Database Config:
@@ -20,7 +20,7 @@ Environment variables divides into 2 groups:
 		XTZ_SCHEME - http or https, default : http
 		XTZ_HOST - default: node
 		XTZ_PORT - default 8732
-    Also Conseil can be configured for Carthage testnet by adding CARTHAGENET_ prefix
+    Also Conseil can be configured for the Carthage testnet by adding CARTHAGENET_ prefix
 
 2. TezTracker API server variables
 
@@ -34,8 +34,8 @@ Environment variables divides into 2 groups:
         TEZTRACKER_DOUBLEENDORSEMENTCHECKINTERVALMINUTES - check interval of double endorsement operations
 
 ### Build and deploy Conseil
-TezTracker depends on the [Conseil](https://github.com/Cryptonomic/Conseil) indexer. Follow the steps to deploy Conseil from our instructions or read through the [README](https://github.com/Cryptonomic/Conseil/blob/master/README.md) in the Conseil GitHub repository.   
-Current explorer state work with [2020-january-release-19](https://github.com/Cryptonomic/Conseil/releases/tag/2020-january-release-19) Conseil releas, so use correct conseil.sql file for db init.
+TezTracker relies on the [Conseil](https://github.com/Cryptonomic/Conseil) indexer. Follow the instructions provided below to deploy Conseil or read through the [README](https://github.com/Cryptonomic/Conseil/blob/master/README.md) in the Conseil GitHub repository.   
+Current explorer state works with [2020-january-release-19](https://github.com/Cryptonomic/Conseil/releases/tag/2020-january-release-19) Conseil release, so use correct conseil.sql file for db init.
 
 Clone the teztracker repository and cd into the cloned folder.
 
@@ -53,7 +53,7 @@ Run the Conseil instance
 	docker-compose up -d conseil-lorre
   
 ### Tezos Node
-  We recommend use public archive nodes as `mainnet.tezos.org.ua` for save you time and disc space.
+  We recommend using public archive nodes from `mainnet.tezos.org.ua` for saving you time and disc space.
   
 ### Build and deploy TezTracker
  
@@ -62,7 +62,7 @@ Run the Conseil instance
     git clone https://github.com/everstake/teztracker
     cd teztracker
     
-   If support for multiple networks is needed add SQLCONNECTIONSTRING with required tezos net instead of MAINNET.
+   If support for multiple networks is needed add SQLCONNECTIONSTRING with a required tezos net instead of MAINNET.
    
    Manualy exec sql migrations from `/repos/migrations` on PostgreSQL Conseil DB.
    
