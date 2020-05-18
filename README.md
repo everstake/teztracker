@@ -1,6 +1,21 @@
 # TezTracker
   TezTracker is an open-source [Tezos](https://tezos.com) explorer based on the Conseil indexer. Developed and supported by [Everstake](https://everstake.one) team. 
-  
+
+## Project overwiew
+
+Programming language: `Go v1.13.6`
+
+DB: `Postgres 10`
+
+Indexer: `Conseil`
+
+Tezos Node: `mainnet.tezos.org.ua`
+	
+ Server struct:
+ 
+ 1. API server
+ 2. Daemons which process specific additional information which not presented by indexer
+	
 ## Local deployment
 ### Environment variables
 All the project variables should be configured by the environment.
@@ -74,4 +89,13 @@ Run the Conseil instance
    To start teztracker on localhost, execute:
    
     docker-compose up -d api-server
+ 
+### Serve TezTracker API documentation
+	
+   From the root of the teztracker folder, execute the following command to build swagger api documentation on Docker:
+   
+    docker-compose build api-documentation
     
+   To serve documentation on localhost, execute:
+   
+    docker-compose up -d api-documentation
