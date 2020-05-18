@@ -22,7 +22,6 @@ func Account(a models.Account) *genModels.AccountsRow {
 		Balance:         a.Balance.Ptr(),
 		BlockLevel:      a.BlockLevel.Ptr(),
 		IsBaker:         &a.IsBaker,
-		Inactive:        a.IsInactive,
 		BakerInfo:       BakerInfo(a.BakerInfo),
 		CreatedAt:       a.CreatedAt.Unix(),
 		LastActive:      a.LastActive.Unix(),
