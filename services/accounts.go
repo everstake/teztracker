@@ -106,7 +106,7 @@ func (t *TezTracker) GetAccount(id string) (acc models.Account, err error) {
 		acc.IsInactive = !acc.IsBaker
 
 		//Set real value for front
-		acc.IsBaker = bi == nil
+		acc.IsBaker = true
 	}
 
 	return acc, nil
