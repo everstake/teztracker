@@ -56,9 +56,6 @@ type AccountsRow struct {
 	// delegate value
 	DelegateValue string `json:"delegateValue,omitempty"`
 
-	// inactive
-	Inactive bool `json:"inactive,omitempty"`
-
 	// index
 	Index int64 `json:"index,omitempty"`
 
