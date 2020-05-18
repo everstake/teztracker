@@ -73,4 +73,13 @@ Run the Conseil instance
    To start teztracker on localhost, execute:
    
     docker-compose up -d api-server
+ 
+### Serve TezTracker API documentation
+	
+   From the root of the teztracker folder, execute the following command to build swagger api documentation on Docker:
+   
+    docker-compose build api-documentation
     
+   To serve documentation on localhost, execute:
+   
+    docker-compose up -d api-documentation
