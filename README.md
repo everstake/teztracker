@@ -2,15 +2,19 @@
   TezTracker is an open-source [Tezos](https://tezos.com) explorer based on the Conseil indexer. Developed and supported by [Everstake](https://everstake.one) team. 
 
 ## Project overwiew
- 	Programming language: `Go v1.13.6`
- 	DB: `Postgres 10`
- 	Indexer: Conseil
-	Tezos Node: mainnet.tezos.org.ua
+
+Programming language: `Go v1.13.6`
+
+DB: `Postgres 10`
+
+Indexer: `Conseil`
+
+Tezos Node: `mainnet.tezos.org.ua`
 	
  Server struct:
  
- 	Api server
-	Daemons which process specific additional information which not presented by indexerr
+ 1. API server
+ 2. Daemons which process specific additional information which not presented by indexer
 	
 ## Local deployment
 ### Environment variables
