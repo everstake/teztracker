@@ -74,3 +74,9 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+  api-documentation:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    ports:
+      - ${TEZTRACKER_API_DOCUMENTATION_PORT}:8080

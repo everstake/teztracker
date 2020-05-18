@@ -1,0 +1,7 @@
+FROM quay.io/goswagger/swagger:latest AS build-env
+
+RUN mkdir /app
+WORKDIR /app
+COPY . .
+
+CMD ["serve", "swagger/swagger.yml", "-p", "8080", "--no-open"]

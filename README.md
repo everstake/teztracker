@@ -24,7 +24,8 @@ Environment variables are divided into 2 groups:
 
 2. TezTracker API server variables
 
-        TEZTRACKER_PORT	- api port    
+        TEZTRACKER_PORT	- api port
+        TEZTRACKER_API_DOCUMENTATION_PORT - api port of documentation ui    
         TEZTRACKER_MAINNET_SQLCONNECTIONSTRING - raw Postgres connection string. example: postgresql://user:pass@127.0.0.1:5432/conseil?sslmode=disable
         TEZTRACKER_LOG_LEVEL - default: info
         TEZTRACKER_COUNTERINTERVALHOURS - update interval of chain counters. example: 2
