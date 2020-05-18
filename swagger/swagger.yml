@@ -2514,6 +2514,8 @@ definitions:
         type: string
       is_baker:
         type: boolean
+      inactive:
+        type: boolean
       bakerInfo:
         $ref: '#/definitions/BakerInfo'
       createdAt:
