@@ -3794,6 +3794,9 @@ func init() {
         "delegateValue": {
           "type": "string"
         },
+        "inactive": {
+          "type": "boolean"
+        },
         "index": {
           "type": "integer",
           "format": "int64"
@@ -8693,6 +8696,9 @@ func init() {
         },
         "delegateValue": {
           "type": "string"
+        },
+        "inactive": {
+          "type": "boolean"
         },
         "index": {
           "type": "integer",
