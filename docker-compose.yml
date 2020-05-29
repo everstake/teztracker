@@ -32,6 +32,8 @@ services:
       DB_Password: ${DB_PASSWORD}
       DB_Database: ${CARTHAGENET_DB_DATABASE}
       XTZ_Host: ${CARTHAGENET_XTZ_HOST}
+      XTZ_Scheme: "${CARTHAGENET_XTZ_SCHEME}"
+      XTZ_Port: "${CARTHAGENET_XTZ_PORT}"
     # If using localhost db you may want to use the host network
     network_mode: "host"
     restart: on-failure
