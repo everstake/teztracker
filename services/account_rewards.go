@@ -36,3 +36,49 @@ func (t *TezTracker) GetAccountRewardsList(accountID string, limits Limiter) (co
 
 	return count, rewards, nil
 }
+
+func (t *TezTracker) GetAccountSecurityDepositList(accountID string) (rewards []models.AccountRewardsCount, err error) {
+	lastBlock, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return rewards, err
+	}
+
+	rewards, err = t.repoProvider.GetAccount().RewardsCountList(accountID, 11)
+	if err != nil {
+		return nil, err
+	}
+
+	bal, err := t.repoProvider.GetBaker().Balance(accountID)
+	if err != nil {
+		return nil, err
+	}
+
+	availableBond := bal.Balance
+	unfrozenCycle := PreservedCycles + 1
+	var futureEndorsementDeposit, futureBakingDeposit int64
+	//Start from active cycle
+	for i := PreservedCycles; i >= 0; i-- {
+		//Calc future deposit
+		futureEndorsementDeposit = rewards[i].FutureEndorsementCount * EndorsementSecurityDeposit
+		futureBakingDeposit = rewards[i].FutureBakingCount * BlockSecurityDeposit
+
+		//Calc current deposit
+		rewards[i].BakingSecurityDeposit += futureBakingDeposit + rewards[i].BakingCount*BlockSecurityDeposit + rewards[i].StolenBaking*BlockSecurityDeposit
+		rewards[i].EndorsementSecurityDeposit += futureEndorsementDeposit + rewards[i].EndorsementsCount*EndorsementSecurityDeposit
+		rewards[i].TotalSecurityDeposit = rewards[i].BakingSecurityDeposit + rewards[i].EndorsementSecurityDeposit
+
+		//Available bond = current amount - future deposit + unfroze deposit
+		availableBond -= futureBakingDeposit + futureEndorsementDeposit
+
+		//Unfroze deposit + unfroze rewards
+		if len(rewards)-i > unfrozenCycle {
+			availableBond += (rewards[i+unfrozenCycle].BakingCount+rewards[i+unfrozenCycle].StolenBaking)*BlockSecurityDeposit + rewards[i+unfrozenCycle].EndorsementsCount*EndorsementSecurityDeposit
+			availableBond += rewards[i+unfrozenCycle].BakingReward + rewards[i+unfrozenCycle].EndorsementsReward
+		}
+
+		rewards[i].AvailableBond = availableBond
+		rewards[i].Status = getRewardStatus(rewards[i].Cycle, lastBlock.MetaCycle)
+	}
+
+	return rewards[0:unfrozenCycle], nil
+}

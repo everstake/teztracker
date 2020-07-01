@@ -38,7 +38,7 @@ func (t *TezTracker) GetAccountFutureEndorsementRights(accountID string, cycle i
 
 	for i := range futureRights {
 		futureRights[i].Reward = int64(EndorsementReward * len(futureRights[i].Slots))
-		futureRights[i].Deposit = BlockSecurityDeposit
+		futureRights[i].Deposit = EndorsementSecurityDeposit
 	}
 
 	return count, futureRights, nil

@@ -94,3 +94,22 @@ func AccountDelegator(acb models.AccountDelegator) *genModels.BakerDelegator {
 		Share:     &acb.Share,
 	}
 }
+
+func AccountSecurityDepositList(accrl []models.AccountRewardsCount) []*genModels.AccountSecurityDepositRow {
+	accrr := make([]*genModels.AccountSecurityDepositRow, len(accrl))
+	for i := range accrl {
+		accrr[i] = AccountSecurityDeposit(accrl[i])
+	}
+	return accrr
+}
+
+func AccountSecurityDeposit(acb models.AccountRewardsCount) *genModels.AccountSecurityDepositRow {
+	return &genModels.AccountSecurityDepositRow{
+		AvailableBond:      acb.AvailableBond,
+		BlocksDeposit:      acb.BakingSecurityDeposit,
+		Cycle:              acb.Cycle,
+		EndorsementDeposit: acb.EndorsementSecurityDeposit,
+		Status:             string(acb.Status),
+		TotalDeposit:       acb.TotalSecurityDeposit,
+	}
+}
