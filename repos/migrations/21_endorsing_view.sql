@@ -5,7 +5,7 @@ CREATE TABLE tezos.baker_endorsements(
   slot integer,
   reward integer,
   missed integer,
-  PRIMARY KEY (delegate,cycle,level));
+  PRIMARY KEY (delegate,cycle,level, slot));
 
 
 CREATE OR REPLACE FUNCTION tezos.baker_endorsements()
