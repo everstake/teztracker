@@ -17,6 +17,14 @@ type PublicBakerSearch struct {
 	BakerName string
 }
 
+type BakerBalance struct {
+	Pkh              string
+	Balance          int64
+	FrozenBalance    uint64
+	StakingBalance   uint64
+	DelegatedBalance uint64
+}
+
 type BakerStats struct {
 	Name                     string    `json:"name"`
 	Fee                      int64     `json:"fee"`

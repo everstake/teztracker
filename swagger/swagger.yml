@@ -1305,6 +1305,43 @@ paths:
           description: Not Found
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/security_deposit/{accountId}/future':
+    get:
+      operationId: getAccountSecurityDepositList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account rewards
+          schema:
+            items:
+              $ref: '#/definitions/AccountSecurityDepositRow'
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/accounts/{accountId}/delegators/{cycleId}':
     get:
       operationId: getAccountDelegatorsByCycleList
@@ -3340,3 +3377,22 @@ definitions:
       - firstPriority
       - secondPriority
       - thirdPriority
+  AccountSecurityDepositRow:
+    properties:
+      cycle:
+        type: integer
+        format: int64
+      status:
+        type: string
+      blocks_deposit:
+        type: integer
+        format: int64
+      endorsement_deposit:
+        type: integer
+        format: int64
+      total_deposit:
+        type: integer
+        format: int64
+      available_bond:
+        type: integer
+        format: int64

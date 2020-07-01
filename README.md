@@ -99,3 +99,5 @@ Run the Conseil instance
    To serve documentation on localhost, execute:
    
     docker-compose up -d api-documentation
+    
+ Full api documentation can be found at [https://teztracker.everstake.one/docs](https://teztracker.everstake.one/docs)

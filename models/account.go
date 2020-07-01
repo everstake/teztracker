@@ -103,6 +103,23 @@ type AccountReward struct {
 	Losses                 int64
 }
 
+type AccountRewardsCount struct {
+	Status                 RewardStatus
+	Cycle                  int64
+	BakingCount            int64
+	BakingReward           int64
+	StolenBaking           int64
+	FutureBakingCount      int64
+	FutureEndorsementCount int64
+	EndorsementsCount      int64
+	EndorsementsReward     int64
+	//Deposit
+	BakingSecurityDeposit      int64
+	EndorsementSecurityDeposit int64
+	TotalSecurityDeposit       int64
+	AvailableBond              int64
+}
+
 type AccountDelegator struct {
 	AccountId string
 	Cycle     int64
