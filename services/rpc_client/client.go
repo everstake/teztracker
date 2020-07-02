@@ -248,6 +248,15 @@ type Parameters struct {
 type Contents struct {
 	Parameters Parameters `json:"parameters`
 	Kind       string     `json:"kind"`
+	Metadata   Metadata   `json:"metadata"`
+}
+
+type InternalOperationResults struct {
+	Parameters Parameters `json:"parameters`
+}
+
+type Metadata struct {
+	InternalOperationResults []InternalOperationResults `json:"internal_operation_results"`
 }
 
 type Operation struct {
@@ -267,6 +276,7 @@ func (t *Tezos) Operation(ctx context.Context, blockHash, transactionHash string
 
 	for _, cont := range operations.Payload {
 		for _, genOp := range cont {
+
 			bt, err := json.Marshal(genOp)
 			if err != nil {
 				return op, err

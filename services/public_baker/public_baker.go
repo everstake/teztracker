@@ -135,7 +135,7 @@ func GetPublicBakerInfo(ctx context.Context, rpc BakesProvider, container michel
 		}
 	}
 
-	container.ParseValues(v)
+	container.ParseValues(op.Contents[index].Parameters.Entrypoint, v)
 
 	bt, err := container.MarshalJSON()
 	if err != nil {
