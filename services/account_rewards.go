@@ -62,10 +62,17 @@ func (t *TezTracker) GetAccountSecurityDepositList(accountID string) (rewards []
 		futureEndorsementDeposit = rewards[i].FutureEndorsementCount * EndorsementSecurityDeposit
 		futureBakingDeposit = rewards[i].FutureBakingCount * BlockSecurityDeposit
 
-		//Calc current deposit
-		rewards[i].BakingSecurityDeposit += futureBakingDeposit + rewards[i].BakingCount*BlockSecurityDeposit + rewards[i].StolenBaking*BlockSecurityDeposit
-		rewards[i].EndorsementSecurityDeposit += futureEndorsementDeposit + rewards[i].EndorsementsCount*EndorsementSecurityDeposit
-		rewards[i].TotalSecurityDeposit = rewards[i].BakingSecurityDeposit + rewards[i].EndorsementSecurityDeposit
+		//Calc actual deposit
+		rewards[i].ActualBakingSecurityDeposit = (rewards[i].BakingCount + rewards[i].StolenBaking) * BlockSecurityDeposit
+		rewards[i].ActualEndorsementSecurityDeposit = rewards[i].EndorsementsCount * EndorsementSecurityDeposit
+
+		//Calc expected deposit
+		rewards[i].ExpectedBakingSecurityDeposit = futureBakingDeposit + rewards[i].ActualBakingSecurityDeposit
+		rewards[i].ExpectedEndorsementSecurityDeposit = futureEndorsementDeposit + rewards[i].ActualEndorsementSecurityDeposit
+
+		//Calc total deposit
+		rewards[i].ActualTotalSecirityDeposit = rewards[i].ActualBakingSecurityDeposit + rewards[i].ActualEndorsementSecurityDeposit
+		rewards[i].ExpectedTotalSecurityDeposit = rewards[i].ExpectedBakingSecurityDeposit + rewards[i].ExpectedEndorsementSecurityDeposit
 
 		//Available bond = current amount - future deposit + unfroze deposit
 		availableBond -= futureBakingDeposit + futureEndorsementDeposit

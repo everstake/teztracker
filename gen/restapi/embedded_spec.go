@@ -3800,11 +3800,19 @@ func init() {
     },
     "AccountSecurityDepositRow": {
       "properties": {
-        "available_bond": {
+        "actual_blocks_deposit": {
           "type": "integer",
           "format": "int64"
         },
-        "blocks_deposit": {
+        "actual_endorsement_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "actual_total_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "available_bond": {
           "type": "integer",
           "format": "int64"
         },
@@ -3812,16 +3820,24 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
-        "endorsement_deposit": {
+        "expected_blocks_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_endorsement_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_total_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "staking_balance": {
           "type": "integer",
           "format": "int64"
         },
         "status": {
           "type": "string"
-        },
-        "total_deposit": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },
@@ -8783,11 +8799,19 @@ func init() {
     },
     "AccountSecurityDepositRow": {
       "properties": {
-        "available_bond": {
+        "actual_blocks_deposit": {
           "type": "integer",
           "format": "int64"
         },
-        "blocks_deposit": {
+        "actual_endorsement_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "actual_total_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "available_bond": {
           "type": "integer",
           "format": "int64"
         },
@@ -8795,16 +8819,24 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
-        "endorsement_deposit": {
+        "expected_blocks_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_endorsement_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_total_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "staking_balance": {
           "type": "integer",
           "format": "int64"
         },
         "status": {
           "type": "string"
-        },
-        "total_deposit": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },

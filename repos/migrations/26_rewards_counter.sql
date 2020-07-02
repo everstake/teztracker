@@ -1,5 +1,6 @@
 CREATE VIEW tezos.rewards_counter AS
 SELECT baker,
+       staking_balance,
        br.cycle,
        cbv.count  as baking_count,
        cbv.stolen    stolen_baking,
