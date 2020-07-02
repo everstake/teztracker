@@ -15,23 +15,35 @@ import (
 // swagger:model AccountSecurityDepositRow
 type AccountSecurityDepositRow struct {
 
+	// actual blocks deposit
+	ActualBlocksDeposit int64 `json:"actual_blocks_deposit,omitempty"`
+
+	// actual endorsement deposit
+	ActualEndorsementDeposit int64 `json:"actual_endorsement_deposit,omitempty"`
+
+	// actual total deposit
+	ActualTotalDeposit int64 `json:"actual_total_deposit,omitempty"`
+
 	// available bond
 	AvailableBond int64 `json:"available_bond,omitempty"`
-
-	// blocks deposit
-	BlocksDeposit int64 `json:"blocks_deposit,omitempty"`
 
 	// cycle
 	Cycle int64 `json:"cycle,omitempty"`
 
-	// endorsement deposit
-	EndorsementDeposit int64 `json:"endorsement_deposit,omitempty"`
+	// expected blocks deposit
+	ExpectedBlocksDeposit int64 `json:"expected_blocks_deposit,omitempty"`
+
+	// expected endorsement deposit
+	ExpectedEndorsementDeposit int64 `json:"expected_endorsement_deposit,omitempty"`
+
+	// expected total deposit
+	ExpectedTotalDeposit int64 `json:"expected_total_deposit,omitempty"`
+
+	// staking balance
+	StakingBalance int64 `json:"staking_balance,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`
-
-	// total deposit
-	TotalDeposit int64 `json:"total_deposit,omitempty"`
 }
 
 // Validate validates this account security deposit row

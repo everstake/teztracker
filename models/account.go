@@ -105,6 +105,7 @@ type AccountReward struct {
 
 type AccountRewardsCount struct {
 	Status                 RewardStatus
+	StakingBalance         int64
 	Cycle                  int64
 	BakingCount            int64
 	BakingReward           int64
@@ -114,10 +115,13 @@ type AccountRewardsCount struct {
 	EndorsementsCount      int64
 	EndorsementsReward     int64
 	//Deposit
-	BakingSecurityDeposit      int64
-	EndorsementSecurityDeposit int64
-	TotalSecurityDeposit       int64
-	AvailableBond              int64
+	ActualBakingSecurityDeposit        int64
+	ExpectedBakingSecurityDeposit      int64
+	ActualEndorsementSecurityDeposit   int64
+	ExpectedEndorsementSecurityDeposit int64
+	ActualTotalSecirityDeposit         int64
+	ExpectedTotalSecurityDeposit       int64
+	AvailableBond                      int64
 }
 
 type AccountDelegator struct {
