@@ -21,6 +21,7 @@ import (
 
 	"github.com/everstake/teztracker/gen/restapi/operations/accounts"
 	"github.com/everstake/teztracker/gen/restapi/operations/app_info"
+	"github.com/everstake/teztracker/gen/restapi/operations/assets"
 	"github.com/everstake/teztracker/gen/restapi/operations/blocks"
 	"github.com/everstake/teztracker/gen/restapi/operations/fees"
 	"github.com/everstake/teztracker/gen/restapi/operations/operation_groups"
@@ -98,6 +99,18 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		AccountsGetAccountsTopBalanceListHandler: accounts.GetAccountsTopBalanceListHandlerFunc(func(params accounts.GetAccountsTopBalanceListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountsTopBalanceList has not yet been implemented")
+		}),
+		AssetsGetAssetOperationsListHandler: assets.GetAssetOperationsListHandlerFunc(func(params assets.GetAssetOperationsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AssetsGetAssetOperationsList has not yet been implemented")
+		}),
+		AssetsGetAssetTokenHoldersListHandler: assets.GetAssetTokenHoldersListHandlerFunc(func(params assets.GetAssetTokenHoldersListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AssetsGetAssetTokenHoldersList has not yet been implemented")
+		}),
+		AssetsGetAssetTokenInfoHandler: assets.GetAssetTokenInfoHandlerFunc(func(params assets.GetAssetTokenInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AssetsGetAssetTokenInfo has not yet been implemented")
+		}),
+		AssetsGetAssetsListHandler: assets.GetAssetsListHandlerFunc(func(params assets.GetAssetsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AssetsGetAssetsList has not yet been implemented")
 		}),
 		FeesGetAvgFeesHandler: fees.GetAvgFeesHandlerFunc(func(params fees.GetAvgFeesParams) middleware.Responder {
 			return middleware.NotImplemented("operation FeesGetAvgFees has not yet been implemented")
@@ -253,6 +266,14 @@ type TezTrackerAPI struct {
 	AccountsGetAccountsListHandler accounts.GetAccountsListHandler
 	// AccountsGetAccountsTopBalanceListHandler sets the operation handler for the get accounts top balance list operation
 	AccountsGetAccountsTopBalanceListHandler accounts.GetAccountsTopBalanceListHandler
+	// AssetsGetAssetOperationsListHandler sets the operation handler for the get asset operations list operation
+	AssetsGetAssetOperationsListHandler assets.GetAssetOperationsListHandler
+	// AssetsGetAssetTokenHoldersListHandler sets the operation handler for the get asset token holders list operation
+	AssetsGetAssetTokenHoldersListHandler assets.GetAssetTokenHoldersListHandler
+	// AssetsGetAssetTokenInfoHandler sets the operation handler for the get asset token info operation
+	AssetsGetAssetTokenInfoHandler assets.GetAssetTokenInfoHandler
+	// AssetsGetAssetsListHandler sets the operation handler for the get assets list operation
+	AssetsGetAssetsListHandler assets.GetAssetsListHandler
 	// FeesGetAvgFeesHandler sets the operation handler for the get avg fees operation
 	FeesGetAvgFeesHandler fees.GetAvgFeesHandler
 	// AppInfoGetBakerChartInfoHandler sets the operation handler for the get baker chart info operation
@@ -444,6 +465,22 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetAccountsTopBalanceListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountsTopBalanceListHandler")
+	}
+
+	if o.AssetsGetAssetOperationsListHandler == nil {
+		unregistered = append(unregistered, "assets.GetAssetOperationsListHandler")
+	}
+
+	if o.AssetsGetAssetTokenHoldersListHandler == nil {
+		unregistered = append(unregistered, "assets.GetAssetTokenHoldersListHandler")
+	}
+
+	if o.AssetsGetAssetTokenInfoHandler == nil {
+		unregistered = append(unregistered, "assets.GetAssetTokenInfoHandler")
+	}
+
+	if o.AssetsGetAssetsListHandler == nil {
+		unregistered = append(unregistered, "assets.GetAssetsListHandler")
 	}
 
 	if o.FeesGetAvgFeesHandler == nil {
@@ -749,6 +786,26 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/top_balance"] = accounts.NewGetAccountsTopBalanceList(o.context, o.AccountsGetAccountsTopBalanceListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/assets/{asset_id}/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/assets/{asset_id}/holders"] = assets.NewGetAssetTokenHoldersList(o.context, o.AssetsGetAssetTokenHoldersListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/assets/{asset_id}"] = assets.NewGetAssetTokenInfo(o.context, o.AssetsGetAssetTokenInfoHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/assets"] = assets.NewGetAssetsList(o.context, o.AssetsGetAssetsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

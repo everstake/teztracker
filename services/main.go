@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/account"
+	"github.com/everstake/teztracker/repos/assets"
 	"github.com/everstake/teztracker/repos/baker"
 	"github.com/everstake/teztracker/repos/baking"
 	"github.com/everstake/teztracker/repos/block"
@@ -42,6 +43,7 @@ type (
 		GetDoubleEndorsement() double_endorsement.Repo
 		GetVotingPeriod() voting_periods.Repo
 		GetChart() chart.Repo
+		GetAssets() assets.Repo
 	}
 
 	Limiter interface {

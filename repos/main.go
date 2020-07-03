@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/everstake/teztracker/repos/assets"
 	"github.com/everstake/teztracker/repos/baking"
 	"github.com/everstake/teztracker/repos/chart"
 	"github.com/everstake/teztracker/repos/double_endorsement"
@@ -106,6 +107,10 @@ func (u *Provider) GetVotingPeriod() voting_periods.Repo {
 
 func (u *Provider) GetChart() chart.Repo {
 	return chart.New(u.getDB())
+}
+
+func (u *Provider) GetAssets() assets.Repo {
+	return assets.New(u.getDB())
 }
 
 func (u *Provider) Start(ctx context.Context) {

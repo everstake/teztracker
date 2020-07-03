@@ -7,6 +7,16 @@ CREATE TABLE tezos.delegators_by_cycle(
     PRIMARY KEY (account_id, cycle, delegate_value)
 );
 
+CREATE TABLE tezos.baking_rewards
+(
+  baker           varchar NOT NULL,
+  cycle           integer NOT NULL,
+  delegators      integer,
+  staking_balance bigint,
+  constraint baking_rewards_pk
+  PRIMARY KEY (baker, cycle)
+);
+
 CREATE VIEW tezos.baker_delegators_by_cycle AS
 select delegate_value baker, cycle, sum(balance) staking_balance, count(1) delegators
 from tezos.delegators_by_cycle
