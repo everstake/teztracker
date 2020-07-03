@@ -24,6 +24,226 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/{network}/assets": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for tokens list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenAssetRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/assets/{asset_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetTokenInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "asset_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for token holders",
+            "schema": {
+              "$ref": "#/definitions/TokenAssetRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/assets/{asset_id}/holders": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetTokenHoldersList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "asset_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for token holders",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenHolderRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/assets/{asset_id}/operations": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetOperationsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "asset_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for token operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AssetOperation"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/ballots/{id}": {
       "get": {
         "produces": [
@@ -3827,6 +4047,48 @@ func init() {
         "transactions": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "AssetOperation": {
+      "required": [
+        "amount",
+        "fee",
+        "gas_limit",
+        "storage_limit"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "fee": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "from": {
+          "type": "string"
+        },
+        "gas_limit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "operation_group_hash": {
+          "type": "string"
+        },
+        "storage_limit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "to": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -4870,6 +5132,53 @@ func init() {
         }
       }
     },
+    "TokenAssetRow": {
+      "required": [
+        "balance",
+        "precision"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "manager": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "precision": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "total_supply": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "TokenHolderRow": {
+      "required": [
+        "balance"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "VoteStats": {
       "properties": {
         "numVoters": {
@@ -4895,6 +5204,230 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/{network}/assets": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for tokens list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenAssetRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/assets/{asset_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetTokenInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "asset_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for token holders",
+            "schema": {
+              "$ref": "#/definitions/TokenAssetRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/assets/{asset_id}/holders": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetTokenHoldersList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "asset_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for token holders",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenHolderRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/assets/{asset_id}/operations": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetOperationsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "asset_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for token operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AssetOperation"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/ballots/{id}": {
       "get": {
         "produces": [
@@ -8730,6 +9263,48 @@ func init() {
         }
       }
     },
+    "AssetOperation": {
+      "required": [
+        "amount",
+        "fee",
+        "gas_limit",
+        "storage_limit"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "fee": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "from": {
+          "type": "string"
+        },
+        "gas_limit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "operation_group_hash": {
+          "type": "string"
+        },
+        "storage_limit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "to": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
     "BakerChartData": {
       "properties": {
         "baker": {
@@ -9768,6 +10343,53 @@ func init() {
         },
         "snapshot_block": {
           "type": "integer"
+        }
+      }
+    },
+    "TokenAssetRow": {
+      "required": [
+        "balance",
+        "precision"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "manager": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "precision": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "total_supply": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "TokenHolderRow": {
+      "required": [
+        "balance"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

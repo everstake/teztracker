@@ -108,8 +108,14 @@ func (g *BigMapContainer) InitPath(prim *script.Prim) {
 	g.dfs(newVertex(prim), "")
 }
 
-func (g *BigMapContainer) ParseValues(entrypoint string, prim *script.Prim) {
+func (g *BigMapContainer) FlushValues() {
+	g.finalMap = map[string]interface{}{}
+}
 
+func (g *BigMapContainer) ParseValues(entrypoint string, prim *script.Prim) {
+	if prim == nil {
+		return
+	}
 	g.searchFunc = g.searchByPath
 	path := ""
 	if prim.OpCode == script.D_RIGHT {

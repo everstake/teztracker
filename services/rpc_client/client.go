@@ -249,6 +249,7 @@ type Contents struct {
 	Parameters Parameters `json:"parameters`
 	Kind       string     `json:"kind"`
 	Metadata   Metadata   `json:"metadata"`
+	Source     string     `json:"source"`
 }
 
 type InternalOperationResults struct {

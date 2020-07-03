@@ -2422,6 +2422,159 @@ paths:
           description: Not Found
       tags:
         - Voting
+  '/v2/data/{network}/assets':
+    get:
+      operationId: getAssetsList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for tokens list
+          schema:
+            items:
+              $ref: >-
+                #/definitions/TokenAssetRow
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Assets
+  '/v2/data/{network}/assets/{asset_id}':
+    get:
+      operationId: getAssetTokenInfo
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for token holders
+          schema:
+              $ref: >-
+                #/definitions/TokenAssetRow
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Assets
+  '/v2/data/{network}/assets/{asset_id}/operations':
+    get:
+      operationId: getAssetOperationsList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+        - in: query
+          name: type
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for token operations
+          schema:
+            items:
+              $ref: >-
+                #/definitions/AssetOperation
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Assets
+  '/v2/data/{network}/assets/{asset_id}/holders':
+    get:
+      operationId: getAssetTokenHoldersList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for token holders
+          schema:
+            items:
+              $ref: >-
+                #/definitions/TokenHolderRow
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - Assets
 definitions:
   Info:
     properties:
@@ -3340,3 +3493,65 @@ definitions:
       - firstPriority
       - secondPriority
       - thirdPriority
+  TokenAssetRow:
+    properties:
+      name:
+        type: string
+      account_id:
+        type: string
+      manager:
+        type: string
+      balance:
+        type: integer
+        format: int64
+      precision:
+        type: integer
+        format: int64
+      created_at:
+        type: integer
+        format: int64
+      total_supply:
+        type: integer
+        format: int64
+    required:
+      - balance
+      - precision
+  AssetOperation:
+    properties:
+      operation_group_hash:
+        type: string
+      type:
+        type: string
+      from:
+        type: string
+      to:
+        type: string
+      amount:
+        type: integer
+        format: int64
+      fee:
+        type: integer
+        format: int64
+      gas_limit:
+        type: integer
+        format: int64
+      storage_limit:
+        type: integer
+        format: int64
+      timestamp:
+        type: integer
+        format: int64
+    required:
+      - amount
+      - fee
+      - gas_limit
+      - storage_limit
+  TokenHolderRow:
+    properties:
+      account_id:
+        type: string
+      balance:
+        type: integer
+        format: int64
+    required:
+      - balance
