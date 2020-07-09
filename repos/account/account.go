@@ -23,6 +23,7 @@ type (
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
 		RewardsList(accountID string, limit uint, offset uint) (count int64, rewards []models.AccountReward, err error)
+		RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error)
 		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
 		RefreshView() error
@@ -179,6 +180,16 @@ func (r *Repository) RefreshView() (err error) {
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error) {
+
+	err = r.db.Table("tezos.rewards_counter").
+		Where("baker = ?", accountID).
+		Limit(limit).
+		Find(&rewards).Error
+
+	return rewards, err
 }
 
 func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (count int64, rewards []models.AccountReward, err error) {

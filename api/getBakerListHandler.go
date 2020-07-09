@@ -85,4 +85,29 @@ func (h *getPublicBakerSearchListHandler) Handle(params accounts.GetPublicBakers
 	return accounts.NewGetPublicBakersListForSearchOK().WithPayload(render.PublicBakersSearch(accs))
 }
 
-//PublicBakerSearch
+type getBakerSecurityDepositFutureListHandler struct {
+	provider DbProvider
+}
+
+// Handle serves the Get Baker Security Deposit Future request.
+func (h *getBakerSecurityDepositFutureListHandler) Handle(params accounts.GetAccountSecurityDepositListParams) middleware.Responder {
+
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountSecurityDepositListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountSecurityDepositListBadRequest()
+	}
+	service := services.New(repos.New(db), net)
+
+	accs, err := service.GetAccountSecurityDepositList(params.AccountID)
+	if err != nil {
+		logrus.Errorf("failed to get public bakers search list: %s", err.Error())
+		return accounts.NewGetAccountSecurityDepositListNotFound()
+	}
+
+	return accounts.NewGetAccountSecurityDepositListOK().WithPayload(render.AccountSecurityDepositList(accs))
+
+}

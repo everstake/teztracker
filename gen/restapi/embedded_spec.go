@@ -1364,6 +1364,62 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/security_deposit/{accountId}/future": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountSecurityDepositList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account rewards",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountSecurityDepositRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/top_balance": {
       "get": {
         "produces": [
@@ -3734,6 +3790,49 @@ func init() {
           "format": "int64"
         },
         "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "AccountSecurityDepositRow": {
+      "properties": {
+        "actual_blocks_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "actual_endorsement_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "actual_total_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "available_bond": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_blocks_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_endorsement_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_total_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "staking_balance": {
           "type": "integer",
           "format": "int64"
         },
@@ -6248,6 +6347,62 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/security_deposit/{accountId}/future": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountSecurityDepositList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account rewards",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountSecurityDepositRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/top_balance": {
       "get": {
         "produces": [
@@ -8634,6 +8789,49 @@ func init() {
           "format": "int64"
         },
         "stakingBalance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "AccountSecurityDepositRow": {
+      "properties": {
+        "actual_blocks_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "actual_endorsement_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "actual_total_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "available_bond": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_blocks_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_endorsement_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "expected_total_deposit": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "staking_balance": {
           "type": "integer",
           "format": "int64"
         },
