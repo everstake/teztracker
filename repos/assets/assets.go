@@ -64,6 +64,8 @@ func (r *Repository) GetAssetTxs(tokenID string) (ops []models.Operation, err er
 	db := r.db.Select("*").
 		Model(&models.Operation{}).
 		Where("source = ? OR destination = ?", tokenID, tokenID).
+		Where("status = ?", "applied").
+		Group("operation_id").
 		Order("operation_id asc")
 
 	err = db.Find(&ops).Error
@@ -74,7 +76,7 @@ func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, 
 
 	db := r.db.Select("*").Table(assetOperations).
 		Joins("LEFT JOIN tezos.operations on (asset_operations.operation_group_hash=operations.operation_group_hash and internal is not TRUE)").
-		Where("token_id = ?", tokenID)
+		Where("token_id = ?", tokenID).Limit(limit).Offset(offset)
 
 	if isTransfer {
 		db = db.Where("type = ?", "transfer")
