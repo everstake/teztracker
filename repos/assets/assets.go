@@ -16,7 +16,7 @@ type (
 		GetTokenInfo(tokenID string) (models.AssetInfo, error)
 		GetTokenHolders(tokenID string) ([]models.AssetHolder, error)
 		GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (info []models.AssetOperationReport, err error)
-		GetAssetTxs(tokenID string) ([]models.Operation, error)
+		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 		CreateAssetOperations(models.AssetOperation) error
 	}
 )
@@ -60,11 +60,13 @@ func (r *Repository) GetTokenHolders(tokenID string) (holders []models.AssetHold
 	return holders, err
 }
 
-func (r *Repository) GetAssetTxs(tokenID string) (ops []models.Operation, err error) {
+func (r *Repository) GetUnprocessedAssetTxs(tokenID string) (ops []models.Operation, err error) {
 	db := r.db.Select("*").
 		Model(&models.Operation{}).
+		Joins("LEFT OUTER JOIN tezos.asset_operations on op.operation_id = asset_operations.operation_id").
 		Where("source = ? OR destination = ?", tokenID, tokenID).
 		Where("status = ?", "applied").
+		Where("asset_operations.operation_id IS NULL").
 		Group("operation_id").
 		Order("operation_id asc")
 

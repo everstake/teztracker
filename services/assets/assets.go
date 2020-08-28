@@ -16,7 +16,7 @@ import (
 )
 
 type AssetRepo interface {
-	GetAssetTxs(tokenID string) ([]models.Operation, error)
+	GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 }
 
 type AssetProvider interface {
@@ -52,9 +52,13 @@ func ProcessAssetOperations(ctx context.Context, unit UnitOfWork, provider Asset
 
 	for tI := range tokens {
 
-		ops, err := repo.GetAssetTxs(tokens[tI].AccountId)
+		ops, err := repo.GetUnprocessedAssetTxs(tokens[tI].AccountId)
 		if err != nil {
 			return err
+		}
+
+		if len(ops) == 0 {
+			continue
 		}
 
 		script, err := provider.Script(ctx, tokens[tI].AccountId)
