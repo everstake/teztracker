@@ -21,6 +21,7 @@ type (
 		EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error)
 		TotalStakingBalance() (int64, error)
 		RefreshView() error
+		Balance(accountId string) (bal models.BakerBalance, err error)
 
 		//New
 		PublicBakersCount() (int64, error)
@@ -119,6 +120,17 @@ func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (cou
 	}
 
 	return counter, nil
+}
+
+func (r *Repository) Balance(accountId string) (bal models.BakerBalance, err error) {
+
+	err = r.db.Table("tezos.delegates").
+		Where("pkh = ?", accountId).
+		Find(&bal).Error
+	if err != nil {
+		return bal, err
+	}
+	return bal, nil
 }
 
 // TotalStakingBalance gets the total staked balance of all delegates.

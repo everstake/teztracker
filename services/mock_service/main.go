@@ -9,6 +9,7 @@ import (
 	baker "github.com/everstake/teztracker/repos/baker"
 	baking "github.com/everstake/teztracker/repos/baking"
 	block "github.com/everstake/teztracker/repos/block"
+	chart "github.com/everstake/teztracker/repos/chart"
 	double_baking "github.com/everstake/teztracker/repos/double_baking"
 	double_endorsement "github.com/everstake/teztracker/repos/double_endorsement"
 	endorsing "github.com/everstake/teztracker/repos/endorsing"
@@ -199,6 +200,18 @@ func (m *MockProvider) GetVotingPeriod() voting_periods.Repo {
 // GetVotingPeriod indicates an expected call of GetVotingPeriod
 func (mr *MockProviderMockRecorder) GetVotingPeriod() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVotingPeriod", reflect.TypeOf((*MockProvider)(nil).GetVotingPeriod))
+}
+
+// GetChart mocks base method
+func (m *MockProvider) GetChart() chart.Repo {
+	ret := m.ctrl.Call(m, "GetChart")
+	ret0, _ := ret[0].(chart.Repo)
+	return ret0
+}
+
+// GetChart indicates an expected call of GetChart
+func (mr *MockProviderMockRecorder) GetChart() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChart", reflect.TypeOf((*MockProvider)(nil).GetChart))
 }
 
 // MockLimiter is a mock of Limiter interface
