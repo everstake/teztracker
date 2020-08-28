@@ -16,7 +16,7 @@ import (
 )
 
 type AssetRepo interface {
-	GetAssetTxs(tokenID string) ([]models.Operation, error)
+	GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 }
 
 type AssetProvider interface {
@@ -52,9 +52,13 @@ func ProcessAssetOperations(ctx context.Context, unit UnitOfWork, provider Asset
 
 	for tI := range tokens {
 
-		ops, err := repo.GetAssetTxs(tokens[tI].AccountId)
+		ops, err := repo.GetUnprocessedAssetTxs(tokens[tI].AccountId)
 		if err != nil {
 			return err
+		}
+
+		if len(ops) == 0 {
+			continue
 		}
 
 		script, err := provider.Script(ctx, tokens[tI].AccountId)
@@ -106,7 +110,12 @@ func ProcessAssetOperations(ctx context.Context, unit UnitOfWork, provider Asset
 				container.ParseValues(value.Parameters.Entrypoint, value.Parameters.Value)
 			//Internal SC call
 			case 2:
-				container.ParseValues(value.Metadata.InternalOperationResults[0].Parameters.Entrypoint, value.Metadata.InternalOperationResults[0].Parameters.Value)
+				if len(value.Metadata.InternalOperationResults) > 0 {
+					container.ParseValues(value.Metadata.InternalOperationResults[0].Parameters.Entrypoint, value.Metadata.InternalOperationResults[0].Parameters.Value)
+				} else {
+					container.ParseValues(value.Parameters.Entrypoint, value.Parameters.Value)
+				}
+
 			}
 
 			c, err := container.MarshalJSON()
@@ -211,8 +220,8 @@ func ProcessAssetOperations(ctx context.Context, unit UnitOfWork, provider Asset
 				return err
 			}
 		}
-
 	}
+
 	return nil
 }
 
