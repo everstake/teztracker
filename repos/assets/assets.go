@@ -78,7 +78,7 @@ func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, 
 
 	db := r.db.Select("*").Table(assetOperations).
 		Joins("LEFT JOIN tezos.operations on (asset_operations.operation_group_hash=operations.operation_group_hash and internal is not TRUE)").
-		Where("token_id = ?", tokenID).Limit(limit).Offset(offset)
+		Where("token_id = ?", tokenID).Order("asset_operations.timestamp desc").Limit(limit).Offset(offset)
 
 	if isTransfer {
 		db = db.Where("type = ?", "transfer")
