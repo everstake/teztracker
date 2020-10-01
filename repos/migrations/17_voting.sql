@@ -1,42 +1,35 @@
-create index ix_operations_voting_proposal_source_kind_period
-  on tezos.operations (proposal, source, kind, period)
-  where ((kind::text = 'proposals'::text) or (kind::text = 'ballot'::text)) and proposal is not null;
-
-create index ix_rolls_pkh_block_level
-  on tezos.rolls (pkh, block_level);
-
 CREATE VIEW tezos.voting_view AS
-select period, proposal, source, rolls, kind, ballot, s.block_level as block_level
-from (select period,
-             unnest(regexp_split_to_array(replace(replace(proposal :: text, '[', ''), ']', ''), ',')) as proposal,
+SELECT period, proposal, source, rolls, kind, ballot, s.block_level AS block_level
+FROM (SELECT period,
+             unnest(regexp_split_to_array(replace(replace(proposal :: text, '[', ''), ']', ''), ',')) AS proposal,
              kind,
              source,
-             min(block_level)                                                                         as block_level,
-             min(coalesce(ballot, 'yay'))                                                             as ballot
-      from tezos.operations
+             min(block_level)                                                                         AS block_level,
+             min(coalesce(ballot, 'yay'))                                                             AS ballot
+      FROM tezos.operations
       where (kind = 'proposals' or kind = 'ballot')
         and proposal is not null
-      group by proposal, source, kind, period) as s
+      GROUP BY proposal, source, kind, period) AS s
        inner join tezos.rolls on (s.source = rolls.pkh and rolls.block_level = s.block_level);
 
 CREATE VIEW tezos.proposal_stat_view AS
-select sum(rolls) as rolls, count(1) as bakers, min(block_level) as block_level, proposal, period, kind, ballot
-from tezos.voting_view
-group by proposal, period, kind, ballot;
+SELECT sum(rolls) AS rolls, count(1) AS bakers, min(block_level) AS block_level, proposal, period, kind, ballot
+FROM tezos.voting_view
+GROUP BY proposal, period, kind, ballot;
 
-Create view tezos.double_voting_by_period as
-select  p.period, sum(p.rolls)/2 as rolls, count(1)/2 as bakers
-from tezos.voting_view as p inner join tezos.voting_view as w on (p.period=w.period and p.source=w.source and p.proposal<>w.proposal)
-group by p.period;
+CREATE VIEW tezos.double_voting_by_period AS
+SELECT  p.period, sum(p.rolls)/2 AS rolls, count(1)/2 AS bakers
+FROM tezos.voting_view AS p inner join tezos.voting_view AS w on (p.period=w.period and p.source=w.source and p.proposal<>w.proposal)
+GROUP BY p.period;
 
 CREATE VIEW tezos.period_stat_view AS
-select s.rolls - coalesce(v.rolls, 0) as rolls, s.bakers - coalesce(v.bakers, 0) as bakers, block_level, s.period, kind
-from (select sum(rolls) as rolls, sum(bakers) as bakers, min(block_level) as block_level, period, kind
-      from tezos.proposal_stat_view
-      group by period, kind) as s
-       left join tezos.double_voting_by_period as v on s.period = v.period;
+SELECT s.rolls - coalesce(v.rolls, 0) AS rolls, s.bakers - coalesce(v.bakers, 0) AS bakers, block_level, s.period, kind
+FROM (SELECT sum(rolls) AS rolls, sum(bakers) AS bakers, min(block_level) AS block_level, period, kind
+      FROM tezos.proposal_stat_view
+      GROUP BY period, kind) AS s
+       left join tezos.double_voting_by_period AS v on s.period = v.period;
 
-CREATE table tezos.voting_period
+CREATE TABLE tezos.voting_period
 (
   id          integer,
   type        varchar,
@@ -47,17 +40,12 @@ CREATE table tezos.voting_period
 );
 
 CREATE VIEW tezos.period_total_stat_view AS
-select psv.period, sum(r.rolls) as total_rolls, count(1) as total_bakers
-from tezos.period_stat_view as psv
-       left join tezos.rolls as r on psv.block_level = r.block_level
-group by psv.period;
+SELECT psv.period, sum(r.rolls) AS total_rolls, count(1) AS total_bakers
+FROM tezos.period_stat_view AS psv
+     LEFT JOIN tezos.bakers_history AS r ON psv.block_level = r.block_level
+GROUP BY psv.period;
 
-
-create index ix_operations_double_endorsement_index
-  on tezos.operations (operation_id)
-  where ((kind)::text = 'double_endorsement_evidence'::text);
-
-CREATE table tezos.voting_proposal
+CREATE TABLE tezos.voting_proposal
 (
   hash      varchar,
   title        varchar,

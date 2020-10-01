@@ -22,6 +22,7 @@ type Config struct {
 	BakerRegistryCheckIntervalMinutes     int
 	AssetsParseIntervalMinutes            int
 }
+
 type NetworkConfig struct {
 	SqlConnectionString string
 	NodeRpc             client.TransportConfig

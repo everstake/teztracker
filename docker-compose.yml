@@ -2,10 +2,8 @@ version: "3.1"
 
 services:
   conseil-lorre:
-    build:
-      context: .
-      dockerfile: Dockerfile-conseil
-    command: lorre
+    image: cryptonomictech/conseil:latest
+    command: conseil-lorre
     environment:
       DB_Host: "${DB_HOST}"
       DB_User: "${DB_USER}"
@@ -22,10 +20,8 @@ services:
         condition: on-failure
         delay: 5s
   conseil-carthagenet-lorre:
-    build:
-      context: .
-      dockerfile: Dockerfile-conseil
-    command: lorre
+    image: cryptonomictech/conseil:latest
+    command: conseil-lorre
     environment:
       DB_Host: ${DB_HOST}
       DB_User: ${DB_USER}
@@ -34,6 +30,7 @@ services:
       XTZ_Host: ${CARTHAGENET_XTZ_HOST}
       XTZ_Scheme: "${CARTHAGENET_XTZ_SCHEME}"
       XTZ_Port: "${CARTHAGENET_XTZ_PORT}"
+      XTZ_Network: "carthagenet"
     # If using localhost db you may want to use the host network
     network_mode: "host"
     restart: on-failure
@@ -65,6 +62,7 @@ services:
       TEZTRACKER_SNAPSHOTCHECKINTERVALMINUTES: ${TEZTRACKER_SNAPSHOTCHECKINTERVALMINUTES}
       TEZTRACKER_DOUBLEBAKINGCHECKINTERVALMINUTES: ${TEZTRACKER_DOUBLEBAKINGCHECKINTERVALMINUTES}
       TEZTRACKER_DOUBLEENDORSEMENTCHECKINTERVALMINUTES: ${TEZTRACKER_DOUBLEENDORSEMENTCHECKINTERVALMINUTES}
+      TEZTRACKER_ASSETSPARSEINTERVALMINUTES: ${TEZTRACKER_ASSETSPARSEINTERVALMINUTES}
       #todo: if the scheme is not http or host/port are different then for lorry - pass it through
       TEZTRACKER_MAINNET_NODERPC_HOST: "${XTZ_HOST}:${XTZ_PORT}"
       TEZTRACKER_MAINNET_NODERPC_SCHEMES: "${XTZ_SCHEME}"

@@ -18,27 +18,28 @@ CREATE TABLE tezos.baking_rewards
 );
 
 CREATE VIEW tezos.baker_delegators_by_cycle AS
-select delegate_value baker, cycle, sum(balance) staking_balance, count(1) delegators
+SELECT delegate_value baker, cycle, sum(balance) staking_balance, count(1) delegators
 from tezos.delegators_by_cycle
 group by delegate_value, cycle;
 
+//After sync
 CREATE OR REPLACE FUNCTION tezos.baking_rewards()
  RETURNS trigger LANGUAGE plpgsql
 AS $$
-BEGIN
-insert into tezos.baking_rewards
-select delegate_value, NEW.snp_cycle, count(1), sum(balance)
-from (select account_id, max(block_level) block_level
-      from tezos.accounts_history
-             left join tezos.snapshots on NEW.snp_cycle = snp_cycle
-      where block_level <= snp_block_level
-      group by account_id) s
-       left join tezos.accounts_history ah on s.account_id = ah.account_id and s.block_level = ah.block_level
-where delegate_value is not null
-  and balance > 0
-group by delegate_value;
-RETURN NEW;
-END $$;
+    BEGIN
+        INSERT INTO tezos.baking_rewards
+        SELECT delegate_value, NEW.snp_cycle, count(1), sum(balance)
+        FROM (SELECT account_id, max(block_level) block_level
+              FROM tezos.accounts_history
+                     LEFT JOIN tezos.snapshots ON NEW.snp_cycle = snp_cycle
+              where block_level <= snp_block_level
+              group by account_id) s
+               left join tezos.accounts_history ah on s.account_id = ah.account_id and s.block_level = ah.block_level
+        where delegate_value is not null
+          and balance > 0
+        group by delegate_value;
+        RETURN NEW;
+    END $$;
 
 CREATE TRIGGER baker_rewards_insert
   AFTER INSERT
@@ -51,8 +52,8 @@ CREATE OR REPLACE FUNCTION tezos.delegators_by_cycle()
 AS $$
 BEGIN
   insert into tezos.delegators_by_cycle
-  select s.account_id, NEW.snp_cycle, s.block_level, delegate_value, balance
-  from (select account_id, max(block_level) block_level
+  SELECT s.account_id, NEW.snp_cycle, s.block_level, delegate_value, balance
+  from (SELECT account_id, max(block_level) block_level
         from tezos.accounts_history
                left join tezos.snapshots on NEW.snp_cycle = snp_cycle
         where block_level <= snp_block_level
@@ -71,12 +72,14 @@ CREATE TRIGGER delegators_by_cycle_insert
 EXECUTE PROCEDURE tezos.delegators_by_cycle();
 
 CREATE OR REPLACE VIEW tezos.frozen_endorsement_rewards as
-select delegate,sum(reward) rewards, sum(count) count
-from tezos.baker_cycle_endorsements_view  where cycle >= (select meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
+SELECT delegate,sum(reward) rewards, sum(count) count
+from tezos.baker_cycle_endorsements_view
+where cycle >= (SELECT meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
 
- CREATE OR REPLACE VIEW tezos.frozen_baking_rewards as
-select delegate,sum(reward) rewards, sum(count) count
-from tezos.baker_cycle_bakings_view where cycle >= (select meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
+CREATE OR REPLACE VIEW tezos.frozen_baking_rewards as
+SELECT delegate,sum(reward) rewards, sum(count) count
+from tezos.baker_cycle_bakings_view
+where cycle >= (SELECT meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
 
 --Add frozen rewards and count
 drop materialized view tezos.baker_view;
@@ -115,9 +118,3 @@ left join tezos.frozen_endorsement_rewards as fer on account_id = fer.delegate;
 
 create unique index unique_index
   on tezos.baker_view (account_id);
-
-create index accounts_history_block_level_index
-	on tezos.accounts_history (block_level desc);
-
-create index accounts_history_delegate_value_index
-	on tezos.accounts_history (delegate_value) where delegate_value is not null;
