@@ -124,7 +124,7 @@ func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (cou
 
 func (r *Repository) Balance(accountId string) (bal models.BakerBalance, err error) {
 
-	err = r.db.Table("tezos.delegates").
+	err = r.db.Table("tezos.bakers").
 		Where("pkh = ?", accountId).
 		Find(&bal).Error
 	if err != nil {
@@ -138,7 +138,7 @@ func (r *Repository) TotalStakingBalance() (b int64, err error) {
 	bal := struct {
 		Balance int64
 	}{}
-	err = r.db.Table("tezos.delegates").
+	err = r.db.Table("tezos.bakers").
 		Select("SUM(staking_balance) balance").
 		Where("deactivated is not true").
 		Find(&bal).Error
