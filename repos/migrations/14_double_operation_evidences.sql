@@ -15,9 +15,3 @@ CREATE TABLE tezos.double_operation_evidences (
     CONSTRAINT double_operation_evidences_denounced_block_foreign FOREIGN KEY (doe_denounced_level) REFERENCES tezos.blocks (level),
     CONSTRAINT double_operation_evidences_operation_foreign FOREIGN KEY (operation_id) REFERENCES tezos.operations (operation_id)
 );
-
-INSERT INTO tezos.double_operation_evidences(operation_id, doe_block_hash, doe_block_level, doe_denounced_level,
-                                             doe_offender, doe_priority, doe_evidence_baker, doe_baker_reward,
-                                             doe_lost_deposits, doe_lost_rewards, doe_lost_fees, doe_type)
-SELECT *, 'double_baking_evidence'
-from tezos.double_baking_evidences;

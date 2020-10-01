@@ -10,7 +10,7 @@ type AssetInfo struct {
 	ContractType string
 	AccountId    string
 	Timestamp    time.Time
-	Precision    int64
+	Scale        int64
 }
 
 type AssetHolder struct {

@@ -69,7 +69,7 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 	db = r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name, CASE WHEN (bv.account_id IS NOT NULL) THEN TRUE ELSE FALSE	END as is_baker").
 		Table("tezos.account_materialized_view as amv").
 		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id").
-		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate").
+		Joins("left join tezos.known_addresses ka on accounts.delegate_value = ka.address").
 		Joins("left join tezos.baker_view bv on accounts.account_id = bv.account_id")
 
 	if filter.Type == models.AccountTypeAccount {
@@ -103,7 +103,7 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 	err = r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name").
 		Model(&filter).
 		Joins("natural join tezos.account_materialized_view").
-		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate").
+		Joins("left join tezos.known_addresses ka on accounts.delegate_value = ka.address").
 		Where(&filter).
 		Order("account_id asc").
 		Limit(limit).
@@ -117,7 +117,7 @@ func (r *Repository) Find(filter models.Account) (found bool, acc models.Account
 	if res := r.db.Select("accounts.*, created_at, last_active, account_name, baker_name as delegate_name").
 		Model(&filter).
 		Joins("natural join tezos.account_materialized_view").
-		Joins("left join tezos.public_bakers pb on accounts.delegate_value = pb.delegate").
+		Joins("left join tezos.known_addresses ka on accounts.delegate_value = ka.address").
 		Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil

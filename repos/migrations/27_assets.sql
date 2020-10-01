@@ -1,3 +1,4 @@
+-- Already on conseil precision -> scale
 CREATE TABLE tezos.registered_tokens
 (
   id            integer not null
