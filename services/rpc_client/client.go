@@ -167,14 +167,22 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 
 func ToDoubleOperationEvidence(op tzblock.Operations) (dee models.DoubleOperationEvidence, err error) {
 	for i := range op.Contents {
-		if op.Contents[i].Op1 != nil {
-			dee.DenouncedLevel = int64(op.Contents[i].Op1.Operations.Level)
-			err = parseDoubleOperationMetaData(&dee, op.Contents[i].Metadata)
-			if err != nil {
-				return dee, err
-			}
-			return dee, nil
+		if op.Contents[i].Kind != "double_endorsement_evidence" || op.Contents[i].Kind != "double_baking_evidence" {
+			continue
 		}
+
+		if op.Contents[i].Kind == "double_endorsement_evidence" {
+			dee.DenouncedLevel = int64(op.Contents[i].Op1.Operations.Level)
+		} else {
+			dee.DenouncedLevel = int64(op.Contents[i].Bh1.Level)
+		}
+
+		err = parseDoubleOperationMetaData(&dee, op.Contents[i].Metadata)
+		if err != nil {
+			return dee, err
+		}
+		return dee, nil
+
 	}
 	return dee, fmt.Errorf("not a double operation evidence")
 }
