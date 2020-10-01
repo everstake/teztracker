@@ -2,7 +2,6 @@ package double_baking
 
 import (
 	"context"
-
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/double_baking"
 	"github.com/everstake/teztracker/repos/operation"
