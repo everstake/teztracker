@@ -1,6 +1,6 @@
 module github.com/everstake/teztracker
 
-go 1.13.6
+go 1.23
 
 require (
 	blockwatch.cc/tzindex v0.0.0-20200216192617-519bcd88724c

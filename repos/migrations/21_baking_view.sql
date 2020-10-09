@@ -28,8 +28,8 @@ LANGUAGE plpgsql
 AS
 $$
 BEGIN
-  insert into tezos.baker_bakings
-select cycle,
+insert into tezos.baker_bakings (cycle,delegate,level,priority,baked,reward,fees,missed,stolen)
+       select meta_cycle,
        br.delegate,
        br.level,
        CASE WHEN baker = br.delegate THEN bl.priority ELSE NULL END        as priority,
@@ -45,7 +45,7 @@ from tezos.baking_rights br
 where category = 'rewards'
   and change > 0
   and source = 'block'
-  and bl.level = NEW.meta_level-2
+  and bl.level = NEW.meta_level-5
   and (baker = br.delegate or bl.priority > br.priority or (br.priority > 0 and baker = br.delegate));
   RETURN NEW;
 END
