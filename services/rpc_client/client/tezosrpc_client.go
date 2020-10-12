@@ -16,6 +16,7 @@ import (
 	"github.com/everstake/teztracker/services/rpc_client/client/endorsing_rights"
 	"github.com/everstake/teztracker/services/rpc_client/client/operations"
 	"github.com/everstake/teztracker/services/rpc_client/client/snapshots"
+	"github.com/everstake/teztracker/services/rpc_client/client/voting"
 )
 
 // Default tezosrpc HTTP client.
@@ -71,6 +72,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Tezosrpc {
 
 	cli.Snapshots = snapshots.New(transport, formats)
 
+	cli.Voting = voting.New(transport, formats)
+
 	return cli
 }
 
@@ -125,6 +128,8 @@ type Tezosrpc struct {
 
 	Snapshots *snapshots.Client
 
+	Voting *voting.Client
+
 	Transport runtime.ClientTransport
 }
 
@@ -141,5 +146,7 @@ func (c *Tezosrpc) SetTransport(transport runtime.ClientTransport) {
 	c.Operations.SetTransport(transport)
 
 	c.Snapshots.SetTransport(transport)
+
+	c.Voting.SetTransport(transport)
 
 }

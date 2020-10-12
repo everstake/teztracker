@@ -134,6 +134,54 @@ paths:
           description: Internal error
       tags:
         - Snapshots
+  /chains/{network}/blocks/{block}/votes/current_period_kind:
+    get:
+      operationId: getCurrentVotingPeriod
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: block
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Endpoint for current period kind
+          schema:
+            type: string
+        '500':
+          description: Internal error
+      tags:
+        - Voting
+  /chains/{network}/blocks/{block}/votes/listings:
+    get:
+      operationId: getVotingRolls
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: block
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Endpoint for voting rolls
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/VotingRolls'
+        '500':
+          description: Internal error
+      tags:
+        - Voting
   /chains/main/blocks/head/context/contracts/{contract}/script:
     get:
       operationId: getContractScript
@@ -205,4 +253,10 @@ definitions:
       estimated_time:
         type: string
         format: date-time
-
+  VotingRolls:
+    properties:
+      pkh:
+        type: string
+      rolls:
+        type: integer
+        format: int64

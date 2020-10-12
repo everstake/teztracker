@@ -17,6 +17,7 @@ type Config struct {
 	CounterIntervalHours                  int
 	FutureRightsIntervalMinutes           int
 	SnapshotCheckIntervalMinutes          int
+	VotingRollsIntervalMinutes            int
 	DoubleBakingCheckIntervalMinutes      int
 	DoubleEndorsementCheckIntervalMinutes int
 	BakerRegistryCheckIntervalMinutes     int

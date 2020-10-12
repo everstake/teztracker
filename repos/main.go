@@ -10,6 +10,7 @@ import (
 	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
+	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/voting_periods"
 
 	"github.com/everstake/teztracker/repos/account"
@@ -91,6 +92,10 @@ func (u *Provider) GetFutureEndorsementRight() future_endorsement_rights.Repo {
 
 func (u *Provider) GetSnapshots() snapshots.Repo {
 	return snapshots.New(u.getDB())
+}
+
+func (u *Provider) GetRolls() rolls.Repo {
+	return rolls.New(u.getDB())
 }
 
 func (u *Provider) GetDoubleBaking() double_baking.Repo {

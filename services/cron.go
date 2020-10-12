@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/everstake/teztracker/services/assets"
 	"github.com/everstake/teztracker/services/public_baker"
+	"github.com/everstake/teztracker/services/rolls"
 	"sync/atomic"
 	"time"
 
@@ -115,6 +116,33 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 	} else {
 		log.Infof("no sheduling snapshots parser due to missing FutureRightsIntervalMinutes in config")
 	}
+
+	if cfg.VotingRollsIntervalMinutes > 0 {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.VotingRollsIntervalMinutes) * time.Minute
+		log.Infof("Sheduling rolls parser saver every %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+				unitOfWork := repos.New(db)
+
+				rpc := rpc_client.New(rpcConfig, string(network), isTestNetwork)
+				count, err := rolls.SaveRolls(context.TODO(), unitOfWork, rpc)
+				if err != nil {
+					log.Errorf("Rolls saver failed: %s", err.Error())
+					return
+				}
+				log.Tracef("Rolls saved %d count", count)
+			} else {
+				log.Tracef("skipping Rolls saver as the previous job is still running")
+			}
+		})
+	} else {
+		log.Infof("no sheduling rolls parser due to missing in config")
+	}
+
 	if cfg.DoubleBakingCheckIntervalMinutes > 0 {
 		var jobIsRunning uint32
 
