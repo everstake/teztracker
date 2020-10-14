@@ -198,29 +198,14 @@ func (t *TezTracker) GetProtocolsList(limits Limiter) (protocols []models.Protoc
 }
 
 func (t *TezTracker) GetPeriodNonVoters(id int64, limits Limiter) (proposals []models.Voter, count int64, err error) {
-	lastBlock, err := t.repoProvider.GetBlock().Last()
-	if err != nil {
-		return proposals, count, err
-	}
-
-	//last block level van pe on processing by indexer
-	blockLevel := lastBlock.MetaLevel - 1
-
-	_, endBlock := t.calcVotingPeriod(id)
-	if endBlock < blockLevel {
-		//Indexer not process rolls state for testing period
-		//so take block before end
-		blockLevel = endBlock - 1
-	}
-
 	periodRepo := t.repoProvider.GetVotingPeriod()
 
-	count, err = periodRepo.PeriodNonVotersCount(id, blockLevel)
+	count, err = periodRepo.PeriodNonVotersCount(id)
 	if err != nil {
 		return proposals, count, err
 	}
 
-	proposals, err = periodRepo.PeriodNonVotersList(id, blockLevel, limits.Limit(), limits.Offset())
+	proposals, err = periodRepo.PeriodNonVotersList(id, limits.Limit(), limits.Offset())
 	if err != nil {
 		return proposals, 0, err
 	}
