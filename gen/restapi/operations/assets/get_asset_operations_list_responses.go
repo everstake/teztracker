@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/swag"
 
 	models "github.com/everstake/teztracker/gen/models"
 )
@@ -21,6 +22,10 @@ const GetAssetOperationsListOKCode int = 200
 swagger:response getAssetOperationsListOK
 */
 type GetAssetOperationsListOK struct {
+	/*The total number of data entries.
+
+	 */
+	XTotalCount int64 `json:"X-Total-Count"`
 
 	/*
 	  In: Body
@@ -32,6 +37,17 @@ type GetAssetOperationsListOK struct {
 func NewGetAssetOperationsListOK() *GetAssetOperationsListOK {
 
 	return &GetAssetOperationsListOK{}
+}
+
+// WithXTotalCount adds the xTotalCount to the get asset operations list o k response
+func (o *GetAssetOperationsListOK) WithXTotalCount(xTotalCount int64) *GetAssetOperationsListOK {
+	o.XTotalCount = xTotalCount
+	return o
+}
+
+// SetXTotalCount sets the xTotalCount to the get asset operations list o k response
+func (o *GetAssetOperationsListOK) SetXTotalCount(xTotalCount int64) {
+	o.XTotalCount = xTotalCount
 }
 
 // WithPayload adds the payload to the get asset operations list o k response
@@ -47,6 +63,13 @@ func (o *GetAssetOperationsListOK) SetPayload(payload []*models.AssetOperation) 
 
 // WriteResponse to the client
 func (o *GetAssetOperationsListOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header X-Total-Count
+
+	xTotalCount := swag.FormatInt64(o.XTotalCount)
+	if xTotalCount != "" {
+		rw.Header().Set("X-Total-Count", xTotalCount)
+	}
 
 	rw.WriteHeader(200)
 	payload := o.Payload

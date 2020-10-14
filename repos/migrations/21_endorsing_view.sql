@@ -37,8 +37,8 @@ BEGIN
                left join tezos.balance_updates bu
                          on (op.operation_group_hash = bu.operation_group_hash and category = 'rewards')
         where op.kind = 'endorsement'
-          and op.level = NEW.meta_level-2) as op on er.level = op.level and op.elem = er.slot::varchar
-  where er.level = NEW.meta_level-2;
+          and op.level = NEW.meta_level-5) as op on er.level = op.level and op.elem = er.slot::varchar
+  where er.level = NEW.meta_level-5;
   RETURN NEW;
 END
 $$;

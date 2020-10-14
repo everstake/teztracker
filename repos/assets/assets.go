@@ -12,10 +12,10 @@ type (
 	}
 
 	Repo interface {
-		GetTokensList() ([]models.AssetInfo, error)
+		GetTokensList() (int64, []models.AssetInfo, error)
 		GetTokenInfo(tokenID string) (models.AssetInfo, error)
 		GetTokenHolders(tokenID string) ([]models.AssetHolder, error)
-		GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (info []models.AssetOperationReport, err error)
+		GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
 		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 		CreateAssetOperations(models.AssetOperation) error
 	}
@@ -38,12 +38,20 @@ func (r *Repository) CreateAssetOperations(operation models.AssetOperation) erro
 	return r.db.Model(&operation).Create(&operation).Error
 }
 
-func (r *Repository) GetTokensList() (tokens []models.AssetInfo, err error) {
-	err = r.db.Select("*").Table(assetsTable).Find(&tokens).Error
+func (r *Repository) GetTokensList() (count int64, tokens []models.AssetInfo, err error) {
+	db := r.db.Table(assetsTable)
+
+	err = db.Count(&count).Error
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
-	return tokens, nil
+
+	err = db.Select("*").Find(&tokens).Error
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return count, tokens, nil
 }
 
 func (r *Repository) GetTokenInfo(tokenID string) (info models.AssetInfo, err error) {
@@ -74,11 +82,17 @@ func (r *Repository) GetUnprocessedAssetTxs(tokenID string) (ops []models.Operat
 	return ops, nil
 }
 
-func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (info []models.AssetOperationReport, err error) {
+func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (count int64, info []models.AssetOperationReport, err error) {
 
-	db := r.db.Select("*").Table(assetOperations).
-		Joins("LEFT JOIN tezos.operations on (asset_operations.operation_group_hash=operations.operation_group_hash and internal is not TRUE)").
-		Where("token_id = ?", tokenID).Order("asset_operations.timestamp desc").Limit(limit).Offset(offset)
+	db := r.db.Select("*").Table(assetOperations).Where("token_id = ?", tokenID)
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return 0, nil, err
+	}
+
+	db = db.Joins("LEFT JOIN tezos.operations on (asset_operations.operation_group_hash=operations.operation_group_hash and internal is not TRUE)").
+		Order("asset_operations.timestamp desc").Limit(limit).Offset(offset)
 
 	if isTransfer {
 		db = db.Where("type = ?", "transfer")
@@ -87,6 +101,9 @@ func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, 
 	}
 
 	err = db.Find(&info).Error
+	if err != nil {
+		return count, info, err
+	}
 
-	return info, err
+	return count, info, nil
 }

@@ -2488,6 +2488,10 @@ paths:
               $ref: >-
                 #/definitions/TokenAssetRow
             type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '400':
           description: Bad request
         '404':
@@ -2567,6 +2571,10 @@ paths:
               $ref: >-
                 #/definitions/AssetOperation
             type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '400':
           description: Bad request
         '404':
