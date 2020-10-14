@@ -35,10 +35,10 @@ func New(db *gorm.DB) *Repository {
 func (r *Repository) getDb() *gorm.DB {
 	db := r.db.Select("blocks.*, pb.baker_name, bu.change as reward").
 		Model(&models.Block{}).
-		Joins("left join tezos.public_bakers as pb on pb.delegate=baker").
+		Joins("left join tezos.public_bakers as pb on delegate=baker").
 		//To get only block reward
 		//Todo refactor
-		Joins("left join tezos.balance_updates as bu on (source_hash=hash and category='rewards' and source='block' and bu.delegate = blocks.baker and change > 0)")
+		Joins("left join tezos.balance_updates as bu on (source_hash=hash and category='rewards' and source='block' and bu.account_id = blocks.baker and change > 0)")
 
 	return db
 }

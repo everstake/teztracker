@@ -1,3 +1,11 @@
+CREATE TABLE tezos.rolls (
+    pkh varchar,
+    rolls integer NOT NULL,
+    block_level  int not null,
+    cycle int not null,
+    voting_period  int not null
+);
+
 CREATE VIEW tezos.voting_view AS
 SELECT period, proposal, source, rolls, kind, ballot, s.block_level AS block_level
 FROM (SELECT period,
@@ -10,7 +18,7 @@ FROM (SELECT period,
       where (kind = 'proposals' or kind = 'ballot')
         and proposal is not null
       GROUP BY proposal, source, kind, period) AS s
-       inner join tezos.rolls on (s.source = rolls.pkh and rolls.block_level = s.block_level);
+       inner join tezos.rolls on (s.source = rolls.pkh and rolls.voting_period = s.period);
 
 CREATE VIEW tezos.proposal_stat_view AS
 SELECT sum(rolls) AS rolls, count(1) AS bakers, min(block_level) AS block_level, proposal, period, kind, ballot
@@ -39,10 +47,10 @@ CREATE TABLE tezos.voting_period
   end_time    timestamp
 );
 
-CREATE VIEW tezos.period_total_stat_view AS
+CREATE OR REPLACE VIEW tezos.period_total_stat_view AS
 SELECT psv.period, sum(r.rolls) AS total_rolls, count(1) AS total_bakers
 FROM tezos.period_stat_view AS psv
-     LEFT JOIN tezos.bakers_history AS r ON psv.block_level = r.block_level
+     LEFT JOIN tezos.rolls AS r ON psv.period = r.voting_period
 GROUP BY psv.period;
 
 CREATE TABLE tezos.voting_proposal

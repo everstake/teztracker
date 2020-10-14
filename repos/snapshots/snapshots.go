@@ -15,7 +15,6 @@ type (
 	Repo interface {
 		List(limit, offset uint) (count int64, snapshots []models.Snapshot, err error)
 		Find(id int64) (found bool, snapshot models.Snapshot, err error)
-		RollsAndBakersInBlock(block int64) (int64, int64, error)
 		Create(snapshot models.Snapshot) error
 		CreateBulk(snapshots []models.Snapshot) error
 	}
@@ -62,19 +61,6 @@ func (r *Repository) Find(id int64) (found bool, snapshot models.Snapshot, err e
 	}
 
 	return true, snapshot, nil
-}
-
-// RollsInBlock returns the total number of rolls in a block.
-func (r *Repository) RollsAndBakersInBlock(block int64) (int64, int64, error) {
-	result := struct {
-		S int64
-		C int64
-	}{}
-
-	err := r.db.Model(&models.Roll{}).
-		Where("block_level = ?", block).
-		Select("sum(rolls) as s, count(1) as c").Scan(&result).Error
-	return result.S, result.C, err
 }
 
 // Create creates a Snapshot.

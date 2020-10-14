@@ -30,4 +30,3 @@ FROM tezos.registered_tokens
        LEFT JOIN tezos.accounts
                  on registered_tokens.account_id = accounts.account_id
        LEFT JOIN tezos.operations ON registered_tokens.account_id = originated_contracts;
-

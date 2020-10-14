@@ -15,6 +15,7 @@ import (
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
 	"github.com/everstake/teztracker/repos/operation"
 	"github.com/everstake/teztracker/repos/operation_groups"
+	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/snapshots"
 	"github.com/everstake/teztracker/repos/voting_periods"
 )
@@ -39,6 +40,7 @@ type (
 		GetFutureBakingRight() future_baking_rights.Repo
 		GetFutureEndorsementRight() future_endorsement_rights.Repo
 		GetSnapshots() snapshots.Repo
+		GetRolls() rolls.Repo
 		GetDoubleBaking() double_baking.Repo
 		GetDoubleEndorsement() double_endorsement.Repo
 		GetVotingPeriod() voting_periods.Repo

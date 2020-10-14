@@ -90,3 +90,7 @@ CREATE INDEX IF NOT EXISTS ix_operations_originated_contract
 CREATE INDEX ix_operations_voting_proposal_source_kind_period
   on tezos.operations (proposal, source, kind, period)
   where ((kind::text = 'proposals'::text) or (kind::text = 'ballot'::text)) and proposal is not null;
+
+CREATE INDEX ix_operations_voting_proposal_source_kind_period
+  on tezos.operations (proposal, source, kind, period)
+  where ballot_period is not null;

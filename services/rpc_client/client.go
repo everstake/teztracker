@@ -7,6 +7,7 @@ import (
 	"github.com/everstake/teztracker/services/michelson"
 	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
 	"github.com/everstake/teztracker/services/rpc_client/client/operations"
+	"github.com/everstake/teztracker/services/rpc_client/client/voting"
 	"strconv"
 	"strings"
 	"time"
@@ -131,6 +132,16 @@ func genEndorsementRightToModel(m genmodels.EndorsementRight) models.FutureEndor
 	}
 }
 
+func genVotingRollsToModel(r genmodels.VotingRolls) models.Roll {
+	return models.Roll{
+		Pkh:   r.Pkh,
+		Rolls: r.Rolls,
+		//Fill later
+		BlockLevel:   0,
+		VotingPeriod: 0,
+	}
+}
+
 func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool) (snap models.Snapshot, err error) {
 	blockToUse := headBlock
 	if !useHead {
@@ -165,9 +176,31 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 	return snap, nil
 }
 
+func (t *Tezos) RollsForBlock(ctx context.Context, blockLevel int64) (roll []models.Roll, err error) {
+	rollParams := voting.NewGetVotingRollsParamsWithContext(ctx).
+		WithNetwork(t.network).
+		WithBlock(strconv.FormatInt(blockLevel, 10))
+
+	rollsResp, err := t.client.Voting.GetVotingRolls(rollParams)
+	if err != nil {
+		return nil, err
+	}
+
+	if rollsResp == nil {
+		return nil, fmt.Errorf("Nil resp")
+	}
+
+	roll = make([]models.Roll, len(rollsResp.Payload))
+	for i := range rollsResp.Payload {
+		roll[i] = genVotingRollsToModel(*rollsResp.Payload[i])
+	}
+
+	return roll, nil
+}
+
 func ToDoubleOperationEvidence(op tzblock.Operations) (dee models.DoubleOperationEvidence, err error) {
 	for i := range op.Contents {
-		if op.Contents[i].Kind != "double_endorsement_evidence" || op.Contents[i].Kind != "double_baking_evidence" {
+		if op.Contents[i].Kind != "double_endorsement_evidence" && op.Contents[i].Kind != "double_baking_evidence" {
 			continue
 		}
 

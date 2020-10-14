@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/block"
+	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/snapshots"
 )
 
@@ -18,6 +19,7 @@ type RightsRepo interface {
 
 type SnapshotProvider interface {
 	SnapshotForCycle(ctx context.Context, cycle int64, useHead bool) (snap models.Snapshot, err error)
+	RollsForBlock(ctx context.Context, blockLevel int64) (roll []models.Roll, err error)
 }
 
 type UnitOfWork interface {
@@ -26,6 +28,7 @@ type UnitOfWork interface {
 	Commit() error
 	GetBlock() block.Repo
 	GetSnapshots() snapshots.Repo
+	GetRolls() rolls.Repo
 }
 
 const CyclesInAdvance = 6
@@ -71,16 +74,17 @@ func SaveSnapshotForCycle(ctx context.Context, cycle int64, unit UnitOfWork, pro
 		return err
 	}
 
-	snapRepo := unit.GetSnapshots()
 	if snap.Rolls == 0 {
 
-		rolls, _, err := snapRepo.RollsAndBakersInBlock(snap.BlockLevel)
+		rolls, _, err := unit.GetRolls().RollsAndBakersInBlock(snap.BlockLevel)
 		if err != nil {
 			return err
 		}
+
 		snap.Rolls = rolls
 	}
-	err = snapRepo.Create(snap)
+
+	err = unit.GetSnapshots().Create(snap)
 	if err != nil {
 		return err
 	}
