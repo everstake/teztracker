@@ -45,7 +45,7 @@ func ProcessAssetOperations(ctx context.Context, unit UnitOfWork, provider Asset
 
 	repo := unit.GetAssets()
 
-	tokens, err := repo.GetTokensList()
+	_, tokens, err := repo.GetTokensList()
 	if err != nil {
 		return err
 	}

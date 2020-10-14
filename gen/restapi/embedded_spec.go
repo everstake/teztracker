@@ -63,6 +63,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/TokenAssetRow"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "400": {
@@ -232,6 +238,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/AssetOperation"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
@@ -5343,6 +5355,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/TokenAssetRow"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "400": {
@@ -5515,6 +5533,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/AssetOperation"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },

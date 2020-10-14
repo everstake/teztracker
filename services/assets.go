@@ -4,15 +4,16 @@ import (
 	"github.com/everstake/teztracker/models"
 )
 
-func (t *TezTracker) TokensList(limiter Limiter) (assets []models.AssetInfo, err error) {
+func (t *TezTracker) TokensList(limiter Limiter) (count int64, assets []models.AssetInfo, err error) {
 	r := t.repoProvider.GetAssets()
 
-	assets, err = r.GetTokensList()
+	count, assets, err = r.GetTokensList()
 	if err != nil {
-		return assets, err
+		return count, assets, err
 	}
 
-	return assets, nil
+	return count,
+		assets, nil
 }
 
 func (t *TezTracker) TokenInfo(assetID string) (info models.AssetInfo, err error) {
@@ -27,13 +28,13 @@ func (t *TezTracker) TokenInfo(assetID string) (info models.AssetInfo, err error
 	return info, nil
 }
 
-func (t *TezTracker) TokenOperations(assetID string, operationsType string, limits Limiter) (operations []models.AssetOperationReport, err error) {
+func (t *TezTracker) TokenOperations(assetID string, operationsType string, limits Limiter) (count int64, operations []models.AssetOperationReport, err error) {
 
 	r := t.repoProvider.GetAssets()
 
 	info, err := r.GetTokenInfo(assetID)
 	if err != nil {
-		return operations, err
+		return 0, operations, err
 	}
 
 	var isTransfer bool
@@ -41,12 +42,12 @@ func (t *TezTracker) TokenOperations(assetID string, operationsType string, limi
 		isTransfer = true
 	}
 
-	operations, err = r.GetAssetOperations(info.ID, isTransfer, limits.Limit(), limits.Offset())
+	count, operations, err = r.GetAssetOperations(info.ID, isTransfer, limits.Limit(), limits.Offset())
 	if err != nil {
-		return operations, err
+		return 0, operations, err
 	}
 
-	return operations, nil
+	return count, operations, nil
 }
 
 func (t *TezTracker) TokenHolders(assetID string) (holders []models.AssetHolder, err error) {

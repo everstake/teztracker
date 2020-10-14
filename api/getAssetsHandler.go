@@ -24,13 +24,13 @@ func (h *getAssetsListHandler) Handle(params assets.GetAssetsListParams) middlew
 	}
 	service := services.New(repos.New(db), net)
 
-	total, err := service.TokensList(NewLimiter(params.Limit, params.Offset))
+	total, tokens, err := service.TokensList(NewLimiter(params.Limit, params.Offset))
 	if err != nil {
-		logrus.Errorf("failed to get accounts: %s", err.Error())
+		logrus.Errorf("failed to get tokens list: %s", err.Error())
 		return assets.NewGetAssetsListNotFound()
 	}
 
-	return assets.NewGetAssetsListOK().WithPayload(render.AssetsList(total))
+	return assets.NewGetAssetsListOK().WithXTotalCount(total).WithPayload(render.AssetsList(tokens))
 }
 
 type getAssetInfoHandler struct {
@@ -50,7 +50,7 @@ func (h *getAssetInfoHandler) Handle(params assets.GetAssetTokenInfoParams) midd
 
 	total, err := service.TokenInfo(params.AssetID)
 	if err != nil {
-		logrus.Errorf("failed to get accounts: %s", err.Error())
+		logrus.Errorf("failed to get token info: %s", err.Error())
 		return assets.NewGetAssetTokenInfoNotFound()
 	}
 
@@ -77,13 +77,13 @@ func (h *getAssetOperationListHandler) Handle(params assets.GetAssetOperationsLi
 		operationType = *params.Type
 	}
 
-	ops, err := service.TokenOperations(params.AssetID, operationType, NewLimiter(params.Limit, params.Offset))
+	count, ops, err := service.TokenOperations(params.AssetID, operationType, NewLimiter(params.Limit, params.Offset))
 	if err != nil {
-		logrus.Errorf("failed to get accounts: %s", err.Error())
+		logrus.Errorf("failed to get token operations: %s", err.Error())
 		return assets.NewGetAssetOperationsListNotFound()
 	}
 
-	return assets.NewGetAssetOperationsListOK().WithPayload(render.AssetOperations(ops))
+	return assets.NewGetAssetOperationsListOK().WithXTotalCount(count).WithPayload(render.AssetOperations(ops))
 }
 
 type getAssetHoldersHandler struct {
@@ -103,7 +103,7 @@ func (h *getAssetHoldersHandler) Handle(params assets.GetAssetTokenHoldersListPa
 
 	total, err := service.TokenHolders(params.AssetID)
 	if err != nil {
-		logrus.Errorf("failed to get accounts: %s", err.Error())
+		logrus.Errorf("failed to get token holders: %s", err.Error())
 		return assets.NewGetAssetTokenHoldersListNotFound()
 	}
 
