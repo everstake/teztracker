@@ -86,6 +86,12 @@ func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, 
 
 	db := r.db.Select("*").Table(assetOperations).Where("token_id = ?", tokenID)
 
+	if isTransfer {
+		db = db.Where("type = ?", "transfer")
+	} else {
+		db = db.Where("type != ?", "transfer")
+	}
+
 	err = db.Count(&count).Error
 	if err != nil {
 		return 0, nil, err
@@ -93,12 +99,6 @@ func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, 
 
 	db = db.Joins("LEFT JOIN tezos.operations on (asset_operations.operation_group_hash=operations.operation_group_hash and internal is not TRUE)").
 		Order("asset_operations.timestamp desc").Limit(limit).Offset(offset)
-
-	if isTransfer {
-		db = db.Where("type = ?", "transfer")
-	} else {
-		db = db.Where("type != ?", "transfer")
-	}
 
 	err = db.Find(&info).Error
 	if err != nil {
