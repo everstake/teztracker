@@ -29,7 +29,7 @@ type (
 )
 
 const (
-//accountMaterializedView = "tezos.account_materialized_view"
+	accountsListView = "tezos.account_list_view"
 )
 
 // New creates an instance of repository using the provided db.
@@ -39,6 +39,7 @@ func New(db *gorm.DB) *Repository {
 	}
 }
 
+//Return clear table for count
 func (r *Repository) getDb(filter models.AccountFilter) *gorm.DB {
 	db := r.db.Model(&models.Account{})
 
@@ -64,18 +65,8 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		return 0, nil, err
 	}
 
-	db = r.db.Select("accounts.*, created_at, blocks.timestamp last_active, aka.alias account_name, ka.alias as delegate_name").
-		Table("tezos.accounts").
-		Joins("inner join tezos.account_created_at act on accounts.account_id = act.account_id").
-		Joins("inner join tezos.blocks on accounts.block_id = blocks.hash").
-		Joins("left join tezos.known_addresses aka on accounts.account_id = aka.address").
-		Joins("left join tezos.known_addresses ka on accounts.delegate_value = ka.address").Where("is_baker = TRUE")
-
-	if filter.Type == models.AccountTypeAccount {
-		db = db.Where("accounts.account_id like 'tz%'")
-	} else if filter.Type == models.AccountTypeContract {
-		db = db.Where("accounts.account_id like 'KT1%'")
-	}
+	db = r.db.Select("*").
+		Table(accountsListView)
 
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
 		db = db.Order("created_at desc")
@@ -99,10 +90,8 @@ func (r *Repository) Count(filter models.Account) (count int64, err error) {
 
 // Filter returns a list of accounts that sutisfies the filter.
 func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error) {
-	err = r.db.Select("accounts.*, created_at, last_active, account_name, alias as delegate_name").
-		Model(&filter).
-		Joins("natural join tezos.account_materialized_view").
-		Joins("left join tezos.known_addresses ka on accounts.delegate_value = ka.address").
+	err = r.db.Select("*").
+		Table(accountsListView).
 		Where(&filter).
 		Order("account_id asc").
 		Limit(limit).
@@ -113,10 +102,8 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 
 // Find looks up for an account with filter.
 func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
-	if res := r.db.Select("accounts.*, created_at, last_active, account_name, alias as delegate_name").
-		Model(&filter).
-		Joins("natural join tezos.account_materialized_view").
-		Joins("left join tezos.known_addresses ka on accounts.delegate_value = ka.address").
+	if res := r.db.Select("*").
+		Table(accountsListView).
 		Where(&filter).Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
