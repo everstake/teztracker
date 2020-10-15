@@ -14,10 +14,10 @@ type (
 	}
 
 	Repo interface {
-		List(limit uint, offset uint, filter models.AccountFilter) (int64, []models.Account, error)
-		Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error)
+		List(limit uint, offset uint, filter models.AccountFilter) (int64, []models.AccountListView, error)
+		Filter(filter models.Account, limit, offset uint) (accounts []models.AccountListView, err error)
 		Count(filter models.Account) (int64, error)
-		Find(filter models.Account) (found bool, acc models.Account, err error)
+		Find(filter models.Account) (found bool, acc models.AccountListView, err error)
 		TotalBalance() (int64, error)
 		Balances(string, time.Time, time.Time) ([]models.AccountBalance, error)
 		PrevBalance(string, time.Time) (bool, models.AccountBalance, error)
@@ -58,15 +58,14 @@ func (r *Repository) getDb(filter models.AccountFilter) *gorm.DB {
 // List returns a list of accounts from the newest to oldest.
 // limit defines the limit for the maximum number of accounts returned.
 // before is used to paginate results based on the level. As the result is ordered descendingly the accounts with level < before will be returned.
-func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (count int64, accounts []models.Account, err error) {
+func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (count int64, accounts []models.AccountListView, err error) {
 	db := r.getDb(filter)
 
 	if err := db.Count(&count).Error; err != nil {
 		return 0, nil, err
 	}
 
-	db = r.db.Select("*").
-		Table(accountsListView)
+	db = r.db.Model(models.AccountListView{})
 
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
 		db = db.Order("created_at desc")
@@ -85,14 +84,14 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 func (r *Repository) Count(filter models.Account) (count int64, err error) {
 	err = r.db.Model(&filter).
 		Where(&filter).Count(&count).Error
+
 	return count, err
 }
 
 // Filter returns a list of accounts that sutisfies the filter.
-func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.Account, err error) {
-	err = r.db.Select("*").
-		Table(accountsListView).
-		Where(&filter).
+func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts []models.AccountListView, err error) {
+	err = r.db.Model(models.AccountListView{}).
+		Where(models.AccountListView{Account: filter}).
 		Order("account_id asc").
 		Limit(limit).
 		Offset(offset).
@@ -101,10 +100,10 @@ func (r *Repository) Filter(filter models.Account, limit, offset uint) (accounts
 }
 
 // Find looks up for an account with filter.
-func (r *Repository) Find(filter models.Account) (found bool, acc models.Account, err error) {
-	if res := r.db.Select("*").
-		Table(accountsListView).
-		Where(&filter).Find(&acc); res.Error != nil {
+func (r *Repository) Find(filter models.Account) (found bool, acc models.AccountListView, err error) {
+	if res := r.db.Model(models.AccountListView{}).
+		Where(models.AccountListView{Account: filter}).
+		Find(&acc); res.Error != nil {
 		if res.RecordNotFound() {
 			return false, acc, nil
 		}
