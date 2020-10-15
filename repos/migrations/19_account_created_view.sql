@@ -11,6 +11,9 @@ CREATE INDEX account_created_time
 
 //After sync
 
+CREATE UNIQUE INDEX account_materialized_view_unique_index
+  on tezos.account_materialized_view (account_id);
+
 CREATE TRIGGER update_materialized_view
   AFTER INSERT
   ON tezos.blocks
@@ -21,7 +24,7 @@ CREATE OR REPLACE FUNCTION refresh_account_materialized_view()
   RETURNS TRIGGER LANGUAGE plpgsql
   AS $$
   BEGIN
-  REFRESH MATERIALIZED VIEW tezos.account_materialized_view;
+  REFRESH MATERIALIZED VIEW CONCURRENTLY tezos.account_materialized_view;
   RETURN NULL;
   END $$;
 
