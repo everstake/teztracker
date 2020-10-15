@@ -25,3 +25,32 @@ CREATE OR REPLACE FUNCTION refresh_account_materialized_view()
   RETURN NULL;
   END $$;
 
+
+//New accounts info
+
+CREATE TABLE tezos.account_created_at
+(
+  account_id            varchar not null
+    constraint account_created_at_pkey
+      primary key,
+  created_at          timestamp    not null
+);
+
+CREATE INDEX IF NOT EXISTS ix_account_created_at
+    ON account_created_at USING btree
+    (created_at DESC);
+
+CREATE OR REPLACE FUNCTION insert_account_created_at()
+  RETURNS TRIGGER LANGUAGE plpgsql
+  AS $$
+  BEGIN
+      insert into tezos.account_created_at(account_id, created_at)
+      VALUES (NEW.account_id, now());
+  RETURN NULL;
+  END $$;
+
+CREATE TRIGGER account_created_at
+  AFTER INSERT
+  ON tezos.accounts
+  FOR EACH ROW
+EXECUTE PROCEDURE insert_account_created_at();

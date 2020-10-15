@@ -1,7 +1,6 @@
 package account
 
 import (
-	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 	"time"
@@ -26,12 +25,11 @@ type (
 		RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error)
 		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
-		RefreshView() error
 	}
 )
 
 const (
-	accountMaterializedView = "tezos.account_materialized_view"
+//accountMaterializedView = "tezos.account_materialized_view"
 )
 
 // New creates an instance of repository using the provided db.
@@ -66,16 +64,17 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		return 0, nil, err
 	}
 
-	db = r.db.Select("accounts.*, created_at, last_active, account_name, alias as delegate_name, CASE WHEN (bv.account_id IS NOT NULL) THEN TRUE ELSE FALSE	END as is_baker").
-		Table("tezos.account_materialized_view as amv").
-		Joins("inner join tezos.accounts on accounts.account_id = amv.account_id").
-		Joins("left join tezos.known_addresses ka on accounts.delegate_value = ka.address").
-		Joins("left join tezos.baker_view bv on accounts.account_id = bv.account_id")
+	db = r.db.Select("accounts.*, created_at, blocks.timestamp last_active, aka.alias account_name, ka.alias as delegate_name").
+		Table("tezos.accounts").
+		Joins("inner join tezos.account_created_at act on accounts.account_id = act.account_id").
+		Joins("inner join tezos.blocks on accounts.block_id = blocks.hash").
+		Joins("left join tezos.known_addresses aka on accounts.account_id = aka.address").
+		Joins("left join tezos.known_addresses ka on accounts.delegate_value = ka.address").Where("is_baker = TRUE")
 
 	if filter.Type == models.AccountTypeAccount {
-		db = db.Where("amv.account_id like 'tz%'")
+		db = db.Where("accounts.account_id like 'tz%'")
 	} else if filter.Type == models.AccountTypeContract {
-		db = db.Where("amv.account_id like 'KT1%'")
+		db = db.Where("accounts.account_id like 'KT1%'")
 	}
 
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
@@ -172,14 +171,6 @@ func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, 
 	}
 	return true, balance, nil
 
-}
-
-func (r *Repository) RefreshView() (err error) {
-	err = r.db.Exec(fmt.Sprint("REFRESH MATERIALIZED VIEW ", accountMaterializedView)).Error
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func (r *Repository) RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error) {
