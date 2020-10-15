@@ -6,6 +6,9 @@ from (select account_id, min(asof) as created_at, max(asof) as last_active
       group by account_id) as acc
        left join tezos.public_bakers on acc.account_id = delegate;
 
+CREATE UNIQUE INDEX account_materialized_view_unique_index
+  on tezos.account_materialized_view (account_id);
+
 CREATE TRIGGER update_materialized_view
   AFTER INSERT
   ON tezos.blocks
@@ -16,7 +19,7 @@ CREATE OR REPLACE FUNCTION refresh_account_materialized_view()
   RETURNS TRIGGER LANGUAGE plpgsql
   AS $$
   BEGIN
-  REFRESH MATERIALIZED VIEW tezos.account_materialized_view;
+  REFRESH MATERIALIZED VIEW CONCURRENTLY tezos.account_materialized_view;
   RETURN NULL;
   END $$;
 
