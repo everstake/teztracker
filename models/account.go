@@ -7,7 +7,7 @@ import (
 
 type Account struct {
 	AccountID          null.String           `gorm:"primary_key;AUTO_INCREMENT" json:"account_id"`
-	AccountName        string                `json:"baker_name"`
+	AccountName        string                `json:"account_name"`
 	BlockID            null.String           `json:"block_id"`
 	Block              *Block                `json:"block"` // This line is infered from column name "block_id".
 	Manager            null.String           `json:"manager"`

@@ -1,30 +1,34 @@
-CREATE MATERIALIZED VIEW tezos.account_materialized_view
-AS
-select acc.*, alias as account_name
-from (select account_id, min(asof) as created_at, max(asof) as last_active
-      from tezos.accounts_history
-      group by account_id) as acc
-       left join tezos.known_addresses on acc.account_id = address;
+CREATE TABLE tezos.account_created_at
+(
+  account_id            varchar not null
+    constraint account_created_at_pkey
+      primary key,
+  created_at          timestamp    not null
+);
 
-CREATE INDEX account_created_time
-  ON tezos.account_materialized_view (created_at);
+CREATE INDEX IF NOT EXISTS ix_account_created_at
+    ON account_created_at USING btree
+    (created_at DESC);
 
-//After sync
-
-CREATE UNIQUE INDEX account_materialized_view_unique_index
-  on tezos.account_materialized_view (account_id);
-
-CREATE TRIGGER update_materialized_view
-  AFTER INSERT
-  ON tezos.blocks
-  FOR EACH ROW
-EXECUTE PROCEDURE refresh_account_materialized_view();
-
-CREATE OR REPLACE FUNCTION refresh_account_materialized_view()
+CREATE OR REPLACE FUNCTION insert_account_created_at()
   RETURNS TRIGGER LANGUAGE plpgsql
   AS $$
   BEGIN
-  REFRESH MATERIALIZED VIEW CONCURRENTLY tezos.account_materialized_view;
+      insert into tezos.account_created_at(account_id, created_at)
+      VALUES (NEW.account_id, now());
   RETURN NULL;
   END $$;
 
+CREATE TRIGGER account_created_at
+  AFTER INSERT
+  ON tezos.accounts
+  FOR EACH ROW
+EXECUTE PROCEDURE insert_account_created_at();
+
+CREATE VIEW account_list_view AS
+SELECT accounts.*, created_at, blocks.timestamp last_active, aka.alias account_name, ka.alias as delegate_name
+FROM "tezos"."accounts"
+         inner join tezos.account_created_at act on accounts.account_id = act.account_id
+         inner join tezos.blocks on accounts.block_id = blocks.hash
+         left join tezos.known_addresses aka on accounts.account_id = aka.address
+         left join tezos.known_addresses ka on accounts.delegate_value = ka.address;
