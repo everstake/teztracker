@@ -70,7 +70,7 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
 		db = db.Order("created_at desc")
 	} else if filter.OrderBy == models.AccountOrderFieldBalance {
-		db = db.Order("accounts.balance desc")
+		db = db.Order("balance desc")
 	}
 
 	db = db.Limit(limit).
