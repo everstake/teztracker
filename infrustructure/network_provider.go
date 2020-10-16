@@ -6,6 +6,7 @@ import (
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/jinzhu/gorm"
+	"strings"
 )
 
 type NetworkContext struct {
@@ -28,8 +29,12 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 		}
 		db.SetLogger(&config.DbLogger{})
 		gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
+			if strings.Contains(defaultTableName, "view") {
+				defaultTableName = defaultTableName[:len(defaultTableName)-1]
+			}
 			return "tezos." + defaultTableName
 		}
+
 		provider.networks[k] = NetworkContext{
 			Db:           db,
 			ClientConfig: v.NodeRpc,

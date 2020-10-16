@@ -195,7 +195,8 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 	func() {
 		var jobIsRunning uint32
 
-		dur := 30 * time.Second
+		//Todo refactor
+		dur := 1 * time.Minute
 		log.Infof("Sheduling baker materialized view update every %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.

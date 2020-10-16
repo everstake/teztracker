@@ -6,7 +6,7 @@ import (
 )
 
 // Account renders an app level model to a gennerated OpenAPI model.
-func Account(a models.Account) *genModels.AccountsRow {
+func Account(a models.AccountListView) *genModels.AccountsRow {
 	return &genModels.AccountsRow{
 		AccountID:       a.AccountID.Ptr(),
 		AccountName:     a.AccountName,
@@ -33,7 +33,7 @@ func Account(a models.Account) *genModels.AccountsRow {
 }
 
 // Accounts renders a slice of app level Accounts into a slice of OpenAPI models.
-func Accounts(ams []models.Account) []*genModels.AccountsRow {
+func Accounts(ams []models.AccountListView) []*genModels.AccountsRow {
 	accs := make([]*genModels.AccountsRow, len(ams))
 	for i := range ams {
 		accs[i] = Account(ams[i])

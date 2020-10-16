@@ -7,7 +7,7 @@ import (
 )
 
 // AccountList retrives up to limit of account before the specified id.
-func (t *TezTracker) AccountList(before string, limits Limiter) (accs []models.Account, count int64, err error) {
+func (t *TezTracker) AccountList(before string, limits Limiter) (accs []models.AccountListView, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
 		Type:    models.AccountTypeAccount,
@@ -18,7 +18,7 @@ func (t *TezTracker) AccountList(before string, limits Limiter) (accs []models.A
 	return accs, count, err
 }
 
-func (t *TezTracker) AccountTopBalanceList(before string, limits Limiter) (accs []models.Account, count int64, err error) {
+func (t *TezTracker) AccountTopBalanceList(before string, limits Limiter) (accs []models.AccountListView, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
 		Type:    models.AccountTypeBoth,
@@ -37,7 +37,7 @@ func (t *TezTracker) AccountTopBalanceList(before string, limits Limiter) (accs 
 }
 
 // ContractList retrives up to limit of contract before the specified id.
-func (t *TezTracker) ContractList(before string, limits Limiter) (accs []models.Account, count int64, err error) {
+func (t *TezTracker) ContractList(before string, limits Limiter) (accs []models.AccountListView, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
 		Type:    models.AccountTypeContract,
@@ -49,7 +49,7 @@ func (t *TezTracker) ContractList(before string, limits Limiter) (accs []models.
 }
 
 // AccountDelegatorsList retrives up to limit of delegators accounts for the specified accountID.
-func (t *TezTracker) AccountDelegatorsList(accountID string, limits Limiter) ([]models.Account, int64, error) {
+func (t *TezTracker) AccountDelegatorsList(accountID string, limits Limiter) ([]models.AccountListView, int64, error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.Account{DelegateValue: accountID}
 	count, err := r.Count(filter)
@@ -61,7 +61,7 @@ func (t *TezTracker) AccountDelegatorsList(accountID string, limits Limiter) ([]
 }
 
 // GetAccount retrieves an account by its ID.
-func (t *TezTracker) GetAccount(id string) (acc models.Account, err error) {
+func (t *TezTracker) GetAccount(id string) (acc models.AccountListView, err error) {
 	r := t.repoProvider.GetAccount()
 
 	filter := models.Account{AccountID: null.StringFrom(id)}
