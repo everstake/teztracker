@@ -44,6 +44,16 @@ func (u *Provider) getDB() *gorm.DB {
 	return u.db
 }
 
+//Heath returns a new health check of repository provider.
+func (u *Provider) Health() (err error) {
+	err = u.db.DB().Ping()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetBlock returns a new block repository.
 func (u *Provider) GetBlock() block.Repo {
 	return block.New(u.getDB())

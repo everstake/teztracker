@@ -160,6 +160,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		BlocksGetFutureBakingRightsHandler: blocks.GetFutureBakingRightsHandlerFunc(func(params blocks.GetFutureBakingRightsParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetFutureBakingRights has not yet been implemented")
 		}),
+		AppInfoGetHealthCheckInfoHandler: app_info.GetHealthCheckInfoHandlerFunc(func(params app_info.GetHealthCheckInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetHealthCheckInfo has not yet been implemented")
+		}),
 		AppInfoGetInfoHandler: app_info.GetInfoHandlerFunc(func(params app_info.GetInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetInfo has not yet been implemented")
 		}),
@@ -306,6 +309,8 @@ type TezTrackerAPI struct {
 	OperationsListGetDoubleEndorsementsListHandler operations_list.GetDoubleEndorsementsListHandler
 	// BlocksGetFutureBakingRightsHandler sets the operation handler for the get future baking rights operation
 	BlocksGetFutureBakingRightsHandler blocks.GetFutureBakingRightsHandler
+	// AppInfoGetHealthCheckInfoHandler sets the operation handler for the get health check info operation
+	AppInfoGetHealthCheckInfoHandler app_info.GetHealthCheckInfoHandler
 	// AppInfoGetInfoHandler sets the operation handler for the get info operation
 	AppInfoGetInfoHandler app_info.GetInfoHandler
 	// VotingGetNonVotersByPeriodIDHandler sets the operation handler for the get non voters by period ID operation
@@ -545,6 +550,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.BlocksGetFutureBakingRightsHandler == nil {
 		unregistered = append(unregistered, "blocks.GetFutureBakingRightsHandler")
+	}
+
+	if o.AppInfoGetHealthCheckInfoHandler == nil {
+		unregistered = append(unregistered, "app_info.GetHealthCheckInfoHandler")
 	}
 
 	if o.AppInfoGetInfoHandler == nil {
@@ -886,6 +895,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/future_baking_rights"] = blocks.NewGetFutureBakingRights(o.context, o.BlocksGetFutureBakingRightsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/health"] = app_info.NewGetHealthCheckInfo(o.context, o.AppInfoGetHealthCheckInfoHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

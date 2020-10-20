@@ -29,6 +29,7 @@ type (
 
 	// Provider is the abstract interface to get any repository.
 	Provider interface {
+		Health() error
 		GetBlock() block.Repo
 		GetOperationGroup() operation_groups.Repo
 		GetOperation() operation.Repo
@@ -55,6 +56,15 @@ type (
 // New creates a new TexTracker service using the repository provider.
 func New(rp Provider, net models.Network) *TezTracker {
 	return &TezTracker{repoProvider: rp, net: net}
+}
+
+func (t *TezTracker) Health() (err error) {
+	err = t.repoProvider.Health()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 const (
