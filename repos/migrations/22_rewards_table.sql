@@ -81,40 +81,31 @@ SELECT delegate,sum(reward) rewards, sum(count) count
 from tezos.baker_cycle_bakings_view
 where cycle >= (SELECT meta_cycle from tezos.blocks order by level desc limit 1) - 5 group by delegate;
 
---Add frozen rewards and count
-drop materialized view tezos.baker_view;
 
-create materialized view tezos.baker_view as
-SELECT w.*, COALESCE(bdv.active_delegations, 0) as active_delegations, fer.rewards as frozen_endorsement_rewards, fer.count endorsement_count, fbr.rewards frozen_baking_rewards, fbr.count baking_count
-FROM (
-       SELECT CASE
-                WHEN (r.bcvbaker IS NOT NULL) THEN r.bcvbaker
-                ELSE r.bevbaker
-                END AS account_id,
-              r.staking_balance,
-              TRUNC(staking_balance/8000/1000000,0) as rolls,
-              r.frozen_balance,
-              r.endorsements,
-              r.blocks,
-              b.timestamp as baking_since,
-              r.balance
-       FROM (SELECT bcv.baker                                          AS bcvbaker,
-                    bev.baker                                          AS bevbaker,
-                    COALESCE(bev.staking_balance, (0)::numeric)        AS staking_balance,
-                    COALESCE(bev.frozen_balance,  (0)::numeric)        AS frozen_balance,
-                    COALESCE(bev.balance, (0)::numeric)                AS balance,
-                    COALESCE(bev.endorsements, (0)::bigint)            AS endorsements,
-                    COALESCE(bcv.blocks, (0)::bigint)                  AS blocks,
-                    LEAST(first_endorsement_level, first_baking_block) as first_block
-             FROM (tezos.baker_endorsement_view bev
-                    FULL JOIN tezos.blocks_counter_view bcv ON (((bev.baker)::text = (bcv.baker)::text)))
-            ) r
-       LEFT JOIN tezos.blocks as b on r.first_block = b.level
-       WHERE ((r.bcvbaker IS NOT NULL) OR (r.bevbaker IS NOT NULL))
-     ) as w
-       left join tezos.baker_delegations_view as bdv on account_id = bdv.baker
-        left join tezos.frozen_baking_rewards as fbr on account_id = fbr.delegate
-left join tezos.frozen_endorsement_rewards as fer on account_id = fer.delegate;
+//New
 
-create unique index unique_index
-  on tezos.baker_view (account_id);
+CREATE TABLE tezos.baker_cycle_endorsements
+ AS (SELECT * FROM baker_cycle_endorsements_view);
+
+alter table tezos.baker_cycle_endorsements
+	add constraint baker_cycle_endorsements_pk
+		primary key (delegate, cycle);
+
+CREATE OR REPLACE VIEW tezos.baker_current_cycle_endorsements_view AS
+    SELECT delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count
+    FROM tezos.baker_endorsements
+    WHERE cycle = (select meta_cycle from tezos.blocks order by level desc limit 1)
+    GROUP BY delegate, cycle;
+
+CREATE TABLE tezos.baker_cycle_bakings
+ AS (SELECT * FROM baker_cycle_bakings_view);
+
+alter table tezos.baker_cycle_bakings
+	add constraint baker_cycle_bakings_pk
+		primary key (delegate, cycle);
+
+CREATE OR REPLACE VIEW tezos.baker_current_cycle_bakings_view AS
+    select cycle, delegate, avg(priority) avg_priority, sum(reward) reward, sum(baked) count, sum(missed) missed, sum(stolen) stolen, sum(fees) fees
+    from tezos.baker_bakings
+    WHERE cycle = (select meta_cycle from tezos.blocks order by level desc limit 1)
+    GROUP BY delegate, cycle;

@@ -46,7 +46,7 @@ CREATE OR REPLACE FUNCTION tezos.baker_bakings()
             where category = 'rewards'
               and change > 0
               and source = 'block'
-              and bl.level = NEW.meta_level-2
+              and bl.level = NEW.meta_level-5
               and (baker = br.delegate or bl.priority > br.priority or (br.priority > 0 and baker = br.delegate));
               RETURN NEW;
         END

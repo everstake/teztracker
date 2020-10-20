@@ -41,7 +41,7 @@ FROM tezos.baker_endorsements
 where missed = 0
 GROUP BY delegate;
 
-CREATE MATERIALIZED VIEW baker_view AS
+CREATE MATERIALIZED VIEW tezos.baker_view AS
 SELECT b.pkh account_id,
        balance,
        frozen_balance,
