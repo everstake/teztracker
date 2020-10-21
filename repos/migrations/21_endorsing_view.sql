@@ -37,8 +37,15 @@ BEGIN
                left join tezos.balance_updates bu
                          on (op.operation_group_hash = bu.operation_group_hash and category = 'rewards')
         where op.kind = 'endorsement'
-          and op.level = NEW.meta_level-2) as op on er.level = op.level and op.elem = er.slot::varchar
-  where er.level = NEW.meta_level-2;
+          and op.level = NEW.meta_level-5) as op on er.level = op.level and op.elem = er.slot::varchar
+  where er.level = NEW.meta_level-5;
+
+  IF NEW.meta_cycle_position <= 5 THEN
+   INSERT INTO tezos.baker_cycle_endorsements (SELECT * FROM tezos.baker_cycle_endorsements_view
+    where tezos.baker_cycle_endorsements_view.cycle = NEW.meta_level-1)
+    ON CONFLICT ON CONSTRAINT baker_cycle_endorsements_pk
+    DO UPDATE SET reward = excluded.reward, missed = excluded.missed, count = excluded.count;
+  END IF;
   RETURN NEW;
 END
 $$;
