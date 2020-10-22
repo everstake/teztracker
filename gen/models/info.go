@@ -31,7 +31,7 @@ type Info struct {
 
 	// price
 	// Required: true
-	Price *float64 `json:"price"`
+	Price *Price `json:"price"`
 
 	// price 24h change
 	// Required: true
@@ -72,6 +72,15 @@ func (m *Info) validatePrice(formats strfmt.Registry) error {
 
 	if err := validate.Required("price", "body", m.Price); err != nil {
 		return err
+	}
+
+	if m.Price != nil {
+		if err := m.Price.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("price")
+			}
+			return err
+		}
 	}
 
 	return nil

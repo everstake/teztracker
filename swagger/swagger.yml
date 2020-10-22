@@ -2653,7 +2653,7 @@ definitions:
   Info:
     properties:
       price:
-        type: number
+        $ref: '#/definitions/Price'
       price_24h_change:
         type: number
       staking_ratio:
@@ -2676,6 +2676,20 @@ definitions:
       - price
       - price_24h_change
     type: object
+  Price:
+    properties:
+      usd:
+        type: number
+        format: float64
+      eur:
+        type: number
+        format: float64
+      gbp:
+        type: number
+        format: float64
+      cny:
+        type: number
+        format: float64
   AccountResult:
     properties:
       account:
