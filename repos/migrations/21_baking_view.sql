@@ -22,6 +22,19 @@ select cycle,
 from tezos.baker_bakings
 group by cycle, delegate;
 
+CREATE TABLE tezos.baker_cycle_bakings
+ AS (SELECT * FROM baker_cycle_bakings_view);
+
+alter table tezos.baker_cycle_bakings
+	add constraint baker_cycle_bakings_pk
+		primary key (delegate, cycle);
+
+CREATE OR REPLACE VIEW tezos.baker_current_cycle_bakings_view AS
+    select cycle, delegate, avg(priority) avg_priority, sum(reward) reward, sum(baked) count, sum(missed) missed, sum(stolen) stolen, sum(fees) fees
+    from tezos.baker_bakings
+    WHERE cycle = (select meta_cycle from tezos.blocks order by level desc limit 1)
+    GROUP BY delegate, cycle;
+
 //After sync
 CREATE OR REPLACE FUNCTION tezos.baker_bakings()
 RETURNS trigger

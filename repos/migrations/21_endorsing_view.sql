@@ -12,6 +12,19 @@ CREATE OR REPLACE VIEW tezos.baker_cycle_endorsements_view AS
     FROM tezos.baker_endorsements
     GROUP BY delegate, cycle;
 
+CREATE TABLE tezos.baker_cycle_endorsements
+ AS (SELECT * FROM baker_cycle_endorsements_view);
+
+alter table tezos.baker_cycle_endorsements
+	add constraint baker_cycle_endorsements_pk
+		primary key (delegate, cycle);
+
+CREATE OR REPLACE VIEW tezos.baker_current_cycle_endorsements_view AS
+    SELECT delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count
+    FROM tezos.baker_endorsements
+    WHERE cycle = (select meta_cycle from tezos.blocks order by level desc limit 1)
+    GROUP BY delegate, cycle;
+
 // After sync
 CREATE OR REPLACE FUNCTION tezos.baker_endorsements()
 RETURNS trigger

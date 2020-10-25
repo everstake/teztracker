@@ -61,14 +61,13 @@ func (r *Repository) GetTokenHolders(tokenID string) (holders []models.AssetHold
 }
 
 func (r *Repository) GetUnprocessedAssetTxs(tokenID string) (ops []models.Operation, err error) {
-	db := r.db.Select("*").
+	db := r.db.Select("operations.operation_group_hash").
 		Model(&models.Operation{}).
-		Joins("LEFT OUTER JOIN tezos.asset_operations on op.operation_id = asset_operations.operation_id").
+		Joins("LEFT OUTER JOIN tezos.asset_operations on operations.operation_id = asset_operations.operation_id").
 		Where("source = ? OR destination = ?", tokenID, tokenID).
 		Where("status = ?", "applied").
 		Where("asset_operations.operation_id IS NULL").
-		Group("operation_id").
-		Order("operation_id asc")
+		Group("operations.operation_group_hash")
 
 	err = db.Find(&ops).Error
 	return ops, nil
