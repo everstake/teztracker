@@ -29,7 +29,7 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 		}
 		db.SetLogger(&config.DbLogger{})
 		gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-			if strings.Contains(defaultTableName, "view") {
+			if strings.Contains(defaultTableName, "views") {
 				defaultTableName = defaultTableName[:len(defaultTableName)-1]
 			}
 			return "tezos." + defaultTableName

@@ -56,7 +56,6 @@ CREATE TRIGGER delegators_by_cycle_insert
   FOR EACH ROW
 EXECUTE PROCEDURE tezos.delegators_by_cycle();
 
-//After sync
 CREATE OR REPLACE FUNCTION tezos.baking_rewards()
  RETURNS trigger LANGUAGE plpgsql
 AS $$

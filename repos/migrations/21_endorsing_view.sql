@@ -25,7 +25,6 @@ CREATE OR REPLACE VIEW tezos.baker_current_cycle_endorsements_view AS
     WHERE cycle = (select meta_cycle from tezos.blocks order by level desc limit 1)
     GROUP BY delegate, cycle;
 
-// After sync
 CREATE OR REPLACE FUNCTION tezos.baker_endorsements()
 RETURNS trigger
 LANGUAGE plpgsql
