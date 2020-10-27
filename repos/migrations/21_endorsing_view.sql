@@ -8,9 +8,10 @@ CREATE TABLE tezos.baker_endorsements(
   PRIMARY KEY (delegate,cycle,level, slot));
 
 CREATE OR REPLACE VIEW tezos.baker_cycle_endorsements_view AS
-    SELECT delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count
+    SELECT delegate, cycle, reward, missed, count - missed count from
+    (SELECT delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count
     FROM tezos.baker_endorsements
-    GROUP BY delegate, cycle;
+    GROUP BY delegate, cycle) s;
 
 CREATE TABLE tezos.baker_cycle_endorsements
  AS (SELECT * FROM baker_cycle_endorsements_view);
