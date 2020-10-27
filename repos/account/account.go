@@ -65,7 +65,7 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		return 0, nil, err
 	}
 
-	db = r.db.Model(models.AccountListView{})
+	db = db.Model(models.AccountListView{})
 
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
 		db = db.Order("created_at desc")
