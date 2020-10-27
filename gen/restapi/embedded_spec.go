@@ -63,6 +63,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/TokenAssetRow"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "400": {
@@ -232,6 +238,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/AssetOperation"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
@@ -3050,6 +3062,54 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/health": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getHealthCheckInfo",
+        "parameters": [
+          {
+            "enum": [
+              "tezos"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "mainnet",
+              "carthagenet"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application health info endpoint",
+            "schema": {
+              "$ref": "#/definitions/Health"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/info": {
       "get": {
         "produces": [
@@ -4800,6 +4860,13 @@ func init() {
           "items": {
             "$ref": "#/definitions/BakingRightsRow"
           }
+        }
+      }
+    },
+    "Health": {
+      "properties": {
+        "status": {
+          "type": "boolean"
         }
       }
     },
@@ -5343,6 +5410,12 @@ func init() {
               "items": {
                 "$ref": "#/definitions/TokenAssetRow"
               }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
             }
           },
           "400": {
@@ -5515,6 +5588,12 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/AssetOperation"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
               }
             }
           },
@@ -8357,6 +8436,54 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/health": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getHealthCheckInfo",
+        "parameters": [
+          {
+            "enum": [
+              "tezos"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "mainnet",
+              "carthagenet"
+            ],
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application health info endpoint",
+            "schema": {
+              "$ref": "#/definitions/Health"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/info": {
       "get": {
         "produces": [
@@ -10112,6 +10239,13 @@ func init() {
           "items": {
             "$ref": "#/definitions/BakingRightsRow"
           }
+        }
+      }
+    },
+    "Health": {
+      "properties": {
+        "status": {
+          "type": "boolean"
         }
       }
     },

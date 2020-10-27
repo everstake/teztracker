@@ -183,6 +183,35 @@ paths:
           description: Internal error
       tags:
         - App Info
+  '/v2/data/{platform}/{network}/health':
+    get:
+      operationId: getHealthCheckInfo
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+          enum: [tezos]
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+          enum: [mainnet, carthagenet]
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application health info endpoint
+          schema:
+            $ref: '#/definitions/Health'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - App Info
   '/v2/data/{platform}/{network}/charts':
     get:
       operationId: getChartsInfo
@@ -2488,6 +2517,10 @@ paths:
               $ref: >-
                 #/definitions/TokenAssetRow
             type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '400':
           description: Bad request
         '404':
@@ -2567,6 +2600,10 @@ paths:
               $ref: >-
                 #/definitions/AssetOperation
             type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
         '400':
           description: Bad request
         '404':
@@ -3623,3 +3660,7 @@ definitions:
         format: int64
     required:
       - balance
+  Health:
+    properties:
+      status:
+        type: boolean
