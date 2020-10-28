@@ -186,7 +186,7 @@ func (r *Repository) EndorsementsFor(blockLevel int64) (operations []models.Oper
 		Joins("left join tezos.balance_updates on (operations.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')").
 		Where("operations.kind = ?", endorsementKind).
 		// the endorsements of the block with blockLevel can only be in a block with level (blockLevel + 1)
-		Where("block_level = ?", blockLevel+1).
+		Where("operations.block_level = ?", blockLevel+1).
 		Order("operation_id DESC").
 		Find(&operations).Error
 	return operations, err

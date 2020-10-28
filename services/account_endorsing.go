@@ -27,6 +27,7 @@ func (t *TezTracker) GetAccountEndorsingTotal(accountID string) (total models.Ac
 		return total, err
 	}
 
+	total.Count -= total.Missed
 	total.TotalDeposit = total.Count * EndorsementSecurityDeposit
 
 	return total, nil

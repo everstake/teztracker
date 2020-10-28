@@ -1,15 +1,3 @@
--- Already on conseil precision -> scale
-CREATE TABLE tezos.registered_tokens
-(
-  id            integer not null
-    constraint registered_tokens_pkey
-      primary key,
-  name          text    not null,
-  contract_type text    not null,
-  account_id    text    not null,
-  precision             int
-);
-
 CREATE TABLE tezos.asset_operations
 (
     token_id  integer,

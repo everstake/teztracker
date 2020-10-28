@@ -65,7 +65,7 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 		return 0, nil, err
 	}
 
-	db = r.db.Model(models.AccountListView{})
+	db = db.Model(models.AccountListView{})
 
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
 		db = db.Order("created_at desc")
@@ -178,10 +178,15 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 		return 0, rewards, err
 	}
 
-	err = db.Select("br.*, cbv.reward as baking_rewards, cbv.missed missed_baking, cbv.fees, fbrv.count as future_baking_count, cev.reward endorsement_rewards ,cev.missed missed_endorsements, fev.count future_endorsement_count").
+	err = db.Select("br.*, CASE WHEN bcb.reward IS NOT NULL THEN bcb.reward ELSE ccb.reward END as baking_rewards, CASE WHEN bcb.missed IS NOT NULL THEN bcb.missed ELSE ccb.missed END as missed_baking, CASE WHEN bcb.fees IS NOT NULL THEN bcb.fees ELSE ccb.fees END as fees, fbrv.count as future_baking_count, CASE WHEN cev.reward IS NOT NULL THEN cev.reward ELSE cce.reward END  as endorsement_rewards, CASE WHEN cev.missed IS NOT NULL THEN cev.missed ELSE cce.missed END  as missed_endorsements, fev.count future_endorsement_count").
+		//History tables
+		Joins("left join tezos.baker_cycle_endorsements cev on br.baker = cev.delegate and br.cycle = cev.cycle").
+		Joins("left join tezos.baker_cycle_bakings bcb on br.baker = bcb.delegate and br.cycle = bcb.cycle").
+		//Views from current active period
+		Joins("left join tezos.baker_current_cycle_endorsements_view cce on br.baker = cce.delegate and br.cycle = cce.cycle").
+		Joins("left join tezos.baker_current_cycle_bakings_view ccb on br.baker = ccb.delegate and br.cycle = ccb.cycle").
+		//Future
 		Joins("left join tezos.baker_future_baking_rights_view fbrv on br.baker = fbrv.delegate and br.cycle = fbrv.cycle").
-		Joins("left join tezos.baker_cycle_bakings_view cbv on br.baker = cbv.delegate and br.cycle = cbv.cycle").
-		Joins("left join tezos.baker_cycle_endorsements_view cev on br.baker = cev.delegate and br.cycle = cev.cycle").
 		Joins("left join tezos.baker_future_endorsement_view fev on br.baker = fev.delegate and br.cycle = fev.cycle").
 		Order("cycle desc").Limit(limit).
 		Offset(offset).

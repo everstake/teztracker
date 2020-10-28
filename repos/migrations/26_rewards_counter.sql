@@ -1,3 +1,4 @@
+//Refactor
 CREATE VIEW tezos.rewards_counter AS
     SELECT baker,
            staking_balance,

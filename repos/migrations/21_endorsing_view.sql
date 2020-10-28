@@ -8,11 +8,24 @@ CREATE TABLE tezos.baker_endorsements(
   PRIMARY KEY (delegate,cycle,level, slot));
 
 CREATE OR REPLACE VIEW tezos.baker_cycle_endorsements_view AS
+    SELECT delegate, cycle, reward, missed, count - missed count from
+    (SELECT delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count
+    FROM tezos.baker_endorsements
+    GROUP BY delegate, cycle) s;
+
+CREATE TABLE tezos.baker_cycle_endorsements
+ AS (SELECT * FROM baker_cycle_endorsements_view);
+
+alter table tezos.baker_cycle_endorsements
+	add constraint baker_cycle_endorsements_pk
+		primary key (delegate, cycle);
+
+CREATE OR REPLACE VIEW tezos.baker_current_cycle_endorsements_view AS
     SELECT delegate, cycle, sum(reward) reward, sum(missed) missed, count(1) count
     FROM tezos.baker_endorsements
+    WHERE cycle = (select meta_cycle from tezos.blocks order by level desc limit 1)
     GROUP BY delegate, cycle;
 
-// After sync
 CREATE OR REPLACE FUNCTION tezos.baker_endorsements()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -39,6 +52,13 @@ BEGIN
         where op.kind = 'endorsement'
           and op.level = NEW.meta_level-5) as op on er.level = op.level and op.elem = er.slot::varchar
   where er.level = NEW.meta_level-5;
+
+  IF NEW.meta_cycle_position <= 5 THEN
+   INSERT INTO tezos.baker_cycle_endorsements (SELECT * FROM tezos.baker_cycle_endorsements_view
+    where tezos.baker_cycle_endorsements_view.cycle = NEW.meta_level-1)
+    ON CONFLICT ON CONSTRAINT baker_cycle_endorsements_pk
+    DO UPDATE SET reward = excluded.reward, missed = excluded.missed, count = excluded.count;
+  END IF;
   RETURN NEW;
 END
 $$;

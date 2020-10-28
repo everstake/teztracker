@@ -1,5 +1,3 @@
-//After sync
-
 CREATE INDEX ix_operations_transactions_source_operation_id
     ON tezos.operations USING btree
     (source, operation_id)
@@ -24,11 +22,6 @@ CREATE INDEX ix_operations_delegations_operation_id
     ON tezos.operations USING btree
     (operation_id)
       WHERE kind='delegation';
-
-CREATE INDEX ix_operations_endorsements_operation_id
-    ON tezos.operations USING btree
-    (operation_id)
-      WHERE kind='endorsement';
 
 CREATE INDEX ix_accounts_balance
     ON tezos.accounts USING btree
@@ -72,16 +65,6 @@ CREATE INDEX concurrently ix_balance_updates_operation_group_hash_rewards
   ON tezos.balance_updates (operation_group_hash, category)
   WHERE category = 'rewards' AND operation_group_hash IS NOT NULL;
 
-CREATE INDEX accounts_history_asof_index
-	ON tezos.accounts_history (asof);
-
-CREATE INDEX accounts_history_block_level_index
-	ON tezos.accounts_history (block_level DESC);
-
-CREATE INDEX accounts_history_delegate_value_index
-	ON tezos.accounts_history (delegate_value)
-	WHERE delegate_value IS NOT NULL;
-
 CREATE INDEX IF NOT EXISTS ix_operations_originated_contract
     ON tezos.operations USING btree
     (originated_contracts)
@@ -94,3 +77,14 @@ CREATE INDEX ix_operations_voting_proposal_source_kind_period
 CREATE INDEX ix_operations_voting_proposal_source_kind_period
   on tezos.operations (proposal, source, kind, period)
   where ballot_period is not null;
+
+//Probably excess
+CREATE INDEX accounts_history_asof_index
+	ON tezos.accounts_history (asof);
+
+CREATE INDEX accounts_history_block_level_index
+	ON tezos.accounts_history (block_level DESC);
+
+CREATE INDEX accounts_history_delegate_value_index
+	ON tezos.accounts_history (delegate_value)
+	WHERE delegate_value IS NOT NULL;
