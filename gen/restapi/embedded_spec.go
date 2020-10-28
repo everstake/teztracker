@@ -4891,7 +4891,7 @@ func init() {
           "type": "number"
         },
         "price": {
-          "type": "number"
+          "$ref": "#/definitions/Price"
         },
         "price_24h_change": {
           "type": "number"
@@ -5184,6 +5184,26 @@ func init() {
         },
         "winner": {
           "$ref": "#/definitions/Proposal"
+        }
+      }
+    },
+    "Price": {
+      "properties": {
+        "cny": {
+          "type": "number",
+          "format": "float64"
+        },
+        "eur": {
+          "type": "number",
+          "format": "float64"
+        },
+        "gbp": {
+          "type": "number",
+          "format": "float64"
+        },
+        "usd": {
+          "type": "number",
+          "format": "float64"
         }
       }
     },
@@ -10270,7 +10290,7 @@ func init() {
           "type": "number"
         },
         "price": {
-          "type": "number"
+          "$ref": "#/definitions/Price"
         },
         "price_24h_change": {
           "type": "number"
@@ -10564,6 +10584,26 @@ func init() {
         },
         "winner": {
           "$ref": "#/definitions/Proposal"
+        }
+      }
+    },
+    "Price": {
+      "properties": {
+        "cny": {
+          "type": "number",
+          "format": "float64"
+        },
+        "eur": {
+          "type": "number",
+          "format": "float64"
+        },
+        "gbp": {
+          "type": "number",
+          "format": "float64"
+        },
+        "usd": {
+          "type": "number",
+          "format": "float64"
         }
       }
     },
