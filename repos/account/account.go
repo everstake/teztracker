@@ -161,7 +161,8 @@ func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, 
 
 func (r *Repository) RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error) {
 
-	err = r.db.Table("tezos.rewards_counter").
+	err = r.db.Select("*").Table("tezos.rewards_counter").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on rewards_counter.cycle = cp.cycle").
 		Where("baker = ?", accountID).
 		Limit(limit).
 		Find(&rewards).Error
@@ -180,6 +181,7 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 
 	err = db.Select("*").
 		Table("tezos.rewards_counter").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on rewards_counter.cycle = cp.cycle").
 		Limit(limit).
 		Offset(offset).
 		Find(&rewards).Error

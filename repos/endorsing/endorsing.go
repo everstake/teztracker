@@ -37,7 +37,7 @@ func (r *Repository) EndorsingTotal(accountID string) (total models.AccountEndor
 }
 
 func (r *Repository) EndorsingList(accountID string, limit uint, offset uint) (count int64, endorsing []models.AccountEndorsing, err error) {
-	db := r.db.Table("tezos.baker_cycle_endorsements_view").
+	db := r.db.Table("tezos.baker_cycle_endorsements_view bce").
 		Model(&models.AccountEndorsing{}).
 		Where("delegate = ?", accountID)
 
@@ -46,7 +46,9 @@ func (r *Repository) EndorsingList(accountID string, limit uint, offset uint) (c
 		return 0, endorsing, err
 	}
 
-	err = db.Order("cycle desc").Limit(limit).
+	err = db.Select("*").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on bce.cycle = cp.cycle").
+		Order("bce.cycle desc").Limit(limit).
 		Offset(offset).
 		Find(&endorsing).Error
 
@@ -54,11 +56,15 @@ func (r *Repository) EndorsingList(accountID string, limit uint, offset uint) (c
 }
 
 func (r *Repository) FutureEndorsingList(accountID string) (endorsing []models.AccountEndorsing, err error) {
-	db := r.db.Table("tezos.baker_future_endorsement_view").
+	err = r.db.Select("*").
+		Table("tezos.baker_future_endorsement_view bfe").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on bfe.cycle = cp.cycle").
 		Model(&models.AccountEndorsing{}).
-		Where("delegate = ?", accountID)
+		Where("delegate = ?", accountID).
+		Order("bfe.cycle desc").Find(&endorsing).Error
+	if err != nil {
+		return nil, err
+	}
 
-	err = db.Order("cycle desc").Find(&endorsing).Error
-
-	return endorsing, err
+	return endorsing, nil
 }

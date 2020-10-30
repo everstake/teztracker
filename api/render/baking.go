@@ -10,6 +10,8 @@ func AccountBaking(acb models.AccountBaking) *genModels.AccountBakingRow {
 		AvgPriority:  &acb.AvgPriority,
 		Blocks:       &acb.Count,
 		Cycle:        &acb.Cycle,
+		CycleStart:   acb.CycleStart.Unix(),
+		CycleEnd:     acb.CycleStart.Unix(),
 		Status:       string(acb.Status),
 		Missed:       &acb.Missed,
 		Rewards:      &acb.Reward,
