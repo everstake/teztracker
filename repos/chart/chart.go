@@ -153,7 +153,7 @@ func (r *Repository) Bakers(from, to int64, period string) (data []models.ChartD
 }
 
 func (r *Repository) InsertWhaleAccounts(dayTime int64) (err error) {
-	err = r.db.Exec("Select insert_whale_stat(?)", dayTime).Error
+	err = r.db.Exec("Select tezos.insert_whale_stat(?)", dayTime).Error
 	if err != nil {
 		return err
 	}
