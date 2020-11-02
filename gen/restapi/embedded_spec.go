@@ -3140,6 +3140,18 @@ func init() {
             "name": "network",
             "in": "path",
             "required": true
+          },
+          {
+            "enum": [
+              "usd",
+              "eur",
+              "gbp",
+              "cny"
+            ],
+            "type": "string",
+            "default": "usd",
+            "name": "currency",
+            "in": "query"
           }
         ],
         "responses": {
@@ -4887,11 +4899,14 @@ func init() {
         "circulating_supply": {
           "type": "number"
         },
+        "currency": {
+          "type": "string"
+        },
         "market_cap": {
           "type": "number"
         },
         "price": {
-          "$ref": "#/definitions/Price"
+          "type": "number"
         },
         "price_24h_change": {
           "type": "number"
@@ -5184,26 +5199,6 @@ func init() {
         },
         "winner": {
           "$ref": "#/definitions/Proposal"
-        }
-      }
-    },
-    "Price": {
-      "properties": {
-        "cny": {
-          "type": "number",
-          "format": "float64"
-        },
-        "eur": {
-          "type": "number",
-          "format": "float64"
-        },
-        "gbp": {
-          "type": "number",
-          "format": "float64"
-        },
-        "usd": {
-          "type": "number",
-          "format": "float64"
         }
       }
     },
@@ -8534,6 +8529,18 @@ func init() {
             "name": "network",
             "in": "path",
             "required": true
+          },
+          {
+            "enum": [
+              "usd",
+              "eur",
+              "gbp",
+              "cny"
+            ],
+            "type": "string",
+            "default": "usd",
+            "name": "currency",
+            "in": "query"
           }
         ],
         "responses": {
@@ -10286,11 +10293,14 @@ func init() {
         "circulating_supply": {
           "type": "number"
         },
+        "currency": {
+          "type": "string"
+        },
         "market_cap": {
           "type": "number"
         },
         "price": {
-          "$ref": "#/definitions/Price"
+          "type": "number"
         },
         "price_24h_change": {
           "type": "number"
@@ -10584,26 +10594,6 @@ func init() {
         },
         "winner": {
           "$ref": "#/definitions/Proposal"
-        }
-      }
-    },
-    "Price": {
-      "properties": {
-        "cny": {
-          "type": "number",
-          "format": "float64"
-        },
-        "eur": {
-          "type": "number",
-          "format": "float64"
-        },
-        "gbp": {
-          "type": "number",
-          "format": "float64"
-        },
-        "usd": {
-          "type": "number",
-          "format": "float64"
         }
       }
     },

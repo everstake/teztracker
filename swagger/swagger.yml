@@ -170,6 +170,11 @@ paths:
           required: true
           type: string
           enum: [mainnet, carthagenet]
+        - in: query
+          name: currency
+          type: string
+          enum: [usd, eur, gbp, cny]
+          default: usd
       produces:
         - application/json
       responses:
@@ -2652,8 +2657,10 @@ paths:
 definitions:
   Info:
     properties:
+      currency:
+        type: string
       price:
-        $ref: '#/definitions/Price'
+        type: number
       price_24h_change:
         type: number
       staking_ratio:
@@ -2676,20 +2683,6 @@ definitions:
       - price
       - price_24h_change
     type: object
-  Price:
-    properties:
-      usd:
-        type: number
-        format: float64
-      eur:
-        type: number
-        format: float64
-      gbp:
-        type: number
-        format: float64
-      cny:
-        type: number
-        format: float64
   AccountResult:
     properties:
       account:

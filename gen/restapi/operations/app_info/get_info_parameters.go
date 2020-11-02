@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/validate"
 
@@ -16,10 +17,18 @@ import (
 )
 
 // NewGetInfoParams creates a new GetInfoParams object
-// no default values defined in spec.
+// with the default values initialized.
 func NewGetInfoParams() GetInfoParams {
 
-	return GetInfoParams{}
+	var (
+		// initialize parameters with default values
+
+		currencyDefault = string("usd")
+	)
+
+	return GetInfoParams{
+		Currency: &currencyDefault,
+	}
 }
 
 // GetInfoParams contains all the bound params for the get info operation
@@ -31,6 +40,11 @@ type GetInfoParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
+	/*
+	  In: query
+	  Default: "usd"
+	*/
+	Currency *string
 	/*Not used
 	  Required: true
 	  In: path
@@ -52,6 +66,13 @@ func (o *GetInfoParams) BindRequest(r *http.Request, route *middleware.MatchedRo
 
 	o.HTTPRequest = r
 
+	qs := runtime.Values(r.URL.Query())
+
+	qCurrency, qhkCurrency, _ := qs.GetOK("currency")
+	if err := o.bindCurrency(qCurrency, qhkCurrency, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	rNetwork, rhkNetwork, _ := route.Params.GetOK("network")
 	if err := o.bindNetwork(rNetwork, rhkNetwork, route.Formats); err != nil {
 		res = append(res, err)
@@ -65,6 +86,39 @@ func (o *GetInfoParams) BindRequest(r *http.Request, route *middleware.MatchedRo
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindCurrency binds and validates parameter Currency from query.
+func (o *GetInfoParams) bindCurrency(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewGetInfoParams()
+		return nil
+	}
+
+	o.Currency = &raw
+
+	if err := o.validateCurrency(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateCurrency carries on validations for parameter Currency
+func (o *GetInfoParams) validateCurrency(formats strfmt.Registry) error {
+
+	if err := validate.Enum("currency", "query", *o.Currency, []interface{}{"usd", "eur", "gbp", "cny"}); err != nil {
+		return err
+	}
+
 	return nil
 }
 

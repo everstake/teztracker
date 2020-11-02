@@ -26,12 +26,15 @@ type Info struct {
 	// circulating supply
 	CirculatingSupply float64 `json:"circulating_supply,omitempty"`
 
+	// currency
+	Currency string `json:"currency,omitempty"`
+
 	// market cap
 	MarketCap float64 `json:"market_cap,omitempty"`
 
 	// price
 	// Required: true
-	Price *Price `json:"price"`
+	Price *float64 `json:"price"`
 
 	// price 24h change
 	// Required: true
@@ -72,15 +75,6 @@ func (m *Info) validatePrice(formats strfmt.Registry) error {
 
 	if err := validate.Required("price", "body", m.Price); err != nil {
 		return err
-	}
-
-	if m.Price != nil {
-		if err := m.Price.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("price")
-			}
-			return err
-		}
 	}
 
 	return nil
