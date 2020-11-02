@@ -17,6 +17,8 @@ type GetInfoURL struct {
 	Network  string
 	Platform string
 
+	Currency *string
+
 	_basePath string
 	// avoid unkeyed usage
 	_ struct{}
@@ -59,6 +61,18 @@ func (o *GetInfoURL) Build() (*url.URL, error) {
 
 	_basePath := o._basePath
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var currencyQ string
+	if o.Currency != nil {
+		currencyQ = *o.Currency
+	}
+	if currencyQ != "" {
+		qs.Set("currency", currencyQ)
+	}
+
+	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

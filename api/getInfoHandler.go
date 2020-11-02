@@ -15,7 +15,7 @@ import (
 
 // MarketDataProvider is an interface for getting actual price and price changes.
 type MarketDataProvider interface {
-	GetTezosMarketData() (md models.MarketInfo, err error)
+	GetTezosMarketData(curr string) (md models.MarketInfo, err error)
 }
 
 type getInfoHandler struct {
@@ -31,7 +31,7 @@ const (
 
 // Handle serves the Get Info request.
 func (h *getInfoHandler) Handle(params info.GetInfoParams) middleware.Responder {
-	md, err := h.provider.GetTezosMarketData()
+	md, err := h.provider.GetTezosMarketData(*params.Currency)
 	if err != nil {
 		logrus.Errorf("failed to get market data: %s", err.Error())
 		return info.NewGetInfoInternalServerError()
@@ -52,9 +52,10 @@ func (h *getInfoHandler) Handle(params info.GetInfoParams) middleware.Responder 
 		ratio, err = service.GetStakingRatio()
 		if err != nil {
 			logrus.Errorf("failed to get staking ratio: %s", err.Error())
+		} else {
+			h.cache.Set(fmt.Sprintf(stakingRatioCacheKey, net), ratio, cacheTTL)
 		}
-		h.cache.Set(fmt.Sprintf(stakingRatioCacheKey, net), ratio, cacheTTL)
 	}
 
-	return info.NewGetInfoOK().WithPayload(render.Info(md, ratio.(float64), service.BlocksInCycle()))
+	return info.NewGetInfoOK().WithPayload(render.Info(*params.Currency, md, ratio.(float64), service.BlocksInCycle()))
 }
