@@ -55,7 +55,7 @@ BEGIN
 
   IF NEW.meta_cycle_position <= 5 THEN
    INSERT INTO tezos.baker_cycle_endorsements (SELECT * FROM tezos.baker_cycle_endorsements_view
-    where tezos.baker_cycle_endorsements_view.cycle = NEW.meta_level-1)
+    where tezos.baker_cycle_endorsements_view.cycle = NEW.meta_cycle-1)
     ON CONFLICT ON CONSTRAINT baker_cycle_endorsements_pk
     DO UPDATE SET reward = excluded.reward, missed = excluded.missed, count = excluded.count;
   END IF;

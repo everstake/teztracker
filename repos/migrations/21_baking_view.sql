@@ -59,7 +59,7 @@ where bl.level = NEW.meta_level-5
   and (baker = br.delegate or bl.priority > br.priority or (br.priority > 0 and baker = br.delegate));
   IF NEW.meta_cycle_position <= 5 THEN
     INSERT INTO tezos.baker_cycle_bakings (SELECT * FROM tezos.baker_cycle_bakings_view
-    where tezos.baker_cycle_bakings_view.cycle = NEW.meta_level-1)
+    where tezos.baker_cycle_bakings_view.cycle = NEW.meta_cycle-1)
     ON CONFLICT ON CONSTRAINT baker_cycle_bakings_pk
     DO UPDATE SET avg_priority = excluded.avg_priority, reward = excluded.reward, count = excluded.count, missed = excluded.missed,stolen = excluded.stolen,fees = excluded.fees;
   END IF;
