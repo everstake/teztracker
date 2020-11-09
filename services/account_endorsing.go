@@ -1,6 +1,8 @@
 package services
 
-import "github.com/everstake/teztracker/models"
+import (
+	"github.com/everstake/teztracker/models"
+)
 
 func (t *TezTracker) GetAccountEndorsingList(accountID string, limits Limiter) (count int64, list []models.AccountEndorsing, err error) {
 	lastBlock, err := t.repoProvider.GetBlock().Last()
