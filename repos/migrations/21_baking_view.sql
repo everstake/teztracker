@@ -53,12 +53,9 @@ insert into tezos.baker_bakings (cycle,delegate,level,priority,baked,reward,fees
        CASE WHEN br.priority > 0 and baker = br.delegate THEN 1 ELSE 0 END as stolen
 from tezos.baking_rights br
        left join tezos.blocks bl on (br.level = bl.meta_level)
-       left join tezos.balance_updates bu on source_hash = hash
+       left join tezos.balance_updates bu on (source_hash = hash and source = 'block' and category = 'rewards' and change > 0)
        left join tezos.block_aggregation_view bav on bav.level = bl.level
-where category = 'rewards'
-  and change > 0
-  and source = 'block'
-  and bl.level = NEW.meta_level-5
+where bl.level = NEW.meta_level-5
   and (baker = br.delegate or bl.priority > br.priority or (br.priority > 0 and baker = br.delegate));
   IF NEW.meta_cycle_position <= 5 THEN
     INSERT INTO tezos.baker_cycle_bakings (SELECT * FROM tezos.baker_cycle_bakings_view

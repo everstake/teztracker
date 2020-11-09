@@ -2,7 +2,7 @@ version: "3.1"
 
 services:
   conseil-lorre:
-    image: cryptonomictech/conseil:latest
+    image: cryptonomictech/conseil:july
     command: conseil-lorre
     environment:
       DB_Host: "${DB_HOST}"
@@ -20,7 +20,7 @@ services:
         condition: on-failure
         delay: 5s
   conseil-carthagenet-lorre:
-    image: cryptonomictech/conseil:latest
+    image: cryptonomictech/conseil:july
     command: conseil-lorre
     environment:
       DB_Host: ${DB_HOST}

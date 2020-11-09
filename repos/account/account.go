@@ -161,7 +161,8 @@ func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, 
 
 func (r *Repository) RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error) {
 
-	err = r.db.Table("tezos.rewards_counter").
+	err = r.db.Select("*").Table("tezos.rewards_counter").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on rewards_counter.cycle = cp.cycle").
 		Where("baker = ?", accountID).
 		Limit(limit).
 		Find(&rewards).Error
@@ -178,17 +179,10 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 		return 0, rewards, err
 	}
 
-	err = db.Select("br.*, CASE WHEN bcb.reward IS NOT NULL THEN bcb.reward ELSE ccb.reward END as baking_rewards, CASE WHEN bcb.missed IS NOT NULL THEN bcb.missed ELSE ccb.missed END as missed_baking, CASE WHEN bcb.fees IS NOT NULL THEN bcb.fees ELSE ccb.fees END as fees, fbrv.count as future_baking_count, CASE WHEN cev.reward IS NOT NULL THEN cev.reward ELSE cce.reward END  as endorsement_rewards, CASE WHEN cev.missed IS NOT NULL THEN cev.missed ELSE cce.missed END  as missed_endorsements, fev.count future_endorsement_count").
-		//History tables
-		Joins("left join tezos.baker_cycle_endorsements cev on br.baker = cev.delegate and br.cycle = cev.cycle").
-		Joins("left join tezos.baker_cycle_bakings bcb on br.baker = bcb.delegate and br.cycle = bcb.cycle").
-		//Views from current active period
-		Joins("left join tezos.baker_current_cycle_endorsements_view cce on br.baker = cce.delegate and br.cycle = cce.cycle").
-		Joins("left join tezos.baker_current_cycle_bakings_view ccb on br.baker = ccb.delegate and br.cycle = ccb.cycle").
-		//Future
-		Joins("left join tezos.baker_future_baking_rights_view fbrv on br.baker = fbrv.delegate and br.cycle = fbrv.cycle").
-		Joins("left join tezos.baker_future_endorsement_view fev on br.baker = fev.delegate and br.cycle = fev.cycle").
-		Order("cycle desc").Limit(limit).
+	err = db.Select("*").
+		Table("tezos.rewards_counter").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on rewards_counter.cycle = cp.cycle").
+		Limit(limit).
 		Offset(offset).
 		Find(&rewards).Error
 

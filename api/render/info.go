@@ -84,6 +84,8 @@ func BlocksPriorityChartElement(chd models.BlockPriority) *genModels.BlockPriori
 
 	return &genModels.BlockPriorityChartData{
 		Cycle:          &chd.Cycle,
+		CycleStart:     chd.CycleStart.Unix(),
+		CycleEnd:       chd.CycleEnd.Unix(),
 		Blocks:         &chd.Blocks,
 		FirstPriority:  &chd.FirstPriority,
 		SecondPriority: &chd.SecondPriority,

@@ -59,8 +59,8 @@ func (t *TezTracker) GetAccountFutureEndorsementsList(accountID string) (list []
 
 	for i := range list {
 		list[i].Status = getRewardStatus(list[i].Cycle, lastBlock.MetaCycle)
-		list[i].TotalDeposit = list[i].Count * BlockSecurityDeposit
-		list[i].Reward = list[i].Count * BlockReward
+		list[i].TotalDeposit = list[i].Count * EndorsementSecurityDeposit
+		list[i].Reward = list[i].Count * EndorsementReward
 	}
 
 	return list, nil
