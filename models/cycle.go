@@ -1,9 +1,11 @@
 package models
 
-import "time"
+import (
+	"github.com/guregu/null"
+)
 
 type BakingCycle struct {
 	Cycle      int64
-	CycleStart time.Time
-	CycleEnd   time.Time
+	CycleStart null.Time
+	CycleEnd   null.Time
 }
