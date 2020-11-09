@@ -18,6 +18,12 @@ type Snapshots struct {
 	// cycle
 	Cycle int64 `json:"cycle,omitempty"`
 
+	// cycle end
+	CycleEnd int64 `json:"cycleEnd,omitempty"`
+
+	// cycle start
+	CycleStart int64 `json:"cycleStart,omitempty"`
+
 	// rolls
 	Rolls int64 `json:"rolls,omitempty"`
 
