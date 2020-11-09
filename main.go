@@ -68,6 +68,7 @@ func main() {
 
 	if !*cronDisableFlag {
 		cron := gron.New()
+
 		for k := range networks {
 			db, err := provider.GetDb(k)
 			if err != nil {
