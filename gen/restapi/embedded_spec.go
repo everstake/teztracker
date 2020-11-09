@@ -3140,6 +3140,18 @@ func init() {
             "name": "network",
             "in": "path",
             "required": true
+          },
+          {
+            "enum": [
+              "usd",
+              "eur",
+              "gbp",
+              "cny"
+            ],
+            "type": "string",
+            "default": "usd",
+            "name": "currency",
+            "in": "query"
           }
         ],
         "responses": {
@@ -4886,6 +4898,9 @@ func init() {
         },
         "circulating_supply": {
           "type": "number"
+        },
+        "currency": {
+          "type": "string"
         },
         "market_cap": {
           "type": "number"
@@ -8514,6 +8529,18 @@ func init() {
             "name": "network",
             "in": "path",
             "required": true
+          },
+          {
+            "enum": [
+              "usd",
+              "eur",
+              "gbp",
+              "cny"
+            ],
+            "type": "string",
+            "default": "usd",
+            "name": "currency",
+            "in": "query"
           }
         ],
         "responses": {
@@ -10265,6 +10292,9 @@ func init() {
         },
         "circulating_supply": {
           "type": "number"
+        },
+        "currency": {
+          "type": "string"
         },
         "market_cap": {
           "type": "number"

@@ -170,6 +170,11 @@ paths:
           required: true
           type: string
           enum: [mainnet, carthagenet]
+        - in: query
+          name: currency
+          type: string
+          enum: [usd, eur, gbp, cny]
+          default: usd
       produces:
         - application/json
       responses:
@@ -2652,6 +2657,8 @@ paths:
 definitions:
   Info:
     properties:
+      currency:
+        type: string
       price:
         type: number
       price_24h_change:

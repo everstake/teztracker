@@ -12,14 +12,12 @@ import (
 )
 
 const (
-	tezosPriceURL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=tezos&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h"
-	cacheTTL      = 30 * time.Second
-	marketInfoKey = "market_info"
+	tezosPriceURL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=%s&ids=tezos&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h"
+	cacheTTL      = 5 * time.Minute
+	marketInfoKey = "market_info_%s"
 )
 
-type tezosMarketData struct {
-	Tezos USDMarketData `json:"tezos"`
-}
+var AvailableCurrencies = map[string]bool{"usd": true, "eur": true, "gbp": true, "cny": true}
 
 // CoinGecko is market data provider.
 type CoinGecko struct {
@@ -30,28 +28,42 @@ func NewCoinGecko() *CoinGecko {
 	return &CoinGecko{cache.New(cacheTTL, cacheTTL)}
 }
 
-// GetTezosMarketData gets the tezos price and price change from CoinGecko API.
-func (c CoinGecko) GetTezosMarketData() (md models.MarketInfo, err error) {
-	if marketData, isFound := c.Cache.Get(marketInfoKey); isFound {
-		return marketData.(models.MarketInfo), nil
+// GetTezosMarketData gets the tezos prices and price change from CoinGecko API.
+func (c CoinGecko) GetTezosMarketData(curr string) (md models.MarketInfo, err error) {
+	if !AvailableCurrencies[curr] {
+		return nil, fmt.Errorf("Not available currency: %s", curr)
+	}
+
+	marketData, err := c.GetTezosMarketDataByCurr(curr)
+	if err != nil {
+		return nil, err
+	}
+
+	return marketData, nil
+}
+
+func (c CoinGecko) GetTezosMarketDataByCurr(curr string) (md CurrMarketData, err error) {
+	cacheKey := fmt.Sprintf(marketInfoKey, curr)
+	if marketData, isFound := c.Cache.Get(cacheKey); isFound {
+		return marketData.(CurrMarketData), nil
 	}
 
 	cg := coingecko.NewClient(nil)
-	b, err := cg.MakeReq(tezosPriceURL)
+	b, err := cg.MakeReq(fmt.Sprintf(tezosPriceURL, curr))
 	if err != nil {
-		return nil, err
+		return md, err
 	}
-	var tmd []USDMarketData
+	var tmd []CurrMarketData
 	err = json.Unmarshal(b, &tmd)
 	if err != nil {
-		return nil, err
+		return md, err
 	}
 	if len(tmd) != 1 {
-		return nil, fmt.Errorf("got enexpected number of entries")
+		return md, fmt.Errorf("got enexpected number of entries")
 	}
 
 	//Save into cache error can be skipped
-	c.Cache.Add(marketInfoKey, tmd[0], cacheTTL)
+	c.Cache.Add(cacheKey, tmd[0], cacheTTL)
 
 	return tmd[0], nil
 }

@@ -26,6 +26,9 @@ type Info struct {
 	// circulating supply
 	CirculatingSupply float64 `json:"circulating_supply,omitempty"`
 
+	// currency
+	Currency string `json:"currency,omitempty"`
+
 	// market cap
 	MarketCap float64 `json:"market_cap,omitempty"`
 
