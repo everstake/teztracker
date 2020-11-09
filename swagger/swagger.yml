@@ -3737,6 +3737,8 @@ definitions:
          type: string
        chain_id:
          type: string
+       branch:
+         type: string
        hash:
          type: string
        signature:

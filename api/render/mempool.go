@@ -9,7 +9,8 @@ func MempoolOperation(acb gotezos.Operations) *genModels.MempoolOperation {
 	return &genModels.MempoolOperation{
 		ChainID:   acb.ChainID,
 		Hash:      acb.Hash,
-		Protocol:  acb.Hash,
+		Protocol:  acb.Protocol,
+		Branch:    acb.Branch,
 		Signature: acb.Signature,
 		Contents:  acb.Contents,
 	}
