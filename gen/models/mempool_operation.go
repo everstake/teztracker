@@ -15,6 +15,9 @@ import (
 // swagger:model MempoolOperation
 type MempoolOperation struct {
 
+	// branch
+	Branch string `json:"branch,omitempty"`
+
 	// chain id
 	ChainID string `json:"chain_id,omitempty"`
 

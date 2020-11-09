@@ -4953,6 +4953,9 @@ func init() {
     },
     "MempoolOperation": {
       "properties": {
+        "branch": {
+          "type": "string"
+        },
         "chain_id": {
           "type": "string"
         },
@@ -10397,6 +10400,9 @@ func init() {
     },
     "MempoolOperation": {
       "properties": {
+        "branch": {
+          "type": "string"
+        },
         "chain_id": {
           "type": "string"
         },
