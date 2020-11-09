@@ -5330,6 +5330,14 @@ func init() {
         "cycle": {
           "type": "integer"
         },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
+          "type": "integer",
+          "format": "int64"
+        },
         "rolls": {
           "type": "integer"
         },
@@ -10749,6 +10757,14 @@ func init() {
       "properties": {
         "cycle": {
           "type": "integer"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
+          "type": "integer",
+          "format": "int64"
         },
         "rolls": {
           "type": "integer"

@@ -3208,6 +3208,12 @@ definitions:
     properties:
       cycle:
         type: integer
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
+        type: integer
+        format: int64
       snapshot_block:
         type: integer
       rolls:
