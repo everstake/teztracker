@@ -40,3 +40,7 @@ select * from cycle_periods
 UNION
 select * from tezos.cycles( (select max(cycle) from cycle_periods), (select max(cycle) + 6 from cycle_periods) )
 order by cycle desc;
+
+CREATE VIEW tezos.snapshots_view AS
+SELECT * FROM tezos.snapshots
+ LEFT JOIN tezos.cycle_periods_view cp on snp_cycle = cp.cycle;
