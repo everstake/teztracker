@@ -7,7 +7,7 @@ type Snapshot struct {
 	Rolls      int64 `gorm:"column:snp_rolls" json:"rolls"`
 }
 
-type SnapshotView struct {
+type SnapshotsView struct {
 	Snapshot
 	BakingCycle
 }
