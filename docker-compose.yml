@@ -68,7 +68,7 @@ services:
       #todo: if the scheme is not http or host/port are different then for lorry - pass it through
       TEZTRACKER_MAINNET_NODERPC_HOST: "${XTZ_HOST}:${XTZ_PORT}"
       TEZTRACKER_MAINNET_NODERPC_SCHEMES: "${XTZ_SCHEME}"
-      TEZTRACKER_CARTHAGENET_NODERPC_HOST: "${CARTHAGENET_XTZ_HOST}:8732"
+      TEZTRACKER_CARTHAGENET_NODERPC_HOST: "${CARTHAGENET_XTZ_HOST}:${CARTHAGENET_XTZ_PORT}"
       TEZTRACKER_CARTHAGENET_NODERPC_SCHEMES: "${CARTHAGENET_XTZ_SCHEME}"
     # If using localhost db you may want to use the host network
     network_mode: "host"
