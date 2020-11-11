@@ -27,6 +27,7 @@ import (
 	"github.com/everstake/teztracker/gen/restapi/operations/operation_groups"
 	"github.com/everstake/teztracker/gen/restapi/operations/operations_list"
 	"github.com/everstake/teztracker/gen/restapi/operations/voting"
+	"github.com/everstake/teztracker/gen/restapi/operations/w_s"
 )
 
 // NewTezTrackerAPI creates a new TezTracker instance
@@ -46,6 +47,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
+		WsConnectToWSHandler: w_s.ConnectToWSHandlerFunc(func(params w_s.ConnectToWSParams) middleware.Responder {
+			return middleware.NotImplemented("operation WsConnectToWS has not yet been implemented")
+		}),
 		AccountsGetAccountHandler: accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccount has not yet been implemented")
 		}),
@@ -233,6 +237,8 @@ type TezTrackerAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// WsConnectToWSHandler sets the operation handler for the connect to w s operation
+	WsConnectToWSHandler w_s.ConnectToWSHandler
 	// AccountsGetAccountHandler sets the operation handler for the get account operation
 	AccountsGetAccountHandler accounts.GetAccountHandler
 	// AccountsGetAccountBakedBlocksListHandler sets the operation handler for the get account baked blocks list operation
@@ -398,6 +404,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.WsConnectToWSHandler == nil {
+		unregistered = append(unregistered, "w_s.ConnectToWSHandler")
 	}
 
 	if o.AccountsGetAccountHandler == nil {
@@ -705,6 +715,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/{network}/ws"] = w_s.NewConnectToWS(o.context, o.WsConnectToWSHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

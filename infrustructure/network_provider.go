@@ -5,12 +5,14 @@ import (
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services/rpc_client/client"
+	"github.com/everstake/teztracker/ws"
 	"github.com/jinzhu/gorm"
 	"strings"
 )
 
 type NetworkContext struct {
 	Db           *gorm.DB
+	WS           *ws.Hub
 	ClientConfig client.TransportConfig
 }
 
@@ -35,8 +37,11 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 			return "tezos." + defaultTableName
 		}
 
+		hub := ws.NewHub()
+
 		provider.networks[k] = NetworkContext{
 			Db:           db,
+			WS:           hub,
 			ClientConfig: v.NodeRpc,
 		}
 	}
@@ -54,9 +59,17 @@ func (p *Provider) Close() {
 		v.Db.Close()
 	}
 }
+
 func (p *Provider) GetDb(net models.Network) (*gorm.DB, error) {
 	if netcont, ok := p.networks[net]; ok {
 		return netcont.Db, nil
+	}
+	return nil, fmt.Errorf("not enabled network")
+}
+
+func (p *Provider) GetWS(net models.Network) (*ws.Hub, error) {
+	if netcont, ok := p.networks[net]; ok {
+		return netcont.WS, nil
 	}
 	return nil, fmt.Errorf("not enabled network")
 }

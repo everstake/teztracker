@@ -3938,6 +3938,31 @@ func init() {
           }
         }
       }
+    },
+    "/v2/{network}/ws": {
+      "get": {
+        "tags": [
+          "WS"
+        ],
+        "operationId": "connectToWS",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -9324,6 +9349,31 @@ func init() {
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/{network}/ws": {
+      "get": {
+        "tags": [
+          "WS"
+        ],
+        "operationId": "connectToWS",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {},
           "400": {
             "description": "Bad request"
           },

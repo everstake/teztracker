@@ -2,8 +2,10 @@ package api
 
 import (
 	"github.com/everstake/teztracker/gen/restapi/operations"
+	"github.com/everstake/teztracker/infrustructure"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services/cmc"
+	"github.com/everstake/teztracker/ws"
 	"github.com/jinzhu/gorm"
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
@@ -13,8 +15,12 @@ type DbProvider interface {
 	GetDb(models.Network) (*gorm.DB, error)
 }
 
+type WSProvider interface {
+	GetWS(models.Network) (*ws.Hub, error)
+}
+
 // SetHandlers initializes the API handlers with underlying services.
-func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
+func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider) {
 	serv.Logger = logrus.Infof
 	serv.BlocksGetBlocksHeadHandler = &getHeadBlockHandler{db}
 	serv.BlocksGetBlocksListHandler = &getBlockListHandler{db}
@@ -67,4 +73,7 @@ func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
 	serv.AssetsGetAssetTokenInfoHandler = &getAssetInfoHandler{db}
 	serv.AssetsGetAssetsListHandler = &getAssetsListHandler{db}
 	serv.AssetsGetAssetOperationsListHandler = &getAssetOperationListHandler{db}
+
+	//	WS
+	serv.WsConnectToWSHandler = &serveWS{provider: db}
 }

@@ -2654,6 +2654,22 @@ paths:
           description: Not Found
       tags:
         - Assets
+  '/v2/{network}/ws':
+    get:
+      operationId: connectToWS
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - WS
 definitions:
   Info:
     properties:
