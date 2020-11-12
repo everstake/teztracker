@@ -11,7 +11,7 @@ func AccountBaking(acb models.AccountBaking) *genModels.AccountBakingRow {
 		Blocks:       &acb.Count,
 		Cycle:        &acb.Cycle,
 		CycleStart:   GetUnixFromNullTime(acb.CycleStart),
-		CycleEnd:     GetUnixFromNullTime(acb.CycleStart),
+		CycleEnd:     GetUnixFromNullTime(acb.CycleEnd),
 		Status:       string(acb.Status),
 		Missed:       &acb.Missed,
 		Rewards:      &acb.Reward,
