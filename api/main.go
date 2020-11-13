@@ -4,6 +4,7 @@ import (
 	"github.com/everstake/teztracker/gen/restapi/operations"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services/cmc"
+	"github.com/everstake/teztracker/services/mempool"
 	"github.com/jinzhu/gorm"
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
@@ -11,6 +12,7 @@ import (
 
 type DbProvider interface {
 	GetDb(models.Network) (*gorm.DB, error)
+	GetMempool(net models.Network) (*mempool.Mempool, error)
 }
 
 // SetHandlers initializes the API handlers with underlying services.
@@ -67,4 +69,6 @@ func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
 	serv.AssetsGetAssetTokenInfoHandler = &getAssetInfoHandler{db}
 	serv.AssetsGetAssetsListHandler = &getAssetsListHandler{db}
 	serv.AssetsGetAssetOperationsListHandler = &getAssetOperationListHandler{db}
+	//	Mempool
+	serv.MempoolGetMempoolOperationsHandler = &getMempoolHandler{db}
 }

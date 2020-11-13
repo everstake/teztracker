@@ -24,6 +24,7 @@ import (
 	"github.com/everstake/teztracker/gen/restapi/operations/assets"
 	"github.com/everstake/teztracker/gen/restapi/operations/blocks"
 	"github.com/everstake/teztracker/gen/restapi/operations/fees"
+	"github.com/everstake/teztracker/gen/restapi/operations/mempool"
 	"github.com/everstake/teztracker/gen/restapi/operations/operation_groups"
 	"github.com/everstake/teztracker/gen/restapi/operations/operations_list"
 	"github.com/everstake/teztracker/gen/restapi/operations/voting"
@@ -165,6 +166,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		AppInfoGetInfoHandler: app_info.GetInfoHandlerFunc(func(params app_info.GetInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetInfo has not yet been implemented")
+		}),
+		MempoolGetMempoolOperationsHandler: mempool.GetMempoolOperationsHandlerFunc(func(params mempool.GetMempoolOperationsParams) middleware.Responder {
+			return middleware.NotImplemented("operation MempoolGetMempoolOperations has not yet been implemented")
 		}),
 		VotingGetNonVotersByPeriodIDHandler: voting.GetNonVotersByPeriodIDHandlerFunc(func(params voting.GetNonVotersByPeriodIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation VotingGetNonVotersByPeriodID has not yet been implemented")
@@ -313,6 +317,8 @@ type TezTrackerAPI struct {
 	AppInfoGetHealthCheckInfoHandler app_info.GetHealthCheckInfoHandler
 	// AppInfoGetInfoHandler sets the operation handler for the get info operation
 	AppInfoGetInfoHandler app_info.GetInfoHandler
+	// MempoolGetMempoolOperationsHandler sets the operation handler for the get mempool operations operation
+	MempoolGetMempoolOperationsHandler mempool.GetMempoolOperationsHandler
 	// VotingGetNonVotersByPeriodIDHandler sets the operation handler for the get non voters by period ID operation
 	VotingGetNonVotersByPeriodIDHandler voting.GetNonVotersByPeriodIDHandler
 	// OperationGroupsGetOperationGroupHandler sets the operation handler for the get operation group operation
@@ -558,6 +564,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AppInfoGetInfoHandler == nil {
 		unregistered = append(unregistered, "app_info.GetInfoHandler")
+	}
+
+	if o.MempoolGetMempoolOperationsHandler == nil {
+		unregistered = append(unregistered, "mempool.GetMempoolOperationsHandler")
 	}
 
 	if o.VotingGetNonVotersByPeriodIDHandler == nil {
@@ -905,6 +915,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/info"] = app_info.NewGetInfo(o.context, o.AppInfoGetInfoHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/mempool"] = mempool.NewGetMempoolOperations(o.context, o.MempoolGetMempoolOperationsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
