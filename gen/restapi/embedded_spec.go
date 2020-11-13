@@ -3941,6 +3941,9 @@ func init() {
     },
     "/v2/{network}/ws": {
       "get": {
+        "schemes": [
+          "ws"
+        ],
         "tags": [
           "WS"
         ],
@@ -9360,6 +9363,9 @@ func init() {
     },
     "/v2/{network}/ws": {
       "get": {
+        "schemes": [
+          "ws"
+        ],
         "tags": [
           "WS"
         ],

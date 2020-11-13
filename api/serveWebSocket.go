@@ -21,7 +21,7 @@ func (h *serveWS) Handle(params w_s.ConnectToWSParams) middleware.Responder {
 
 	hub, err := h.provider.GetWS(net)
 	if err != nil {
-
+		return w_s.NewConnectToWSBadRequest()
 	}
 
 	return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {

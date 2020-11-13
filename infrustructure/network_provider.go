@@ -38,6 +38,8 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 		}
 
 		hub := ws.NewHub()
+		//Start hub
+		go hub.Run()
 
 		provider.networks[k] = NetworkContext{
 			Db:           db,

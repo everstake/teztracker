@@ -2,10 +2,12 @@ package ws
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/everstake/teztracker/ws/models"
 	"github.com/gorilla/websocket"
+	"github.com/mailru/easygo/netpoll"
 	log "github.com/sirupsen/logrus"
 	"strings"
 	"sync"
@@ -41,13 +43,15 @@ type (
 		// Buffered channel of outbound messages.
 		sendChan chan []byte
 
-		payload string
-
 		// List of channels which user subscribes to
 		subscriptions     map[string]bool
 		subscriptionsLock sync.RWMutex
 
+		ctx       context.Context
+		cancel    context.CancelFunc
 		safeClose sync.Once
+
+		desc *netpoll.Desc
 	}
 )
 
@@ -57,19 +61,29 @@ func NewClient(hub *Hub, conn *websocket.Conn) *Client {
 	conn.SetWriteDeadline(time.Time{})
 	conn.SetReadDeadline(time.Time{})
 
+	ctx, cancel := context.WithCancel(hub.ctx)
+
 	c := &Client{
 		hub:           hub,
 		conn:          conn,
 		sendChan:      make(chan []byte, 256),
 		subscriptions: make(map[string]bool),
-		safeClose:     sync.Once{},
+
+		ctx:    ctx,
+		cancel: cancel,
+	}
+
+	var err error
+	c.desc, err = netpoll.HandleRead(conn.UnderlyingConn())
+	if err != nil {
+		//TODO Check Error
+		log.Error(err)
 	}
 
 	c.register()
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines.
 	go c.writePump()
-	go c.readPump()
 
 	// Send hello message
 	c.send(&models.SystemMessage{Message: models.SysMessageHello})
@@ -77,33 +91,33 @@ func NewClient(hub *Hub, conn *websocket.Conn) *Client {
 	return c
 }
 
-func (this *Client) register() {
-	this.hub.registerChan <- this
+func (cl *Client) register() {
+	cl.hub.registerChan <- cl
 }
 
-func (this *Client) unregister() {
-	this.hub.unregisterChan <- this
+func (cl *Client) unregister() {
+	cl.hub.unregisterChan <- cl
 }
 
 // readPump pumps messages from the websocket connection to the hub.
-func (this *Client) readPump() {
-	defer this.unregister()
+func (cl *Client) readPump() {
+	defer cl.unregister()
 
 	for {
-		_, msgBytes, err := this.conn.ReadMessage()
+		_, msgBytes, err := cl.conn.ReadMessage()
 		if err != nil {
 			log.Debugf("Ws error: %s", err.Error())
-			break
+			return
 		}
 
-		message, err := this.parseMessage(msgBytes)
+		message, err := cl.parseMessage(msgBytes)
 		if err != nil {
 			// Send user unknown message command
-			this.send(&models.SystemMessage{Message: models.SysMessageUnknownCommand})
+			cl.send(&models.SystemMessage{Message: models.SysMessageUnknownCommand})
 			continue
 		}
 
-		err = this.handleMessage(message)
+		err = cl.handleMessage(message)
 		if err != nil {
 			log.Errorf("WS handleMessage: %s", err.Error())
 			continue
@@ -111,21 +125,46 @@ func (this *Client) readPump() {
 	}
 }
 
+func (cl *Client) Reader() {
+	_, msgBytes, err := cl.conn.ReadMessage()
+	if err != nil {
+		log.Debugf("Ws error: %s", err.Error())
+		cl.unregister()
+		//TODO check cancel on reader
+		//cl.cancel()
+		return
+	}
+
+	message, err := cl.parseMessage(msgBytes)
+	if err != nil {
+		// Send user unknown message command
+		cl.send(&models.SystemMessage{Message: models.SysMessageUnknownCommand})
+	}
+
+	err = cl.handleMessage(message)
+	if err != nil {
+		log.Errorf("WS handleMessage: %s", err.Error())
+		return
+	}
+}
+
 // writePump pumps messages from the hub to the websocket connection.
-func (this *Client) writePump() {
-	defer this.Close()
+func (cl *Client) writePump() {
+	defer cl.Close()
 
 	for {
 		select {
-		case message, ok := <-this.sendChan:
+		case message, ok := <-cl.sendChan:
 			if !ok {
 				// The hub closed the channel.
-				this.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				cl.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				log.Debug("Closed")
 				return
 			}
 
-			w, err := this.conn.NextWriter(websocket.TextMessage)
+			w, err := cl.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
+				log.Debug("NextWriter Error")
 				return
 			}
 
@@ -135,26 +174,31 @@ func (this *Client) writePump() {
 				return
 			}
 		case <-time.After(pingInterval):
-			if err := this.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+			log.Debug("Ping message")
+			if err := cl.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				log.Debug("Ping errror")
 				return
 			}
+		case <-cl.ctx.Done():
+			log.Debug("Ctx.Done")
+			return
 		}
 	}
 }
 
-func (this *Client) isSubscribed(channel string) bool {
+func (cl *Client) isSubscribed(channel string) bool {
 	if channel == "" {
 		return false
 	}
 
-	this.subscriptionsLock.RLock()
-	defer this.subscriptionsLock.RUnlock()
+	cl.subscriptionsLock.RLock()
+	defer cl.subscriptionsLock.RUnlock()
 
-	_, ok := this.subscriptions[channel]
+	_, ok := cl.subscriptions[channel]
 	return ok
 }
 
-func (this *Client) parseMessage(message []byte) (models.ClientMessage, error) {
+func (cl *Client) parseMessage(message []byte) (models.ClientMessage, error) {
 	// Trim empty bytes if any
 	msgBytes := bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 
@@ -179,14 +223,14 @@ func (this *Client) parseMessage(message []byte) (models.ClientMessage, error) {
 	return msg, err
 }
 
-func (this *Client) handleMessage(msg models.ClientMessage) error {
+func (cl *Client) handleMessage(msg models.ClientMessage) error {
 	var err error
 
 	switch m := msg.(type) {
 	case *models.ClientMessageSubscribe:
-		this.subscribe(m.Channels...)
+		cl.subscribe(m.Channels...)
 	case *models.ClientMessageUnsubscribe:
-		this.unsubscribe(m.Channels...)
+		cl.unsubscribe(m.Channels...)
 	default:
 		return fmt.Errorf("Unknown client message type")
 	}
@@ -194,49 +238,49 @@ func (this *Client) handleMessage(msg models.ClientMessage) error {
 	return err
 }
 
-func (this *Client) send(msg models.MessageInterface) error {
-	data, err := this.hub.serializeMessage(msg)
+func (cl *Client) send(msg models.MessageInterface) error {
+	data, err := cl.hub.serializeMessage(msg)
 	if err != nil {
 		return err
 	}
 
-	this.hub.sendToClient(this, data)
+	cl.hub.sendToClient(cl, data)
 
 	return nil
 }
 
-func (this *Client) subscribe(channels ...string) {
-	this.subscriptionsLock.Lock()
-	defer this.subscriptionsLock.Unlock()
+func (cl *Client) subscribe(channels ...string) {
+	cl.subscriptionsLock.Lock()
+	defer cl.subscriptionsLock.Unlock()
 
 	for _, c := range channels {
 		if c != "" {
 			c = strings.ToLower(c)
-			this.subscriptions[c] = true
+			cl.subscriptions[c] = true
 		}
 	}
 
-	this.send(&models.SystemMessage{Message: models.SysMessageSubscribed, Description: strings.Join(channels, ", ")})
+	cl.send(&models.SystemMessage{Message: models.SysMessageSubscribed, Description: strings.Join(channels, ", ")})
 }
 
-func (this *Client) unsubscribe(channels ...string) {
-	this.subscriptionsLock.Lock()
-	defer this.subscriptionsLock.Unlock()
+func (cl *Client) unsubscribe(channels ...string) {
+	cl.subscriptionsLock.Lock()
+	defer cl.subscriptionsLock.Unlock()
 
 	for _, c := range channels {
 		if c != "" {
 			c = strings.ToLower(c)
-			delete(this.subscriptions, c)
+			delete(cl.subscriptions, c)
 		}
 	}
 
-	this.send(&models.SystemMessage{Message: models.SysMessageUnsubscribed, Description: strings.Join(channels, ", ")})
+	cl.send(&models.SystemMessage{Message: models.SysMessageUnsubscribed, Description: strings.Join(channels, ", ")})
 }
 
 // Close will close send channel and connection once
-func (this *Client) Close() {
-	this.safeClose.Do(func() {
-		this.conn.Close()
-		close(this.sendChan)
+func (cl *Client) Close() {
+	cl.safeClose.Do(func() {
+		cl.conn.Close()
+		close(cl.sendChan)
 	})
 }

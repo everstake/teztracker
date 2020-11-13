@@ -2656,6 +2656,7 @@ paths:
         - Assets
   '/v2/{network}/ws':
     get:
+      schemes: ["ws"]
       operationId: connectToWS
       parameters:
         - in: path
