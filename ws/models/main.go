@@ -20,6 +20,10 @@ type BasicMessage struct {
 	Data  interface{} `json:"data"`
 }
 
+func (bm BasicMessage) GetEvent() eventType {
+	return bm.Event
+}
+
 type SystemMessage struct {
 	Message     sysMessage `json:"msg"`
 	Description string     `json:"description"`

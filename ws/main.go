@@ -156,14 +156,15 @@ func (h *Hub) RegisterClient(conn *websocket.Conn) {
 	NewClient(h, conn)
 }
 
-func (h *Hub) Broadcast(msg models.PublicMessageInterface) error {
+func (h *Hub) Broadcast(msg models.MessageInterface) error {
 	data, err := h.serializeMessage(msg)
 	if err != nil {
 		return err
 	}
 
 	h.broadcast <- &PublicMsg{
-		channel: msg.GetChannel(),
+		//Temp
+		channel: string(msg.GetEvent()),
 		data:    data,
 	}
 
