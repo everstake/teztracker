@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/ws"
 	"github.com/jinzhu/gorm"
@@ -12,6 +13,7 @@ import (
 
 type NetworkContext struct {
 	Db           *gorm.DB
+	Mempool      *mempool.Mempool
 	WS           *ws.Hub
 	ClientConfig client.TransportConfig
 }
@@ -37,12 +39,20 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 			return "tezos." + defaultTableName
 		}
 
+		m, err := mempool.NewMempool(v)
+		if err != nil {
+			return nil, err
+		}
+
+		go m.MonitorMempool()
+
 		hub := ws.NewHub()
 		//Start hub
 		go hub.Run()
 
 		provider.networks[k] = NetworkContext{
 			Db:           db,
+			Mempool:      m,
 			WS:           hub,
 			ClientConfig: v.NodeRpc,
 		}
@@ -59,12 +69,20 @@ func (p *Provider) EnableTraceLevel() {
 func (p *Provider) Close() {
 	for _, v := range p.networks {
 		v.Db.Close()
+		v.Mempool.Cancel()
 	}
 }
 
 func (p *Provider) GetDb(net models.Network) (*gorm.DB, error) {
 	if netcont, ok := p.networks[net]; ok {
 		return netcont.Db, nil
+	}
+	return nil, fmt.Errorf("not enabled network")
+}
+
+func (p *Provider) GetMempool(net models.Network) (*mempool.Mempool, error) {
+	if netcont, ok := p.networks[net]; ok {
+		return netcont.Mempool, nil
 	}
 	return nil, fmt.Errorf("not enabled network")
 }

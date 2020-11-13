@@ -3170,6 +3170,51 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/mempool": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Mempool"
+        ],
+        "operationId": "getMempoolOperations",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for mempool operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MempoolOperation"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/operation_groups": {
       "get": {
         "produces": [
@@ -4946,6 +4991,28 @@ func init() {
         },
         "volume_24h": {
           "type": "number"
+        }
+      }
+    },
+    "MempoolOperation": {
+      "properties": {
+        "branch": {
+          "type": "string"
+        },
+        "chain_id": {
+          "type": "string"
+        },
+        "contents": {
+          "type": "object"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
         }
       }
     },
@@ -8587,6 +8654,51 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/mempool": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Mempool"
+        ],
+        "operationId": "getMempoolOperations",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for mempool operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MempoolOperation"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/operation_groups": {
       "get": {
         "produces": [
@@ -10369,6 +10481,28 @@ func init() {
         },
         "volume_24h": {
           "type": "number"
+        }
+      }
+    },
+    "MempoolOperation": {
+      "properties": {
+        "branch": {
+          "type": "string"
+        },
+        "chain_id": {
+          "type": "string"
+        },
+        "contents": {
+          "type": "object"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
         }
       }
     },

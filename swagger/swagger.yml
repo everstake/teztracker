@@ -2654,6 +2654,36 @@ paths:
           description: Not Found
       tags:
         - Assets
+  '/v2/data/{platform}/{network}/mempool':
+    get:
+      operationId: getMempoolOperations
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for mempool operations
+          schema:
+            items:
+              $ref: >-
+                #/definitions/MempoolOperation
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Mempool
   '/v2/{network}/ws':
     get:
       schemes: ["ws"]
@@ -3688,3 +3718,17 @@ definitions:
     properties:
       status:
         type: boolean
+  MempoolOperation:
+     properties:
+       protocol:
+         type: string
+       chain_id:
+         type: string
+       branch:
+         type: string
+       hash:
+         type: string
+       signature:
+         type: string
+       contents:
+         type: object
