@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos"
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/services/rpc_client/client"
+	"github.com/everstake/teztracker/services/watcher"
 	"github.com/everstake/teztracker/ws"
 	"github.com/jinzhu/gorm"
 	"strings"
@@ -49,6 +51,12 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 		hub := ws.NewHub()
 		//Start hub
 		go hub.Run()
+
+		//TODO make graceful stop
+		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db))
+
+		//Start watcher
+		go w.Start()
 
 		provider.networks[k] = NetworkContext{
 			Db:           db,

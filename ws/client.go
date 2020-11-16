@@ -99,39 +99,12 @@ func (cl *Client) unregister() {
 	cl.hub.unregisterChan <- cl
 }
 
-// readPump pumps messages from the websocket connection to the hub.
-func (cl *Client) readPump() {
-	defer cl.unregister()
-
-	for {
-		_, msgBytes, err := cl.conn.ReadMessage()
-		if err != nil {
-			log.Debugf("Ws error: %s", err.Error())
-			return
-		}
-
-		message, err := cl.parseMessage(msgBytes)
-		if err != nil {
-			// Send user unknown message command
-			cl.send(&models.SystemMessage{Message: models.SysMessageUnknownCommand})
-			continue
-		}
-
-		err = cl.handleMessage(message)
-		if err != nil {
-			log.Errorf("WS handleMessage: %s", err.Error())
-			continue
-		}
-	}
-}
-
 func (cl *Client) Reader() {
 	_, msgBytes, err := cl.conn.ReadMessage()
 	if err != nil {
 		log.Debugf("Ws error: %s", err.Error())
 		cl.unregister()
-		//TODO check cancel on reader
-		//cl.cancel()
+		cl.cancel()
 		return
 	}
 

@@ -106,8 +106,6 @@ func (h *Hub) Run() {
 			h.removeClient(client)
 
 			h.poller.Stop(client.desc)
-
-			client.cancel()
 		case message := <-h.broadcast:
 			log.Debug("Public broadcast", "clients", len(h.clients), "channel", message.channel)
 			for c, _ := range h.clients {

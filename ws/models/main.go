@@ -1,11 +1,11 @@
 package models
 
-type eventType string
+type EventType string
 
 const (
-	eventTypeSystem    eventType = "sys"
-	eventTypeBlock     eventType = "block"
-	eventTypeOperation eventType = "operation"
+	eventTypeSystem    EventType = "sys"
+	eventTypeBlock     EventType = "block"
+	eventTypeOperation EventType = "operation"
 )
 
 type sysMessage string
@@ -16,11 +16,11 @@ const SysMessageSubscribed sysMessage = "subscribed"
 const SysMessageUnsubscribed sysMessage = "unsubscribed"
 
 type BasicMessage struct {
-	Event eventType   `json:"event"`
+	Event EventType   `json:"event"`
 	Data  interface{} `json:"data"`
 }
 
-func (bm BasicMessage) GetEvent() eventType {
+func (bm BasicMessage) GetEvent() EventType {
 	return bm.Event
 }
 
@@ -30,14 +30,14 @@ type SystemMessage struct {
 }
 
 type MessageInterface interface {
-	GetEvent() eventType
+	GetEvent() EventType
 }
 
-func (sm SystemMessage) GetEvent() eventType {
+func (sm SystemMessage) GetEvent() EventType {
 	return eventTypeSystem
 }
 
 type PublicMessageInterface interface {
 	GetChannel() string
-	GetEvent() eventType
+	GetEvent() EventType
 }

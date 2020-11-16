@@ -80,7 +80,6 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider) {
 	serv.AssetsGetAssetOperationsListHandler = &getAssetOperationListHandler{db}
 	//	Mempool
 	serv.MempoolGetMempoolOperationsHandler = &getMempoolHandler{db}
-
 	//	WS
 	serv.WsConnectToWSHandler = &serveWS{provider: db}
 }
