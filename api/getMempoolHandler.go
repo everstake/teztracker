@@ -7,10 +7,9 @@ import (
 )
 
 type getMempoolHandler struct {
-	provider DbProvider
+	provider MempoolProvider
 }
 
-//
 func (h *getMempoolHandler) Handle(params mempool.GetMempoolOperationsParams) middleware.Responder {
 
 	net, err := ToNetwork(params.Network)

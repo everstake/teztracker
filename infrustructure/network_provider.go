@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
+	"github.com/everstake/teztracker/repos"
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/services/rpc_client/client"
+	"github.com/everstake/teztracker/services/watcher"
+	"github.com/everstake/teztracker/ws"
 	"github.com/jinzhu/gorm"
 	"strings"
 )
@@ -13,6 +16,7 @@ import (
 type NetworkContext struct {
 	Db           *gorm.DB
 	Mempool      *mempool.Mempool
+	WS           *ws.Hub
 	ClientConfig client.TransportConfig
 }
 
@@ -44,9 +48,20 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 
 		go m.MonitorMempool()
 
+		hub := ws.NewHub()
+		//Start hub
+		go hub.Run()
+
+		//TODO make graceful stop
+		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db))
+
+		//Start watcher
+		go w.Start()
+
 		provider.networks[k] = NetworkContext{
 			Db:           db,
 			Mempool:      m,
+			WS:           hub,
 			ClientConfig: v.NodeRpc,
 		}
 	}
@@ -76,6 +91,13 @@ func (p *Provider) GetDb(net models.Network) (*gorm.DB, error) {
 func (p *Provider) GetMempool(net models.Network) (*mempool.Mempool, error) {
 	if netcont, ok := p.networks[net]; ok {
 		return netcont.Mempool, nil
+	}
+	return nil, fmt.Errorf("not enabled network")
+}
+
+func (p *Provider) GetWS(net models.Network) (*ws.Hub, error) {
+	if netcont, ok := p.networks[net]; ok {
+		return netcont.WS, nil
 	}
 	return nil, fmt.Errorf("not enabled network")
 }

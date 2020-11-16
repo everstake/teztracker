@@ -5,6 +5,7 @@ Package restapi TezTracker API
 
     Schemes:
       http
+      ws
     Host: localhost
     BasePath: /
     Version: 0.0.1
