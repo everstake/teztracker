@@ -7,6 +7,7 @@ package operations
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -47,6 +48,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
+		CsvProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("csv producer has not yet been implemented")
+		}),
 		AccountsGetAccountHandler: accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccount has not yet been implemented")
 		}),
@@ -82,6 +86,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		AccountsGetAccountFutureEndorsingHandler: accounts.GetAccountFutureEndorsingHandlerFunc(func(params accounts.GetAccountFutureEndorsingParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountFutureEndorsing has not yet been implemented")
+		}),
+		AccountsGetAccountReportHandler: accounts.GetAccountReportHandlerFunc(func(params accounts.GetAccountReportParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountReport has not yet been implemented")
 		}),
 		AccountsGetAccountRewardsListHandler: accounts.GetAccountRewardsListHandlerFunc(func(params accounts.GetAccountRewardsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountRewardsList has not yet been implemented")
@@ -236,6 +243,8 @@ type TezTrackerAPI struct {
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
+	// CsvProducer registers a producer for a "text/csv" mime type
+	CsvProducer runtime.Producer
 
 	// AccountsGetAccountHandler sets the operation handler for the get account operation
 	AccountsGetAccountHandler accounts.GetAccountHandler
@@ -261,6 +270,8 @@ type TezTrackerAPI struct {
 	AccountsGetAccountFutureEndorsementRightsByCycleHandler accounts.GetAccountFutureEndorsementRightsByCycleHandler
 	// AccountsGetAccountFutureEndorsingHandler sets the operation handler for the get account future endorsing operation
 	AccountsGetAccountFutureEndorsingHandler accounts.GetAccountFutureEndorsingHandler
+	// AccountsGetAccountReportHandler sets the operation handler for the get account report operation
+	AccountsGetAccountReportHandler accounts.GetAccountReportHandler
 	// AccountsGetAccountRewardsListHandler sets the operation handler for the get account rewards list operation
 	AccountsGetAccountRewardsListHandler accounts.GetAccountRewardsListHandler
 	// AccountsGetAccountSecurityDepositListHandler sets the operation handler for the get account security deposit list operation
@@ -406,6 +417,10 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.CsvProducer == nil {
+		unregistered = append(unregistered, "CsvProducer")
+	}
+
 	if o.AccountsGetAccountHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountHandler")
 	}
@@ -452,6 +467,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetAccountFutureEndorsingHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountFutureEndorsingHandler")
+	}
+
+	if o.AccountsGetAccountReportHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountReportHandler")
 	}
 
 	if o.AccountsGetAccountRewardsListHandler == nil {
@@ -674,6 +693,9 @@ func (o *TezTrackerAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pro
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 
+		case "text/csv":
+			result["text/csv"] = o.CsvProducer
+
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -775,6 +797,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/endorsing/{accountId}/future"] = accounts.NewGetAccountFutureEndorsing(o.context, o.AccountsGetAccountFutureEndorsingHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}/report"] = accounts.NewGetAccountReport(o.context, o.AccountsGetAccountReportHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

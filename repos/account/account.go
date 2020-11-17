@@ -25,6 +25,7 @@ type (
 		RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error)
 		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
+		GetReport(accountID string, params models.AccountReportFilter) (report []models.AccountReport, err error)
 	}
 )
 
@@ -211,4 +212,10 @@ func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, 
 	}
 
 	return delegators, nil
+}
+
+func (r *Repository) GetReport(accountID string, params models.AccountReportFilter) (report []models.AccountReport, err error) {
+	//Todo implement
+
+	return nil, nil
 }

@@ -14,6 +14,7 @@ Package restapi TezTracker API
 
     Produces:
     - application/json
+    - text/csv
 
 swagger:meta
 */

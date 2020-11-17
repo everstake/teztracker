@@ -134,3 +134,31 @@ type AccountDelegator struct {
 	Balance   int64
 	Share     float64
 }
+
+type AccountReportFilter struct {
+	From       int64
+	To         int64
+	Operations []string
+	IsBaker    bool
+}
+
+type AccountReport struct {
+	BlockLevel         uint64
+	OperationGroupHash null.String
+	Timestamp          time.Time
+	OperationKind      string
+	//Temp disabled
+	//Coin string
+	In     uint64
+	Out    uint64
+	From   string
+	To     string
+	Fee    uint64
+	Status string
+	Link   string
+}
+
+type BakerReport struct {
+	Reward uint64
+	Loss   uint64
+}
