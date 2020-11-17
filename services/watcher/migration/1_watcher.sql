@@ -22,3 +22,7 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER blocks_notify_event
 AFTER INSERT ON tezos.blocks
     FOR EACH ROW EXECUTE PROCEDURE notify_event();
+
+CREATE TRIGGER operations_notify_event
+AFTER INSERT ON tezos.operations
+    FOR EACH ROW EXECUTE PROCEDURE notify_event();

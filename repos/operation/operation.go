@@ -15,7 +15,7 @@ type (
 	}
 
 	Repo interface {
-		List(ids, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64) (operations []models.Operation, err error)
+		List(ids, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error)
 		ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error)
 		Count(ids, kinds, inBlocks, accountIDs []string, maxOperationID int64) (count int64, err error)
 		EndorsementsFor(blockLevel int64) (operations []models.Operation, err error)
@@ -27,7 +27,11 @@ type (
 	}
 )
 
-const endorsementKind = "endorsement"
+const (
+	endorsementKind = "endorsement"
+	delegationKind  = "delegation"
+	activationKind  = "activate_account"
+)
 
 // New creates an instance of repository using the provided db.
 func New(db *gorm.DB) *Repository {
@@ -38,7 +42,7 @@ func New(db *gorm.DB) *Repository {
 
 // Count counts a number of operations sutisfying the filter.
 func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperationID int64) (count int64, err error) {
-	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs, true)
+	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs, nil, true)
 	if maxOperationID > 0 {
 		db = db.Where("operation_id <= ?", maxOperationID)
 	}
@@ -56,51 +60,59 @@ func (r *Repository) Count(ids, kinds, inBlocks, accountIDs []string, maxOperati
 	return count + snapshotCount, err
 }
 
-func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []string, count bool) (db *gorm.DB) {
+//TODO refactor to preload for all types
+func (r *Repository) getFilteredDB(hashes, kinds, inBlocks, accountIDs []string, operationIDs []int64, count bool) (db *gorm.DB) {
 	selectQ := "*"
 	db = r.db.Model(&models.Operation{})
 
-	if len(ids) > 0 {
+	if len(hashes) > 0 || len(operationIDs) > 0 {
 		//Join for extend info
 		if !count && len(kinds) == 0 {
-			//Preload orders
+
+			kindMap := map[string]bool{}
+			//Preload operations by hashes
+
+			//Preload operations
 			preloadDb := r.db
-			preloadDb = preloadDb.Where("operations.operation_group_hash IN (?)", ids)
+			if len(operationIDs) == 0 {
+				preloadDb = preloadDb.Where("operations.operation_group_hash IN (?)", hashes)
+			} else {
+				preloadDb = preloadDb.Where("operations.operation_id IN (?)", operationIDs)
+			}
 			op := []models.Operation{}
 			err := preloadDb.Model(&models.Operation{}).Find(&op).Error
 			if err != nil {
 				return
 			}
 
-			kindMap := map[string]bool{}
 			var operationIds []int64
 			for key := range op {
 				kindMap[op[key].Kind.String] = true
-				operationIds = append(operationIds, op[key].OperationID.Int64)
+				operationIDs = append(operationIds, op[key].OperationID.Int64)
 			}
 
-			db = db.Where("operations.operation_id IN (?)", operationIds)
+			db = db.Where("operations.operation_id IN (?)", operationIDs)
 
 			for kind := range kindMap {
 				switch kind {
-				case "delegation":
+				case delegationKind:
 					db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source and operations.kind='delegation')")
 				case endorsementKind:
 					selectQ = fmt.Sprintf("%s, %s", selectQ, "bur.change endorsement_reward, bud.change endorsement_deposit")
 					db = db.Joins("left join tezos.balance_updates as bur on (operations.operation_group_hash = bur.operation_group_hash and bur.category='rewards')").
 						Joins("left join tezos.balance_updates as bud on (operations.operation_group_hash = bud.operation_group_hash and bud.category='deposits')")
-				case "activate_account":
+				case activationKind:
 					selectQ = fmt.Sprintf("%s, %s", selectQ, "bua.change claimed_amount")
 					db = db.Joins("left join tezos.balance_updates as bua on (operations.operation_group_hash = bua.operation_group_hash and bua.kind='contract')")
 				}
 			}
 		} else {
-			db = db.Where("operations.operation_group_hash IN (?)", ids)
+			db = db.Where("operations.operation_group_hash IN (?)", hashes)
 		}
 	}
 
 	if len(kinds) > 0 {
-		if !count && validate.Enum("", "", "delegation", kinds) == nil {
+		if !count && validate.Enum("", "", delegationKind, kinds) == nil {
 			db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source)")
 		}
 
@@ -135,8 +147,8 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 // limit defines the limit for the maximum number of operations returned.
 // since is used to paginate results based on the operation id.
 // As the result is ordered descendingly the operations with operation_id < since will be returned.
-func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64) (operations []models.Operation, err error) {
-	db := r.getFilteredDB(ids, kinds, inBlocks, accountIDs, false)
+func (r *Repository) List(hashes, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error) {
+	db := r.getFilteredDB(hashes, kinds, inBlocks, accountIDs, operationsIDs, false)
 
 	if since > 0 {
 		db = db.Where("operations.operation_id < ?", since)
@@ -146,7 +158,8 @@ func (r *Repository) List(ids, kinds []string, inBlocks, accountIDs []string, li
 		Limit(limit).
 		Offset(offset)
 
-	if len(inBlocks) == 1 && len(kinds) == 1 && kinds[0] == "endorsement" {
+	//TODO Join with baker_endorsements
+	if len(inBlocks) == 1 && len(kinds) == 1 && kinds[0] == endorsementKind {
 		db = r.db.Raw("SELECT * from (?) as s left join tezos.balance_updates on (s.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')", db.SubQuery())
 	}
 
@@ -169,7 +182,7 @@ func (r *Repository) UpdateLevel(operation models.Operation) error {
 }
 
 func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error) {
-	db := r.getFilteredDB(nil, kinds, nil, nil, false)
+	db := r.getFilteredDB(nil, kinds, nil, nil, nil, false)
 
 	if after > 0 {
 		db = db.Where("operation_id > ?", after)
@@ -202,7 +215,7 @@ func (r *Repository) Last() (operation models.Operation, err error) {
 }
 
 func (r *Repository) AccountOperationCount(acc string) (counts []models.OperationCount, err error) {
-	db := r.getFilteredDB(nil, nil, nil, []string{acc}, true)
+	db := r.getFilteredDB(nil, nil, nil, []string{acc}, nil, true)
 
 	err = db.Select("kind,count(1)").
 		Group("kind").
@@ -229,6 +242,7 @@ func (r *Repository) AccountEndorsements(accountID string, cycle int64, limit ui
 		Limit(limit).
 		Offset(offset)
 
+	//TODO Join with baker_endorsements
 	db = r.db.Raw("SELECT * from (?) as s left join tezos.balance_updates on (s.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')", db.SubQuery())
 	err = db.Find(&operations).Error
 

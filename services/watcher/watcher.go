@@ -46,7 +46,8 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Wat
 		l:      listener,
 		tasks: map[string]tasks.EventExecutor{
 			//Todo Add factory
-			"blocks": tasks.NewBlockTask(provider),
+			"blocks":     tasks.NewBlockTask(provider),
+			"operations": tasks.NewOperationTask(provider),
 		},
 	}
 }
@@ -87,6 +88,7 @@ func (w Watcher) Start() {
 			}
 
 			w.hub.Broadcast(models.BasicMessage{
+				//Todo get Event from handler
 				Event: models.EventType(ev.Table),
 				Data:  wsData,
 			})
