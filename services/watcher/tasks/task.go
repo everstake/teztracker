@@ -1,5 +1,5 @@
 package tasks
 
 type EventExecutor interface {
-	GetEventData(data interface{}) (interface{}, error)
+	GetEventData(data interface{}) ([]string, interface{}, error)
 }

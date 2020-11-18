@@ -75,23 +75,24 @@ func (w Watcher) Start() {
 			}
 
 			handler, ok := w.tasks[ev.Table]
-			//
 			if !ok {
 				log.Errorf("Unknown event: %s", ev.Table)
 				continue
 			}
 
-			wsData, err := handler.GetEventData(ev.Data)
+			channels, wsData, err := handler.GetEventData(ev.Data)
 			if err != nil {
 				log.Errorf("GetEventData error: %s", err)
 				continue
 			}
 
-			w.hub.Broadcast(models.BasicMessage{
-				//Todo get Event from handler
-				Event: models.EventType(ev.Table),
-				Data:  wsData,
-			})
+			//Publish to all channels
+			for i := range channels {
+				w.hub.Broadcast(models.BasicMessage{
+					Event: models.EventType(channels[i]),
+					Data:  wsData,
+				})
+			}
 		}
 	}
 }

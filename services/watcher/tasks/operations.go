@@ -17,29 +17,29 @@ func NewOperationTask(repos services.Provider) Operation {
 	return Operation{repos: repos}
 }
 
-func (o Operation) GetEventData(data interface{}) (interface{}, error) {
+func (o Operation) GetEventData(data interface{}) ([]string, interface{}, error) {
 	bt, err := json.Marshal(data)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	operation := models.Operation{}
 
 	err = json.Unmarshal(bt, &operation)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	op, err := o.repos.GetOperation().List(nil, nil, nil, nil, 1, 0, 0, []int64{operation.OperationID.Int64})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if len(op) != 1 {
-		return nil, fmt.Errorf("Wrong resp len: %d", len(op))
+		return nil, nil, fmt.Errorf("Wrong resp len: %d", len(op))
 	}
 
 	apiOperation := render.Operation(op[0], nil)
 
-	return apiOperation, nil
+	return []string{"operations", operation.Kind.String}, apiOperation, nil
 }
