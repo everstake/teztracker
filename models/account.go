@@ -138,24 +138,30 @@ type AccountDelegator struct {
 type AccountReportFilter struct {
 	From       int64
 	To         int64
+	Limit      int64
 	Operations []string
 	IsBaker    bool
 }
 
 type AccountReport struct {
-	BlockLevel         uint64
-	OperationGroupHash null.String
-	Timestamp          time.Time
-	OperationKind      string
-	//Temp disabled
-	//Coin string
-	In     uint64
-	Out    uint64
-	From   string
-	To     string
-	Fee    uint64
-	Status string
-	Link   string
+	BlockLevel         uint64      `csv:"block level"`
+	OperationGroupHash null.String `csv:"-"`
+	Timestamp          time.Time   `csv:"timestamp"`
+	Kind               string      `csv:"operation type"`
+	Coin               string      `csv:"coin"`
+	//DB field
+	Amount      uint64 `csv:"-"`
+	Fee         uint64 `csv:"fee"`
+	Source      string `csv:"-"`
+	Destination string `csv:"-"`
+	Status      string `csv:"status"`
+	//Baker operations
+	Reward uint64 `csv:"reward"`
+	Loss   uint64 `csv:"loss"`
+	//CSV field
+	In   uint64 `csv:"in"`
+	Out  uint64 `csv:"out"`
+	Link string `csv:"link"`
 }
 
 type BakerReport struct {

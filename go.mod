@@ -5,6 +5,7 @@ go 1.23
 require (
 	blockwatch.cc/tzindex v0.0.0-20200216192617-519bcd88724c
 	github.com/bullblock-io/go-tezos/v2 v2.0.5
+	github.com/echa/log v1.0.0
 	github.com/go-openapi/errors v0.19.2
 	github.com/go-openapi/loads v0.19.2
 	github.com/go-openapi/runtime v0.19.3
@@ -19,6 +20,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/jinzhu/gorm v1.9.10
 	github.com/joho/godotenv v1.3.0
+	github.com/jszwec/csvutil v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.1.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible

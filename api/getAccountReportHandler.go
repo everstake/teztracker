@@ -17,11 +17,13 @@ func (h *getAccountReportHandler) Handle(params accounts.GetAccountReportParams)
 	if err != nil {
 		return accounts.NewGetAccountReportBadRequest()
 	}
-	//db, err := h.provider.GetDb(net)
-	//if err != nil {
-	//	return accounts.NewGetAccountReportNotFound()
-	//}
-	service := services.New(repos.New(nil), net)
+
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountReportNotFound()
+	}
+
+	service := services.New(repos.New(db), net)
 
 	resp, err := service.GetAccountReport(params.AccountID, params.From, params.To, params.OperaionType)
 	if err != nil {

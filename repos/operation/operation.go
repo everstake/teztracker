@@ -118,7 +118,6 @@ func (r *Repository) getFilteredDB(ids, kinds []string, inBlocks, accountIDs []s
 			db = db.Where("operations.delegate IN (?) OR operations.pkh IN (?) OR operations.source IN (?) OR operations.public_key IN (?) OR operations.destination IN (?) OR operations.originated_contracts IN (?)", accountIDs, accountIDs, accountIDs, accountIDs, accountIDs, accountIDs)
 		}
 	}
-
 	//Join Aliases
 	if !count {
 		selectQ = fmt.Sprintf("%s, %s", selectQ, "des.baker_name as destination_name, s.baker_name as source_name, del.baker_name as delegate_name")

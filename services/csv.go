@@ -5,11 +5,14 @@ import (
 	"encoding/csv"
 	"fmt"
 	"github.com/everstake/teztracker/models"
+	"github.com/jszwec/csvutil"
 	"log"
 )
 
-const limit = 257000
-const frontHost = "https://teztracker.everstake.one/en/mainnet/tx/%s"
+const (
+	limit     = 250000
+	frontHost = "https://teztracker.everstake.one/en/mainnet/tx/%s"
+)
 
 var header = []string{"block level", "timestamp", "operation", "coin", "in", "out", "from", "to", "fee", "reward", "loss", "status", "link"}
 
@@ -17,17 +20,17 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 	var buf bytes.Buffer
 
 	//Check that account is baker
-	//isBaker, _, err := t.repoProvider.GetBaker().Find(accountID)
-	//if err != nil {
-	//	return nil, err
-	//}
-	isBaker := false
+	isBaker, _, err := t.repoProvider.GetBaker().Find(accountID)
+	if err != nil {
+		return nil, err
+	}
 
 	report, err := t.repoProvider.GetAccount().GetReport(accountID, models.AccountReportFilter{
 		From:       from,
 		To:         to,
 		Operations: operations,
 		IsBaker:    isBaker,
+		Limit:      limit,
 	})
 	if err != nil {
 		return nil, err
@@ -39,31 +42,23 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 
 	writer.Write(header)
 
+	encoder := csvutil.NewEncoder(writer)
+
 	for i := range report {
 		//TODO get front host from env
 		if report[i].OperationGroupHash.Valid {
 			report[i].Link = fmt.Sprintf(frontHost, report[i].OperationGroupHash.String)
 		}
 
-		//TODO Marshall to csv form
-		writer.Write([]string{report[i].Link})
-	}
+		if report[i].Source == accountID {
+			report[i].Out = report[i].Amount
+		} else {
+			report[i].In = report[i].Amount
+		}
 
-	//Remove
-	data := [][]string{
-		{"opaxMZALov5bo6TE47jfeN3gpyMxnjEHn1UKcZjqXP7pKPn91cR",
-			"tz1UAxKyit5AmzUauHNvV5TMwCQhQZuJPZc6",
-			"2020-07-15 02:14:53"},
-		{"opauvrecoE6BN5YHsUN4ivmZroEXEhqLSdhTyFF2sVpyQRqiwKS",
-			"tz1dqs6dtzzTfhVvQYUPDXHXZKY3SR8GozTX",
-			"2020-07-11 20:47:25"},
-		{"opao7MFwkWF1gsZuQVTJkX6W7SsPcWUQQNcpWNhk247PxNH7akr", "tz1WjhcpYaxeV6VAQk9XpTnieBEdgk6eafkq", "2020-06-10 19:57:40"},
-	}
-
-	for i := range data {
-		err = writer.Write(data[i])
+		err = encoder.Encode(report[i])
 		if err != nil {
-			log.Print(err)
+			return nil, err
 		}
 	}
 
