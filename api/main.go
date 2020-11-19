@@ -7,6 +7,7 @@ import (
 	"github.com/everstake/teztracker/services/cmc"
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/ws"
+	"github.com/go-openapi/runtime"
 	"github.com/jinzhu/gorm"
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
@@ -27,6 +28,9 @@ type WSProvider interface {
 // SetHandlers initializes the API handlers with underlying services.
 func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider) {
 	serv.Logger = logrus.Infof
+	//TODO probably process by io.Pipe
+	serv.CsvProducer = runtime.CSVProducer()
+
 	serv.BlocksGetBlocksHeadHandler = &getHeadBlockHandler{db}
 	serv.BlocksGetBlocksListHandler = &getBlockListHandler{db}
 	serv.BlocksGetBlockEndorsementsHandler = &getBlockEndorsementsHandler{db}
@@ -58,6 +62,7 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider) {
 	serv.AccountsGetAccountRewardsListHandler = &getAccountRewardsListHandler{db}
 	serv.AccountsGetAccountDelegatorsByCycleListHandler = &getAccountDelegatorsByCycleListHandler{db}
 	serv.AccountsGetAccountSecurityDepositListHandler = &getBakerSecurityDepositFutureListHandler{db}
+	serv.AccountsGetAccountReportHandler = &getAccountReportHandler{db}
 	serv.BlocksGetBakingRightsHandler = &getBakingRightsHandler{db}
 	serv.BlocksGetFutureBakingRightsHandler = &getFutureBakingRightsHandler{db}
 	serv.AccountsGetAccountFutureEndorsingHandler = &getAccountFutureEndorsingHandler{db}

@@ -53,7 +53,6 @@ func main() {
 		log.Fatalln(err)
 	}
 	apiServer := operations.NewTezTrackerAPI(swaggerSpec)
-
 	// pass services instance to API handlers
 	api.SetHandlers(apiServer, provider)
 

@@ -25,6 +25,7 @@ type (
 		RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error)
 		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
+		GetReport(accountID string, params models.AccountReportFilter) (report []models.AccountReport, err error)
 	}
 )
 
@@ -213,4 +214,21 @@ func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, 
 	}
 
 	return delegators, nil
+}
+
+func (r *Repository) GetReport(accountID string, params models.AccountReportFilter) (report []models.AccountReport, err error) {
+	//Todo add support of kinds
+
+	err = r.db.Select("block_level, timestamp, kind, operation_group_hash,'XTZ' coin, amount, source, destination, 0 reward, 0 loss, fee, status").
+		Table("tezos.operations").
+		Where("operations.delegate = ? OR operations.pkh = ? OR operations.source = ? OR operations.public_key = ? OR operations.destination = ? OR operations.originated_contracts = ?", accountID, accountID, accountID, accountID, accountID, accountID).
+		Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+		Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+		Order("operations.block_level desc").
+		Limit(params.Limit).Find(&report).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return report, nil
 }
