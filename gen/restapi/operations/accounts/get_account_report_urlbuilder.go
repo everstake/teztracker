@@ -20,9 +20,9 @@ type GetAccountReportURL struct {
 	Network   string
 	Platform  string
 
-	From         int64
-	OperaionType []string
-	To           int64
+	From          int64
+	OperationType []string
+	To            int64
 
 	_basePath string
 	// avoid unkeyed usage
@@ -81,18 +81,18 @@ func (o *GetAccountReportURL) Build() (*url.URL, error) {
 		qs.Set("from", fromQ)
 	}
 
-	var operaionTypeIR []string
-	for _, operaionTypeI := range o.OperaionType {
-		operaionTypeIS := operaionTypeI
-		if operaionTypeIS != "" {
-			operaionTypeIR = append(operaionTypeIR, operaionTypeIS)
+	var operationTypeIR []string
+	for _, operationTypeI := range o.OperationType {
+		operationTypeIS := operationTypeI
+		if operationTypeIS != "" {
+			operationTypeIR = append(operationTypeIR, operationTypeIS)
 		}
 	}
 
-	operaionType := swag.JoinByFormat(operaionTypeIR, "multi")
+	operationType := swag.JoinByFormat(operationTypeIR, "multi")
 
-	for _, qsv := range operaionType {
-		qs.Add("operaion_type", qsv)
+	for _, qsv := range operationType {
+		qs.Add("operation_type", qsv)
 	}
 
 	toQ := swag.FormatInt64(o.To)

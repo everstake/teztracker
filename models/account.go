@@ -136,11 +136,11 @@ type AccountDelegator struct {
 }
 
 type AccountReportFilter struct {
-	From       int64
-	To         int64
-	Limit      int64
-	Operations []string
-	IsBaker    bool
+	From         int64
+	To           int64
+	Limit        int64
+	Operations   []string
+	EndorsingReq bool
 }
 
 type AccountReport struct {
@@ -155,9 +155,7 @@ type AccountReport struct {
 	Source      string `csv:"-"`
 	Destination string `csv:"-"`
 	Status      string `csv:"status"`
-	//Baker operations
-	Reward uint64 `csv:"reward"`
-	Loss   uint64 `csv:"loss"`
+
 	//CSV field
 	In   uint64 `csv:"in"`
 	Out  uint64 `csv:"out"`
@@ -165,6 +163,8 @@ type AccountReport struct {
 }
 
 type BakerReport struct {
-	Reward uint64
-	Loss   uint64
+	AccountReport
+	//Baker operations
+	Reward uint64 `csv:"reward"`
+	Loss   uint64 `csv:"loss"`
 }

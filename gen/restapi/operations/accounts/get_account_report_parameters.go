@@ -52,7 +52,7 @@ type GetAccountReportParams struct {
 	  In: query
 	  Collection Format: multi
 	*/
-	OperaionType []string
+	OperationType []string
 	/*Not used
 	  Required: true
 	  In: path
@@ -91,8 +91,8 @@ func (o *GetAccountReportParams) BindRequest(r *http.Request, route *middleware.
 		res = append(res, err)
 	}
 
-	qOperaionType, qhkOperaionType, _ := qs.GetOK("operaion_type")
-	if err := o.bindOperaionType(qOperaionType, qhkOperaionType, route.Formats); err != nil {
+	qOperationType, qhkOperationType, _ := qs.GetOK("operation_type")
+	if err := o.bindOperationType(qOperationType, qhkOperationType, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -167,26 +167,26 @@ func (o *GetAccountReportParams) bindNetwork(rawData []string, hasKey bool, form
 	return nil
 }
 
-// bindOperaionType binds and validates array parameter OperaionType from query.
+// bindOperationType binds and validates array parameter OperationType from query.
 //
 // Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
-func (o *GetAccountReportParams) bindOperaionType(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetAccountReportParams) bindOperationType(rawData []string, hasKey bool, formats strfmt.Registry) error {
 
 	// CollectionFormat: multi
-	operaionTypeIC := rawData
+	operationTypeIC := rawData
 
-	if len(operaionTypeIC) == 0 {
+	if len(operationTypeIC) == 0 {
 		return nil
 	}
 
-	var operaionTypeIR []string
-	for _, operaionTypeIV := range operaionTypeIC {
-		operaionTypeI := operaionTypeIV
+	var operationTypeIR []string
+	for _, operationTypeIV := range operationTypeIC {
+		operationTypeI := operationTypeIV
 
-		operaionTypeIR = append(operaionTypeIR, operaionTypeI)
+		operationTypeIR = append(operationTypeIR, operationTypeI)
 	}
 
-	o.OperaionType = operaionTypeIR
+	o.OperationType = operationTypeIR
 
 	return nil
 }

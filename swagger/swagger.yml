@@ -794,7 +794,7 @@ paths:
           in: query
           items:
             type: string
-          name: operaion_type
+          name: operation_type
           description: Not used
           type: array
       responses:

@@ -25,7 +25,7 @@ func (h *getAccountReportHandler) Handle(params accounts.GetAccountReportParams)
 
 	service := services.New(repos.New(db), net)
 
-	resp, err := service.GetAccountReport(params.AccountID, params.From, params.To, params.OperaionType)
+	resp, err := service.GetAccountReport(params.AccountID, params.From, params.To, params.OperationType)
 	if err != nil {
 		log.Errorf("GetAccountReport error: %s", err)
 		return accounts.NewGetAccountReportInternalServerError()
