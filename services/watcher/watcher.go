@@ -46,7 +46,8 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Wat
 		l:      listener,
 		tasks: map[string]tasks.EventExecutor{
 			//Todo Add factory
-			"blocks": tasks.NewBlockTask(provider),
+			"blocks":     tasks.NewBlockTask(provider),
+			"operations": tasks.NewOperationTask(provider),
 		},
 	}
 }
@@ -74,22 +75,24 @@ func (w Watcher) Start() {
 			}
 
 			handler, ok := w.tasks[ev.Table]
-			//
 			if !ok {
 				log.Errorf("Unknown event: %s", ev.Table)
 				continue
 			}
 
-			wsData, err := handler.GetEventData(ev.Data)
+			channels, wsData, err := handler.GetEventData(ev.Data)
 			if err != nil {
 				log.Errorf("GetEventData error: %s", err)
 				continue
 			}
 
-			w.hub.Broadcast(models.BasicMessage{
-				Event: models.EventType(ev.Table),
-				Data:  wsData,
-			})
+			//Publish to all channels
+			for i := range channels {
+				w.hub.Broadcast(models.BasicMessage{
+					Event: models.EventType(channels[i]),
+					Data:  wsData,
+				})
+			}
 		}
 	}
 }

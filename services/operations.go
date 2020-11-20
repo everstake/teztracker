@@ -20,7 +20,7 @@ func (t *TezTracker) GetOperations(ids, kinds, inBlocks, accountIDs []string, li
 		return nil, 0, err
 	}
 
-	operations, err = r.List(ids, kinds, inBlocks, accountIDs, limits.Limit(), limits.Offset(), before)
+	operations, err = r.List(ids, kinds, inBlocks, accountIDs, limits.Limit(), limits.Offset(), before, nil)
 	if err != nil {
 		return nil, 0, err
 	}

@@ -74,7 +74,7 @@ func ProcessAssetOperations(ctx context.Context, unit UnitOfWork, provider Asset
 		for opsI := range ops {
 			container.FlushValues()
 
-			groupHashOperations, err = unit.GetOperation().List([]string{ops[opsI].OperationGroupHash.String}, []string{"transaction"}, nil, nil, 10, 0, 0)
+			groupHashOperations, err = unit.GetOperation().List([]string{ops[opsI].OperationGroupHash.String}, []string{"transaction"}, nil, nil, 10, 0, 0, nil)
 			if err != nil {
 				return err
 			}
