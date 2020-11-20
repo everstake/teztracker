@@ -1970,7 +1970,7 @@ func init() {
             },
             "collectionFormat": "multi",
             "description": "Not used",
-            "name": "operaion_type",
+            "name": "operation_type",
             "in": "query"
           }
         ],
@@ -7570,7 +7570,7 @@ func init() {
             },
             "collectionFormat": "multi",
             "description": "Not used",
-            "name": "operaion_type",
+            "name": "operation_type",
             "in": "query"
           }
         ],

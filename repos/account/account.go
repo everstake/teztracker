@@ -25,7 +25,8 @@ type (
 		RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error)
 		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
-		GetReport(accountID string, params models.AccountReportFilter) (report []models.AccountReport, err error)
+		GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
+		GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
 	}
 )
 
@@ -216,15 +217,55 @@ func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, 
 	return delegators, nil
 }
 
-func (r *Repository) GetReport(accountID string, params models.AccountReportFilter) (report []models.AccountReport, err error) {
-	//Todo add support of kinds
+func (r *Repository) GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
+	columns := []string{"operations.block_level", "timestamp", "operations.kind", "operations.operation_group_hash", "'XTZ' coin", "amount", "operations.status", "operations.source", "destination", "0 loss", "fee"}
 
-	err = r.db.Select("block_level, timestamp, kind, operation_group_hash,'XTZ' coin, amount, source, destination, 0 reward, 0 loss, fee, status").
+	db := r.db
+	req := r.db.Select(columns).
 		Table("tezos.operations").
 		Where("operations.delegate = ? OR operations.pkh = ? OR operations.source = ? OR operations.public_key = ? OR operations.destination = ? OR operations.originated_contracts = ?", accountID, accountID, accountID, accountID, accountID, accountID).
+		Where("operations.kind IN (?)", params.Operations).
 		Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
 		Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
-		Order("operations.block_level desc").
+		Order("operations.block_level desc")
+
+	db = req
+
+	if params.EndorsingReq {
+
+		columns = append(columns, "bu.change reward")
+		subQ := req.Select(columns).Joins("left join tezos.balance_updates bu on (operations.operation_group_hash = bu.operation_group_hash and category = 'rewards')").SubQuery()
+
+		missedEndorsementsSubQ := r.db.
+			Select("baker_endorsements.level block_level, timestamp, 'endorsement' kind,'' operation_group_hash, 'XTZ' coin, 0 amount, '' status, '' source, '' destination, case when missed = 1 then 1250000 ELSE 0 END loss, 0 fee, reward").
+			Table("tezos.baker_endorsements").
+			Joins("left join tezos.blocks on blocks.level+1 = baker_endorsements.level").
+			Where("delegate = ?", accountID).
+			Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+			Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+			Where("missed = 1").
+			Order("baker_endorsements.level desc").SubQuery()
+
+		db = r.db.Raw("SELECT * FROM ? op UNION ? ORDER BY block_level desc", subQ, missedEndorsementsSubQ)
+	}
+
+	err = db.Limit(params.Limit).Find(&report).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return report, nil
+}
+
+func (r *Repository) GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
+
+	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward, case when missed = 1 then 40000000 ELSE 0 END loss, 0 fee, '' status").
+		Table("tezos.baker_bakings").
+		Joins("left join tezos.blocks on blocks.level = baker_bakings.level").
+		Where("delegate = ?", accountID).
+		Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+		Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+		Order("blocks.level desc").
 		Limit(params.Limit).Find(&report).Error
 	if err != nil {
 		return nil, err
