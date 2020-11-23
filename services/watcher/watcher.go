@@ -46,8 +46,9 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Wat
 		l:      listener,
 		tasks: map[string]tasks.EventExecutor{
 			//Todo Add factory
-			"blocks":     tasks.NewBlockTask(provider),
-			"operations": tasks.NewOperationTask(provider),
+			"blocks":             tasks.NewBlockTask(provider),
+			"operations":         tasks.NewOperationTask(provider),
+			"account_created_at": tasks.NewAccountTask(provider),
 		},
 	}
 }
