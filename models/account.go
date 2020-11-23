@@ -60,6 +60,13 @@ const (
 	StatusUnfrozen RewardStatus = "unfrozen"
 )
 
+type AccountPrefix string
+
+const (
+	ImplicitAccountPrefix = "tz"
+	ContractAccountPrefix = "KT1"
+)
+
 type AccountFilter struct {
 	Type     AccountType
 	OrderBy  AccountOrderField
