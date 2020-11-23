@@ -41,5 +41,5 @@ func (o Operation) GetEventData(data interface{}) ([]string, interface{}, error)
 
 	apiOperation := render.Operation(op[0], nil)
 
-	return []string{"operations", operation.Kind.String}, apiOperation, nil
+	return []string{"operations", op[0].Kind.String}, apiOperation, nil
 }

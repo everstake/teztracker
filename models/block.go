@@ -7,10 +7,11 @@ import (
 )
 
 type Block struct {
-	Level                    null.Int               `json:"level"`
-	Proto                    null.Int               `json:"proto"`
-	Predecessor              null.String            `json:"predecessor"`
-	Timestamp                time.Time              `json:"timestamp"`
+	Level       null.Int    `json:"level"`
+	Proto       null.Int    `json:"proto"`
+	Predecessor null.String `json:"predecessor"`
+	//Temp not unmarshal timestamp from json db because time.Time not support ISO without timezone
+	Timestamp                time.Time              `json:"-"`
 	BlockTime                int64                  `json:"block_time"`
 	ValidationPass           null.Int               `json:"validation_pass"`
 	Fitness                  null.String            `json:"fitness"`
