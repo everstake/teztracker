@@ -3,10 +3,8 @@ package ws
 import (
 	"context"
 	"encoding/json"
-
 	"github.com/everstake/teztracker/ws/models"
 	"github.com/gorilla/websocket"
-	"github.com/mailru/easygo/netpoll"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -27,9 +25,6 @@ type (
 
 		//Cancel func
 		cancel context.CancelFunc
-
-		//
-		poller netpoll.Poller
 
 		// All clients
 		clients map[*Client]bool
@@ -56,15 +51,10 @@ type (
 func NewHub() *Hub {
 
 	ctx, cancel := context.WithCancel(context.Background())
-	poller, err := netpoll.New(nil)
-	if err != nil {
-
-	}
 
 	return &Hub{
 		ctx:    ctx,
 		cancel: cancel,
-		poller: poller,
 
 		broadcast:      make(chan *PublicMsg),
 		registerChan:   make(chan *Client),
@@ -91,21 +81,9 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.registerChan:
-
-			// Make conn to be observed by netpoll instance.
-			// Note that EventRead is identical to EPOLLIN on Linux.
-			h.poller.Start(client.desc, func(event netpoll.Event) {
-				// We spawn goroutine here to prevent poller wait loop
-				// to become locked during receiving packet from ch.
-				go client.Reader()
-			})
-
 			h.addClient(client)
-
 		case client := <-h.unregisterChan:
 			h.removeClient(client)
-
-			h.poller.Stop(client.desc)
 		case message := <-h.broadcast:
 			log.Debug("Public broadcast", "clients", len(h.clients), "channel", message.channel)
 			for c, _ := range h.clients {

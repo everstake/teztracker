@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/everstake/teztracker/ws/models"
 	"github.com/gorilla/websocket"
-	"github.com/mailru/easygo/netpoll"
 	log "github.com/sirupsen/logrus"
 	"strings"
 	"sync"
@@ -18,8 +17,14 @@ const (
 	// Maximum message size allowed from peer.
 	maxMessageSize = 512
 
+	// Time allowed to read the next pong message from the peer.
+	pongWait = 10 * time.Second
+
 	// Send pings to peer with this period. Must be less than pongWait.
-	pingInterval = 30 * time.Second
+	pingPeriod = (pongWait * 2) // 10
+
+	// Time allowed to write a message to the peer.
+	writeWait = 10 * time.Second
 )
 
 var (
@@ -50,8 +55,6 @@ type (
 		ctx       context.Context
 		cancel    context.CancelFunc
 		safeClose sync.Once
-
-		desc *netpoll.Desc
 	}
 )
 
@@ -73,17 +76,13 @@ func NewClient(hub *Hub, conn *websocket.Conn) *Client {
 		cancel: cancel,
 	}
 
-	var err error
-	c.desc, err = netpoll.HandleRead(conn.UnderlyingConn())
-	if err != nil {
-		//TODO Check Error
-		log.Error(err)
-	}
-
 	c.register()
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines.
 	go c.writePump()
+
+	// Not optimal but work
+	go c.readPump()
 
 	// Send hello message
 	c.send(&models.SystemMessage{Message: models.SysMessageHello})
@@ -99,25 +98,29 @@ func (cl *Client) unregister() {
 	cl.hub.unregisterChan <- cl
 }
 
-func (cl *Client) Reader() {
-	_, msgBytes, err := cl.conn.ReadMessage()
-	if err != nil {
-		log.Debugf("Ws error: %s", err.Error())
-		cl.unregister()
-		cl.cancel()
-		return
-	}
+// readPump pumps messages from the websocket connection to the hub.
+func (cl *Client) readPump() {
+	defer cl.Close()
 
-	message, err := cl.parseMessage(msgBytes)
-	if err != nil {
-		// Send user unknown message command
-		cl.send(&models.SystemMessage{Message: models.SysMessageUnknownCommand})
-	}
+	for {
+		_, msgBytes, err := cl.conn.ReadMessage()
+		if err != nil {
+			log.Debugf("Ws error: %s", err.Error())
+			break
+		}
 
-	err = cl.handleMessage(message)
-	if err != nil {
-		log.Errorf("WS handleMessage: %s", err.Error())
-		return
+		message, err := cl.parseMessage(msgBytes)
+		if err != nil {
+			// Send user unknown message command
+			cl.send(&models.SystemMessage{Message: models.SysMessageUnknownCommand})
+			continue
+		}
+
+		err = cl.handleMessage(message)
+		if err != nil {
+			log.Errorf("WS handleMessage: %s", err.Error())
+			continue
+		}
 	}
 }
 
@@ -130,30 +133,31 @@ func (cl *Client) writePump() {
 		case message, ok := <-cl.sendChan:
 			if !ok {
 				// The hub closed the channel.
-				cl.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				log.Debug("Closed")
 				return
 			}
 
 			w, err := cl.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
-				log.Debug("NextWriter Error")
+				log.Debugf("NextWriter Error: %s", err.Error())
 				return
 			}
 
 			w.Write(message)
 
 			if err := w.Close(); err != nil {
+				log.Debugf("Close error: %s", err.Error())
 				return
 			}
-		case <-time.After(pingInterval):
+		case <-time.After(pingPeriod):
 			log.Debug("Ping message")
-			if err := cl.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+			if err := cl.conn.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(writeWait)); err != nil {
 				log.Debug("Ping errror")
 				return
 			}
 		case <-cl.ctx.Done():
 			log.Debug("Ctx.Done")
+			cl.conn.WriteMessage(websocket.CloseMessage, []byte{})
 			return
 		}
 	}
@@ -164,8 +168,8 @@ func (cl *Client) isSubscribed(channel string) bool {
 		return false
 	}
 
-	cl.subscriptionsLock.RLock()
-	defer cl.subscriptionsLock.RUnlock()
+	cl.subscriptionsLock.Lock()
+	defer cl.subscriptionsLock.Unlock()
 
 	_, ok := cl.subscriptions[channel]
 	return ok
@@ -193,12 +197,14 @@ func (cl *Client) parseMessage(message []byte) (models.ClientMessage, error) {
 	}
 
 	err = json.Unmarshal(um.Payload, &msg)
-	return msg, err
+	if err != nil {
+		return nil, err
+	}
+
+	return msg, nil
 }
 
 func (cl *Client) handleMessage(msg models.ClientMessage) error {
-	var err error
-
 	switch m := msg.(type) {
 	case *models.ClientMessageSubscribe:
 		cl.subscribe(m.Channels...)
@@ -208,7 +214,7 @@ func (cl *Client) handleMessage(msg models.ClientMessage) error {
 		return fmt.Errorf("Unknown client message type")
 	}
 
-	return err
+	return nil
 }
 
 func (cl *Client) send(msg models.MessageInterface) error {
@@ -253,6 +259,7 @@ func (cl *Client) unsubscribe(channels ...string) {
 // Close will close send channel and connection once
 func (cl *Client) Close() {
 	cl.safeClose.Do(func() {
+		cl.unregister()
 		cl.conn.Close()
 		close(cl.sendChan)
 	})
