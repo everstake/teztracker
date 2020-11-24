@@ -20,7 +20,7 @@ type Watcher struct {
 
 	hub   *ws.Hub
 	l     *pq.Listener
-	tasks map[string]tasks.EventExecutor
+	tasks map[models.EventType]tasks.EventExecutor
 }
 
 func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Watcher {
@@ -44,11 +44,11 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Wat
 		cancel: cancel,
 		hub:    hub,
 		l:      listener,
-		tasks: map[string]tasks.EventExecutor{
+		tasks: map[models.EventType]tasks.EventExecutor{
 			//Todo Add factory
-			"blocks":             tasks.NewBlockTask(provider),
-			"operations":         tasks.NewOperationTask(provider),
-			"account_created_at": tasks.NewAccountTask(provider),
+			models.EventTypeBlock:          tasks.NewBlockTask(provider),
+			models.EventTypeOperation:      tasks.NewOperationTask(provider),
+			models.EventTypeAccountCreated: tasks.NewAccountTask(provider),
 		},
 	}
 }
@@ -75,7 +75,7 @@ func (w Watcher) Start() {
 				log.Error(err)
 			}
 
-			handler, ok := w.tasks[ev.Table]
+			handler, ok := w.tasks[models.EventType(ev.Table)]
 			if !ok {
 				log.Errorf("Unknown event: %s", ev.Table)
 				continue
@@ -90,7 +90,7 @@ func (w Watcher) Start() {
 			//Publish to all channels
 			for i := range channels {
 				w.hub.Broadcast(models.BasicMessage{
-					Event: models.EventType(channels[i]),
+					Event: channels[i],
 					Data:  wsData,
 				})
 			}

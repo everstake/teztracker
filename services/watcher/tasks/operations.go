@@ -6,6 +6,7 @@ import (
 	"github.com/everstake/teztracker/api/render"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services"
+	wsmodels "github.com/everstake/teztracker/ws/models"
 )
 
 type Operation struct {
@@ -17,7 +18,7 @@ func NewOperationTask(repos services.Provider) Operation {
 	return Operation{repos: repos}
 }
 
-func (o Operation) GetEventData(data interface{}) ([]string, interface{}, error) {
+func (o Operation) GetEventData(data interface{}) ([]wsmodels.EventType, interface{}, error) {
 	bt, err := json.Marshal(data)
 	if err != nil {
 		return nil, nil, err
@@ -41,5 +42,5 @@ func (o Operation) GetEventData(data interface{}) ([]string, interface{}, error)
 
 	apiOperation := render.Operation(op[0], nil)
 
-	return []string{"operations", fmt.Sprint(op[0].Kind.String, "s")}, apiOperation, nil
+	return []wsmodels.EventType{wsmodels.EventTypeOperation, wsmodels.EventType(fmt.Sprint(op[0].Kind.String, "s"))}, apiOperation, nil
 }

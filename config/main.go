@@ -22,6 +22,7 @@ type Config struct {
 	DoubleEndorsementCheckIntervalMinutes int
 	BakerRegistryCheckIntervalMinutes     int
 	AssetsParseIntervalMinutes            int
+	InfoWSEventsIntervalMinutes           int
 }
 
 type NetworkConfig struct {

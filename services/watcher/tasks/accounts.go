@@ -6,6 +6,7 @@ import (
 	"github.com/everstake/teztracker/api/render"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services"
+	wsmodels "github.com/everstake/teztracker/ws/models"
 	"strings"
 )
 
@@ -18,7 +19,7 @@ func NewAccountTask(repos services.Provider) Account {
 	return Account{repos: repos}
 }
 
-func (ac Account) GetEventData(data interface{}) ([]string, interface{}, error) {
+func (ac Account) GetEventData(data interface{}) ([]wsmodels.EventType, interface{}, error) {
 	bt, err := json.Marshal(data)
 	if err != nil {
 		return nil, nil, err
@@ -47,5 +48,5 @@ func (ac Account) GetEventData(data interface{}) ([]string, interface{}, error) 
 		accountType = "contracts"
 	}
 
-	return []string{accountType}, apiAccount, nil
+	return []wsmodels.EventType{wsmodels.EventTypeAccountCreated, wsmodels.EventType(accountType)}, apiAccount, nil
 }

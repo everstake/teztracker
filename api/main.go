@@ -26,7 +26,7 @@ type WSProvider interface {
 }
 
 // SetHandlers initializes the API handlers with underlying services.
-func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider) {
+func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, marketDataProvider *cmc.CoinGecko) {
 	serv.Logger = logrus.Infof
 	//TODO probably process by io.Pipe
 	serv.CsvProducer = runtime.CSVProducer()
@@ -36,7 +36,7 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider) {
 	serv.BlocksGetBlockEndorsementsHandler = &getBlockEndorsementsHandler{db}
 	serv.BlocksGetBlockHandler = &getBlockHandler{db}
 	serv.OperationsListGetOperationsListHandler = &getOperationListHandler{db}
-	serv.AppInfoGetInfoHandler = &getInfoHandler{cmc.NewCoinGecko(), db, cache.New(cacheTTL, cacheTTL)}
+	serv.AppInfoGetInfoHandler = &getInfoHandler{marketDataProvider, db, cache.New(cacheTTL, cacheTTL)}
 	serv.AppInfoGetChartsInfoHandler = &getChartsInfoHandler{db}
 	serv.AppInfoGetHealthCheckInfoHandler = &getHealthHandler{db}
 	serv.AppInfoGetBakerChartInfoHandler = &getBakerChartHandler{db}

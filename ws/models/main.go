@@ -3,9 +3,11 @@ package models
 type EventType string
 
 const (
-	eventTypeSystem    EventType = "sys"
-	eventTypeBlock     EventType = "block"
-	eventTypeOperation EventType = "operation"
+	eventTypeSystem         EventType = "sys"
+	EventTypeBlock          EventType = "blocks"
+	EventTypeOperation      EventType = "operations"
+	EventTypeAccountCreated EventType = "account_created_at"
+	EventTypeInfo           EventType = "info"
 )
 
 type sysMessage string

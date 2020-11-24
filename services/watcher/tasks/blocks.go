@@ -6,6 +6,7 @@ import (
 	"github.com/everstake/teztracker/api/render"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/services"
+	wsmodels "github.com/everstake/teztracker/ws/models"
 )
 
 type Block struct {
@@ -17,7 +18,7 @@ func NewBlockTask(repos services.Provider) Block {
 	return Block{repos: repos}
 }
 
-func (b Block) GetEventData(data interface{}) ([]string, interface{}, error) {
+func (b Block) GetEventData(data interface{}) ([]wsmodels.EventType, interface{}, error) {
 
 	bt, err := json.Marshal(data)
 	if err != nil {
@@ -44,5 +45,5 @@ func (b Block) GetEventData(data interface{}) ([]string, interface{}, error) {
 	//TODO move render as smodels render
 	apiBlock := render.Block(extBlock)
 
-	return []string{"blocks"}, apiBlock, nil
+	return []wsmodels.EventType{wsmodels.EventTypeBlock}, apiBlock, nil
 }
