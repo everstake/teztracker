@@ -23,6 +23,10 @@ CREATE TRIGGER blocks_notify_event
 AFTER INSERT ON tezos.blocks
     FOR EACH ROW EXECUTE PROCEDURE notify_event();
 
+CREATE TRIGGER account_created_notify_event
+AFTER INSERT ON tezos.account_created_at
+    FOR EACH ROW EXECUTE PROCEDURE notify_event();
+
 --Use separate notify builder for operations to prevent event overflow
 CREATE OR REPLACE FUNCTION tezos.operation_notify_event() RETURNS TRIGGER AS $$
     DECLARE

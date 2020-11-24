@@ -25,7 +25,6 @@ require (
 	github.com/jszwec/csvutil v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.1.1
-	github.com/mailru/easygo v0.0.0-20190618140210-3c14a0dc985f
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/roylee0704/gron v0.0.0-20160621042432-e78485adab46
 	github.com/rs/cors v1.6.0
