@@ -74,6 +74,7 @@ func SetHandlers(serv *operations.TezTrackerAPI, db DbProvider) {
 	serv.AssetsGetAssetTokenInfoHandler = &getAssetInfoHandler{db}
 	serv.AssetsGetAssetsListHandler = &getAssetsListHandler{db}
 	serv.AssetsGetAssetOperationsListHandler = &getAssetOperationListHandler{db}
+	serv.AssetsGetAssetReportHandler = &getAssetReportHandler{db}
 	//	Mempool
 	serv.MempoolGetMempoolOperationsHandler = &getMempoolHandler{db}
 }

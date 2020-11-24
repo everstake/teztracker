@@ -111,6 +111,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AssetsGetAssetOperationsListHandler: assets.GetAssetOperationsListHandlerFunc(func(params assets.GetAssetOperationsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AssetsGetAssetOperationsList has not yet been implemented")
 		}),
+		AssetsGetAssetReportHandler: assets.GetAssetReportHandlerFunc(func(params assets.GetAssetReportParams) middleware.Responder {
+			return middleware.NotImplemented("operation AssetsGetAssetReport has not yet been implemented")
+		}),
 		AssetsGetAssetTokenHoldersListHandler: assets.GetAssetTokenHoldersListHandlerFunc(func(params assets.GetAssetTokenHoldersListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AssetsGetAssetTokenHoldersList has not yet been implemented")
 		}),
@@ -286,6 +289,8 @@ type TezTrackerAPI struct {
 	AccountsGetAccountsTopBalanceListHandler accounts.GetAccountsTopBalanceListHandler
 	// AssetsGetAssetOperationsListHandler sets the operation handler for the get asset operations list operation
 	AssetsGetAssetOperationsListHandler assets.GetAssetOperationsListHandler
+	// AssetsGetAssetReportHandler sets the operation handler for the get asset report operation
+	AssetsGetAssetReportHandler assets.GetAssetReportHandler
 	// AssetsGetAssetTokenHoldersListHandler sets the operation handler for the get asset token holders list operation
 	AssetsGetAssetTokenHoldersListHandler assets.GetAssetTokenHoldersListHandler
 	// AssetsGetAssetTokenInfoHandler sets the operation handler for the get asset token info operation
@@ -499,6 +504,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AssetsGetAssetOperationsListHandler == nil {
 		unregistered = append(unregistered, "assets.GetAssetOperationsListHandler")
+	}
+
+	if o.AssetsGetAssetReportHandler == nil {
+		unregistered = append(unregistered, "assets.GetAssetReportHandler")
 	}
 
 	if o.AssetsGetAssetTokenHoldersListHandler == nil {
@@ -837,6 +846,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{network}/assets/{asset_id}/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/assets/{assetId}/report"] = assets.NewGetAssetReport(o.context, o.AssetsGetAssetReportHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
