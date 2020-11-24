@@ -2,9 +2,13 @@ package services
 
 import (
 	"context"
+	"fmt"
+	"github.com/everstake/teztracker/api/render"
 	"github.com/everstake/teztracker/services/assets"
+	"github.com/everstake/teztracker/services/cmc"
 	"github.com/everstake/teztracker/services/public_baker"
 	"github.com/everstake/teztracker/services/rolls"
+	"github.com/everstake/teztracker/ws"
 	"sync/atomic"
 	"time"
 
@@ -18,12 +22,13 @@ import (
 	"github.com/everstake/teztracker/services/rpc_client"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/services/snapshots"
+	wsmodels "github.com/everstake/teztracker/ws/models"
 	"github.com/jinzhu/gorm"
 	"github.com/roylee0704/gron"
 	log "github.com/sirupsen/logrus"
 )
 
-func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client.TransportConfig, network models.Network, isTestNetwork bool) {
+func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, marketDataProvider *cmc.CoinGecko, rpcConfig client.TransportConfig, network models.Network, isTestNetwork bool) {
 
 	if cfg.CounterIntervalHours > 0 {
 		dur := time.Duration(cfg.CounterIntervalHours) * time.Hour
@@ -285,5 +290,51 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, rpcConfig client
 			}
 		})
 	}
+
+	//Info cron
+	func() {
+		var jobIsRunning uint32
+
+		dur := 1 * time.Minute
+		log.Infof("Sheduling parse assets operations %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				//Outside network always main for RPC
+				serviceNetwork := network
+				if isTestNetwork {
+					serviceNetwork = models.NetworkCarthage
+				}
+
+				service := New(repos.New(db), serviceNetwork)
+				ratio, err := service.GetStakingRatio()
+				if err != nil {
+					log.Errorf("failed to get staking ratio: %s", err.Error())
+				}
+
+				for curr := range cmc.AvailableCurrencies {
+					md, err := marketDataProvider.GetTezosMarketData(curr)
+					if err != nil {
+						log.Errorf("GetTezosMarketData failed: %s", err.Error())
+						continue
+					}
+
+					apiInfo := render.Info(curr, md, ratio, service.BlocksInCycle())
+					err = ws.Broadcast(wsmodels.BasicMessage{
+						Event: wsmodels.EventType(fmt.Sprintf("%s_%s", string(wsmodels.EventTypeInfo), curr)),
+						Data:  apiInfo,
+					})
+					if err != nil {
+						log.Errorf("Broadcast info message failed: %s", err.Error())
+						continue
+					}
+				}
+			} else {
+				log.Tracef("skipping info job is still running")
+			}
+		})
+	}()
 
 }
