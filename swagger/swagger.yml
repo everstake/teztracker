@@ -2684,6 +2684,23 @@ paths:
           description: Internal error
       tags:
         - Mempool
+  '/v2/{network}/ws':
+    get:
+      schemes: ["ws"]
+      operationId: connectToWS
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+      tags:
+        - WS
 definitions:
   Info:
     properties:

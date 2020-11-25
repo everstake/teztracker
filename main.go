@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/everstake/teztracker/services/cmc"
 	"os"
 	"strings"
 
@@ -54,8 +55,9 @@ func main() {
 	}
 	apiServer := operations.NewTezTrackerAPI(swaggerSpec)
 
+	marketData := cmc.NewCoinGecko()
 	// pass services instance to API handlers
-	api.SetHandlers(apiServer, provider)
+	api.SetHandlers(apiServer, provider, marketData)
 
 	server := restapi.NewServer(apiServer)
 	server.ConfigureAPI()
@@ -78,9 +80,15 @@ func main() {
 			if err != nil {
 				log.Fatalln(err)
 			}
+
+			ws, err := provider.GetWS(k)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
 			// Using models.NetworkMain instead of k due to stupid nodes configuration for carthagenet.
 			// todo: if something is not workign for testnets, check this one.
-			services.AddToCron(cron, cfg, db, rpc, models.NetworkMain, k == models.NetworkCarthage)
+			services.AddToCron(cron, cfg, db, ws, marketData, rpc, models.NetworkMain, k == models.NetworkCarthage)
 		}
 
 		cron.Start()

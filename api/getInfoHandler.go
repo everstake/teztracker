@@ -13,13 +13,8 @@ import (
 	"time"
 )
 
-// MarketDataProvider is an interface for getting actual price and price changes.
-type MarketDataProvider interface {
-	GetTezosMarketData(curr string) (md models.MarketInfo, err error)
-}
-
 type getInfoHandler struct {
-	provider   MarketDataProvider
+	provider   models.MarketDataProvider
 	dbProvider DbProvider
 	cache      *cache.Cache
 }
