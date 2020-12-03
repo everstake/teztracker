@@ -296,7 +296,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mark
 		var jobIsRunning uint32
 
 		dur := 1 * time.Minute
-		log.Infof("Sheduling parse assets operations %s", dur)
+		log.Infof("Sheduling info ws publish %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
 			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
