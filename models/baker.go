@@ -71,6 +71,19 @@ type BakerRegistry struct {
 	IsHidden                               bool           `json:"is_hidden"`
 }
 
+type ThirdPartyBaker struct {
+	Provider          string  `json:"provider"`
+	Number            int     `json:"number"`
+	Name              string  `json:"name"`
+	Address           string  `json:"address"`
+	Yield             float64 `json:"yield"`
+	StakingBalance    int64   `json:"staking_balance,omitempty"`
+	Fee               float64 `json:"fee"`
+	AvailableCapacity int64   `json:"available_capacity,omitempty"`
+	Efficiency        float64 `json:"efficiency,omitempty"`
+	PayoutAccuracy    string  `json:"payout_accuracy,omitempty"`
+}
+
 func (pb *BakerRegistry) Unmarshal(data []byte) (err error) {
 
 	err = json.Unmarshal(data, &pb)
