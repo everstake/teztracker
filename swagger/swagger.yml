@@ -3262,6 +3262,12 @@ definitions:
     properties:
       cycle:
         type: integer
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
+        type: integer
+        format: int64
       snapshot_block:
         type: integer
       rolls:
@@ -3419,6 +3425,12 @@ definitions:
       cycle:
         type: integer
         format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
+        type: integer
+        format: int64
       blocks:
         type: integer
         format: int64
@@ -3450,6 +3462,12 @@ definitions:
   AccountEndorsingRow:
     properties:
       cycle:
+        type: integer
+        format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
         type: integer
         format: int64
       slots:
@@ -3501,6 +3519,12 @@ definitions:
   AccountRewardsRow:
     properties:
       cycle:
+        type: integer
+        format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
         type: integer
         format: int64
       delegators:
@@ -3599,6 +3623,12 @@ definitions:
       cycle:
         type: integer
         format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
+        type: integer
+        format: int64
       blocks:
         type: integer
         format: int64
@@ -3624,6 +3654,12 @@ definitions:
   AccountSecurityDepositRow:
     properties:
       cycle:
+        type: integer
+        format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
         type: integer
         format: int64
       staking_balance:

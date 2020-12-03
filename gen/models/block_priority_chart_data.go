@@ -25,6 +25,12 @@ type BlockPriorityChartData struct {
 	// Required: true
 	Cycle *int64 `json:"cycle"`
 
+	// cycle end
+	CycleEnd int64 `json:"cycleEnd,omitempty"`
+
+	// cycle start
+	CycleStart int64 `json:"cycleStart,omitempty"`
+
 	// first priority
 	// Required: true
 	FirstPriority *int64 `json:"firstPriority"`

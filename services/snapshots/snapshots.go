@@ -50,10 +50,10 @@ func SaveNewSnapshots(ctx context.Context, unit UnitOfWork, provider SnapshotPro
 
 	nextCycleToScan := int64(FirstCycleWithSnapshots)
 	if len(list) > 0 {
-		if list[0].Cycle >= lastCycle {
+		if list[0].Snapshot.Cycle >= lastCycle {
 			return 0, nil
 		}
-		nextCycleToScan = list[0].Cycle + 1
+		nextCycleToScan = list[0].Snapshot.Cycle + 1
 	}
 
 	//Last cycle not finished yet so will be selected later

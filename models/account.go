@@ -80,7 +80,7 @@ type AccountBalance struct {
 }
 
 type AccountBaking struct {
-	Cycle        int64
+	BakingCycle
 	Status       RewardStatus
 	Count        int64
 	Missed       int64
@@ -91,7 +91,7 @@ type AccountBaking struct {
 }
 
 type AccountEndorsing struct {
-	Cycle        int64
+	BakingCycle
 	Status       RewardStatus
 	Count        int64
 	Missed       int64
@@ -99,9 +99,10 @@ type AccountEndorsing struct {
 	TotalDeposit int64
 }
 
+//TODO refactor Account rewards models
 type AccountReward struct {
+	BakingCycle
 	Status                 RewardStatus
-	Cycle                  int64
 	Delegators             int64
 	StakingBalance         int64
 	BakingRewards          int64
@@ -115,9 +116,9 @@ type AccountReward struct {
 }
 
 type AccountRewardsCount struct {
+	BakingCycle
 	Status                 RewardStatus
 	StakingBalance         int64
-	Cycle                  int64
 	BakingCount            int64
 	BakingReward           int64
 	StolenBaking           int64

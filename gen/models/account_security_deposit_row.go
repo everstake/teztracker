@@ -30,6 +30,12 @@ type AccountSecurityDepositRow struct {
 	// cycle
 	Cycle int64 `json:"cycle,omitempty"`
 
+	// cycle end
+	CycleEnd int64 `json:"cycleEnd,omitempty"`
+
+	// cycle start
+	CycleStart int64 `json:"cycleStart,omitempty"`
+
 	// expected blocks deposit
 	ExpectedBlocksDeposit int64 `json:"expected_blocks_deposit,omitempty"`
 

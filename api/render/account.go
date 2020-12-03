@@ -68,6 +68,8 @@ func AccountRewardsList(accrl []models.AccountReward) []*genModels.AccountReward
 func AccountReward(acb models.AccountReward) *genModels.AccountRewardsRow {
 	return &genModels.AccountRewardsRow{
 		Cycle:          &acb.Cycle,
+		CycleStart:     GetUnixFromNullTime(acb.CycleStart),
+		CycleEnd:       GetUnixFromNullTime(acb.CycleEnd),
 		Status:         string(acb.Status),
 		Delegators:     &acb.Delegators,
 		Baking:         &acb.BakingRewards,
@@ -107,6 +109,8 @@ func AccountSecurityDeposit(acb models.AccountRewardsCount) *genModels.AccountSe
 	return &genModels.AccountSecurityDepositRow{
 		AvailableBond:              acb.AvailableBond,
 		Cycle:                      acb.Cycle,
+		CycleStart:                 acb.CycleStart.ValueOrZero().Unix(),
+		CycleEnd:                   acb.CycleEnd.ValueOrZero().Unix(),
 		StakingBalance:             acb.StakingBalance,
 		Status:                     string(acb.Status),
 		ActualBlocksDeposit:        acb.ActualBakingSecurityDeposit,

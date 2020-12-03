@@ -9,6 +9,8 @@ func AccountEndorsing(acb models.AccountEndorsing) *genModels.AccountEndorsingRo
 	return &genModels.AccountEndorsingRow{
 		Slots:        &acb.Count,
 		Cycle:        &acb.Cycle,
+		CycleStart:   GetUnixFromNullTime(acb.CycleStart),
+		CycleEnd:     GetUnixFromNullTime(acb.CycleEnd),
 		Status:       string(acb.Status),
 		Missed:       &acb.Missed,
 		Rewards:      &acb.Reward,
