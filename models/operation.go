@@ -42,23 +42,24 @@ type Operation struct {
 	OriginatedContracts    string      `json:"originated_contracts"`
 	BlockHash              null.String `json:"block_hash"`
 	BlockLevel             null.Int    `json:"block_level"`
-	Timestamp              time.Time   `json:"timestamp"`
-	Branch                 string      `json:"branch" gorm:"column:branch"`
-	NumberOfSlots          int64       `json:"number_of_slots" gorm:"column:number_of_slots"`
-	Cycle                  int64       `json:"cycle" gorm:"column:cycle"`
-	Proposal               string      `json:"proposal" gorm:"column:proposal"`
-	Ballot                 string      `json:"ballot" gorm:"column:ballot"`
-	Internal               bool        `json:"internal" gorm:"column:internal"`
-	Period                 int64       `json:"period" gorm:"column:period"`
-	Reward                 int64       `json:"reward" gorm:"column:change"`
-	DelegateName           string      `json:"delegate_name" gorm:"column:delegate_name"`
-	SourceName             string      `json:"source_name" gorm:"column:source_name"`
-	DestinationName        string      `json:"destination_name" gorm:"column:destination_name"`
-	Confirmations          int64       `json:"confirmations"`
-	EndorsementReward      int64       `json:"endorsement_reward" gorm:"column:endorsement_reward"`
-	EndorsementDeposit     int64       `json:"endorsement_reward" gorm:"column:endorsement_deposit"`
-	ClaimedAmount          int64       `json:"claimed_amount" gorm:"column:claimed_amount"`
-	Deposit                int64       `json:"deposit"`
+	//Temp not unmarshal timestamp from json db because time.Time not support ISO without timezone
+	Timestamp          time.Time `json:"-"`
+	Branch             string    `json:"branch" gorm:"column:branch"`
+	NumberOfSlots      int64     `json:"number_of_slots" gorm:"column:number_of_slots"`
+	Cycle              int64     `json:"cycle" gorm:"column:cycle"`
+	Proposal           string    `json:"proposal" gorm:"column:proposal"`
+	Ballot             string    `json:"ballot" gorm:"column:ballot"`
+	Internal           bool      `json:"internal" gorm:"column:internal"`
+	Period             int64     `json:"period" gorm:"column:period"`
+	Reward             int64     `json:"reward" gorm:"column:change"`
+	DelegateName       string    `json:"delegate_name" gorm:"column:delegate_name"`
+	SourceName         string    `json:"source_name" gorm:"column:source_name"`
+	DestinationName    string    `json:"destination_name" gorm:"column:destination_name"`
+	Confirmations      int64     `json:"confirmations"`
+	EndorsementReward  int64     `json:"endorsement_reward" gorm:"column:endorsement_reward"`
+	EndorsementDeposit int64     `json:"endorsement_reward" gorm:"column:endorsement_deposit"`
+	ClaimedAmount      int64     `json:"claimed_amount" gorm:"column:claimed_amount"`
+	Deposit            int64     `json:"deposit"`
 	*DoubleOperationEvidenceExtended
 }
 

@@ -34,7 +34,7 @@ func MonitorPublicBakers(ctx context.Context, unit UnitOfWork, rpc BakesProvider
 	}
 
 	operationRepo := unit.GetOperation()
-	operations, err := operationRepo.List(nil, []string{operationKindTransaction}, nil, []string{BakerRegistryContract}, 100, 0, 0)
+	operations, err := operationRepo.List(nil, []string{operationKindTransaction}, nil, []string{BakerRegistryContract}, 100, 0, 0, nil)
 	if err != nil {
 		return err
 	}

@@ -6,6 +6,7 @@ package mock_services
 
 import (
 	account "github.com/everstake/teztracker/repos/account"
+	assets "github.com/everstake/teztracker/repos/assets"
 	baker "github.com/everstake/teztracker/repos/baker"
 	baking "github.com/everstake/teztracker/repos/baking"
 	block "github.com/everstake/teztracker/repos/block"
@@ -17,6 +18,7 @@ import (
 	future_endorsement_rights "github.com/everstake/teztracker/repos/future_endorsement_rights"
 	operation "github.com/everstake/teztracker/repos/operation"
 	operation_groups "github.com/everstake/teztracker/repos/operation_groups"
+	rolls "github.com/everstake/teztracker/repos/rolls"
 	snapshots "github.com/everstake/teztracker/repos/snapshots"
 	voting_periods "github.com/everstake/teztracker/repos/voting_periods"
 	gomock "github.com/golang/mock/gomock"
@@ -44,6 +46,18 @@ func NewMockProvider(ctrl *gomock.Controller) *MockProvider {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockProvider) EXPECT() *MockProviderMockRecorder {
 	return m.recorder
+}
+
+// Health mocks base method
+func (m *MockProvider) Health() error {
+	ret := m.ctrl.Call(m, "Health")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Health indicates an expected call of Health
+func (mr *MockProviderMockRecorder) Health() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Health", reflect.TypeOf((*MockProvider)(nil).Health))
 }
 
 // GetBlock mocks base method
@@ -166,6 +180,18 @@ func (mr *MockProviderMockRecorder) GetSnapshots() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSnapshots", reflect.TypeOf((*MockProvider)(nil).GetSnapshots))
 }
 
+// GetRolls mocks base method
+func (m *MockProvider) GetRolls() rolls.Repo {
+	ret := m.ctrl.Call(m, "GetRolls")
+	ret0, _ := ret[0].(rolls.Repo)
+	return ret0
+}
+
+// GetRolls indicates an expected call of GetRolls
+func (mr *MockProviderMockRecorder) GetRolls() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRolls", reflect.TypeOf((*MockProvider)(nil).GetRolls))
+}
+
 // GetDoubleBaking mocks base method
 func (m *MockProvider) GetDoubleBaking() double_baking.Repo {
 	ret := m.ctrl.Call(m, "GetDoubleBaking")
@@ -212,6 +238,18 @@ func (m *MockProvider) GetChart() chart.Repo {
 // GetChart indicates an expected call of GetChart
 func (mr *MockProviderMockRecorder) GetChart() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChart", reflect.TypeOf((*MockProvider)(nil).GetChart))
+}
+
+// GetAssets mocks base method
+func (m *MockProvider) GetAssets() assets.Repo {
+	ret := m.ctrl.Call(m, "GetAssets")
+	ret0, _ := ret[0].(assets.Repo)
+	return ret0
+}
+
+// GetAssets indicates an expected call of GetAssets
+func (mr *MockProviderMockRecorder) GetAssets() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAssets", reflect.TypeOf((*MockProvider)(nil).GetAssets))
 }
 
 // MockLimiter is a mock of Limiter interface

@@ -6,3 +6,8 @@ type Snapshot struct {
 	Block      Block `gorm:"column:snp_block_level save_associations:false" json:"block"`
 	Rolls      int64 `gorm:"column:snp_rolls" json:"rolls"`
 }
+
+type SnapshotsView struct {
+	Snapshot
+	BakingCycle
+}

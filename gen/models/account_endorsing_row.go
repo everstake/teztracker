@@ -21,6 +21,12 @@ type AccountEndorsingRow struct {
 	// Required: true
 	Cycle *int64 `json:"cycle"`
 
+	// cycle end
+	CycleEnd int64 `json:"cycleEnd,omitempty"`
+
+	// cycle start
+	CycleStart int64 `json:"cycleStart,omitempty"`
+
 	// missed
 	// Required: true
 	Missed *int64 `json:"missed"`

@@ -25,6 +25,12 @@ type AccountRewardsRow struct {
 	// Required: true
 	Cycle *int64 `json:"cycle"`
 
+	// cycle end
+	CycleEnd int64 `json:"cycleEnd,omitempty"`
+
+	// cycle start
+	CycleStart int64 `json:"cycleStart,omitempty"`
+
 	// delegators
 	// Required: true
 	Delegators *int64 `json:"delegators"`

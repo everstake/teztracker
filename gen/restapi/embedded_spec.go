@@ -4135,6 +4135,34 @@ func init() {
           }
         }
       }
+    },
+    "/v2/{network}/ws": {
+      "get": {
+        "schemes": [
+          "ws"
+        ],
+        "tags": [
+          "WS"
+        ],
+        "operationId": "connectToWS",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -4158,6 +4186,14 @@ func init() {
           "format": "int64"
         },
         "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
           "type": "integer",
           "format": "int64"
         },
@@ -4208,6 +4244,14 @@ func init() {
       ],
       "properties": {
         "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
           "type": "integer",
           "format": "int64"
         },
@@ -4262,6 +4306,14 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
+          "type": "integer",
+          "format": "int64"
+        },
         "delegators": {
           "type": "integer",
           "format": "int64"
@@ -4306,6 +4358,14 @@ func init() {
           "format": "int64"
         },
         "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
           "type": "integer",
           "format": "int64"
         },
@@ -4716,6 +4776,14 @@ func init() {
           "format": "int64"
         },
         "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
           "type": "integer",
           "format": "int64"
         },
@@ -5523,6 +5591,14 @@ func init() {
       "properties": {
         "cycle": {
           "type": "integer"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
+          "type": "integer",
+          "format": "int64"
         },
         "rolls": {
           "type": "integer"
@@ -9748,6 +9824,34 @@ func init() {
           }
         }
       }
+    },
+    "/v2/{network}/ws": {
+      "get": {
+        "schemes": [
+          "ws"
+        ],
+        "tags": [
+          "WS"
+        ],
+        "operationId": "connectToWS",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -9771,6 +9875,14 @@ func init() {
           "format": "int64"
         },
         "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
           "type": "integer",
           "format": "int64"
         },
@@ -9821,6 +9933,14 @@ func init() {
       ],
       "properties": {
         "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
           "type": "integer",
           "format": "int64"
         },
@@ -9875,6 +9995,14 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
+          "type": "integer",
+          "format": "int64"
+        },
         "delegators": {
           "type": "integer",
           "format": "int64"
@@ -9919,6 +10047,14 @@ func init() {
           "format": "int64"
         },
         "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
           "type": "integer",
           "format": "int64"
         },
@@ -10329,6 +10465,14 @@ func init() {
           "format": "int64"
         },
         "cycle": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
           "type": "integer",
           "format": "int64"
         },
@@ -11137,6 +11281,14 @@ func init() {
       "properties": {
         "cycle": {
           "type": "integer"
+        },
+        "cycleEnd": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cycleStart": {
+          "type": "integer",
+          "format": "int64"
         },
         "rolls": {
           "type": "integer"

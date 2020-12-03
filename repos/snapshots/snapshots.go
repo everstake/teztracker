@@ -13,7 +13,7 @@ type (
 	}
 
 	Repo interface {
-		List(limit, offset uint) (count int64, snapshots []models.Snapshot, err error)
+		List(limit, offset uint) (count int64, snapshots []models.SnapshotsView, err error)
 		Find(id int64) (found bool, snapshot models.Snapshot, err error)
 		Create(snapshot models.Snapshot) error
 		CreateBulk(snapshots []models.Snapshot) error
@@ -36,7 +36,7 @@ func (r *Repository) getDb() *gorm.DB {
 // List returns a list of snapshots from the newest to oldest.
 // limit defines the limit for the maximum number of snapshots returned.
 // since is used to paginate results based on the level. As the result is ordered descendingly the snapshots with level < since will be returned.
-func (r *Repository) List(limit, offset uint) (count int64, snapshots []models.Snapshot, err error) {
+func (r *Repository) List(limit, offset uint) (count int64, snapshots []models.SnapshotsView, err error) {
 	db := r.getDb()
 	if err := db.Count(&count).Error; err != nil {
 		return 0, nil, err
