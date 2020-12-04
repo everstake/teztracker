@@ -19,6 +19,8 @@ type (
 	}
 )
 
+const thirdPartyBakersTable = "tezos.third_party_bakers"
+
 // New creates an instance of repository using the provided db.
 func New(db *gorm.DB) *Repository {
 	return &Repository{
@@ -36,7 +38,7 @@ func (r *Repository) getDb() *gorm.DB {
 func (r *Repository) GetAggregatedBakers() (bakers []models.ThirdPartyBakerAgg, err error) {
 	err = r.db.Select("address,max(staking_balance) as staking_balance,json_agg(json_build_object('provider',provider,'number',number,'name',name,'address',address,'yield',yield,'staking_balance',staking_balance,'fee',fee,'available_capacity',available_capacity,'efficiency',efficiency,'payout_accuracy',payout_accuracy)) as providers").
 		Model(models.ThirdPartyBakerAgg{}).
-		Table("tezos.third_party_bakers").
+		Table(thirdPartyBakersTable).
 		Order("staking_balance DESC").
 		Group("address").
 		Find(&bakers).
