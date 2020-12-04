@@ -24,6 +24,34 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/thirdparty/bakers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getThirdPartyBakersHandler",
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ThirdPartyBakers"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/assets": {
       "get": {
         "produces": [
@@ -5532,6 +5560,54 @@ func init() {
         }
       }
     },
+    "ThirdPartyBakers": {
+      "properties": {
+        "baker": {
+          "type": "string"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "available_capacity": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "efficiency": {
+                "type": "number"
+              },
+              "fee": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "payout_accuracy": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "staking_balance": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "yield": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
     "TokenAssetRow": {
       "required": [
         "balance",
@@ -5604,6 +5680,34 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/thirdparty/bakers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getThirdPartyBakersHandler",
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ThirdPartyBakers"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/assets": {
       "get": {
         "produces": [
@@ -11143,6 +11247,54 @@ func init() {
         },
         "snapshot_block": {
           "type": "integer"
+        }
+      }
+    },
+    "ThirdPartyBakers": {
+      "properties": {
+        "baker": {
+          "type": "string"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "available_capacity": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "efficiency": {
+                "type": "number"
+              },
+              "fee": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "payout_accuracy": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "staking_balance": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "yield": {
+                "type": "number"
+              }
+            }
+          }
         }
       }
     },

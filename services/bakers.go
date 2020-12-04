@@ -202,3 +202,8 @@ func (t *TezTracker) GetStakingRatio() (float64, error) {
 
 	return ratio, nil
 }
+
+func (t *TezTracker) GetThirdPartyBakers() (bakers []models.ThirdPartyBakerAgg, err error) {
+	tpbRepo := t.repoProvider.GetThirdPartyBakers()
+	return tpbRepo.GetAggregatedBakers()
+}
