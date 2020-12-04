@@ -13,7 +13,6 @@ type (
 	}
 
 	Repo interface {
-		GetAll() (bakers []models.ThirdPartyBaker, err error)
 		DeleteAll() error
 		Create(bakers []models.ThirdPartyBaker) error
 		GetAggregatedBakers() (bakers []models.ThirdPartyBakerAgg, err error)
@@ -31,12 +30,6 @@ func (r *Repository) getDb() *gorm.DB {
 	db := r.db.
 		Model(&models.ThirdPartyBaker{})
 	return db
-}
-
-// Get all third party bakers
-func (r *Repository) GetAll() (bakers []models.ThirdPartyBaker, err error) {
-	err = r.getDb().Find(&bakers).Error
-	return bakers, err
 }
 
 // Get all aggregated third party bakers
