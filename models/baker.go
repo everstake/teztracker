@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/lib/pq"
 	"time"
 )
@@ -84,8 +85,15 @@ type ThirdPartyBaker struct {
 	PayoutAccuracy    string  `json:"payout_accuracy,omitempty"`
 }
 
-func (pb *BakerRegistry) Unmarshal(data []byte) (err error) {
+type ThirdPartyBakerAgg struct {
+	Address        string
+	StakingBalance int64
+	Providers      ThirdPartyProviders
+}
 
+type ThirdPartyProviders []ThirdPartyBaker
+
+func (pb *BakerRegistry) Unmarshal(data []byte) (err error) {
 	err = json.Unmarshal(data, &pb)
 	if err != nil {
 		return err
@@ -104,5 +112,22 @@ func (pb *BakerRegistry) Unmarshal(data []byte) (err error) {
 
 	pb.BakerOffchainRegistryUrl = string(bytes)
 
+	return nil
+}
+
+func (v *ThirdPartyProviders) Scan(value interface{}) (err error) {
+	if value == nil {
+		return nil
+	}
+	data, ok := value.([]byte)
+	if !ok {
+		return fmt.Errorf("invalid type")
+	}
+	var bakers []ThirdPartyBaker
+	err = json.Unmarshal(data, &bakers)
+	if err != nil {
+		return fmt.Errorf("json.Unmarshal: %s", err.Error())
+	}
+	*v = bakers
 	return nil
 }

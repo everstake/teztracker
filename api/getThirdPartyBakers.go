@@ -4,7 +4,8 @@ import (
 	"github.com/everstake/teztracker/api/render"
 	"github.com/everstake/teztracker/gen/restapi/operations/app_info"
 	"github.com/everstake/teztracker/models"
-	"github.com/everstake/teztracker/repos/thirdparty_bakers"
+	"github.com/everstake/teztracker/repos"
+	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sirupsen/logrus"
 )
@@ -19,10 +20,10 @@ func (h *getThirdPartyBakersHandler) Handle(params app_info.GetThirdPartyBakersH
 	if err != nil {
 		return app_info.NewGetThirdPartyBakersHandlerInternalServerError()
 	}
-	repo := thirdparty_bakers.New(db)
-	bakers, err := repo.GetAll()
+	service := services.New(repos.New(db), models.NetworkMain)
+	bakers, err := service.GetThirdPartyBakers()
 	if err != nil {
-		logrus.Errorf("getThirdPartyBakersHandler: repo.GetAll: %s", err.Error())
+		logrus.Errorf("service.GetThirdPartyBakers: %s", err.Error())
 		return app_info.NewGetThirdPartyBakersHandlerInternalServerError()
 	}
 	return app_info.NewGetThirdPartyBakersHandlerOK().WithPayload(render.ThirdPartyBakers(bakers))

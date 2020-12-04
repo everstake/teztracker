@@ -16,6 +16,7 @@ type (
 		GetAll() (bakers []models.ThirdPartyBaker, err error)
 		DeleteAll() error
 		Create(bakers []models.ThirdPartyBaker) error
+		GetAggregatedBakers() (bakers []models.ThirdPartyBakerAgg, err error)
 	}
 )
 
@@ -27,7 +28,7 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb() *gorm.DB {
-	db := r.db.Select("*").
+	db := r.db.
 		Model(&models.ThirdPartyBaker{})
 	return db
 }
@@ -35,6 +36,18 @@ func (r *Repository) getDb() *gorm.DB {
 // Get all third party bakers
 func (r *Repository) GetAll() (bakers []models.ThirdPartyBaker, err error) {
 	err = r.getDb().Find(&bakers).Error
+	return bakers, err
+}
+
+// Get all aggregated third party bakers
+func (r *Repository) GetAggregatedBakers() (bakers []models.ThirdPartyBakerAgg, err error) {
+	err = r.db.Select("address,max(staking_balance) as staking_balance,json_agg(json_build_object('provider',provider,'number',number,'name',name,'address',address,'yield',yield,'staking_balance',staking_balance,'fee',fee,'available_capacity',available_capacity,'efficiency',efficiency,'payout_accuracy',payout_accuracy)) as providers").
+		Model(models.ThirdPartyBakerAgg{}).
+		Table("tezos.third_party_bakers").
+		Order("staking_balance DESC").
+		Group("address").
+		Find(&bakers).
+		Error
 	return bakers, err
 }
 

@@ -292,7 +292,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mark
 		})
 	}
 
-	if cfg.ThirdPartyBakersIntervalMinutes > 0 && !isTestNetwork && network == models.NetworkMain {
+	if cfg.ThirdPartyBakersIntervalMinutes > 0 && !isTestNetwork {
 		var jobIsRunning uint32
 
 		dur := time.Duration(cfg.ThirdPartyBakersIntervalMinutes) * time.Minute
