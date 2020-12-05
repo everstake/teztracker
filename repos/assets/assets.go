@@ -15,7 +15,7 @@ type (
 		GetTokensList() (int64, []models.AssetInfo, error)
 		GetTokenInfo(tokenID string) (models.AssetInfo, error)
 		GetTokenHolders(tokenID string) ([]models.AssetHolder, error)
-		GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
+		GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
 		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 		CreateAssetOperations(models.AssetOperation) error
 	}
@@ -81,14 +81,26 @@ func (r *Repository) GetUnprocessedAssetTxs(tokenID string) (ops []models.Operat
 	return ops, nil
 }
 
-func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (count int64, info []models.AssetOperationReport, err error) {
+func (r *Repository) GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, limit, offset uint) (count int64, info []models.AssetOperationReport, err error) {
 
-	db := r.db.Select("*").Table(assetOperations).Where("token_id = ?", tokenID)
+	db := r.db.Select("*").Table(assetOperations)
 
-	if isTransfer {
-		db = db.Where("type = ?", "transfer")
-	} else {
-		db = db.Where("type != ?", "transfer")
+	if len(tokenIDs) > 0 {
+		db = db.Joins("LEFT JOIN tezos.registered_tokens on id = token_id")
+		db = db.Where("account_id IN (?)", tokenIDs)
+	}
+
+	if len(operationTypes) == 1 {
+		switch operationTypes[0] {
+		case "transfer":
+			db = db.Where("type = ?", "transfer")
+		case "other":
+			db = db.Where("type != ?", "transfer")
+		}
+	}
+
+	if len(accountIDs) > 0 {
+		db = db.Where("asset_operations.sender IN (?) OR asset_operations.receiver IN (?)", accountIDs, accountIDs)
 	}
 
 	err = db.Count(&count).Error

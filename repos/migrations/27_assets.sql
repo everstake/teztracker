@@ -18,3 +18,11 @@ FROM tezos.registered_tokens
        LEFT JOIN tezos.accounts
                  on registered_tokens.account_id = accounts.account_id
        LEFT JOIN tezos.operations ON registered_tokens.account_id = originated_contracts;
+
+
+CREATE UNIQUE index registered_tokens_account_id_uindex
+	ON registered_tokens (account_id);
+
+CREATE INDEX asset_operations_token_id_index
+	ON asset_operations (token_id);
+

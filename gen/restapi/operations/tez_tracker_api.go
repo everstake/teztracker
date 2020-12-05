@@ -860,7 +860,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/data/{network}/assets/{asset_id}/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
+	o.handlers["GET"]["/v2/data/{network}/assets/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

@@ -2671,16 +2671,12 @@ paths:
           description: Internal error
       tags:
         - Assets
-  '/v2/data/{network}/assets/{asset_id}/operations':
+  '/v2/data/{network}/assets/operations':
     get:
       operationId: getAssetOperationsList
       produces:
         - application/json
       parameters:
-        - in: path
-          name: asset_id
-          required: true
-          type: string
         - in: path
           name: network
           required: true
@@ -2697,8 +2693,21 @@ paths:
           default: 0
           minimum: 0
         - in: query
+          name: asset_id
+          type: array
+          items:
+            type: string
+        - in: query
+          name: account_id
+          type: array
+          items:
+            type: string
+        - in: query
           name: type
-          type: string
+          type: array
+          items:
+            type: string
+          enum: [transfer, other]
       responses:
         '200':
           description: Query compatibility endpoint for token operations

@@ -72,12 +72,7 @@ func (h *getAssetOperationListHandler) Handle(params assets.GetAssetOperationsLi
 	}
 	service := services.New(repos.New(db), net)
 
-	operationType := ""
-	if params.Type != nil {
-		operationType = *params.Type
-	}
-
-	count, ops, err := service.TokenOperations(params.AssetID, operationType, NewLimiter(params.Limit, params.Offset))
+	count, ops, err := service.TokenOperations(params.AssetID, params.Type, params.AccountID, NewLimiter(params.Limit, params.Offset))
 	if err != nil {
 		logrus.Errorf("failed to get token operations: %s", err.Error())
 		return assets.NewGetAssetOperationsListNotFound()

@@ -29,7 +29,7 @@ func NewGetAssetOperationsList(ctx *middleware.Context, handler GetAssetOperatio
 	return &GetAssetOperationsList{Context: ctx, Handler: handler}
 }
 
-/*GetAssetOperationsList swagger:route GET /v2/data/{network}/assets/{asset_id}/operations Assets getAssetOperationsList
+/*GetAssetOperationsList swagger:route GET /v2/data/{network}/assets/operations Assets getAssetOperationsList
 
 GetAssetOperationsList get asset operations list API
 
