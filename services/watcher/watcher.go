@@ -7,6 +7,7 @@ import (
 	"github.com/everstake/teztracker/services/watcher/tasks"
 	"github.com/everstake/teztracker/ws"
 	"github.com/everstake/teztracker/ws/models"
+	gotez "github.com/goat-systems/go-tezos/v2"
 	"github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 	"time"
@@ -21,9 +22,15 @@ type Watcher struct {
 	hub   *ws.Hub
 	l     *pq.Listener
 	tasks map[models.EventType]tasks.EventExecutor
+
+	mempoolCh chan gotez.Operations
 }
 
-func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Watcher {
+type MempoolProvider interface {
+	Subscribe() chan gotez.Operations
+}
+
+func NewWatcher(connection string, hub *ws.Hub, provider services.Provider, mempool MempoolProvider) *Watcher {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -39,6 +46,8 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Wat
 		panic(err)
 	}
 
+	mempoolCh := mempool.Subscribe()
+
 	return &Watcher{
 		ctx:    ctx,
 		cancel: cancel,
@@ -50,6 +59,7 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Wat
 			models.EventTypeOperation:      tasks.NewOperationTask(provider),
 			models.EventTypeAccountCreated: tasks.NewAccountTask(provider),
 		},
+		mempoolCh: mempoolCh,
 	}
 }
 
@@ -94,6 +104,11 @@ func (w Watcher) Start() {
 					Data:  wsData,
 				})
 			}
+		case op := <-w.mempoolCh:
+			w.hub.Broadcast(models.BasicMessage{
+				Event: models.EventTypeMempool,
+				Data:  op,
+			})
 		}
 	}
 }

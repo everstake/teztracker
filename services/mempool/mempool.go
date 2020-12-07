@@ -8,13 +8,15 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 )
 
 const (
-	monitoringUrl = "/chains/main/mempool/monitor_operations"
-	mempoolKey    = "mempool"
-	cacheTTL      = 1 * time.Minute
+	monitoringUrl   = "/chains/main/mempool/monitor_operations"
+	mempoolKey      = "mempool"
+	cacheTTL        = 1 * time.Minute
+	dispatchTimeout = time.Millisecond * 500
 )
 
 func NewMempool(cfg config.NetworkConfig) (*Mempool, error) {
@@ -33,18 +35,22 @@ func NewMempool(cfg config.NetworkConfig) (*Mempool, error) {
 		url:     rpcURL,
 		cl:      http.DefaultClient,
 		storage: cache.New(cacheTTL, cacheTTL),
+
+		mu: &sync.RWMutex{},
 	}, nil
 }
 
 type Mempool struct {
-	url     *url.URL
-	cl      *http.Client
-	storage *cache.Cache
-	ctx     context.Context
-	Cancel  context.CancelFunc
+	url         *url.URL
+	cl          *http.Client
+	storage     *cache.Cache
+	ctx         context.Context
+	Cancel      context.CancelFunc
+	mu          *sync.RWMutex
+	subscribers []chan gotez.Operations
 }
 
-func (m Mempool) MonitorMempool() {
+func (m *Mempool) MonitorMempool() {
 	log.Info("Start mempool monitor")
 	var err error
 	ch := make(chan []gotez.Operations)
@@ -87,7 +93,7 @@ func (m Mempool) monitorMempoolOperations(ctx context.Context, filter string, re
 	return m.Do(m.ctx, http.MethodGet, monitoringUrl, filter, results)
 }
 
-func (m Mempool) listenResp(ctx context.Context, ch chan []gotez.Operations) {
+func (m *Mempool) listenResp(ctx context.Context, ch chan []gotez.Operations) {
 	var stored interface{}
 	for {
 		select {
@@ -107,6 +113,29 @@ func (m Mempool) listenResp(ctx context.Context, ch chan []gotez.Operations) {
 			}
 
 			m.storage.SetDefault(mempoolKey, append(stored.([]gotez.Operations), elem...))
+
+			m.dispatch(elem)
 		}
 	}
+}
+
+func (m *Mempool) Subscribe() chan gotez.Operations {
+	ch := make(chan gotez.Operations)
+	m.mu.Lock()
+	m.subscribers = append(m.subscribers, ch)
+	m.mu.Unlock()
+	return ch
+}
+
+func (m *Mempool) dispatch(items []gotez.Operations) {
+	m.mu.RLock()
+	for i := range m.subscribers {
+		for _, operation := range items {
+			select {
+			case m.subscribers[i] <- operation:
+			case <-time.After(dispatchTimeout):
+			}
+		}
+	}
+	m.mu.RUnlock()
 }

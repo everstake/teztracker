@@ -53,7 +53,7 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 		go hub.Run()
 
 		//TODO make graceful stop
-		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db))
+		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db), m)
 
 		//Start watcher
 		go w.Start()
