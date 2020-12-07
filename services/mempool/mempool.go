@@ -3,23 +3,22 @@ package mempool
 import (
 	"context"
 	"github.com/everstake/teztracker/config"
+	"github.com/everstake/teztracker/ws/models"
 	gotez "github.com/goat-systems/go-tezos/v2"
 	"github.com/patrickmn/go-cache"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
-	"sync"
 	"time"
 )
 
 const (
-	monitoringUrl   = "/chains/main/mempool/monitor_operations"
-	mempoolKey      = "mempool"
-	cacheTTL        = 1 * time.Minute
-	dispatchTimeout = time.Millisecond * 500
+	monitoringUrl = "/chains/main/mempool/monitor_operations"
+	mempoolKey    = "mempool"
+	cacheTTL      = 1 * time.Minute
 )
 
-func NewMempool(cfg config.NetworkConfig) (*Mempool, error) {
+func NewMempool(cfg config.NetworkConfig, pub Publisher) (*Mempool, error) {
 	rpcURL := &url.URL{
 		Scheme: cfg.NodeRpc.Schemes[0],
 		Host:   cfg.NodeRpc.Host,
@@ -35,19 +34,21 @@ func NewMempool(cfg config.NetworkConfig) (*Mempool, error) {
 		url:     rpcURL,
 		cl:      http.DefaultClient,
 		storage: cache.New(cacheTTL, cacheTTL),
-
-		mu: &sync.RWMutex{},
+		pub:     pub,
 	}, nil
 }
 
 type Mempool struct {
-	url         *url.URL
-	cl          *http.Client
-	storage     *cache.Cache
-	ctx         context.Context
-	Cancel      context.CancelFunc
-	mu          *sync.RWMutex
-	subscribers []chan gotez.Operations
+	url     *url.URL
+	cl      *http.Client
+	storage *cache.Cache
+	ctx     context.Context
+	Cancel  context.CancelFunc
+	pub     Publisher
+}
+
+type Publisher interface {
+	Broadcast(msg models.MessageInterface) error
 }
 
 func (m *Mempool) MonitorMempool() {
@@ -114,28 +115,10 @@ func (m *Mempool) listenResp(ctx context.Context, ch chan []gotez.Operations) {
 
 			m.storage.SetDefault(mempoolKey, append(stored.([]gotez.Operations), elem...))
 
-			m.dispatch(elem)
+			m.pub.Broadcast(models.BasicMessage{
+				Event: models.EventTypeMempool,
+				Data:  elem,
+			})
 		}
 	}
-}
-
-func (m *Mempool) Subscribe() chan gotez.Operations {
-	ch := make(chan gotez.Operations)
-	m.mu.Lock()
-	m.subscribers = append(m.subscribers, ch)
-	m.mu.Unlock()
-	return ch
-}
-
-func (m *Mempool) dispatch(items []gotez.Operations) {
-	m.mu.RLock()
-	for i := range m.subscribers {
-		for _, operation := range items {
-			select {
-			case m.subscribers[i] <- operation:
-			case <-time.After(dispatchTimeout):
-			}
-		}
-	}
-	m.mu.RUnlock()
 }
