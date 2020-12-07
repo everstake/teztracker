@@ -13,9 +13,10 @@ import (
 )
 
 const (
-	monitoringUrl = "/chains/main/mempool/monitor_operations"
-	mempoolKey    = "mempool"
-	cacheTTL      = 1 * time.Minute
+	monitoringUrl           = "/chains/main/mempool/monitor_operations"
+	mempoolKey              = "mempool"
+	cacheTTL                = 1 * time.Minute
+	publisherTruncateAction = "truncate"
 )
 
 func NewMempool(cfg config.NetworkConfig, pub Publisher) (*Mempool, error) {
@@ -72,6 +73,8 @@ func (m *Mempool) MonitorMempool() {
 			cancel()
 			//Block closed, flush storage
 			m.storage.Flush()
+			// notify publisher
+			m.pub.Broadcast(models.BasicMessage{Event: models.EventTypeMempool, Data: publisherTruncateAction})
 		}
 
 	}
