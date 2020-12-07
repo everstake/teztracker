@@ -44,3 +44,25 @@ order by cycle desc;
 CREATE VIEW tezos.snapshots_view AS
 SELECT * FROM tezos.snapshots
  LEFT JOIN tezos.cycle_periods_view cp on snp_cycle = cp.cycle;
+
+CREATE OR REPLACE FUNCTION tezos.cycle_periods()
+RETURNS trigger
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+  IF NEW.meta_cycle_position = 0 THEN
+   INSERT INTO tezos.cycle_periods
+    SELECT meta_cycle, min(timestamp), max(timestamp)
+     FROM tezos.blocks
+     where meta_cycle = NEW.meta_cycle - 1 group by meta_cycle;
+  END IF;
+  RETURN NEW;
+END
+$$;
+
+CREATE TRIGGER cycle_periods_insert
+  AFTER INSERT
+  ON tezos.blocks
+  FOR EACH ROW
+EXECUTE PROCEDURE tezos.cycle_periods();

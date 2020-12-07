@@ -237,7 +237,7 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 		subQ := req.Select(columns).Joins("left join tezos.balance_updates bu on (operations.operation_group_hash = bu.operation_group_hash and category = 'rewards')").SubQuery()
 
 		missedEndorsementsSubQ := r.db.
-			Select("baker_endorsements.level block_level, timestamp, 'endorsement' kind,'' operation_group_hash, 'XTZ' coin, 0 amount, '' status, '' source, '' destination, case when missed = 1 then 1250000 ELSE 0 END loss, 0 fee, reward").
+			Select("baker_endorsements.level block_level, timestamp, 'endorsement' kind,'' operation_group_hash, 'XTZ' coin, 0 amount, '' status, '' source, '' destination, case when missed = 1 then 1.25 ELSE 0 END loss, 0 fee, reward").
 			Table("tezos.baker_endorsements").
 			Joins("left join tezos.blocks on blocks.level+1 = baker_endorsements.level").
 			Where("delegate = ?", accountID).
@@ -259,7 +259,7 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 
 func (r *Repository) GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
 
-	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward, case when missed = 1 then 40000000 ELSE 0 END loss, 0 fee, '' status").
+	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward, case when missed = 1 then 40 ELSE 0 END loss, 0 fee, '' status").
 		Table("tezos.baker_bakings").
 		Joins("left join tezos.blocks on blocks.level = baker_bakings.level").
 		Where("delegate = ?", accountID).

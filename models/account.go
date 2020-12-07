@@ -158,21 +158,21 @@ type AccountReport struct {
 	Kind               string      `csv:"operation type"`
 	Coin               string      `csv:"coin"`
 	//DB field
-	Amount      uint64 `csv:"-"`
-	Fee         uint64 `csv:"fee"`
-	Source      string `csv:"-"`
-	Destination string `csv:"-"`
-	Status      string `csv:"status"`
+	Amount      float64 `csv:"-"`
+	Fee         float64 `csv:"fee"`
+	Source      string  `csv:"-"`
+	Destination string  `csv:"-"`
+	Status      string  `csv:"status"`
 
 	//CSV field
-	In   uint64 `csv:"in"`
-	Out  uint64 `csv:"out"`
-	Link string `csv:"link"`
+	In   float64 `csv:"in"`
+	Out  float64 `csv:"out"`
+	Link string  `csv:"link"`
 }
 
 type BakerReport struct {
 	AccountReport
 	//Baker operations
-	Reward uint64 `csv:"reward"`
-	Loss   uint64 `csv:"loss"`
+	Reward float64 `csv:"reward"`
+	Loss   float64 `csv:"loss"`
 }

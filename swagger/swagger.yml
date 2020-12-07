@@ -819,10 +819,6 @@ paths:
         '200':
           description: CSV file to download
           schema:
-#             type: file
-
-#            type: string
-#            format: binary
             type: array
             items:
                 type: integer
@@ -2640,6 +2636,57 @@ paths:
           description: Bad request
         '404':
           description: Not Found
+      tags:
+        - Assets
+  '/v2/data/{platform}/{network}/assets/{assetId}/report':
+    get:
+      operationId: getAssetReport
+      produces:
+        - text/csv
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: assetId
+          required: true
+          type: string
+        - in: query
+          name: from
+          required: true
+          type: integer
+        - in: query
+          name: to
+          required: true
+          type: integer
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_type
+          description: Not used
+          type: array
+      responses:
+        '200':
+          description: CSV file to download
+          schema:
+            type: array
+            items:
+              type: integer
+              format: uint8
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
       tags:
         - Assets
   '/v2/data/{network}/assets/{asset_id}/operations':
