@@ -12,6 +12,14 @@ func (t *TezTracker) TokensList(limiter Limiter) (count int64, assets []models.A
 		return count, assets, err
 	}
 
+	for i := range assets {
+
+		assets[i].Balance, err = t.TokenTotalSupply(assets[i].AccountId)
+		if err != nil {
+			return count, assets, err
+		}
+	}
+
 	return count,
 		assets, nil
 }
@@ -25,7 +33,27 @@ func (t *TezTracker) TokenInfo(assetID string) (info models.AssetInfo, err error
 		return info, err
 	}
 
+	info.Balance, err = t.TokenTotalSupply(info.AccountId)
+	if err != nil {
+		return info, err
+	}
+
 	return info, nil
+}
+
+func (t *TezTracker) TokenTotalSupply(assetID string) (totalSupply int64, err error) {
+	r := t.repoProvider.GetAssets()
+
+	h, err := r.GetTokenHolders(assetID)
+	if err != nil {
+		return 0, err
+	}
+
+	for j := range h {
+		totalSupply += int64(h[j].Balance)
+	}
+
+	return totalSupply, nil
 }
 
 func (t *TezTracker) TokenOperations(assetIDs, operationsTypes, accountIDs []string, limits Limiter) (count int64, operations []models.AssetOperationReport, err error) {

@@ -34,9 +34,10 @@ func AssetHolders(ash []models.AssetHolder) []*genModels.TokenHolderRow {
 }
 
 func AssetHolder(acb models.AssetHolder) *genModels.TokenHolderRow {
+	bal := int64(acb.Balance)
 	return &genModels.TokenHolderRow{
-		AccountID: acb.AccountID,
-		Balance:   &acb.Balance,
+		AccountID: string(acb.Address),
+		Balance:   &bal,
 	}
 }
 
