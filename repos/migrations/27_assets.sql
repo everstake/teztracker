@@ -1,5 +1,6 @@
 CREATE TABLE tezos.asset_operations
 (
+    block_level integer,
     token_id  integer,
     operation_id integer constraint asset_operations_pkey
       primary key,

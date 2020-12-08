@@ -249,6 +249,22 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 		db = r.db.Raw("SELECT * FROM ? op UNION ? ORDER BY block_level desc", subQ, missedEndorsementsSubQ)
 	}
 
+	if params.AssetsReq {
+
+		subQ := db.SubQuery()
+		assetsSubQ := r.db.
+			//Todo remove 0 block_level after migration
+			Select("0 block_level, timestamp, type kind, operation_group_hash, CASE WHEN (name = 'Staker DAO') THEN 'STKR' ELSE name END, amount, 'applied' status, sender source, receiver destination, 0 loss,0 fee").
+			Table("tezos.asset_operations").
+			Joins("left join tezos.registered_tokens on token_id = id").
+			Where("sender = ? OR receiver = ?", accountID, accountID).
+			Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+			Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+			Order("timestamp desc").SubQuery()
+
+		db = r.db.Raw("SELECT * FROM ? ops UNION ? ORDER BY block_level desc", subQ, assetsSubQ)
+	}
+
 	err = db.Limit(params.Limit).Find(&report).Error
 	if err != nil {
 		return nil, err

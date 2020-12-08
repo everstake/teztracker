@@ -142,6 +142,7 @@ type AssetHolder struct {
 }
 
 type AssetOperation struct {
+	BlockLevel         int64
 	TokenId            uint64
 	OperationId        int64
 	OperationGroupHash string

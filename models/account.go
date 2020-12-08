@@ -149,6 +149,7 @@ type AccountReportFilter struct {
 	Limit        int64
 	Operations   []string
 	EndorsingReq bool
+	AssetsReq    bool
 }
 
 type AccountReport struct {

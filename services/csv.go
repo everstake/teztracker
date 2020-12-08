@@ -26,7 +26,7 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 		return nil, err
 	}
 
-	var bakingReq, endorsingReq bool
+	var bakingReq, endorsingReq, assetsReq bool
 	//For baker check that baking\endorsing operations required
 	if isBaker {
 		for i := range operations {
@@ -35,7 +35,10 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 				bakingReq = true
 			case "endorsement":
 				endorsingReq = true
+			case "assets":
+				assetsReq = true
 			}
+
 		}
 	}
 
@@ -44,6 +47,7 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 		To:           to,
 		Operations:   operations,
 		EndorsingReq: endorsingReq,
+		AssetsReq:    assetsReq,
 		Limit:        limit,
 	})
 	if err != nil {
