@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/everstake/teztracker/models"
+	"sort"
 )
 
 func (t *TezTracker) TokensList(limiter Limiter) (count int64, assets []models.AssetInfo, err error) {
@@ -72,6 +73,14 @@ func (t *TezTracker) TokenHolders(assetID string) (holders []models.AssetHolder,
 	holders, err = r.GetTokenHolders(assetID)
 	if err != nil {
 		return nil, err
+	}
+
+	//Desc order
+	sort.Slice(holders, func(i, j int) bool { return holders[i].Balance > holders[j].Balance })
+
+	//Remove excess records from bigmap
+	for i := len(holders) - 1; holders[i].Balance == 0; i-- {
+		holders = holders[:i]
 	}
 
 	return holders, nil
