@@ -15,7 +15,7 @@ type (
 		GetTokensList() (int64, []models.AssetInfo, error)
 		GetTokenInfo(tokenID string) (models.AssetInfo, error)
 		GetTokenHolders(tokenID string) ([]models.AssetHolder, error)
-		GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
+		GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, blockLevels []int64, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
 		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 		CreateAssetOperations(models.AssetOperation) error
 	}
@@ -87,7 +87,7 @@ func (r *Repository) GetUnprocessedAssetTxs(tokenID string) (ops []models.Operat
 	return ops, nil
 }
 
-func (r *Repository) GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, limit, offset uint) (count int64, info []models.AssetOperationReport, err error) {
+func (r *Repository) GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, blockLevels []int64, limit, offset uint) (count int64, info []models.AssetOperationReport, err error) {
 
 	db := r.db.Select("*").Table(assetOperations)
 
@@ -107,6 +107,10 @@ func (r *Repository) GetAssetOperations(tokenIDs, operationTypes, accountIDs []s
 
 	if len(accountIDs) > 0 {
 		db = db.Where("asset_operations.sender IN (?) OR asset_operations.receiver IN (?)", accountIDs, accountIDs)
+	}
+
+	if len(blockLevels) > 0 {
+		db = db.Where("asset_operations.block_level IN (?)", blockLevels)
 	}
 
 	err = db.Count(&count).Error

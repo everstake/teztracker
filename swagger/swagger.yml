@@ -2708,6 +2708,12 @@ paths:
           items:
             type: string
           enum: [transfer, other]
+        - in: query
+          collectionFormat: multi
+          name: block_level
+          type: array
+          items:
+            type: integer
       responses:
         '200':
           description: Query compatibility endpoint for token operations

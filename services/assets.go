@@ -57,9 +57,9 @@ func (t *TezTracker) TokenTotalSupply(assetID string) (totalSupply int64, err er
 	return totalSupply, nil
 }
 
-func (t *TezTracker) TokenOperations(assetIDs, operationsTypes, accountIDs []string, limits Limiter) (count int64, operations []models.AssetOperationReport, err error) {
+func (t *TezTracker) TokenOperations(assetIDs, operationsTypes, accountIDs []string, blockLevels []int64, limits Limiter) (count int64, operations []models.AssetOperationReport, err error) {
 
-	count, operations, err = t.repoProvider.GetAssets().GetAssetOperations(assetIDs, operationsTypes, accountIDs, limits.Limit(), limits.Offset())
+	count, operations, err = t.repoProvider.GetAssets().GetAssetOperations(assetIDs, operationsTypes, accountIDs, blockLevels, limits.Limit(), limits.Offset())
 	if err != nil {
 		return 0, operations, err
 	}

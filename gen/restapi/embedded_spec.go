@@ -137,6 +137,15 @@ func init() {
             },
             "name": "type",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi",
+            "name": "block_level",
+            "in": "query"
           }
         ],
         "responses": {
@@ -5814,6 +5823,15 @@ func init() {
               "type": "string"
             },
             "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi",
+            "name": "block_level",
             "in": "query"
           }
         ],

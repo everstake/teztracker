@@ -6,6 +6,7 @@ package assets
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -54,6 +55,11 @@ type GetAssetOperationsListParams struct {
 	*/
 	AssetID []string
 	/*
+	  In: query
+	  Collection Format: multi
+	*/
+	BlockLevel []int64
+	/*
 	  Maximum: 300
 	  Minimum: 1
 	  In: query
@@ -95,6 +101,11 @@ func (o *GetAssetOperationsListParams) BindRequest(r *http.Request, route *middl
 
 	qAssetID, qhkAssetID, _ := qs.GetOK("asset_id")
 	if err := o.bindAssetID(qAssetID, qhkAssetID, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qBlockLevel, qhkBlockLevel, _ := qs.GetOK("block_level")
+	if err := o.bindBlockLevel(qBlockLevel, qhkBlockLevel, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -176,6 +187,33 @@ func (o *GetAssetOperationsListParams) bindAssetID(rawData []string, hasKey bool
 	}
 
 	o.AssetID = assetIDIR
+
+	return nil
+}
+
+// bindBlockLevel binds and validates array parameter BlockLevel from query.
+//
+// Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
+func (o *GetAssetOperationsListParams) bindBlockLevel(rawData []string, hasKey bool, formats strfmt.Registry) error {
+
+	// CollectionFormat: multi
+	blockLevelIC := rawData
+
+	if len(blockLevelIC) == 0 {
+		return nil
+	}
+
+	var blockLevelIR []int64
+	for i, blockLevelIV := range blockLevelIC {
+		blockLevelI, err := swag.ConvertInt64(blockLevelIV)
+		if err != nil {
+			return errors.InvalidType(fmt.Sprintf("%s.%v", "block_level", i), "query", "int64", blockLevelI)
+		}
+
+		blockLevelIR = append(blockLevelIR, blockLevelI)
+	}
+
+	o.BlockLevel = blockLevelIR
 
 	return nil
 }

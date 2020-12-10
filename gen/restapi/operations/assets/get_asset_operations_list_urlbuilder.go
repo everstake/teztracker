@@ -18,11 +18,12 @@ import (
 type GetAssetOperationsListURL struct {
 	Network string
 
-	AccountID []string
-	AssetID   []string
-	Limit     *int64
-	Offset    *int64
-	Type      []string
+	AccountID  []string
+	AssetID    []string
+	BlockLevel []int64
+	Limit      *int64
+	Offset     *int64
+	Type       []string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -94,6 +95,20 @@ func (o *GetAssetOperationsListURL) Build() (*url.URL, error) {
 		if qsv != "" {
 			qs.Set("asset_id", qsv)
 		}
+	}
+
+	var blockLevelIR []string
+	for _, blockLevelI := range o.BlockLevel {
+		blockLevelIS := swag.FormatInt64(blockLevelI)
+		if blockLevelIS != "" {
+			blockLevelIR = append(blockLevelIR, blockLevelIS)
+		}
+	}
+
+	blockLevel := swag.JoinByFormat(blockLevelIR, "multi")
+
+	for _, qsv := range blockLevel {
+		qs.Add("block_level", qsv)
 	}
 
 	var limitQ string
