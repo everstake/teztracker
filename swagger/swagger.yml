@@ -3803,6 +3803,8 @@ definitions:
     properties:
       name:
         type: string
+      ticker:
+        type: string
       account_id:
         type: string
       manager:

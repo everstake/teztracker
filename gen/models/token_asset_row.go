@@ -37,6 +37,9 @@ type TokenAssetRow struct {
 	// Required: true
 	Precision *int64 `json:"precision"`
 
+	// ticker
+	Ticker string `json:"ticker,omitempty"`
+
 	// total supply
 	TotalSupply int64 `json:"total_supply,omitempty"`
 }

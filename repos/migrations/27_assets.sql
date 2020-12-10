@@ -22,8 +22,19 @@ FROM tezos.registered_tokens
 
 
 CREATE UNIQUE index registered_tokens_account_id_uindex
-	ON registered_tokens (account_id);
+	ON tezos.registered_tokens (account_id);
+
+alter table tezos.asset_operations
+	add block_level int default 0 not null;
 
 CREATE INDEX asset_operations_token_id_index
-	ON asset_operations (token_id);
+	ON tezos.asset_operations (token_id);
 
+create index asset_operations_timestamp_index
+	on tezos.asset_operations (timestamp desc);
+
+alter table tezos.asset_operations
+	add block_level int default 0 not null;
+
+create index asset_operations_block_level_index
+	on tezos.asset_operations (block_level desc);

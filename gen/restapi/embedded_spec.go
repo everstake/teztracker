@@ -5652,6 +5652,9 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "ticker": {
+          "type": "string"
+        },
         "total_supply": {
           "type": "integer",
           "format": "int64"
@@ -11358,6 +11361,9 @@ func init() {
         "precision": {
           "type": "integer",
           "format": "int64"
+        },
+        "ticker": {
+          "type": "string"
         },
         "total_supply": {
           "type": "integer",

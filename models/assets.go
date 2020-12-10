@@ -14,6 +14,7 @@ type AssetInfo struct {
 	ID           uint64
 	Name         string
 	Balance      int64
+	Ticker       string
 	Source       string
 	ContractType string
 	AccountId    string

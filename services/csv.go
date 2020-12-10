@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jszwec/csvutil"
-	"math"
 )
 
 const (
@@ -27,16 +26,20 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 	}
 
 	var bakingReq, endorsingReq, assetsReq bool
-	//For baker check that baking\endorsing operations required
-	if isBaker {
-		for i := range operations {
+
+	for i := range operations {
+
+		if operations[i] == "assets" {
+			assetsReq = true
+		}
+
+		//For baker check that baking\endorsing\assets operations required
+		if isBaker {
 			switch operations[i] {
 			case "baking":
 				bakingReq = true
 			case "endorsement":
 				endorsingReq = true
-			case "assets":
-				assetsReq = true
 			}
 
 		}
@@ -76,13 +79,11 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 
 	var j int
 	var record interface{}
-	precisionMultiplier := math.Pow(10, Precision)
+
 	for i := 0; i < len(report); {
 
 		//Merge sort
 		if j < len(bakingReport) && report[i].BlockLevel <= bakingReport[j].BlockLevel {
-			//Formatting
-			bakingReport[j].Reward = bakingReport[j].Reward / precisionMultiplier
 			record = bakingReport[j]
 			j++
 		} else {
@@ -90,11 +91,6 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 			if report[i].OperationGroupHash.Valid {
 				report[i].Link = fmt.Sprintf(frontHost, report[i].OperationGroupHash.String)
 			}
-
-			//Formatting
-			report[i].Fee = report[i].Fee / precisionMultiplier
-			report[i].Reward = report[i].Reward / precisionMultiplier
-			report[i].Amount = report[i].Amount / precisionMultiplier
 
 			report[i].In = report[i].Amount
 			if report[i].Source == accountID {

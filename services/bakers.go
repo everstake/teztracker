@@ -6,7 +6,6 @@ import (
 
 const (
 	PreservedCycles            = 5
-	Precision                  = 6
 	XTZ                        = 1000000
 	BlockSecurityDeposit       = 512 * XTZ
 	EndorsementSecurityDeposit = 64 * XTZ

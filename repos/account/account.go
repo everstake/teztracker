@@ -218,7 +218,7 @@ func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, 
 }
 
 func (r *Repository) GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
-	columns := []string{"operations.block_level", "timestamp", "operations.kind", "operations.operation_group_hash", "'XTZ' coin", "amount", "operations.status", "operations.source", "destination", "0 loss", "fee"}
+	columns := []string{"operations.block_level", "timestamp", "operations.kind", "operations.operation_group_hash", "'XTZ' coin", "amount :: decimal / 10 ^ 6 amount", "operations.status", "operations.source", "destination", "0 loss", "fee :: decimal / 10 ^ 6 fee"}
 
 	db := r.db
 	req := r.db.Select(columns).
@@ -237,7 +237,7 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 		subQ := req.Select(columns).Joins("left join tezos.balance_updates bu on (operations.operation_group_hash = bu.operation_group_hash and category = 'rewards')").SubQuery()
 
 		missedEndorsementsSubQ := r.db.
-			Select("baker_endorsements.level block_level, timestamp, 'endorsement' kind,'' operation_group_hash, 'XTZ' coin, 0 amount, '' status, '' source, '' destination, case when missed = 1 then 1.25 ELSE 0 END loss, 0 fee, reward").
+			Select("baker_endorsements.level block_level, timestamp, 'endorsement' kind,'' operation_group_hash, 'XTZ' coin, 0 amount, '' status, '' source, '' destination, case when missed = 1 then 1.25 ELSE 0 END loss, 0 fee, reward :: decimal / 10 ^ 6 reward").
 			Table("tezos.baker_endorsements").
 			Joins("left join tezos.blocks on blocks.level+1 = baker_endorsements.level").
 			Where("delegate = ?", accountID).
@@ -254,7 +254,7 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 		subQ := db.SubQuery()
 		assetsSubQ := r.db.
 			//Todo remove 0 block_level after migration
-			Select("0 block_level, timestamp, type kind, operation_group_hash, CASE WHEN (name = 'Staker DAO') THEN 'STKR' ELSE name END, amount, 'applied' status, sender source, receiver destination, 0 loss,0 fee").
+			Select("block_level, timestamp, type kind, operation_group_hash, ticker coin, amount :: decimal / (10 ^ scale) amount, 'applied' status, sender source, receiver destination, 0 loss, 0 fee").
 			Table("tezos.asset_operations").
 			Joins("left join tezos.registered_tokens on token_id = id").
 			Where("sender = ? OR receiver = ?", accountID, accountID).
@@ -275,7 +275,7 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 
 func (r *Repository) GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
 
-	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward, case when missed = 1 then 40 ELSE 0 END loss, 0 fee, '' status").
+	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward :: decimal / 10 ^ 6 reward, case when missed = 1 then 40 ELSE 0 END loss, 0 fee, '' status").
 		Table("tezos.baker_bakings").
 		Joins("left join tezos.blocks on blocks.level = baker_bakings.level").
 		Where("delegate = ?", accountID).

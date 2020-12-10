@@ -20,8 +20,9 @@ func AssetInfo(asi models.AssetInfo) *genModels.TokenAssetRow {
 		CreatedAt:   asi.Timestamp.Unix(),
 		Manager:     asi.Source,
 		Name:        asi.Name,
+		Ticker:      asi.Ticker,
 		Precision:   &asi.Scale,
-		TotalSupply: 0,
+		TotalSupply: asi.Balance,
 	}
 }
 
