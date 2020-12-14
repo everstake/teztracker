@@ -45,7 +45,7 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 		}
 	}
 
-	report, err := t.repoProvider.GetAccount().GetReport(accountID, models.AccountReportFilter{
+	report, err := t.repoProvider.GetAccount().GetReport(accountID, models.ReportFilter{
 		From:         from,
 		To:           to,
 		Operations:   operations,
@@ -57,14 +57,13 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 		return nil, err
 	}
 
-	var bakingReport []models.BakerReport
+	var bakingReport []models.ExtendReport
 	if bakingReq {
-		bakingReport, err = t.repoProvider.GetAccount().GetBakingReport(accountID, models.AccountReportFilter{
-			From:         from,
-			To:           to,
-			Operations:   operations,
-			EndorsingReq: isBaker,
-			Limit:        limit,
+		bakingReport, err = t.repoProvider.GetAccount().GetBakingReport(accountID, models.ReportFilter{
+			From:       from,
+			To:         to,
+			Operations: operations,
+			Limit:      limit,
 		})
 		if err != nil {
 			return nil, err
@@ -99,12 +98,52 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 
 			record = report[i]
 			if !isBaker {
-				record = report[i].AccountReport
+				record = report[i].OperationReport
 			}
 			i++
 		}
 
 		err = encoder.Encode(record)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	writer.Flush()
+
+	return buf.Bytes(), nil
+}
+
+func (t *TezTracker) GetAssetReport(assetID string, from, to int64, operations []string) (resp []byte, err error) {
+	repo := t.repoProvider.GetAssets()
+	token, err := repo.GetTokenInfo(assetID)
+	if err != nil {
+		return nil, err
+	}
+
+	report, err := repo.GetAssetReport(token.ID, models.ReportFilter{
+		From:  from,
+		To:    to,
+		Limit: limit,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var buf bytes.Buffer
+
+	writer := csv.NewWriter(&buf)
+	writer.UseCRLF = true
+	writer.Comma = ';'
+
+	encoder := csvutil.NewEncoder(writer)
+
+	for i := range report {
+		if report[i].OperationGroupHash.Valid {
+			report[i].Link = fmt.Sprintf(frontHost, report[i].OperationGroupHash.String)
+		}
+
+		err = encoder.Encode(report[i])
 		if err != nil {
 			return nil, err
 		}

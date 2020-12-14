@@ -17,8 +17,9 @@ type (
 		GetTokenInfo(tokenID string) (models.AssetInfo, error)
 		GetTokenHolders(tokenID string) ([]models.AssetHolder, error)
 		GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, blockLevels []int64, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
-		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
+		GetAssetReport(tokenID uint64, params models.ReportFilter) ([]models.AssetReport, error)
 		GetAccountAssetsBalances(hexAddress string) (holders []models.AccountAssetBalance, err error)
+		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 		CreateAssetOperations(models.AssetOperation) error
 	}
 )
@@ -142,4 +143,22 @@ func (r *Repository) GetAssetOperations(tokenIDs, operationTypes, accountIDs []s
 	}
 
 	return count, info, nil
+}
+
+func (r *Repository) GetAssetReport(tokenID uint64, params models.ReportFilter) (report []models.AssetReport, err error) {
+	err = r.db.
+		Select("block_level, timestamp, type kind, operation_group_hash, ticker coin, amount :: decimal / (10 ^ scale) amount, 'applied' status, sender source, receiver destination, 0 fee").
+		Table("tezos.asset_operations").
+		Joins("left join tezos.registered_tokens on token_id = id").
+		Where("token_id = ?", tokenID).
+		Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+		Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+		Limit(params.Limit).
+		Order("timestamp desc").
+		Find(&report).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return report, nil
 }

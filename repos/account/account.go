@@ -25,8 +25,8 @@ type (
 		RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error)
 		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
-		GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
-		GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
+		GetReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error)
+		GetBakingReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error)
 	}
 )
 
@@ -217,7 +217,7 @@ func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, 
 	return delegators, nil
 }
 
-func (r *Repository) GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
+func (r *Repository) GetReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error) {
 	columns := []string{"operations.block_level", "timestamp", "operations.kind", "operations.operation_group_hash", "'XTZ' coin", "amount :: decimal / 10 ^ 6 amount", "operations.status", "operations.source", "destination", "0 loss", "fee :: decimal / 10 ^ 6 fee"}
 
 	db := r.db
@@ -253,8 +253,7 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 
 		subQ := db.SubQuery()
 		assetsSubQ := r.db.
-			//Todo remove 0 block_level after migration
-			Select("block_level, timestamp, type kind, operation_group_hash, ticker coin, amount :: decimal / (10 ^ scale) amount, 'applied' status, sender source, receiver destination, 0 loss, 0 fee").
+			Select("block_level, timestamp, type kind, operation_group_hash, ticker coin, amount :: decimal / (10 ^ scale) amount, 'applied' status, sender source, receiver destination, 0 fee").
 			Table("tezos.asset_operations").
 			Joins("left join tezos.registered_tokens on token_id = id").
 			Where("sender = ? OR receiver = ?", accountID, accountID).
@@ -273,7 +272,7 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 	return report, nil
 }
 
-func (r *Repository) GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
+func (r *Repository) GetBakingReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error) {
 
 	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward :: decimal / 10 ^ 6 reward, case when missed = 1 then 40 ELSE 0 END loss, 0 fee, '' status").
 		Table("tezos.baker_bakings").
