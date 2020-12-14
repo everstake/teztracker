@@ -1798,6 +1798,59 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/{accountId}/assets": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountAssetsBalancesList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountAssetBalanceRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/{accountId}/delegators": {
       "get": {
         "produces": [
@@ -4192,6 +4245,20 @@ func init() {
     }
   },
   "definitions": {
+    "AccountAssetBalanceRow": {
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "token_info": {
+          "$ref": "#/definitions/TokenAssetRow"
+        }
+      }
+    },
     "AccountBakingRow": {
       "required": [
         "avgPriority",
@@ -5636,16 +5703,11 @@ func init() {
     },
     "TokenAssetRow": {
       "required": [
-        "balance",
         "precision"
       ],
       "properties": {
         "account_id": {
           "type": "string"
-        },
-        "balance": {
-          "type": "integer",
-          "format": "int64"
         },
         "created_at": {
           "type": "integer",
@@ -7501,6 +7563,59 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/{accountId}/assets": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountAssetsBalancesList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountAssetBalanceRow"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/{accountId}/delegators": {
       "get": {
         "produces": [
@@ -9910,6 +10025,20 @@ func init() {
     }
   },
   "definitions": {
+    "AccountAssetBalanceRow": {
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "token_info": {
+          "$ref": "#/definitions/TokenAssetRow"
+        }
+      }
+    },
     "AccountBakingRow": {
       "required": [
         "avgPriority",
@@ -11355,16 +11484,11 @@ func init() {
     },
     "TokenAssetRow": {
       "required": [
-        "balance",
         "precision"
       ],
       "properties": {
         "account_id": {
           "type": "string"
-        },
-        "balance": {
-          "type": "integer",
-          "format": "int64"
         },
         "created_at": {
           "type": "integer",

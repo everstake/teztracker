@@ -813,6 +813,42 @@ paths:
           description: Internal error
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/{accountId}/assets':
+    get:
+      operationId: getAccountAssetsBalancesList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account
+          schema:
+            type: array
+            items:
+              $ref: >-
+                #/definitions/AccountAssetBalanceRow
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/accounts/{accountId}/delegators':
     get:
       operationId: getAccountDelegators
@@ -3815,9 +3851,6 @@ definitions:
         type: string
       manager:
         type: string
-      balance:
-        type: integer
-        format: int64
       precision:
         type: integer
         format: int64
@@ -3828,7 +3861,6 @@ definitions:
         type: integer
         format: int64
     required:
-      - balance
       - precision
   AssetOperation:
     properties:
@@ -3860,6 +3892,15 @@ definitions:
       - fee
       - gas_limit
       - storage_limit
+  AccountAssetBalanceRow:
+    properties:
+      account_id:
+        type: string
+      balance:
+        type: integer
+        format: int64
+      token_info:
+        $ref: '#/definitions/TokenAssetRow'
   TokenHolderRow:
     properties:
       account_id:

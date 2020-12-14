@@ -1,6 +1,7 @@
 package assets
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
@@ -17,6 +18,7 @@ type (
 		GetTokenHolders(tokenID string) ([]models.AssetHolder, error)
 		GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, blockLevels []int64, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
 		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
+		GetAccountAssetsBalances(hexAddress string) (holders []models.AccountAssetBalance, err error)
 		CreateAssetOperations(models.AssetOperation) error
 	}
 )
@@ -69,6 +71,19 @@ func (r *Repository) GetTokenHolders(tokenID string) (holders []models.AssetHold
 		Table("tezos.big_map_contents").
 		Joins("LEFT JOIN tezos.originated_account_maps oam on oam.big_map_id = big_map_contents.big_map_id").
 		Where("account_id = ?", tokenID).
+		Where("value is not null").
+		Find(&holders).Error
+	return holders, err
+}
+
+func (r *Repository) GetAccountAssetsBalances(hexAddress string) (holders []models.AccountAssetBalance, err error) {
+
+	err = r.db.
+		Select("key as address, value balance, asset_info.*").
+		Table("tezos.big_map_contents").
+		Joins("LEFT JOIN tezos.originated_account_maps oam on oam.big_map_id = big_map_contents.big_map_id").
+		Joins("LEFT JOIN tezos.asset_info on asset_info.account_id = oam.account_id").
+		Where("key like ?", fmt.Sprint("%", hexAddress, "%")).
 		Where("value is not null").
 		Find(&holders).Error
 	return holders, err

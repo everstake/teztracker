@@ -20,10 +20,6 @@ type TokenAssetRow struct {
 	// account id
 	AccountID string `json:"account_id,omitempty"`
 
-	// balance
-	// Required: true
-	Balance *int64 `json:"balance"`
-
 	// created at
 	CreatedAt int64 `json:"created_at,omitempty"`
 
@@ -48,10 +44,6 @@ type TokenAssetRow struct {
 func (m *TokenAssetRow) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateBalance(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validatePrecision(formats); err != nil {
 		res = append(res, err)
 	}
@@ -59,15 +51,6 @@ func (m *TokenAssetRow) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *TokenAssetRow) validateBalance(formats strfmt.Registry) error {
-
-	if err := validate.Required("balance", "body", m.Balance); err != nil {
-		return err
-	}
-
 	return nil
 }
 

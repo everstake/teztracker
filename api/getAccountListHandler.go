@@ -6,7 +6,7 @@ import (
 	"github.com/everstake/teztracker/repos"
 	"github.com/everstake/teztracker/services"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -32,7 +32,7 @@ func (h *getAccountListHandler) Handle(params accounts.GetAccountsListParams) mi
 	}
 	accs, count, err := service.AccountList(before, limiter)
 	if err != nil {
-		logrus.Errorf("failed to get accounts: %s", err.Error())
+		log.Errorf("failed to get accounts: %s", err.Error())
 		return accounts.NewGetAccountsListNotFound()
 	}
 	return accounts.NewGetAccountsListOK().WithPayload(render.Accounts(accs)).WithXTotalCount(count)
@@ -60,7 +60,7 @@ func (h *getAccountTopBalanceListHandler) Handle(params accounts.GetAccountsTopB
 	}
 	accs, count, err := service.AccountTopBalanceList(before, limiter)
 	if err != nil {
-		logrus.Errorf("failed to get accounts: %s", err.Error())
+		log.Errorf("failed to get accounts: %s", err.Error())
 		return accounts.NewGetAccountsTopBalanceListNotFound()
 	}
 	return accounts.NewGetAccountsTopBalanceListOK().WithPayload(render.Accounts(accs)).WithXTotalCount(count)
@@ -95,9 +95,33 @@ func (h *getAccountBalanceListHandler) Handle(params accounts.GetAccountBalanceL
 
 	accs, err := service.GetAccountBalanceHistory(params.AccountID, from, to)
 	if err != nil {
-		logrus.Errorf("failed to get accounts: %s", err.Error())
+		log.Errorf("failed to get accounts: %s", err.Error())
 		return accounts.NewGetAccountsListNotFound()
 	}
 
 	return accounts.NewGetAccountBalanceListOK().WithPayload(render.AccountBalances(accs))
+}
+
+type getAccountAssetsBalancesHandler struct {
+	provider DbProvider
+}
+
+func (h *getAccountAssetsBalancesHandler) Handle(params accounts.GetAccountAssetsBalancesListParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetAccountAssetsBalancesListBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetAccountAssetsBalancesListBadRequest()
+	}
+	service := services.New(repos.New(db), net)
+
+	balances, err := service.GetAccountAssetsBalance(params.AccountID)
+	if err != nil {
+		log.Errorf("failed to get account assets balances: %s", err.Error())
+		return accounts.NewGetAccountAssetsBalancesListInternalServerError()
+	}
+
+	return accounts.NewGetAccountAssetsBalancesListOK().WithPayload(render.AccountAssetBalances(balances))
 }

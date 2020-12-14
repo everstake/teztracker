@@ -16,7 +16,6 @@ func AssetsList(ash []models.AssetInfo) []*genModels.TokenAssetRow {
 func AssetInfo(asi models.AssetInfo) *genModels.TokenAssetRow {
 	return &genModels.TokenAssetRow{
 		AccountID:   asi.AccountId,
-		Balance:     &asi.Balance,
 		CreatedAt:   asi.Timestamp.Unix(),
 		Manager:     asi.Source,
 		Name:        asi.Name,
@@ -39,6 +38,28 @@ func AssetHolder(acb models.AssetHolder) *genModels.TokenHolderRow {
 	return &genModels.TokenHolderRow{
 		AccountID: string(acb.Address),
 		Balance:   &bal,
+	}
+}
+
+func AccountAssetBalances(ash []models.AccountAssetBalance) []*genModels.AccountAssetBalanceRow {
+	asb := make([]*genModels.AccountAssetBalanceRow, len(ash))
+	for i := range ash {
+		asb[i] = AccountAssetBalance(ash[i])
+	}
+	return asb
+}
+
+func AccountAssetBalance(acb models.AccountAssetBalance) *genModels.AccountAssetBalanceRow {
+	scale := acb.AssetInfo.Scale
+	return &genModels.AccountAssetBalanceRow{
+		AccountID: string(acb.Address),
+		Balance:   int64(acb.AssetHolder.Balance),
+		TokenInfo: &genModels.TokenAssetRow{
+			AccountID: acb.AssetInfo.AccountId,
+			Name:      acb.AssetInfo.Name,
+			Precision: &scale,
+			Ticker:    acb.AssetInfo.Ticker,
+		},
 	}
 }
 

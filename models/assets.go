@@ -122,6 +122,7 @@ func (v *HolderBalance) Scan(value interface{}) (err error) {
 			return fmt.Errorf("Wrong pair")
 		}
 
+		//TODO check position of int value
 		//Int value on Michelson pair
 		bal = arr[1]
 	default:
