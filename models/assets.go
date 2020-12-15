@@ -34,6 +34,10 @@ func (v *HolderAddress) Scan(value interface{}) (err error) {
 		return fmt.Errorf("invalid type")
 	}
 
+	if len(data) < 2 {
+		return fmt.Errorf("unknown format")
+	}
+
 	bt, err := hex.DecodeString(data[2:])
 	if err != nil {
 		return err
@@ -91,9 +95,9 @@ func (v *HolderBalance) Scan(value interface{}) (err error) {
 	}
 
 	var bal string
-	switch data[0] {
+	switch data[0:2] {
 	// bytes 0x
-	case '0':
+	case "0x":
 		bt, err := hex.DecodeString(data[2:])
 		if err != nil {
 			return err
@@ -116,15 +120,18 @@ func (v *HolderBalance) Scan(value interface{}) (err error) {
 		}
 
 		bal = p.Args[0].Int.String()
-	case 'P':
+	case "Pa":
 		arr := strings.Split(data, " ")
-		if len(arr) < 2 {
+		if len(arr) < 3 {
 			return fmt.Errorf("Wrong pair")
 		}
 
-		//TODO check position of int value
-		//Int value on Michelson pair
+		//Int value on Michelin pair
 		bal = arr[1]
+		//On some contracts can be on second position
+		if strings.Contains(arr[1], "{}") {
+			bal = arr[2]
+		}
 	default:
 		bal = data
 	}

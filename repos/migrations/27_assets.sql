@@ -38,3 +38,7 @@ alter table tezos.asset_operations
 
 create index asset_operations_block_level_index
 	on tezos.asset_operations (block_level desc);
+
+create index big_maps_key_type_index
+	on tezos.big_maps (key_type);
+
