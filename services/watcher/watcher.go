@@ -3,6 +3,8 @@ package watcher
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	genModels "github.com/everstake/teztracker/gen/models"
 	"github.com/everstake/teztracker/services"
 	"github.com/everstake/teztracker/services/watcher/tasks"
 	"github.com/everstake/teztracker/ws"
@@ -21,9 +23,16 @@ type Watcher struct {
 	hub   *ws.Hub
 	l     *pq.Listener
 	tasks map[models.EventType]tasks.EventExecutor
+
+	provider services.Provider
+	mail     MailPusher
 }
 
-func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Watcher {
+type MailPusher interface {
+	Send(email string, kind string, values map[string]string) error
+}
+
+func NewWatcher(connection string, hub *ws.Hub, provider services.Provider, mail MailPusher) *Watcher {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -50,6 +59,8 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Wat
 			models.EventTypeOperation:      tasks.NewOperationTask(provider),
 			models.EventTypeAccountCreated: tasks.NewAccountTask(provider),
 		},
+		mail:     mail,
+		provider: provider,
 	}
 }
 
@@ -81,19 +92,69 @@ func (w Watcher) Start() {
 				continue
 			}
 
-			channels, wsData, err := handler.GetEventData(ev.Data)
+			channels, data, err := handler.GetEventData(ev.Data)
 			if err != nil {
 				log.Errorf("GetEventData error: %s", err)
 				continue
 			}
 
 			//Publish to all channels
-			for i := range channels {
+			for i, event := range channels {
 				w.hub.Broadcast(models.BasicMessage{
 					Event: channels[i],
-					Data:  wsData,
+					Data:  data,
 				})
+
+				if event == models.EventTypeOperation {
+					err = w.pushOperationToMail(data)
+					if err != nil {
+						log.Errorf("pushOperationToMail error: %s", err)
+					}
+				}
 			}
 		}
 	}
+}
+
+func (w Watcher) pushOperationToMail(operationData interface{}) error {
+	operation, ok := operationData.(*genModels.OperationsRow)
+	if !ok {
+		return fmt.Errorf("invalid format of operations data")
+	}
+	if operation.Kind == nil {
+		return nil
+	}
+	var addresses []string
+	if *operation.Kind == "delegation" {
+		addresses = append(addresses, operation.Delegate, operation.Source)
+	}
+	if *operation.Kind == "transaction" {
+		addresses = append(addresses, operation.Source, operation.Destination)
+	}
+	if len(addresses) == 0 {
+		return nil
+	}
+	userProfileRepo := w.provider.GetUserProfile()
+	users, err := userProfileRepo.GetUsersAndAddresses(addresses)
+	if err != nil {
+		return fmt.Errorf("userProfileRepo.GetUsersByAddresses: %s", err.Error())
+	}
+	for _, user := range users {
+		if user.Email == "" {
+			continue
+		}
+		switch *operation.Kind {
+		case "delegation":
+			if !user.DelegationsEnabled {
+				continue
+			}
+		case "transaction":
+			if !user.TransfersEnabled {
+				continue
+			}
+		}
+	}
+	// todo
+	return nil
+
 }

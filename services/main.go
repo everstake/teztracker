@@ -17,6 +17,7 @@ import (
 	"github.com/everstake/teztracker/repos/operation_groups"
 	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/snapshots"
+	"github.com/everstake/teztracker/repos/user_profile"
 	"github.com/everstake/teztracker/repos/voting_periods"
 )
 
@@ -47,6 +48,7 @@ type (
 		GetVotingPeriod() voting_periods.Repo
 		GetChart() chart.Repo
 		GetAssets() assets.Repo
+		GetUserProfile() user_profile.Repo
 	}
 
 	Limiter interface {

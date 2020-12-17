@@ -28,6 +28,7 @@ import (
 	"github.com/everstake/teztracker/gen/restapi/operations/mempool"
 	"github.com/everstake/teztracker/gen/restapi/operations/operation_groups"
 	"github.com/everstake/teztracker/gen/restapi/operations/operations_list"
+	"github.com/everstake/teztracker/gen/restapi/operations/profile"
 	"github.com/everstake/teztracker/gen/restapi/operations/voting"
 	"github.com/everstake/teztracker/gen/restapi/operations/w_s"
 )
@@ -54,6 +55,18 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		WsConnectToWSHandler: w_s.ConnectToWSHandlerFunc(func(params w_s.ConnectToWSParams) middleware.Responder {
 			return middleware.NotImplemented("operation WsConnectToWS has not yet been implemented")
+		}),
+		ProfileCreateOrUpdateNoteHandler: profile.CreateOrUpdateNoteHandlerFunc(func(params profile.CreateOrUpdateNoteParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileCreateOrUpdateNote has not yet been implemented")
+		}),
+		ProfileCreateOrUpdateUserAddressHandler: profile.CreateOrUpdateUserAddressHandlerFunc(func(params profile.CreateOrUpdateUserAddressParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileCreateOrUpdateUserAddress has not yet been implemented")
+		}),
+		ProfileDeleteUserAddressHandler: profile.DeleteUserAddressHandlerFunc(func(params profile.DeleteUserAddressParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileDeleteUserAddress has not yet been implemented")
+		}),
+		ProfileDeleteUserNoteHandler: profile.DeleteUserNoteHandlerFunc(func(params profile.DeleteUserNoteParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileDeleteUserNote has not yet been implemented")
 		}),
 		AccountsGetAccountHandler: accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccount has not yet been implemented")
@@ -220,6 +233,18 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		GetSnapshotsHandler: GetSnapshotsHandlerFunc(func(params GetSnapshotsParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetSnapshots has not yet been implemented")
 		}),
+		ProfileGetUserAddressesHandler: profile.GetUserAddressesHandlerFunc(func(params profile.GetUserAddressesParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileGetUserAddresses has not yet been implemented")
+		}),
+		ProfileGetUserNotesHandler: profile.GetUserNotesHandlerFunc(func(params profile.GetUserNotesParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileGetUserNotes has not yet been implemented")
+		}),
+		ProfileGetUserProfileHandler: profile.GetUserProfileHandlerFunc(func(params profile.GetUserProfileParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileGetUserProfile has not yet been implemented")
+		}),
+		ProfileUpdateProfileHandler: profile.UpdateProfileHandlerFunc(func(params profile.UpdateProfileParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileUpdateProfile has not yet been implemented")
+		}),
 	}
 }
 
@@ -255,6 +280,14 @@ type TezTrackerAPI struct {
 
 	// WsConnectToWSHandler sets the operation handler for the connect to w s operation
 	WsConnectToWSHandler w_s.ConnectToWSHandler
+	// ProfileCreateOrUpdateNoteHandler sets the operation handler for the create or update note operation
+	ProfileCreateOrUpdateNoteHandler profile.CreateOrUpdateNoteHandler
+	// ProfileCreateOrUpdateUserAddressHandler sets the operation handler for the create or update user address operation
+	ProfileCreateOrUpdateUserAddressHandler profile.CreateOrUpdateUserAddressHandler
+	// ProfileDeleteUserAddressHandler sets the operation handler for the delete user address operation
+	ProfileDeleteUserAddressHandler profile.DeleteUserAddressHandler
+	// ProfileDeleteUserNoteHandler sets the operation handler for the delete user note operation
+	ProfileDeleteUserNoteHandler profile.DeleteUserNoteHandler
 	// AccountsGetAccountHandler sets the operation handler for the get account operation
 	AccountsGetAccountHandler accounts.GetAccountHandler
 	// AccountsGetAccountBakedBlocksListHandler sets the operation handler for the get account baked blocks list operation
@@ -365,6 +398,14 @@ type TezTrackerAPI struct {
 	AccountsGetPublicBakersListForSearchHandler accounts.GetPublicBakersListForSearchHandler
 	// GetSnapshotsHandler sets the operation handler for the get snapshots operation
 	GetSnapshotsHandler GetSnapshotsHandler
+	// ProfileGetUserAddressesHandler sets the operation handler for the get user addresses operation
+	ProfileGetUserAddressesHandler profile.GetUserAddressesHandler
+	// ProfileGetUserNotesHandler sets the operation handler for the get user notes operation
+	ProfileGetUserNotesHandler profile.GetUserNotesHandler
+	// ProfileGetUserProfileHandler sets the operation handler for the get user profile operation
+	ProfileGetUserProfileHandler profile.GetUserProfileHandler
+	// ProfileUpdateProfileHandler sets the operation handler for the update profile operation
+	ProfileUpdateProfileHandler profile.UpdateProfileHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -434,6 +475,22 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.WsConnectToWSHandler == nil {
 		unregistered = append(unregistered, "w_s.ConnectToWSHandler")
+	}
+
+	if o.ProfileCreateOrUpdateNoteHandler == nil {
+		unregistered = append(unregistered, "profile.CreateOrUpdateNoteHandler")
+	}
+
+	if o.ProfileCreateOrUpdateUserAddressHandler == nil {
+		unregistered = append(unregistered, "profile.CreateOrUpdateUserAddressHandler")
+	}
+
+	if o.ProfileDeleteUserAddressHandler == nil {
+		unregistered = append(unregistered, "profile.DeleteUserAddressHandler")
+	}
+
+	if o.ProfileDeleteUserNoteHandler == nil {
+		unregistered = append(unregistered, "profile.DeleteUserNoteHandler")
 	}
 
 	if o.AccountsGetAccountHandler == nil {
@@ -656,6 +713,22 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "GetSnapshotsHandler")
 	}
 
+	if o.ProfileGetUserAddressesHandler == nil {
+		unregistered = append(unregistered, "profile.GetUserAddressesHandler")
+	}
+
+	if o.ProfileGetUserNotesHandler == nil {
+		unregistered = append(unregistered, "profile.GetUserNotesHandler")
+	}
+
+	if o.ProfileGetUserProfileHandler == nil {
+		unregistered = append(unregistered, "profile.GetUserProfileHandler")
+	}
+
+	if o.ProfileUpdateProfileHandler == nil {
+		unregistered = append(unregistered, "profile.UpdateProfileHandler")
+	}
+
 	if len(unregistered) > 0 {
 		return fmt.Errorf("missing registration: %s", strings.Join(unregistered, ", "))
 	}
@@ -761,6 +834,26 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/{network}/ws"] = w_s.NewConnectToWS(o.context, o.WsConnectToWSHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v2/data/profile/note"] = profile.NewCreateOrUpdateNote(o.context, o.ProfileCreateOrUpdateNoteHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v2/data/profile/address"] = profile.NewCreateOrUpdateUserAddress(o.context, o.ProfileCreateOrUpdateUserAddressHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/v2/data/profile/delete/address"] = profile.NewDeleteUserAddress(o.context, o.ProfileDeleteUserAddressHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/v2/data/profile/delete/note"] = profile.NewDeleteUserNote(o.context, o.ProfileDeleteUserNoteHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1036,6 +1129,26 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/snapshots"] = NewGetSnapshots(o.context, o.GetSnapshotsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/profile/addresses"] = profile.NewGetUserAddresses(o.context, o.ProfileGetUserAddressesHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/profile/notes"] = profile.NewGetUserNotes(o.context, o.ProfileGetUserNotesHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/profile"] = profile.NewGetUserProfile(o.context, o.ProfileGetUserProfileHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v2/data/profile/update"] = profile.NewUpdateProfile(o.context, o.ProfileUpdateProfileHandler)
 
 }
 

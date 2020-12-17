@@ -5,6 +5,7 @@ import (
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos"
+	"github.com/everstake/teztracker/services/mail_provider"
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/services/watcher"
@@ -52,8 +53,10 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 		//Start hub
 		go hub.Run()
 
+		mail := mail_provider.New() // todo
+
 		//TODO make graceful stop
-		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db))
+		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db), mail)
 
 		//Start watcher
 		go w.Start()
