@@ -6,6 +6,7 @@ import (
 )
 
 var AccountNotFoundErr = errors.New("account not found")
+var UserLimitReached = errors.New("limit reached")
 
 type User struct {
 	AccountID string

@@ -14,7 +14,7 @@ import (
 // CreateOrUpdateNoteOKCode is the HTTP code returned for type CreateOrUpdateNoteOK
 const CreateOrUpdateNoteOKCode int = 200
 
-/*CreateOrUpdateNoteOK Updated user profile
+/*CreateOrUpdateNoteOK Updated user note
 
 swagger:response createOrUpdateNoteOK
 */

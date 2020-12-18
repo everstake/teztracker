@@ -59,7 +59,7 @@ func init() {
     },
     "/v2/data/profile/address": {
       "post": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -132,7 +132,7 @@ func init() {
     },
     "/v2/data/profile/delete/address": {
       "delete": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -169,7 +169,7 @@ func init() {
     },
     "/v2/data/profile/delete/note": {
       "delete": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -206,7 +206,7 @@ func init() {
     },
     "/v2/data/profile/note": {
       "post": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -230,7 +230,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Updated user profile"
+            "description": "Updated user note"
           },
           "400": {
             "description": "Bad request"
@@ -260,7 +260,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Get user addresses",
+            "description": "Get user notes",
             "schema": {
               "type": "array",
               "items": {
@@ -279,7 +279,7 @@ func init() {
     },
     "/v2/data/profile/update": {
       "post": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -6049,7 +6049,7 @@ func init() {
     },
     "/v2/data/profile/address": {
       "post": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -6122,7 +6122,7 @@ func init() {
     },
     "/v2/data/profile/delete/address": {
       "delete": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -6159,7 +6159,7 @@ func init() {
     },
     "/v2/data/profile/delete/note": {
       "delete": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -6196,7 +6196,7 @@ func init() {
     },
     "/v2/data/profile/note": {
       "post": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [
@@ -6220,7 +6220,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Updated user profile"
+            "description": "Updated user note"
           },
           "400": {
             "description": "Bad request"
@@ -6250,7 +6250,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Get user addresses",
+            "description": "Get user notes",
             "schema": {
               "type": "array",
               "items": {
@@ -6269,7 +6269,7 @@ func init() {
     },
     "/v2/data/profile/update": {
       "post": {
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "tags": [

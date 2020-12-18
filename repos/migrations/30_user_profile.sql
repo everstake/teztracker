@@ -10,12 +10,15 @@ create table tezos.user_addresses
 (
     account_id          varchar not null,
     delegations_enabled boolean,
-    transfers_enabled   boolean
+    transfers_enabled   boolean,
+    address             varchar
 );
 
-create
-    unique index user_address_uindex
-    on tezos.users (account_id);
+create index user_addresses_account_id_index
+    on tezos.user_addresses (account_id);
+
+create index user_addresses_address_index
+    on tezos.user_addresses (address);
 
 
 create table tezos.user_notes

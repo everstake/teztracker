@@ -22,12 +22,14 @@ type (
 		CreateUserAddress(address models.UserAddress) error
 		DeleteUserAddress(accountID string, address string) error
 		UpdateUserAddress(address models.UserAddress) error
+		GetUserAddressesCount(accountID string) (count uint64, err error)
 
 		UserNotesList(accountID string) (notes []models.UserNote, err error)
 		FindUserNote(accountID string, text string) (note models.UserNote, found bool, err error)
 		CreateUserNote(models.UserNote) error
 		DeleteUserNote(accountID string, text string) error
 		UpdateUserNote(models.UserNote) error
+		GetUserNotesCount(accountID string) (count uint64, err error)
 	}
 )
 
@@ -57,10 +59,10 @@ func (r *Repository) UpdateUser(user models.User) error {
 }
 
 func (r *Repository) GetUsersAndAddresses(addresses []string) (items []models.UserAndAddress, err error) {
-	err = r.db.Select("user_addresses.*", "users.email").
+	err = r.db.Select("user_addresses.*, users.email").
 		Where("user_addresses.address in (?)", addresses).
-		Table("user_addresses").
-		Joins("users ON (user_addresses.account_id = users.account_id)").
+		Table("tezos.user_addresses").
+		Joins("left join tezos.users ON (user_addresses.account_id = users.account_id)").
 		Find(&items).
 		Error
 	return items, err
@@ -101,6 +103,13 @@ func (r *Repository) UpdateUserAddress(address models.UserAddress) error {
 		Where("address = ?", address).Update(&address).Error
 }
 
+func (r *Repository) GetUserAddressesCount(accountID string) (count uint64, err error) {
+	 err = r.db.Model(&models.UserAddress{}).
+	 	Select("count(*)").
+		Where("account_id = ?", accountID).First(&count).Error
+	 return count, err
+}
+
 func (r *Repository) UserNotesList(accountID string) (notes []models.UserNote, err error) {
 	err = r.db.Model(&models.UserAddress{}).Where("account_id = ?", accountID).Find(&notes).Error
 	return notes, err
@@ -129,3 +138,11 @@ func (r *Repository) DeleteUserNote(accountID string, text string) error {
 		Where("account_id = ?", accountID).
 		Where("text = ?", text).Error
 }
+
+func (r *Repository) GetUserNotesCount(accountID string) (count uint64, err error) {
+	err = r.db.Model(&models.UserNote{}).
+		Select("count(*)").
+		Where("account_id = ?", accountID).First(&count).Error
+	return count, err
+}
+

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	genModels "github.com/everstake/teztracker/gen/models"
 	"github.com/everstake/teztracker/services"
+	"github.com/everstake/teztracker/services/mailer"
 	"github.com/everstake/teztracker/services/watcher/tasks"
 	"github.com/everstake/teztracker/ws"
 	"github.com/everstake/teztracker/ws/models"
@@ -125,11 +126,19 @@ func (w Watcher) pushOperationToMail(operationData interface{}) error {
 		return nil
 	}
 	var addresses []string
+	var msgType string
+	msgValues := make(map[string]string)
 	if *operation.Kind == "delegation" {
 		addresses = append(addresses, operation.Delegate, operation.Source)
+		msgValues["delegator"] = operation.Source
+		msgValues["validator"] = operation.Delegate
 	}
 	if *operation.Kind == "transaction" {
+		msgType = mailer.TransferMsg
 		addresses = append(addresses, operation.Source, operation.Destination)
+		msgValues["from"] = operation.Source
+		msgValues["to"] = operation.Destination
+		msgValues["amount"] = fmt.Sprintf("%f", operation.Amount/1e6)
 	}
 	if len(addresses) == 0 {
 		return nil
@@ -137,7 +146,7 @@ func (w Watcher) pushOperationToMail(operationData interface{}) error {
 	userProfileRepo := w.provider.GetUserProfile()
 	users, err := userProfileRepo.GetUsersAndAddresses(addresses)
 	if err != nil {
-		return fmt.Errorf("userProfileRepo.GetUsersByAddresses: %s", err.Error())
+		return fmt.Errorf("userProfileRepo.GetUsersAndAddresses: %s", err.Error())
 	}
 	for _, user := range users {
 		if user.Email == "" {
@@ -148,13 +157,20 @@ func (w Watcher) pushOperationToMail(operationData interface{}) error {
 			if !user.DelegationsEnabled {
 				continue
 			}
+			if msgValues["delegator"] == user.Address {
+				msgType = mailer.DelegatorDelegationMsg
+			} else {
+				msgType = mailer.ValidatorDelegationMsg
+			}
 		case "transaction":
 			if !user.TransfersEnabled {
 				continue
 			}
 		}
+		err = w.mail.Send(user.Email, msgType, msgValues)
+		if err != nil {
+			log.Errorf("Watcher: mail: cant send to %s: %s", user.Email, err.Error())
+		}
 	}
-	// todo
 	return nil
-
 }

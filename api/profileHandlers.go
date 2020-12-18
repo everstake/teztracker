@@ -55,6 +55,8 @@ func (h *updateUserProfileHandler) Handle(params profile.UpdateProfileParams) mi
 		logrus.Errorf("failed get user profile: %s", err.Error())
 		return profile.NewUpdateProfileInternalServerError()
 	}
+
+	user.Email = params.Data.Email
 	err = service.UpdateUser(user)
 	if err != nil {
 		logrus.Errorf("failed update user profile: %s", err.Error())
@@ -116,6 +118,9 @@ func (h *createOrUpdateUserAddressHandler) Handle(params profile.CreateOrUpdateU
 		DelegationsEnabled: params.Data.DelegationsEnabled,
 		TransfersEnabled:   params.Data.TransfersEnabled,
 	})
+	if err == models.UserLimitReached || err == models.AccountNotFoundErr {
+		return profile.NewCreateOrUpdateUserAddressBadRequest()
+	}
 	if err != nil {
 		logrus.Errorf("failed create or update user address: %s", err.Error())
 		return profile.NewCreateOrUpdateUserAddressInternalServerError()
@@ -204,6 +209,9 @@ func (h *createOrUpdateUserNoteHandler) Handle(params profile.CreateOrUpdateNote
 		Text:      params.Data.Text,
 		Alias:     params.Data.Alias,
 	})
+	if err == models.UserLimitReached || err == models.AccountNotFoundErr {
+		return profile.NewCreateOrUpdateNoteBadRequest()
+	}
 	if err != nil {
 		logrus.Errorf("failed get user notes: %s", err.Error())
 		return profile.NewCreateOrUpdateNoteInternalServerError()

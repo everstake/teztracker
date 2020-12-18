@@ -6,6 +6,11 @@ import (
 	"github.com/guregu/null"
 )
 
+const (
+	userAddressesLimit = 50
+	userNotesLimit     = 50
+)
+
 func (t *TezTracker) GetOrCreateUser(account string) (user models.User, err error) {
 	profileRepo := t.repoProvider.GetUserProfile()
 	user, found, err := profileRepo.FindUserByAccount(account)
@@ -45,7 +50,7 @@ func (t *TezTracker) GetUserAddresses(accountID string) (addresses []models.User
 
 func (t *TezTracker) CreateOrUpdateUserAddress(userAddress models.UserAddress) error {
 	userProfileRepo := t.repoProvider.GetUserProfile()
-	_, found, err := userProfileRepo.GetUserAddress(userAddress.AccountID, userAddress.Address)
+	user, found, err := userProfileRepo.GetUserAddress(userAddress.AccountID, userAddress.Address)
 	if err != nil {
 		return fmt.Errorf("GetUserAddress: %s", err.Error())
 	}
@@ -62,6 +67,13 @@ func (t *TezTracker) CreateOrUpdateUserAddress(userAddress models.UserAddress) e
 	})
 	if !accFound {
 		return models.AccountNotFoundErr
+	}
+	count, err := userProfileRepo.GetUserAddressesCount(user.AccountID)
+	if err != nil {
+		return fmt.Errorf("userProfileRepo.GetUserAddressesCount: %s", err.Error())
+	}
+	if count == userAddressesLimit {
+		return models.UserLimitReached
 	}
 	err = userProfileRepo.CreateUserAddress(userAddress)
 	if err != nil {
@@ -80,7 +92,7 @@ func (t *TezTracker) GetUserNotes(accountID string) (notes []models.UserNote, er
 
 func (t *TezTracker) CreateOrUpdateUserNote(note models.UserNote) error {
 	userProfileRepo := t.repoProvider.GetUserProfile()
-	_, found, err := userProfileRepo.FindUserNote(note.AccountID, note.Text)
+	user, found, err := userProfileRepo.FindUserNote(note.AccountID, note.Text)
 	if err != nil {
 		return fmt.Errorf("FindUserNote: %s", err.Error())
 	}
@@ -90,6 +102,13 @@ func (t *TezTracker) CreateOrUpdateUserNote(note models.UserNote) error {
 			return fmt.Errorf("UpdateUserNote: %s", err.Error())
 		}
 		return nil
+	}
+	count, err := userProfileRepo.GetUserNotesCount(user.AccountID)
+	if err != nil {
+		return fmt.Errorf("userProfileRepo.GetUserNotesCount: %s", err.Error())
+	}
+	if count == userNotesLimit {
+		return models.UserLimitReached
 	}
 	err = userProfileRepo.CreateUserNote(note)
 	if err != nil {

@@ -16,7 +16,7 @@ import (
 // GetUserNotesOKCode is the HTTP code returned for type GetUserNotesOK
 const GetUserNotesOKCode int = 200
 
-/*GetUserNotesOK Get user addresses
+/*GetUserNotesOK Get user notes
 
 swagger:response getUserNotesOK
 */

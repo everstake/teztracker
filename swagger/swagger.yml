@@ -2827,7 +2827,7 @@ paths:
   '/v2/data/profile/update':
     post:
       operationId: updateProfile
-      produces:
+      consumes:
         - application/json
       parameters:
         - in: header
@@ -2873,7 +2873,7 @@ paths:
   '/v2/data/profile/address':
     post:
       operationId: createOrUpdateUserAddress
-      produces:
+      consumes:
         - application/json
       parameters:
         - in: header
@@ -2896,7 +2896,7 @@ paths:
   '/v2/data/profile/delete/address':
     delete:
       operationId: deleteUserAddress
-      produces:
+      consumes:
         - application/json
       parameters:
         - in: header
@@ -2942,7 +2942,7 @@ paths:
   '/v2/data/profile/note':
     post:
       operationId: createOrUpdateNote
-      produces:
+      consumes:
         - application/json
       parameters:
         - in: header
@@ -2965,7 +2965,7 @@ paths:
   '/v2/data/profile/delete/note':
     delete:
       operationId: deleteUserNote
-      produces:
+      consumes:
         - application/json
       parameters:
         - in: header
