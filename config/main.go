@@ -24,6 +24,10 @@ type Config struct {
 	AssetsParseIntervalMinutes            int
 	InfoWSEventsIntervalMinutes           int
 	ThirdPartyBakersIntervalMinutes       int
+	SmtpHost                              string
+	SmtpPort                              int
+	SmtpUser                              string
+	SmtpPassword                          string
 }
 
 type NetworkConfig struct {

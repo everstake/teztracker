@@ -821,8 +821,8 @@ paths:
           schema:
             type: array
             items:
-                type: integer
-                format: uint8
+              type: integer
+              format: uint8
         '400':
           description: Bad request
         '404':
@@ -2821,6 +2821,188 @@ paths:
           description: Not Found
       tags:
         - WS
+  '/v2/data/profile':
+    get:
+      operationId: getUserProfile
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+      responses:
+        '200':
+          schema:
+            $ref: "#/definitions/UserProfile"
+          description: Get user profile
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/update':
+    post:
+      operationId: updateProfile
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/UserProfile"
+      responses:
+        '200':
+          description: Update user profile
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/addresses':
+    get:
+      operationId: getUserAddresses
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserAddress"
+          description: Get user addresses
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/address':
+    post:
+      operationId: createOrUpdateUserAddress
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/UserAddress"
+      responses:
+        '200':
+          description: Create or update user address
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/delete/address':
+    delete:
+      operationId: deleteUserAddress
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/DeleteUserAddress"
+      responses:
+        '200':
+          description: Deleted user address
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/notes':
+    get:
+      operationId: getUserNotes
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserNote"
+          description: Get user notes
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/note':
+    post:
+      operationId: createOrUpdateNote
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/UserNote"
+      responses:
+        '200':
+          description: Updated user note
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/delete/note':
+    delete:
+      operationId: deleteUserNote
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/DeleteUserNote"
+      responses:
+        '200':
+          description: Deleted user note
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
 definitions:
   Info:
     properties:
@@ -3920,3 +4102,29 @@ definitions:
               type: number
             payout_accuracy:
               type: string
+  UserProfile:
+    properties:
+      email:
+        type: string
+  UserAddress:
+    properties:
+      address:
+        type: string
+      delegations:enabled:
+        type: boolean
+      transfers_enabled:
+        type: boolean
+  DeleteUserAddress:
+    properties:
+      address:
+        type: string
+  UserNote:
+    properties:
+      text:
+        type: string
+      alias:
+        type: string
+  DeleteUserNote:
+    properties:
+      text:
+        type: string

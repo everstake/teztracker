@@ -39,7 +39,7 @@ func main() {
 		log.Fatalln("no networks are configured")
 	}
 
-	provider, err := infrustructure.New(networks)
+	provider, err := infrustructure.New(networks, cfg)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

@@ -1,0 +1,1 @@
+Ваш адрес {delegator} делегировал за {validator}
