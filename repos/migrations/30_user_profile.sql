@@ -1,10 +1,11 @@
 create table tezos.users
 (
     email      varchar                 not null,
-    account_id varchar                 not null,
+    account_id varchar                 not null
+        constraint users_pk
+            primary key,
     created_at timestamp default now() not null
 );
-
 
 create table tezos.user_addresses
 (

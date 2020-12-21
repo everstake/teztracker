@@ -118,7 +118,7 @@ func (h *createOrUpdateUserAddressHandler) Handle(params profile.CreateOrUpdateU
 		DelegationsEnabled: params.Data.DelegationsEnabled,
 		TransfersEnabled:   params.Data.TransfersEnabled,
 	})
-	if err == models.UserLimitReached || err == models.AccountNotFoundErr {
+	if err == models.UserLimitReachedErr || err == models.AccountNotFoundErr {
 		return profile.NewCreateOrUpdateUserAddressBadRequest()
 	}
 	if err != nil {
@@ -209,7 +209,7 @@ func (h *createOrUpdateUserNoteHandler) Handle(params profile.CreateOrUpdateNote
 		Text:      params.Data.Text,
 		Alias:     params.Data.Alias,
 	})
-	if err == models.UserLimitReached || err == models.AccountNotFoundErr {
+	if err == models.UserLimitReachedErr || err == models.AccountNotFoundErr {
 		return profile.NewCreateOrUpdateNoteBadRequest()
 	}
 	if err != nil {

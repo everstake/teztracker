@@ -73,7 +73,7 @@ func (t *TezTracker) CreateOrUpdateUserAddress(userAddress models.UserAddress) e
 		return fmt.Errorf("userProfileRepo.GetUserAddressesCount: %s", err.Error())
 	}
 	if count == userAddressesLimit {
-		return models.UserLimitReached
+		return models.UserLimitReachedErr
 	}
 	err = userProfileRepo.CreateUserAddress(userAddress)
 	if err != nil {
@@ -108,7 +108,7 @@ func (t *TezTracker) CreateOrUpdateUserNote(note models.UserNote) error {
 		return fmt.Errorf("userProfileRepo.GetUserNotesCount: %s", err.Error())
 	}
 	if count == userNotesLimit {
-		return models.UserLimitReached
+		return models.UserLimitReachedErr
 	}
 	err = userProfileRepo.CreateUserNote(note)
 	if err != nil {
