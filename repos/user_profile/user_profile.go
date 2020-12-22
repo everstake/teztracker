@@ -15,7 +15,7 @@ type (
 		FindUserByAccount(accountID string) (user models.User, found bool, err error)
 		CreateUser(user models.User) error
 		UpdateUser(user models.User) error
-		GetUsersAndAddresses(addresses []string) (users []models.UserAndAddress, err error)
+		GetUsersAndAddresses(addresses []string) (users []models.UserAddressWithEmail, err error)
 
 		GetUserAddresses(accountID string) (addresses []models.UserAddress, err error)
 		GetUserAddress(accountID string, address string) (model models.UserAddress, found bool, err error)
@@ -58,7 +58,7 @@ func (r *Repository) UpdateUser(user models.User) error {
 	return r.db.Where("account_id = ?", user.AccountID).Update(&user).Error
 }
 
-func (r *Repository) GetUsersAndAddresses(addresses []string) (items []models.UserAndAddress, err error) {
+func (r *Repository) GetUsersAndAddresses(addresses []string) (items []models.UserAddressWithEmail, err error) {
 	err = r.db.Select("user_addresses.*, users.email").
 		Where("user_addresses.address in (?)", addresses).
 		Table("tezos.user_addresses").
