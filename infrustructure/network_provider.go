@@ -53,7 +53,13 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 		//Start hub
 		go hub.Run()
 
-		mail := mailer.New(cfg.SmtpHost, cfg.SmtpPort, cfg.SmtpUser, cfg.SmtpPassword)
+		var mail mailer.Mail
+		switch k {
+		case models.NetworkMain:
+			mail = mailer.New(cfg.SmtpHost, cfg.SmtpPort, cfg.SmtpUser, cfg.SmtpPassword)
+		default:
+			mail = mailer.NewFakeMailer()
+		}
 
 		//TODO make graceful stop
 		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db), mail)
