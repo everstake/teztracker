@@ -29,6 +29,10 @@ type Mailer struct {
 	dialer    *gomail.Dialer
 }
 
+type Mail interface {
+	Send(email string, msgType string, values map[string]string) error
+}
+
 func New(host string, port int, user, password string) *Mailer {
 	d := gomail.NewDialer(host, port, user, password)
 	return &Mailer{

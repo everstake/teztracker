@@ -92,7 +92,7 @@ func (t *TezTracker) GetUserNotes(accountID string) (notes []models.UserNote, er
 
 func (t *TezTracker) CreateOrUpdateUserNote(note models.UserNote) error {
 	userProfileRepo := t.repoProvider.GetUserProfile()
-	user, found, err := userProfileRepo.FindUserNote(note.AccountID, note.Text)
+	userNote, found, err := userProfileRepo.FindUserNote(note.AccountID, note.Text)
 	if err != nil {
 		return fmt.Errorf("FindUserNote: %s", err.Error())
 	}
@@ -103,7 +103,7 @@ func (t *TezTracker) CreateOrUpdateUserNote(note models.UserNote) error {
 		}
 		return nil
 	}
-	count, err := userProfileRepo.GetUserNotesCount(user.AccountID)
+	count, err := userProfileRepo.GetUserNotesCount(userNote.AccountID)
 	if err != nil {
 		return fmt.Errorf("userProfileRepo.GetUserNotesCount: %s", err.Error())
 	}

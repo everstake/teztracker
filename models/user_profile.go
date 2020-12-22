@@ -28,7 +28,7 @@ type UserNote struct {
 	Alias     string
 }
 
-type UserAndAddress struct {
+type UserAddressWithEmail struct {
 	Email string
 	UserAddress
 }
