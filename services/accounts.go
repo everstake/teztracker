@@ -7,12 +7,13 @@ import (
 )
 
 // AccountList retrives up to limit of account before the specified id.
-func (t *TezTracker) AccountList(before string, limits Limiter) (accs []models.AccountListView, count int64, err error) {
+func (t *TezTracker) AccountList(before string, limits Limiter, favorites []string) (accs []models.AccountListView, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
-		Type:    models.AccountTypeAccount,
-		OrderBy: models.AccountOrderFieldCreatedAt,
-		After:   before,
+		Type:      models.AccountTypeAccount,
+		OrderBy:   models.AccountOrderFieldCreatedAt,
+		After:     before,
+		Favorites: favorites,
 	}
 	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
 	return accs, count, err

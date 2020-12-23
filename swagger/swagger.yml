@@ -463,6 +463,13 @@ paths:
           name: order
           description: Not used
           type: string
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query compatibility endpoint for accounts

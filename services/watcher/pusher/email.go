@@ -35,7 +35,7 @@ func (p EmailPusher) Push(event wsmodels.EventType, data interface{}) (err error
 }
 
 func (p EmailPusher) sendOperation(data interface{}) error {
-	operation, ok := data.(*models.Operation)
+	operation, ok := data.(models.Operation)
 	if !ok {
 		return fmt.Errorf("wrong data")
 	}
