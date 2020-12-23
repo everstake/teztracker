@@ -1110,6 +1110,16 @@ func init() {
             "description": "Not used",
             "name": "order",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -7185,6 +7195,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],

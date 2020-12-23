@@ -68,10 +68,11 @@ const (
 )
 
 type AccountFilter struct {
-	Type     AccountType
-	OrderBy  AccountOrderField
-	Delegate string
-	After    string
+	Type      AccountType
+	OrderBy   AccountOrderField
+	Delegate  string
+	After     string
+	Favorites []string
 }
 
 type AccountBalance struct {

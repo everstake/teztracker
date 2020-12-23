@@ -30,7 +30,7 @@ func (h *getAccountListHandler) Handle(params accounts.GetAccountsListParams) mi
 	if params.AfterID != nil {
 		before = *params.AfterID
 	}
-	accs, count, err := service.AccountList(before, limiter)
+	accs, count, err := service.AccountList(before, limiter, params.Favorites)
 	if err != nil {
 		logrus.Errorf("failed to get accounts: %s", err.Error())
 		return accounts.NewGetAccountsListNotFound()
