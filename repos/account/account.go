@@ -27,6 +27,7 @@ type (
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
 		GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
 		GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
+		RichAccounts(limit uint) (accounts []models.Account, err error)
 	}
 )
 
@@ -272,4 +273,9 @@ func (r *Repository) GetBakingReport(accountID string, params models.AccountRepo
 	}
 
 	return report, nil
+}
+
+func (r *Repository) RichAccounts(limit uint) (accounts []models.Account, err error) {
+	err = r.db.Model(&models.Account{}).Order("balance desc").Limit(limit).Find(&accounts).Error
+	return accounts, err
 }

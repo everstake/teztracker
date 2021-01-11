@@ -8,6 +8,7 @@ import (
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/services/watcher"
+	"github.com/everstake/teztracker/services/whales"
 	"github.com/everstake/teztracker/ws"
 	"github.com/jinzhu/gorm"
 	"strings"
@@ -41,6 +42,8 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 			return "tezos." + defaultTableName
 		}
 
+		whales.Service.AddNetwork(k, db)
+
 		m, err := mempool.NewMempool(v)
 		if err != nil {
 			return nil, err
@@ -65,6 +68,7 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 			ClientConfig: v.NodeRpc,
 		}
 	}
+	whales.Service.Update()
 	return provider, nil
 }
 

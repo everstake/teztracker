@@ -78,6 +78,8 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, ma
 	serv.VotingGetProtocolsListHandler = &getProtocolListHandler{db}
 	serv.VotingGetNonVotersByPeriodIDHandler = &getNonVotersHandler{db}
 	serv.VotingGetBallotsByPeriodIDHandler = &getBallotsHandler{db}
+	serv.AccountsGetWhaleAccountsHandler = &getWhaleAccountsHandler{}
+	serv.AccountsGetWhaleTranfersHandler = &getWhaleTransfersHandler{}
 	//	Assets
 	serv.AssetsGetAssetTokenHoldersListHandler = &getAssetHoldersHandler{db}
 	serv.AssetsGetAssetTokenInfoHandler = &getAssetInfoHandler{db}

@@ -23,6 +23,7 @@ type Config struct {
 	BakerRegistryCheckIntervalMinutes     int
 	AssetsParseIntervalMinutes            int
 	InfoWSEventsIntervalMinutes           int
+	WhalesUpdatesIntervalMinutes          int
 }
 
 type NetworkConfig struct {

@@ -24,6 +24,296 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/profile": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user profile",
+            "schema": {
+              "$ref": "#/definitions/UserProfile"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/address": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "createOrUpdateUserAddress",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserAddress"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create or update user address"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/addresses": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserAddresses",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user addresses",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserAddress"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/delete/address": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "deleteUserAddress",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserAddress"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted user address"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/delete/note": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "deleteUserNote",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserNote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted user note"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/note": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "createOrUpdateNote",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserNote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated user note"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/notes": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserNotes",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user notes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserNote"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/update": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "updateProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserProfile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update user profile"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/assets": {
       "get": {
         "produces": [
@@ -791,6 +1081,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -4136,6 +4436,91 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/whale/accounts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getWhaleAccounts",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of rich accounts with thier transfers",
+            "schema": {
+              "$ref": "#/definitions/WhaleAccounts"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/whale/transfers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getWhaleTranfers",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of large transfers",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LargeTransfer"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/{network}/ws": {
       "get": {
         "schemes": [
@@ -5049,6 +5434,20 @@ func init() {
         }
       }
     },
+    "DeleteUserAddress": {
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "DeleteUserNote": {
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    },
     "DoubleOperationDetails": {
       "properties": {
         "baker_reward": {
@@ -5183,6 +5582,20 @@ func init() {
         },
         "volume_24h": {
           "type": "number"
+        }
+      }
+    },
+    "LargeTransfer": {
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
         }
       }
     },
@@ -5655,6 +6068,36 @@ func init() {
         }
       }
     },
+    "UserAddress": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "delegations:enabled": {
+          "type": "boolean"
+        },
+        "transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserNote": {
+      "properties": {
+        "alias": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "UserProfile": {
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
     "VoteStats": {
       "properties": {
         "numVoters": {
@@ -5670,6 +6113,41 @@ func init() {
           "type": "integer"
         }
       }
+    },
+    "WhaleAccounts": {
+      "properties": {
+        "accounts": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "balance": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          }
+        },
+        "transfers": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }`))
@@ -5680,6 +6158,296 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/profile": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user profile",
+            "schema": {
+              "$ref": "#/definitions/UserProfile"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/address": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "createOrUpdateUserAddress",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserAddress"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create or update user address"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/addresses": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserAddresses",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user addresses",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserAddress"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/delete/address": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "deleteUserAddress",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserAddress"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted user address"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/delete/note": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "deleteUserNote",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserNote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted user note"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/note": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "createOrUpdateNote",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserNote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated user note"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/notes": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserNotes",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user notes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserNote"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/update": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "updateProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserProfile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update user profile"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/assets": {
       "get": {
         "produces": [
@@ -6457,6 +7225,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -9825,6 +10603,91 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/whale/accounts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getWhaleAccounts",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of rich accounts with thier transfers",
+            "schema": {
+              "$ref": "#/definitions/WhaleAccounts"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/whale/transfers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getWhaleTranfers",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of large transfers",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LargeTransfer"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/v2/{network}/ws": {
       "get": {
         "schemes": [
@@ -10735,6 +11598,20 @@ func init() {
         "whale_accounts": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "DeleteUserAddress": {
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "DeleteUserNote": {
+      "properties": {
+        "text": {
+          "type": "string"
         }
       }
     },
@@ -10876,6 +11753,20 @@ func init() {
         }
       }
     },
+    "LargeTransfer": {
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        }
+      }
+    },
     "MempoolOperation": {
       "properties": {
         "branch": {
@@ -11345,6 +12236,36 @@ func init() {
         }
       }
     },
+    "UserAddress": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "delegations:enabled": {
+          "type": "boolean"
+        },
+        "transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserNote": {
+      "properties": {
+        "alias": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "UserProfile": {
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
     "VoteStats": {
       "properties": {
         "numVoters": {
@@ -11358,6 +12279,41 @@ func init() {
         },
         "votesCast": {
           "type": "integer"
+        }
+      }
+    },
+    "WhaleAccounts": {
+      "properties": {
+        "accounts": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "balance": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          }
+        },
+        "transfers": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }

@@ -5,6 +5,7 @@ import (
 	"github.com/everstake/teztracker/models"
 	"github.com/go-openapi/validate"
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
 //go:generate mockgen -source ./operation.go -destination ./mock_operation/main.go Repo
@@ -24,11 +25,13 @@ type (
 		UpdateLevel(operation models.Operation) error
 		AccountOperationCount(string) ([]models.OperationCount, error)
 		AccountEndorsements(accountID string, cycle int64, limit uint, offset uint) (count int64, operations []models.Operation, err error)
+		LargeTransfers(minAmount int64, limit int64, sinceDate time.Time) (operations []models.Operation, err error)
 	}
 )
 
 const (
 	endorsementKind = "endorsement"
+	transactionKind = "transaction"
 	delegationKind  = "delegation"
 	activationKind  = "activate_account"
 )
@@ -246,4 +249,19 @@ func (r *Repository) AccountEndorsements(accountID string, cycle int64, limit ui
 	err = db.Find(&operations).Error
 
 	return count, operations, nil
+}
+
+func (r *Repository) LargeTransfers(minAmount int64, limit int64, sinceDate time.Time) (operations []models.Operation, err error) {
+	db := r.db.Model(&models.Operation{}).Where("kind = ?", transactionKind)
+	if minAmount > 0 {
+		db = db.Where("amount > ?", minAmount)
+	}
+	if limit > 0 {
+		db = db.Limit(limit)
+	}
+	if !sinceDate.IsZero() {
+		db = db.Where("timestamp > ?", sinceDate)
+	}
+	err = db.Find(&operations).Error
+	return operations, err
 }
