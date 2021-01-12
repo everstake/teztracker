@@ -3757,28 +3757,29 @@ definitions:
       providers:
         type: array
         items:
-          type: object
-          properties:
-            provider:
-              type: string
-            number:
-              type: integer
-              format: int64
-            name:
-              type: string
-            address:
-              type: string
-            yield:
-              type: number
-            staking_balance:
-              type: integer
-              format: int64
-            fee:
-              type: number
-            available_capacity:
-              type: integer
-              format: int64
-            efficiency:
-              type: number
-            payout_accuracy:
-              type: string
+          $ref: '#/definitions/ThirdPartyProvider'
+  ThirdPartyProvider:
+    properties:
+      provider:
+        type: string
+      number:
+        type: integer
+        format: int64
+      name:
+        type: string
+      address:
+        type: string
+      yield:
+        type: number
+      staking_balance:
+        type: integer
+        format: int64
+      fee:
+        type: number
+      available_capacity:
+        type: integer
+        format: int64
+      efficiency:
+        type: number
+      payout_accuracy:
+        type: string
