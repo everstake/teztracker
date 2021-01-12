@@ -10,6 +10,7 @@ import (
 )
 
 const apiURL = "https://api.tezos-nodes.com/v1"
+const routeBakers = "/bakers"
 
 type (
 	API struct {
@@ -36,7 +37,7 @@ func New() *API {
 
 func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err error) {
 	var bakers []Baker
-	err = api.get("/bakers", &bakers)
+	err = api.get(routeBakers, &bakers)
 	if err != nil {
 		return nil, fmt.Errorf("get: %s", err.Error())
 	}
