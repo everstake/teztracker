@@ -41,16 +41,16 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 			return "tezos." + defaultTableName
 		}
 
-		m, err := mempool.NewMempool(v)
+		hub := ws.NewHub()
+		//Start hub
+		go hub.Run()
+
+		m, err := mempool.NewMempool(v, hub)
 		if err != nil {
 			return nil, err
 		}
 
 		go m.MonitorMempool()
-
-		hub := ws.NewHub()
-		//Start hub
-		go hub.Run()
 
 		//TODO make graceful stop
 		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db))

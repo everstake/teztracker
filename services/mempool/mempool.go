@@ -3,6 +3,7 @@ package mempool
 import (
 	"context"
 	"github.com/everstake/teztracker/config"
+	"github.com/everstake/teztracker/ws/models"
 	gotez "github.com/goat-systems/go-tezos/v2"
 	"github.com/patrickmn/go-cache"
 	log "github.com/sirupsen/logrus"
@@ -12,12 +13,13 @@ import (
 )
 
 const (
-	monitoringUrl = "/chains/main/mempool/monitor_operations"
-	mempoolKey    = "mempool"
-	cacheTTL      = 1 * time.Minute
+	monitoringUrl           = "/chains/main/mempool/monitor_operations"
+	mempoolKey              = "mempool"
+	cacheTTL                = 1 * time.Minute
+	publisherTruncateAction = "truncate"
 )
 
-func NewMempool(cfg config.NetworkConfig) (*Mempool, error) {
+func NewMempool(cfg config.NetworkConfig, pub Publisher) (*Mempool, error) {
 	rpcURL := &url.URL{
 		Scheme: cfg.NodeRpc.Schemes[0],
 		Host:   cfg.NodeRpc.Host,
@@ -33,6 +35,7 @@ func NewMempool(cfg config.NetworkConfig) (*Mempool, error) {
 		url:     rpcURL,
 		cl:      http.DefaultClient,
 		storage: cache.New(cacheTTL, cacheTTL),
+		pub:     pub,
 	}, nil
 }
 
@@ -42,9 +45,14 @@ type Mempool struct {
 	storage *cache.Cache
 	ctx     context.Context
 	Cancel  context.CancelFunc
+	pub     Publisher
 }
 
-func (m Mempool) MonitorMempool() {
+type Publisher interface {
+	Broadcast(msg models.MessageInterface) error
+}
+
+func (m *Mempool) MonitorMempool() {
 	log.Info("Start mempool monitor")
 	var err error
 	ch := make(chan []gotez.Operations)
@@ -65,6 +73,8 @@ func (m Mempool) MonitorMempool() {
 			cancel()
 			//Block closed, flush storage
 			m.storage.Flush()
+			// notify publisher
+			m.pub.Broadcast(models.BasicMessage{Event: models.EventTypeMempool, Data: publisherTruncateAction})
 		}
 
 	}
@@ -87,7 +97,7 @@ func (m Mempool) monitorMempoolOperations(ctx context.Context, filter string, re
 	return m.Do(m.ctx, http.MethodGet, monitoringUrl, filter, results)
 }
 
-func (m Mempool) listenResp(ctx context.Context, ch chan []gotez.Operations) {
+func (m *Mempool) listenResp(ctx context.Context, ch chan []gotez.Operations) {
 	var stored interface{}
 	for {
 		select {
@@ -107,6 +117,11 @@ func (m Mempool) listenResp(ctx context.Context, ch chan []gotez.Operations) {
 			}
 
 			m.storage.SetDefault(mempoolKey, append(stored.([]gotez.Operations), elem...))
+
+			m.pub.Broadcast(models.BasicMessage{
+				Event: models.EventTypeMempool,
+				Data:  elem,
+			})
 		}
 	}
 }
