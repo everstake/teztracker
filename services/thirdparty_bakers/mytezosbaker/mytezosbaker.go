@@ -48,10 +48,11 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 	if err != nil {
 		return nil, fmt.Errorf("get: %s", err.Error())
 	}
-	for _, b := range resp.Bakers {
+	thirdPartyBakers = make([]models.ThirdPartyBaker, len(resp.Bakers))
+	for i, b := range resp.Bakers {
 		strs := strings.Split(b.NominalStakingYield, " ")
 		yield, _ := strconv.ParseFloat(strs[0], 64)
-		thirdPartyBakers = append(thirdPartyBakers, models.ThirdPartyBaker{
+		thirdPartyBakers[i] = models.ThirdPartyBaker{
 			Number:            b.Rank,
 			Name:              b.BakerName,
 			Address:           b.DelegationCode,
@@ -59,7 +60,7 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 			Fee:               b.Fee / 100,
 			Efficiency:        b.BakerEfficiency,
 			AvailableCapacity: int64(b.AvailableCapacity * 1e6),
-		})
+		}
 	}
 	return thirdPartyBakers, nil
 }
