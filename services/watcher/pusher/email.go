@@ -25,6 +25,8 @@ func (p EmailPusher) Push(event wsmodels.EventType, data interface{}) (err error
 	switch event {
 	case wsmodels.EventTypeOperation:
 		err = p.sendOperation(data)
+	case wsmodels.EventTypeAssetOperation:
+		err = p.sendAssetOperation(data)
 	default:
 		return nil
 	}
@@ -61,9 +63,9 @@ func (p EmailPusher) sendOperation(data interface{}) error {
 		return nil
 	}
 	userProfileRepo := p.service.GetUserProfile()
-	users, err := userProfileRepo.GetUsersAndAddresses(addresses)
+	users, err := userProfileRepo.GetVerifiedUsersAndAddresses(addresses)
 	if err != nil {
-		return fmt.Errorf("userProfileRepo.GetUsersAndAddresses: %s", err.Error())
+		return fmt.Errorf("userProfileRepo.GetVerifiedUsersAndAddresses: %s", err.Error())
 	}
 	for _, user := range users {
 		if user.Email == "" {
@@ -80,11 +82,50 @@ func (p EmailPusher) sendOperation(data interface{}) error {
 				msgType = mailer.ValidatorDelegationMsg
 			}
 		case "transaction":
-			if !user.TransfersEnabled {
+			if !user.InTransfersEnabled && msgValues["to"] == user.Address {
+				continue
+			}
+			if !user.OutTransfersEnabled && msgValues["from"] == user.Address {
 				continue
 			}
 		}
 		err = p.mail.Send(user.Email, msgType, msgValues)
+		if err != nil {
+			log.Errorf("Watcher: mail: cant send to %s: %s", user.Email, err.Error())
+		}
+	}
+	return nil
+}
+
+func (p EmailPusher) sendAssetOperation(data interface{}) error {
+	operation, ok := data.(models.AssetOperation)
+	if !ok {
+		return fmt.Errorf("wrong data")
+	}
+	if operation.Type != "transfer" {
+		return nil
+	}
+	addresses := []string{operation.Receiver, operation.Sender}
+	userProfileRepo := p.service.GetUserProfile()
+	users, err := userProfileRepo.GetVerifiedUsersAndAddresses(addresses)
+	if err != nil {
+		return fmt.Errorf("userProfileRepo.GetVerifiedUsersAndAddresses: %s", err.Error())
+	}
+	msgValues := make(map[string]string)
+	msgValues["from"] = operation.Sender
+	msgValues["to"] = operation.Receiver
+	msgValues["amount"] = fmt.Sprintf("%f", float64(operation.Amount))
+	for _, user := range users {
+		if user.Email == "" {
+			continue
+		}
+		if !user.InTransfersEnabled && msgValues["to"] == user.Address {
+			continue
+		}
+		if !user.OutTransfersEnabled && msgValues["from"] == user.Address {
+			continue
+		}
+		err = p.mail.Send(user.Email, mailer.AssetTransferMsg, msgValues)
 		if err != nil {
 			log.Errorf("Watcher: mail: cant send to %s: %s", user.Email, err.Error())
 		}

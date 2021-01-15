@@ -314,6 +314,67 @@ func init() {
         }
       }
     },
+    "/v2/data/profile/verify/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmail",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email/token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmailToken",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EmailToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email token"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/assets": {
       "get": {
         "produces": [
@@ -5400,6 +5461,13 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "EmailToken": {
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -5974,10 +6042,13 @@ func init() {
         "address": {
           "type": "string"
         },
-        "delegations:enabled": {
+        "delegations_enabled": {
           "type": "boolean"
         },
-        "transfers_enabled": {
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
           "type": "boolean"
         }
       }
@@ -5996,6 +6067,12 @@ func init() {
       "properties": {
         "email": {
           "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
         }
       }
     },
@@ -6304,6 +6381,67 @@ func init() {
         "responses": {
           "200": {
             "description": "Update user profile"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmail",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email/token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmailToken",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EmailToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email token"
           },
           "400": {
             "description": "Bad request"
@@ -11433,6 +11571,13 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "EmailToken": {
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -12008,10 +12153,13 @@ func init() {
         "address": {
           "type": "string"
         },
-        "delegations:enabled": {
+        "delegations_enabled": {
           "type": "boolean"
         },
-        "transfers_enabled": {
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
           "type": "boolean"
         }
       }
@@ -12030,6 +12178,12 @@ func init() {
       "properties": {
         "email": {
           "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
         }
       }
     },

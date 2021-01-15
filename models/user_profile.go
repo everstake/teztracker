@@ -10,15 +10,18 @@ var UserLimitReachedErr = errors.New("limit reached")
 
 type User struct {
 	AccountID string
+	Username  string
 	Email     string
+	Verified  bool
 	CreatedAt time.Time
 }
 
 type UserAddress struct {
-	AccountID          string
-	Address            string
-	DelegationsEnabled bool
-	TransfersEnabled   bool
+	AccountID           string
+	Address             string
+	DelegationsEnabled  bool
+	InTransfersEnabled  bool
+	OutTransfersEnabled bool
 }
 
 type UserNote struct {
@@ -31,4 +34,13 @@ type UserNote struct {
 type UserAddressWithEmail struct {
 	Email string
 	UserAddress
+}
+
+type EmailVerification struct {
+	AccountID string
+	Email     string
+	Token     string
+	Verified  bool
+	Sent      bool
+	CreatedAt time.Time
 }

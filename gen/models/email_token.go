@@ -11,27 +11,21 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// UserProfile user profile
-// swagger:model UserProfile
-type UserProfile struct {
+// EmailToken email token
+// swagger:model EmailToken
+type EmailToken struct {
 
-	// email
-	Email string `json:"email,omitempty"`
-
-	// username
-	Username string `json:"username,omitempty"`
-
-	// verified
-	Verified bool `json:"verified,omitempty"`
+	// token
+	Token string `json:"token,omitempty"`
 }
 
-// Validate validates this user profile
-func (m *UserProfile) Validate(formats strfmt.Registry) error {
+// Validate validates this email token
+func (m *EmailToken) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *UserProfile) MarshalBinary() ([]byte, error) {
+func (m *EmailToken) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -39,8 +33,8 @@ func (m *UserProfile) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *UserProfile) UnmarshalBinary(b []byte) error {
-	var res UserProfile
+func (m *EmailToken) UnmarshalBinary(b []byte) error {
+	var res EmailToken
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

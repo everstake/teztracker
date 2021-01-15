@@ -16,12 +16,15 @@ const (
 	ValidatorDelegationMsg = "validator_delegation"
 	DelegatorDelegationMsg = "delegator_delegation"
 	TransferMsg            = "transfer"
+	AssetTransferMsg       = "asset_transfer"
+	VerificationMsg        = "verification"
 )
 
 var templatesPath = map[string]string{
 	ValidatorDelegationMsg: "./services/mailer/templates/validator_delegation.txt",
 	DelegatorDelegationMsg: "./services/mailer/templates/delegator_delegation.txt",
 	TransferMsg:            "./services/mailer/templates/transfer.txt",
+	VerificationMsg:        "./services/mailer/templates/verification.txt",
 }
 
 type Mailer struct {

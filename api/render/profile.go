@@ -9,9 +9,10 @@ func UserAddresses(in []models.UserAddress) []*genModels.UserAddress {
 	out := make([]*genModels.UserAddress, len(in))
 	for i := range in {
 		out[i] = &genModels.UserAddress{
-			Address:            in[i].Address,
-			DelegationsEnabled: in[i].DelegationsEnabled,
-			TransfersEnabled:   in[i].TransfersEnabled,
+			Address:             in[i].Address,
+			DelegationsEnabled:  in[i].DelegationsEnabled,
+			InTransfersEnabled:  in[i].InTransfersEnabled,
+			OutTransfersEnabled: in[i].OutTransfersEnabled,
 		}
 	}
 	return out
