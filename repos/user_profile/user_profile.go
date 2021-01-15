@@ -15,7 +15,7 @@ type (
 		FindUserByAccount(accountID string) (user models.User, found bool, err error)
 		CreateUser(user models.User) error
 		UpdateUser(user models.User) error
-		GetUsersAndAddresses(addresses []string) (users []models.UserAddressWithEmail, err error)
+		GetVerifiedUsersAndAddresses(addresses []string) (users []models.UserAddressWithEmail, err error)
 
 		GetUserAddresses(accountID string) (addresses []models.UserAddress, err error)
 		GetUserAddress(accountID string, address string) (model models.UserAddress, found bool, err error)
@@ -30,6 +30,11 @@ type (
 		DeleteUserNote(accountID string, text string) error
 		UpdateUserNote(models.UserNote) error
 		GetUserNotesCount(accountID string) (count uint64, err error)
+
+		GetEmailVerification(accountID string, email string) (verification models.EmailVerification, found bool, err error)
+		CreateEmailToken(verification models.EmailVerification) error
+		GetEmailVerifications(sent bool, tokens []string) (verifications []models.EmailVerification, err error)
+		UpdateEmailVerifications(verification models.EmailVerification) error
 	}
 )
 
@@ -55,12 +60,17 @@ func (r *Repository) CreateUser(user models.User) error {
 }
 
 func (r *Repository) UpdateUser(user models.User) error {
-	return r.db.Where("account_id = ?", user.AccountID).Update(&user).Error
+	return r.db.Where("account_id = ?", user.AccountID).Updates(map[string]interface{}{
+		"email":    user.Email,
+		"username": user.Username,
+		"verified": user.Verified,
+	}).Error
 }
 
-func (r *Repository) GetUsersAndAddresses(addresses []string) (items []models.UserAddressWithEmail, err error) {
+func (r *Repository) GetVerifiedUsersAndAddresses(addresses []string) (items []models.UserAddressWithEmail, err error) {
 	err = r.db.Select("user_addresses.*, users.email").
 		Where("user_addresses.address in (?)", addresses).
+		Where("users.verified = true").
 		Table("tezos.user_addresses").
 		Joins("left join tezos.users ON (user_addresses.account_id = users.account_id)").
 		Find(&items).
@@ -77,7 +87,7 @@ func (r *Repository) GetUserAddress(accountID string, address string) (model mod
 	res := r.db.Model(&models.UserAddress{}).
 		Where("account_id = ?", accountID).
 		Where("address = ?", address).
-		First(&address)
+		First(&model)
 	if res.RecordNotFound() {
 		return model, false, nil
 	}
@@ -100,14 +110,19 @@ func (r *Repository) DeleteUserAddress(accountID string, address string) error {
 func (r *Repository) UpdateUserAddress(address models.UserAddress) error {
 	return r.db.Model(&models.UserAddress{}).
 		Where("account_id = ?", address.AccountID).
-		Where("address = ?", address).Update(&address).Error
+		Where("address = ?", address.Address).
+		Updates(map[string]interface{}{
+			"delegations_enabled":   address.DelegationsEnabled,
+			"in_transfers_enabled":  address.InTransfersEnabled,
+			"out_transfers_enabled": address.OutTransfersEnabled,
+		}).Error
 }
 
 func (r *Repository) GetUserAddressesCount(accountID string) (count uint64, err error) {
-	 err = r.db.Model(&models.UserAddress{}).
-	 	Select("count(*)").
-		Where("account_id = ?", accountID).First(&count).Error
-	 return count, err
+	err = r.db.Model(&models.UserAddress{}).
+		Select("count(*)").
+		Where("account_id = ?", accountID).Count(&count).Error
+	return count, err
 }
 
 func (r *Repository) UserNotesList(accountID string) (notes []models.UserNote, err error) {
@@ -146,3 +161,29 @@ func (r *Repository) GetUserNotesCount(accountID string) (count uint64, err erro
 	return count, err
 }
 
+func (r *Repository) GetEmailVerification(accountID string, email string) (verification models.EmailVerification, found bool, err error) {
+	if res := r.db.Model(&models.EmailVerification{}).Where("account_id = ?", accountID).Where("email = ?", email).First(&verification); res.Error != nil {
+		if res.RecordNotFound() {
+			return verification, false, nil
+		}
+		return verification, false, err
+	}
+	return verification, true, nil
+}
+
+func (r *Repository) CreateEmailToken(verification models.EmailVerification) error {
+	return r.db.Model(&models.EmailVerification{}).Create(&verification).Error
+}
+
+func (r *Repository) GetEmailVerifications(sent bool, tokens []string) (verifications []models.EmailVerification, err error) {
+	q := r.db.Model(&models.EmailVerification{}).Where("sent = ?", sent)
+	if len(tokens) > 0 {
+		q = q.Where("token in (?)", tokens)
+	}
+	err = q.Find(&verifications).Error
+	return verifications, err
+}
+
+func (r *Repository) UpdateEmailVerifications(verification models.EmailVerification) error {
+	return r.db.Model(&models.EmailVerification{}).Where("token = ?", verification.Token).Update(&verification).Error
+}

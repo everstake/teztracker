@@ -54,6 +54,7 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider, mail
 			models.EventTypeBlock:          tasks.NewBlockTask(provider),
 			models.EventTypeOperation:      tasks.NewOperationTask(provider),
 			models.EventTypeAccountCreated: tasks.NewAccountTask(provider),
+			models.EventTypeAssetOperation: tasks.NewAssetOperation(provider),
 		},
 		pushers: []eventPusher{pusher.NewWSPusher(hub), pusher.NewEmailPusher(mail, provider)},
 	}

@@ -19,10 +19,13 @@ type UserAddress struct {
 	Address string `json:"address,omitempty"`
 
 	// delegations enabled
-	DelegationsEnabled bool `json:"delegations:enabled,omitempty"`
+	DelegationsEnabled bool `json:"delegations_enabled,omitempty"`
 
-	// transfers enabled
-	TransfersEnabled bool `json:"transfers_enabled,omitempty"`
+	// in transfers enabled
+	InTransfersEnabled bool `json:"in_transfers_enabled,omitempty"`
+
+	// out transfers enabled
+	OutTransfersEnabled bool `json:"out_transfers_enabled,omitempty"`
 }
 
 // Validate validates this user address

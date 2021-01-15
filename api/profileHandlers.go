@@ -57,6 +57,7 @@ func (h *updateUserProfileHandler) Handle(params profile.UpdateProfileParams) mi
 	}
 
 	user.Email = params.Data.Email
+	user.Username = params.Data.Username
 	err = service.UpdateUser(user)
 	if err != nil {
 		logrus.Errorf("failed update user profile: %s", err.Error())
@@ -113,10 +114,11 @@ func (h *createOrUpdateUserAddressHandler) Handle(params profile.CreateOrUpdateU
 	}
 
 	err = service.CreateOrUpdateUserAddress(models.UserAddress{
-		AccountID:          user.AccountID,
-		Address:            params.Data.Address,
-		DelegationsEnabled: params.Data.DelegationsEnabled,
-		TransfersEnabled:   params.Data.TransfersEnabled,
+		AccountID:           user.AccountID,
+		Address:             params.Data.Address,
+		DelegationsEnabled:  params.Data.DelegationsEnabled,
+		InTransfersEnabled:  params.Data.InTransfersEnabled,
+		OutTransfersEnabled: params.Data.OutTransfersEnabled,
 	})
 	if err == models.UserLimitReachedErr || err == models.AccountNotFoundErr {
 		return profile.NewCreateOrUpdateUserAddressBadRequest()
@@ -245,4 +247,50 @@ func (h *deleteUserNoteHandler) Handle(params profile.DeleteUserNoteParams) midd
 		return profile.NewDeleteUserNoteInternalServerError()
 	}
 	return profile.NewDeleteUserNoteOK()
+}
+
+type verifyEmailHandler struct {
+	provider DbProvider
+}
+
+func (h *verifyEmailHandler) Handle(params profile.VerifyEmailParams) middleware.Responder {
+	db, err := h.provider.GetDb(models.NetworkMain)
+	if err != nil {
+		return profile.NewGetUserAddressesBadRequest()
+	}
+	service := services.New(repos.New(db), models.NetworkMain)
+	user, err := service.GetOrCreateUser(params.Address)
+	if err == models.AccountNotFoundErr {
+		logrus.Warnf("account not found")
+		return profile.NewGetUserAddressesBadRequest()
+	}
+	if err != nil {
+		logrus.Errorf("failed get user profile: %s", err.Error())
+		return profile.NewGetUserAddressesInternalServerError()
+	}
+
+	err = service.EmailVerification(user.AccountID)
+	if err != nil {
+		logrus.Errorf("failed get user notes: %s", err.Error())
+		return profile.NewVerifyEmailInternalServerError()
+	}
+	return profile.NewVerifyEmailOK()
+}
+
+type verifyEmailTokenHandler struct {
+	provider DbProvider
+}
+
+func (h *verifyEmailTokenHandler) Handle(params profile.VerifyEmailTokenParams) middleware.Responder {
+	db, err := h.provider.GetDb(models.NetworkMain)
+	if err != nil {
+		return profile.NewGetUserAddressesBadRequest()
+	}
+	service := services.New(repos.New(db), models.NetworkMain)
+	err = service.EmailTokenVerification(params.Data.Token)
+	if err != nil {
+		logrus.Errorf("failed get user notes: %s", err.Error())
+		return profile.NewVerifyEmailTokenInternalServerError()
+	}
+	return profile.NewVerifyEmailTokenOK()
 }

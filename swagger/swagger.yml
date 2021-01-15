@@ -3010,6 +3010,44 @@ paths:
           description: Internal error
       tags:
         - Profile
+  '/v2/data/profile/verify/email':
+    post:
+      operationId: verifyEmail
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Verified user email
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/verify/email/token':
+    post:
+      operationId: verifyEmailToken
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/EmailToken"
+      responses:
+        '200':
+          description: Verified user email token
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
 definitions:
   Info:
     properties:
@@ -4113,13 +4151,19 @@ definitions:
     properties:
       email:
         type: string
+      username:
+        type: string
+      verified:
+        type: boolean
   UserAddress:
     properties:
       address:
         type: string
-      delegations:enabled:
+      delegations_enabled:
         type: boolean
-      transfers_enabled:
+      in_transfers_enabled:
+        type: boolean
+      out_transfers_enabled:
         type: boolean
   DeleteUserAddress:
     properties:
@@ -4134,4 +4178,8 @@ definitions:
   DeleteUserNote:
     properties:
       text:
+        type: string
+  EmailToken:
+    properties:
+      token:
         type: string

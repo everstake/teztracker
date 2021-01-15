@@ -98,4 +98,6 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, ma
 	serv.ProfileGetUserNotesHandler = &getUserNotesHandler{db}
 	serv.ProfileCreateOrUpdateNoteHandler = &createOrUpdateUserNoteHandler{db}
 	serv.ProfileDeleteUserNoteHandler = &deleteUserNoteHandler{db}
+	serv.ProfileVerifyEmailHandler = &verifyEmailHandler{db}
+	serv.ProfileVerifyEmailTokenHandler = &verifyEmailTokenHandler{db}
 }

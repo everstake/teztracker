@@ -248,6 +248,12 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		ProfileUpdateProfileHandler: profile.UpdateProfileHandlerFunc(func(params profile.UpdateProfileParams) middleware.Responder {
 			return middleware.NotImplemented("operation ProfileUpdateProfile has not yet been implemented")
 		}),
+		ProfileVerifyEmailHandler: profile.VerifyEmailHandlerFunc(func(params profile.VerifyEmailParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileVerifyEmail has not yet been implemented")
+		}),
+		ProfileVerifyEmailTokenHandler: profile.VerifyEmailTokenHandlerFunc(func(params profile.VerifyEmailTokenParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileVerifyEmailToken has not yet been implemented")
+		}),
 	}
 }
 
@@ -411,6 +417,10 @@ type TezTrackerAPI struct {
 	ProfileGetUserProfileHandler profile.GetUserProfileHandler
 	// ProfileUpdateProfileHandler sets the operation handler for the update profile operation
 	ProfileUpdateProfileHandler profile.UpdateProfileHandler
+	// ProfileVerifyEmailHandler sets the operation handler for the verify email operation
+	ProfileVerifyEmailHandler profile.VerifyEmailHandler
+	// ProfileVerifyEmailTokenHandler sets the operation handler for the verify email token operation
+	ProfileVerifyEmailTokenHandler profile.VerifyEmailTokenHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -736,6 +746,14 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.ProfileUpdateProfileHandler == nil {
 		unregistered = append(unregistered, "profile.UpdateProfileHandler")
+	}
+
+	if o.ProfileVerifyEmailHandler == nil {
+		unregistered = append(unregistered, "profile.VerifyEmailHandler")
+	}
+
+	if o.ProfileVerifyEmailTokenHandler == nil {
+		unregistered = append(unregistered, "profile.VerifyEmailTokenHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -1163,6 +1181,16 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/v2/data/profile/update"] = profile.NewUpdateProfile(o.context, o.ProfileUpdateProfileHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v2/data/profile/verify/email"] = profile.NewVerifyEmail(o.context, o.ProfileVerifyEmailHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v2/data/profile/verify/email/token"] = profile.NewVerifyEmailToken(o.context, o.ProfileVerifyEmailTokenHandler)
 
 }
 
