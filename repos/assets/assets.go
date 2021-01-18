@@ -19,6 +19,7 @@ type (
 		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 		CreateAssetOperations(models.AssetOperation) error
 		FindOperations(operationIDs []int64, limit uint64) (operations []models.AssetOperation, err error)
+		GetRegisteredToken(tokenID uint64) (token models.RegisteredToken, err error)
 	}
 )
 
@@ -118,4 +119,9 @@ func (r *Repository) FindOperations(operationIDs []int64, limit uint64) (operati
 	}
 	err = q.Find(&operations).Error
 	return operations, err
+}
+
+func (r *Repository) GetRegisteredToken(tokenID uint64) (token models.RegisteredToken, err error) {
+	err = r.db.Model(&models.RegisteredToken{}).Where("id = ?", tokenID).First(&token).Error
+	return token, err
 }

@@ -34,7 +34,7 @@ type (
 		GetEmailVerification(accountID string, email string) (verification models.EmailVerification, found bool, err error)
 		CreateEmailToken(verification models.EmailVerification) error
 		GetEmailVerifications(sent bool, tokens []string) (verifications []models.EmailVerification, err error)
-		UpdateEmailVerifications(verification models.EmailVerification) error
+		UpdateEmailVerification(verification models.EmailVerification) error
 	}
 )
 
@@ -184,6 +184,12 @@ func (r *Repository) GetEmailVerifications(sent bool, tokens []string) (verifica
 	return verifications, err
 }
 
-func (r *Repository) UpdateEmailVerifications(verification models.EmailVerification) error {
-	return r.db.Model(&models.EmailVerification{}).Where("token = ?", verification.Token).Update(&verification).Error
+func (r *Repository) UpdateEmailVerification(verification models.EmailVerification) error {
+	return r.db.Model(&models.EmailVerification{}).
+		Where("token = ?", verification.Token).
+		Updates(map[string]interface{}{
+			"verified":   verification.Verified,
+			"sent":       verification.Sent,
+			"created_at": verification.CreatedAt,
+		}).Error
 }

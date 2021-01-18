@@ -9,21 +9,23 @@ import (
 )
 
 const (
-	from     = "teztracker@everstake.one"
-	fromName = "TezTracker"
-	subject  = "Notification from TezTracker"
-
+	from                   = "teztracker@everstake.one"
+	fromName               = "TezTracker"
+	subject                = "Notification from TezTracker"
 	ValidatorDelegationMsg = "validator_delegation"
 	DelegatorDelegationMsg = "delegator_delegation"
-	TransferMsg            = "transfer"
-	AssetTransferMsg       = "asset_transfer"
-	VerificationMsg        = "verification"
+)
+const (
+	InTransferMsg    = "in_transfer"
+	OutTransferMsg   = "out_transfer"
+	VerificationMsg  = "verification"
 )
 
 var templatesPath = map[string]string{
 	ValidatorDelegationMsg: "./services/mailer/templates/validator_delegation.txt",
 	DelegatorDelegationMsg: "./services/mailer/templates/delegator_delegation.txt",
-	TransferMsg:            "./services/mailer/templates/transfer.txt",
+	InTransferMsg:          "./services/mailer/templates/in_transfer.txt",
+	OutTransferMsg:         "./services/mailer/templates/out_transfer.txt",
 	VerificationMsg:        "./services/mailer/templates/verification.txt",
 }
 
@@ -73,7 +75,7 @@ func (m Mailer) send(email string, data string) error {
 	msg.SetHeader("Subject", subject)
 	msg.SetAddressHeader("From", from, fromName)
 	msg.SetHeader("To", email)
-	msg.SetBody("text/plain", data)
+	msg.SetBody("text/html", data)
 	err := m.dialer.DialAndSend(msg)
 	if err != nil {
 		return fmt.Errorf("dialer.DialAndSend: %s", err.Error())

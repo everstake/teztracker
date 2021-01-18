@@ -1,1 +1,2 @@
-Пользователь {delegator} заделегировал за Ваш адрес {validator}
+<p>Address {delegator} delegated to your address {validator} </p>
+<p><a href="https://teztracker.com/en/mainnet/account/{delegator}">Link to Teztracker</a></p>

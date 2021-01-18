@@ -1,2 +1,4 @@
-Для подтверждения вашего email адреса перейдите по ссылке:
-<a href="{token}">{token}</a>
+<p>
+To confirm email click to a link:
+<a href="https://teztracker.com/account_verification/{token}">https://teztracker.com/account_verification/{token}</a>
+</p>

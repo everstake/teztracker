@@ -8,12 +8,14 @@ import (
 	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"regexp"
+	"time"
 )
 
 const (
 	userAddressesLimit = 50
 	userNotesLimit     = 50
 	emailTokenLen      = 30
+	resendEmailMinutes = 5
 )
 
 func (t *TezTracker) GetOrCreateUser(account string) (user models.User, err error) {
@@ -75,11 +77,20 @@ func (t *TezTracker) EmailVerification(accountID string) error {
 	if user.Email == "" {
 		return fmt.Errorf("empty user email")
 	}
-	_, found, err = profileRepo.GetEmailVerification(accountID, user.Email)
+	verification, found, err := profileRepo.GetEmailVerification(accountID, user.Email)
 	if err != nil {
 		return fmt.Errorf("repoProvider.GetEmailVerification: %s", err.Error())
 	}
 	if found {
+		// resend
+		if time.Now().Sub(verification.CreatedAt).Minutes() > resendEmailMinutes {
+			verification.Sent = false
+			verification.CreatedAt = time.Now()
+			err = profileRepo.UpdateEmailVerification(verification)
+			if err != nil {
+				return fmt.Errorf("profileRepo.UpdateEmailVerifications: %s", err.Error())
+			}
+		}
 		return nil
 	}
 	token := randomStr(emailTokenLen)
@@ -87,6 +98,7 @@ func (t *TezTracker) EmailVerification(accountID string) error {
 		AccountID: accountID,
 		Email:     user.Email,
 		Token:     token,
+		CreatedAt: time.Now(),
 	})
 	if err != nil {
 		return fmt.Errorf("repoProvider.CreateEmailToken: %s", err.Error())
@@ -186,7 +198,7 @@ func (t *TezTracker) SendNewVerifications(pusher mailer.Mail) error {
 			continue
 		}
 		verification.Sent = true
-		err = userRepo.UpdateEmailVerifications(verification)
+		err = userRepo.UpdateEmailVerification(verification)
 		if err != nil {
 			log.Error("SendNewVerifications: userRepo.UpdateEmailVerifications: %s", err.Error())
 			continue
@@ -219,7 +231,7 @@ func (t *TezTracker) EmailTokenVerification(token string) error {
 		return fmt.Errorf("profileRepo.UpdateUser: %s", err.Error())
 	}
 	verification.Verified = true
-	err = profileRepo.UpdateEmailVerifications(verification)
+	err = profileRepo.UpdateEmailVerification(verification)
 	if err != nil {
 		return fmt.Errorf("profileRepo.UpdateEmailVerifications: %s", err.Error())
 	}
