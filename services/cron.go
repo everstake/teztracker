@@ -315,7 +315,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 		})
 	}
 
-	if network == models.NetworkMain{ // dispatch user verifications every minutes
+	if !isTestNetwork { // dispatch user verifications every minutes
 		var jobIsRunning uint32
 
 		log.Infof("Sheduling check email verifications")

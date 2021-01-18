@@ -19,14 +19,14 @@ type AssetHolder struct {
 }
 
 type AssetOperation struct {
-	TokenId            uint64
-	OperationId        int64
-	OperationGroupHash string
-	Sender             string
-	Receiver           string
-	Amount             int64
-	Type               string
-	Timestamp          time.Time
+	TokenId            uint64    `json:"token_id"`
+	OperationId        int64     `json:"operation_id"`
+	OperationGroupHash string    `json:"operation_group_hash"`
+	Sender             string    `json:"sender"`
+	Receiver           string    `json:"receiver"`
+	Amount             int64     `json:"amount"`
+	Type               string    `json:"type"`
+	Timestamp          time.Time `json:"timestamp"`
 }
 
 type AssetOperationReport struct {
@@ -34,4 +34,13 @@ type AssetOperationReport struct {
 	Fee          int64
 	GasLimit     int64
 	StorageLimit int64
+}
+
+type RegisteredToken struct {
+	ID           uint64
+	Name         string
+	ContractType string
+	AccountId    string
+	Scale        uint64
+	Ticker       string
 }

@@ -53,11 +53,12 @@ func (p EmailPusher) sendOperation(data interface{}) error {
 		msgValues["validator"] = operation.Delegate
 	}
 	if operation.Kind.String == "transaction" {
-		msgType = mailer.TransferMsg
 		addresses = append(addresses, operation.Source, operation.Destination)
 		msgValues["from"] = operation.Source
 		msgValues["to"] = operation.Destination
 		msgValues["amount"] = fmt.Sprintf("%f", float64(operation.Amount/1e6))
+		msgValues["operation"] = operation.OperationGroupHash.String
+		msgValues["token"] = "xtz"
 	}
 	if len(addresses) == 0 {
 		return nil
@@ -88,6 +89,10 @@ func (p EmailPusher) sendOperation(data interface{}) error {
 			if !user.OutTransfersEnabled && msgValues["from"] == user.Address {
 				continue
 			}
+			msgType = mailer.InTransferMsg
+			if msgValues["from"] == user.Address {
+				msgType = mailer.OutTransferMsg
+			}
 		}
 		err = p.mail.Send(user.Email, msgType, msgValues)
 		if err != nil {
@@ -115,6 +120,9 @@ func (p EmailPusher) sendAssetOperation(data interface{}) error {
 	msgValues["from"] = operation.Sender
 	msgValues["to"] = operation.Receiver
 	msgValues["amount"] = fmt.Sprintf("%f", float64(operation.Amount))
+	msgValues["operation"] = operation.OperationGroupHash
+	registeredToken, _ := p.service.GetAssets().GetRegisteredToken(operation.TokenId)
+	msgValues["token"] = registeredToken.Name
 	for _, user := range users {
 		if user.Email == "" {
 			continue
@@ -125,7 +133,11 @@ func (p EmailPusher) sendAssetOperation(data interface{}) error {
 		if !user.OutTransfersEnabled && msgValues["from"] == user.Address {
 			continue
 		}
-		err = p.mail.Send(user.Email, mailer.AssetTransferMsg, msgValues)
+		msgType := mailer.InTransferMsg
+		if msgValues["from"] == user.Address {
+			msgType = mailer.OutTransferMsg
+		}
+		err = p.mail.Send(user.Email, msgType, msgValues)
 		if err != nil {
 			log.Errorf("Watcher: mail: cant send to %s: %s", user.Email, err.Error())
 		}
