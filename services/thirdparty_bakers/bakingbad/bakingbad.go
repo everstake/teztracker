@@ -10,7 +10,11 @@ import (
 	"time"
 )
 
-const apiURL = "https://api.baking-bad.org/v2"
+const (
+	apiURL      = "https://api.baking-bad.org/v2"
+	noDataField = "no_data"
+	routeBakers = "/bakers"
+)
 
 type (
 	API struct {
@@ -43,26 +47,26 @@ func New() *API {
 
 func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err error) {
 	var bakers []Baker
-	err = api.get("/bakers", &bakers)
+	err = api.get(routeBakers, &bakers)
 	if err != nil {
 		return nil, fmt.Errorf("get: %s", err.Error())
 	}
 	sort.Slice(bakers, func(i, j int) bool {
-		if bakers[i].PayoutAccuracy == "no_data" {
+		if bakers[i].PayoutAccuracy == noDataField {
 			return false
 		}
-		if bakers[j].PayoutAccuracy == "no_data" {
+		if bakers[j].PayoutAccuracy == noDataField {
 			return true
 		}
 		if bakers[i].InsuranceCoverage != bakers[j].InsuranceCoverage {
 			return bakers[i].InsuranceCoverage > bakers[j].InsuranceCoverage
-		} else {
-			return bakers[i].EstimatedRoi > bakers[j].EstimatedRoi
 		}
+		return bakers[i].EstimatedRoi > bakers[j].EstimatedRoi
 	})
+	thirdPartyBakers = make([]models.ThirdPartyBaker, len(bakers))
 	for i, b := range bakers {
 		stakingBalance := int64(b.StakingBalance * 1e6)
-		thirdPartyBakers = append(thirdPartyBakers, models.ThirdPartyBaker{
+		thirdPartyBakers[i] = models.ThirdPartyBaker{
 			Number:            i + 1,
 			Name:              b.Name,
 			Address:           b.Address,
@@ -71,7 +75,7 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 			Fee:               b.Fee,
 			AvailableCapacity: int64(b.FreeSpace * 1e6),
 			PayoutAccuracy:    b.PayoutAccuracy,
-		})
+		}
 	}
 	return thirdPartyBakers, nil
 }

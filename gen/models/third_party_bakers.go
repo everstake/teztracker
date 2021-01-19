@@ -22,7 +22,7 @@ type ThirdPartyBakers struct {
 	Baker string `json:"baker,omitempty"`
 
 	// providers
-	Providers []*ThirdPartyBakersProvidersItems0 `json:"providers"`
+	Providers []*ThirdPartyProvider `json:"providers"`
 }
 
 // Validate validates this third party bakers
@@ -75,64 +75,6 @@ func (m *ThirdPartyBakers) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *ThirdPartyBakers) UnmarshalBinary(b []byte) error {
 	var res ThirdPartyBakers
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-// ThirdPartyBakersProvidersItems0 third party bakers providers items0
-// swagger:model ThirdPartyBakersProvidersItems0
-type ThirdPartyBakersProvidersItems0 struct {
-
-	// address
-	Address string `json:"address,omitempty"`
-
-	// available capacity
-	AvailableCapacity int64 `json:"available_capacity,omitempty"`
-
-	// efficiency
-	Efficiency float64 `json:"efficiency,omitempty"`
-
-	// fee
-	Fee float64 `json:"fee,omitempty"`
-
-	// name
-	Name string `json:"name,omitempty"`
-
-	// number
-	Number int64 `json:"number,omitempty"`
-
-	// payout accuracy
-	PayoutAccuracy string `json:"payout_accuracy,omitempty"`
-
-	// provider
-	Provider string `json:"provider,omitempty"`
-
-	// staking balance
-	StakingBalance int64 `json:"staking_balance,omitempty"`
-
-	// yield
-	Yield float64 `json:"yield,omitempty"`
-}
-
-// Validate validates this third party bakers providers items0
-func (m *ThirdPartyBakersProvidersItems0) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *ThirdPartyBakersProvidersItems0) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *ThirdPartyBakersProvidersItems0) UnmarshalBinary(b []byte) error {
-	var res ThirdPartyBakersProvidersItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -6,26 +6,37 @@ import (
 )
 
 func ThirdPartyBakers(bakers []models.ThirdPartyBakerAgg) (result []*genModels.ThirdPartyBakers) {
-	for _, b := range bakers {
-		var providers []*genModels.ThirdPartyBakersProvidersItems0
-		for _, p := range b.Providers {
-			providers = append(providers, &genModels.ThirdPartyBakersProvidersItems0{
-				Address:           p.Address,
-				AvailableCapacity: p.AvailableCapacity,
-				Efficiency:        p.Efficiency,
-				Fee:               p.Fee,
-				Name:              p.Name,
-				Number:            int64(p.Number),
-				PayoutAccuracy:    p.PayoutAccuracy,
-				Provider:          p.Provider,
-				StakingBalance:    p.StakingBalance,
-				Yield:             p.Yield,
-			})
-		}
-		result = append(result, &genModels.ThirdPartyBakers{
+	result = make([]*genModels.ThirdPartyBakers, len(bakers))
+	for i, b := range bakers {
+		result[i] = &genModels.ThirdPartyBakers{
 			Baker:     b.Address,
-			Providers: providers,
-		})
+			Providers: ThirdPartyBakersProviders(b.Providers),
+		}
 	}
 	return result
 }
+
+func ThirdPartyBakersProviders (tp models.ThirdPartyProviders) []*genModels.ThirdPartyProvider {
+	providers := make([]*genModels.ThirdPartyProvider, len(tp))
+	for i, p := range tp {
+		providers[i] = ThirdPartyBakersItem(p)
+	}
+	return providers
+}
+
+func ThirdPartyBakersItem (p models.ThirdPartyBaker) *genModels.ThirdPartyProvider {
+	return &genModels.ThirdPartyProvider{
+		Address:           p.Address,
+		AvailableCapacity: p.AvailableCapacity,
+		Efficiency:        p.Efficiency,
+		Fee:               p.Fee,
+		Name:              p.Name,
+		Number:            int64(p.Number),
+		PayoutAccuracy:    p.PayoutAccuracy,
+		Provider:          p.Provider,
+		StakingBalance:    p.StakingBalance,
+		Yield:             p.Yield,
+	}
+}
+
+

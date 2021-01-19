@@ -10,6 +10,7 @@ import (
 )
 
 const apiURL = "https://api.tezos-nodes.com/v1"
+const routeBakers = "/bakers"
 
 type (
 	API struct {
@@ -36,12 +37,13 @@ func New() *API {
 
 func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err error) {
 	var bakers []Baker
-	err = api.get("/bakers", &bakers)
+	err = api.get(routeBakers, &bakers)
 	if err != nil {
 		return nil, fmt.Errorf("get: %s", err.Error())
 	}
-	for _, b := range bakers {
-		thirdPartyBakers = append(thirdPartyBakers, models.ThirdPartyBaker{
+	thirdPartyBakers = make([]models.ThirdPartyBaker, len(bakers))
+	for i, b := range bakers {
+		thirdPartyBakers[i] = models.ThirdPartyBaker{
 			Number:            b.Rank,
 			Name:              b.Name,
 			Address:           b.Address,
@@ -49,7 +51,7 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 			Fee:               b.Fee,
 			AvailableCapacity: b.Freespace * 1e6,
 			Efficiency:        b.Efficiency,
-		})
+		}
 	}
 	return thirdPartyBakers, nil
 }

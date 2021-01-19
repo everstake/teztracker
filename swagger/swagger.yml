@@ -4122,31 +4122,32 @@ definitions:
       providers:
         type: array
         items:
-          type: object
-          properties:
-            provider:
-              type: string
-            number:
-              type: integer
-              format: int64
-            name:
-              type: string
-            address:
-              type: string
-            yield:
-              type: number
-            staking_balance:
-              type: integer
-              format: int64
-            fee:
-              type: number
-            available_capacity:
-              type: integer
-              format: int64
-            efficiency:
-              type: number
-            payout_accuracy:
-              type: string
+          $ref: '#/definitions/ThirdPartyProvider'
+  ThirdPartyProvider:
+    properties:
+      provider:
+        type: string
+      number:
+        type: integer
+        format: int64
+      name:
+        type: string
+      address:
+        type: string
+      yield:
+        type: number
+      staking_balance:
+        type: integer
+        format: int64
+      fee:
+        type: number
+      available_capacity:
+        type: integer
+        format: int64
+      efficiency:
+        type: number
+      payout_accuracy:
+        type: string
   UserProfile:
     properties:
       email:
@@ -4155,31 +4156,31 @@ definitions:
         type: string
       verified:
         type: boolean
-  UserAddress:
-    properties:
-      address:
-        type: string
-      delegations_enabled:
-        type: boolean
-      in_transfers_enabled:
-        type: boolean
-      out_transfers_enabled:
-        type: boolean
-  DeleteUserAddress:
-    properties:
-      address:
-        type: string
-  UserNote:
-    properties:
-      text:
-        type: string
-      alias:
-        type: string
-  DeleteUserNote:
-    properties:
-      text:
-        type: string
-  EmailToken:
-    properties:
-      token:
-        type: string
+    UserAddress:
+      properties:
+        address:
+          type: string
+        delegations_enabled:
+          type: boolean
+        in_transfers_enabled:
+          type: boolean
+        out_transfers_enabled:
+          type: boolean
+    DeleteUserAddress:
+      properties:
+        address:
+          type: string
+    UserNote:
+      properties:
+        text:
+          type: string
+        alias:
+          type: string
+    DeleteUserNote:
+      properties:
+        text:
+          type: string
+    EmailToken:
+      properties:
+        token:
+          type: string

@@ -6026,43 +6026,45 @@ func init() {
         "providers": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "address": {
-                "type": "string"
-              },
-              "available_capacity": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "efficiency": {
-                "type": "number"
-              },
-              "fee": {
-                "type": "number"
-              },
-              "name": {
-                "type": "string"
-              },
-              "number": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "payout_accuracy": {
-                "type": "string"
-              },
-              "provider": {
-                "type": "string"
-              },
-              "staking_balance": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "yield": {
-                "type": "number"
-              }
-            }
+            "$ref": "#/definitions/ThirdPartyProvider"
           }
+        }
+      }
+    },
+    "ThirdPartyProvider": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "available_capacity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "efficiency": {
+          "type": "number"
+        },
+        "fee": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "payout_accuracy": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "staking_balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "yield": {
+          "type": "number"
         }
       }
     },
@@ -12213,43 +12215,45 @@ func init() {
         "providers": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "address": {
-                "type": "string"
-              },
-              "available_capacity": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "efficiency": {
-                "type": "number"
-              },
-              "fee": {
-                "type": "number"
-              },
-              "name": {
-                "type": "string"
-              },
-              "number": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "payout_accuracy": {
-                "type": "string"
-              },
-              "provider": {
-                "type": "string"
-              },
-              "staking_balance": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "yield": {
-                "type": "number"
-              }
-            }
+            "$ref": "#/definitions/ThirdPartyProvider"
           }
+        }
+      }
+    },
+    "ThirdPartyProvider": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "available_capacity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "efficiency": {
+          "type": "number"
+        },
+        "fee": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "payout_accuracy": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "staking_balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "yield": {
+          "type": "number"
         }
       }
     },
