@@ -8,7 +8,7 @@ const (
 	EventTypeOperation      EventType = "operations"
 	EventTypeAccountCreated EventType = "account_created_at"
 	EventTypeInfo           EventType = "info"
-	EventTypeAssetOperation EventType = "asset_operation"
+	EventTypeAssetOperation EventType = "asset_operations"
 	EventTypeMempool        EventType = "mempool"
 )
 
