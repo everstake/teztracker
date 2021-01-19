@@ -14,14 +14,25 @@ import (
 const apiURL = "https://api.tzstats.com"
 const routeIncome = "/tables/income"
 const routeTip = "/explorer/tip"
+const routeConfig = "/explorer/config/head"
 const routeAccount = "/explorer/account/%s"
+const bakersMaxCount = 200
 
 type (
 	API struct {
 		client *http.Client
 	}
 	Tip struct {
-		Cycle int64 `json:"cycle"`
+		Cycle int64   `json:"cycle"`
+		Rolls float64 `json:"rolls"`
+	}
+	Config struct {
+		BlockSecurityDeposit       float64 `json:"block_security_deposit"`
+		BlocksPerCycle             float64 `json:"blocks_per_cycle"`
+		EndorsersPerBlock          float64 `json:"endorsers_per_block"`
+		EndorsementSecurityDeposit float64 `json:"endorsement_security_deposit"`
+		PreservedCycles            float64 `json:"preserved_cycles"`
+		TokensPerRoll              float64 `json:"tokens_per_roll"`
 	}
 	Account struct {
 		Address          string  `json:"address"`
@@ -29,6 +40,9 @@ type (
 		StakingBalance   float64 `json:"staking_balance"`
 		BlocksBaked      int64   `json:"blocks_baked"`
 		BlocksMissed     int64   `json:"blocks_missed"`
+		SpendableBalance float64 `json:"spendable_balance"`
+		FrozenDeposits   float64 `json:"frozen_deposits"`
+		FrozenFees       float64 `json:"frozen_fees"`
 	}
 )
 
@@ -46,6 +60,17 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 	if err != nil {
 		return nil, fmt.Errorf("can`t get tip: %s", err.Error())
 	}
+	var config Config
+	err = api.get(routeConfig, nil, &config)
+	if err != nil {
+		return nil, fmt.Errorf("can`t get config: %s", err.Error())
+	}
+	blockDeposits := config.BlockSecurityDeposit + config.EndorsementSecurityDeposit*config.EndorsersPerBlock
+	networkBond := blockDeposits * config.BlocksPerCycle * (config.PreservedCycles + 1)
+	if networkBond == 0 {
+		return nil, fmt.Errorf("wrong network bond")
+	}
+	networkStake := tip.Rolls * config.TokensPerRoll
 	params := url.Values{}
 	params.Add("columns", "address,rolls")
 	params.Add("limit", "1000")
@@ -62,8 +87,8 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 		}
 		return incomes[i][1].(float64) > incomes[j][1].(float64)
 	})
-	if len(incomes) > 100 {
-		incomes = incomes[:100]
+	if len(incomes) > bakersMaxCount {
+		incomes = incomes[:bakersMaxCount]
 	}
 	thirdPartyBakers = make([]models.ThirdPartyBaker, len(incomes))
 	for i, income := range incomes {
@@ -83,11 +108,13 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 		if acc.BlocksBaked > 0 {
 			efficiency = float64(acc.BlocksBaked) / float64(acc.BlocksBaked+acc.BlocksMissed)
 		}
+		totalBalance := acc.SpendableBalance + acc.FrozenDeposits + acc.FrozenFees
+		capacity := (totalBalance / networkBond) * networkStake
 		thirdPartyBakers[i] = models.ThirdPartyBaker{
 			Number:            i + 1,
 			Address:           address,
 			StakingBalance:    int64(acc.StakingBalance * 1e6),
-			AvailableCapacity: 0,
+			AvailableCapacity: int64((capacity - acc.StakingBalance) * 1e6),
 			Efficiency:        efficiency,
 		}
 	}

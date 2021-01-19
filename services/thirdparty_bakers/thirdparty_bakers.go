@@ -6,14 +6,15 @@ import (
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/thirdparty_bakers"
 	"github.com/everstake/teztracker/services/thirdparty_bakers/bakingbad"
-	"github.com/everstake/teztracker/services/thirdparty_bakers/mytezosbaker"
 	"github.com/everstake/teztracker/services/thirdparty_bakers/tezosnodes"
+	"github.com/everstake/teztracker/services/thirdparty_bakers/tzstats"
 )
 
 const (
 	BakingBadProvider    = "baking-bad"
 	MyTezosBakerProvider = "mytezosbaker"
 	TezosNodesProvider   = "tezos-nodes"
+	TzstatsProvider      = "tzstats"
 )
 
 type (
@@ -34,9 +35,9 @@ type ThirdPartyBakers struct {
 
 func getProviders() map[string]BakersProvider {
 	return map[string]BakersProvider{
-		BakingBadProvider:    bakingbad.New(),
-		MyTezosBakerProvider: mytezosbaker.New(),
-		TezosNodesProvider:   tezosnodes.New(),
+		BakingBadProvider:  bakingbad.New(),
+		TezosNodesProvider: tezosnodes.New(),
+		TzstatsProvider:    tzstats.New(),
 	}
 }
 
