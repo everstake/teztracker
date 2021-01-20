@@ -27,16 +27,6 @@ func (t *TezTracker) GetOrCreateUser(account string) (user models.User, err erro
 	if found {
 		return user, nil
 	}
-	accountRepo := t.repoProvider.GetAccount()
-	accFound, _, err := accountRepo.Find(models.Account{
-		AccountID: null.NewString(account, true),
-	})
-	if err != nil {
-		return user, fmt.Errorf("accountRepo.Find: %s", err.Error())
-	}
-	if !accFound {
-		return user, models.AccountNotFoundErr
-	}
 	user = models.User{
 		AccountID: account,
 	}
