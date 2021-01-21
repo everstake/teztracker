@@ -29,7 +29,7 @@ func NewDeleteUserAddress(ctx *middleware.Context, handler DeleteUserAddressHand
 	return &DeleteUserAddress{Context: ctx, Handler: handler}
 }
 
-/*DeleteUserAddress swagger:route DELETE /v2/data/profile/delete/address Profile deleteUserAddress
+/*DeleteUserAddress swagger:route POST /v2/data/profile/delete/address Profile deleteUserAddress
 
 DeleteUserAddress delete user address API
 
