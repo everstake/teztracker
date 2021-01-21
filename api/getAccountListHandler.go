@@ -58,7 +58,7 @@ func (h *getAccountTopBalanceListHandler) Handle(params accounts.GetAccountsTopB
 	if params.AfterID != nil {
 		before = *params.AfterID
 	}
-	accs, count, err := service.AccountTopBalanceList(before, limiter)
+	accs, count, err := service.AccountTopBalanceList(before, limiter, params.Favorites)
 	if err != nil {
 		logrus.Errorf("failed to get accounts: %s", err.Error())
 		return accounts.NewGetAccountsTopBalanceListNotFound()

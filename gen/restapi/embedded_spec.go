@@ -2084,6 +2084,16 @@ func init() {
             "type": "string",
             "name": "after_id",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2499,6 +2509,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -3296,6 +3316,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -4385,6 +4415,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -8311,6 +8351,16 @@ func init() {
             "type": "string",
             "name": "after_id",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8729,6 +8779,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -9530,6 +9590,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -10626,6 +10696,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
