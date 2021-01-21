@@ -32,7 +32,9 @@ func (h *getUserProfileHandler) Handle(params profile.GetUserProfileParams) midd
 		return profile.NewGetUserProfileInternalServerError()
 	}
 	return profile.NewGetUserProfileOK().WithPayload(&genModels.UserProfile{
-		Email: user.Email,
+		Email:    user.Email,
+		Username: user.Username,
+		Verified: user.Verified,
 	})
 }
 
