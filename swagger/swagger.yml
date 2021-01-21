@@ -518,6 +518,13 @@ paths:
         - in: query
           name: after_id
           type: string
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query compatibility endpoint for accounts
@@ -595,6 +602,13 @@ paths:
           name: order
           description: Not used
           type: string
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query compatibility endpoint for contract accounts
@@ -640,6 +654,13 @@ paths:
           type: integer
           default: 0
           minimum: 0
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query Endpoint for getting list of baker accounts ordered by staking balance.
@@ -685,6 +706,13 @@ paths:
           type: integer
           default: 0
           minimum: 0
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query Endpoint for getting list of baker accounts ordered by staking balance.
