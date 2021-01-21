@@ -31,8 +31,8 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb(filter models.RightFilter) *gorm.DB {
-	db := r.db.Select("fbr.*, baker_name as delegate_name").Table("tezos.future_baking_rights as fbr").
-		Joins("left join tezos.public_bakers as pb on fbr.delegate = pb.delegate")
+	db := r.db.Select("fbr.*, ka.alias as delegate_name").Table("tezos.future_baking_rights as fbr").
+		Joins("left join tezos.known_addresses as ka on fbr.delegate = ka.address")
 
 	//Priority
 	if filter.FromID.Valid && filter.ToID.Valid {

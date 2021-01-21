@@ -58,9 +58,9 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err error) {
-	if res := r.db.Select("tezos.baker_view.*, baker_name as name, (10000 - split)/100 as fee").
+	if res := r.db.Select("tezos.baker_view.*, known_addresses.alias as name, (10000 - split)/100 as fee").
 		Table(bakerMaterializedView).
-		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
+		Joins("left join tezos.known_addresses on baker_view.account_id = known_addresses.address").
 		Where("account_id = ?", accountID).
 		Order("staking_balance desc").
 		Find(&baker); res.Error != nil {
@@ -76,8 +76,8 @@ func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
 func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error) {
-	err = r.db.Select("tezos.baker_view.*,baker_name as name").Table(bakerMaterializedView).
-		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
+	err = r.db.Select("tezos.baker_view.*,tezos.known_addresses.alias as name").Table(bakerMaterializedView).
+		Joins("left join tezos.known_addresses on baker_view.account_id = known_addresses.address").
 		Order("staking_balance desc").
 		Limit(limit).
 		Offset(offset).

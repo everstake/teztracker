@@ -28,8 +28,8 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) getDb(filter models.RightFilter) *gorm.DB {
-	db := r.db.Select("fer.*, baker_name as delegate_name").Table("tezos.future_endorsement_rights as fer").
-		Joins("left join tezos.public_bakers as pb on fer.delegate = pb.delegate")
+	db := r.db.Select("fer.*, ka.alias as delegate_name").Table("tezos.future_endorsement_rights as fer").
+		Joins("left join tezos.known_addresses as ka on fer.delegate = ka.address")
 	if len(filter.BlockLevels) != 0 {
 		db = db.Where("level IN (?)", filter.BlockLevels)
 	}

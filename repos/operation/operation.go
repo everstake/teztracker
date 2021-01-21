@@ -132,10 +132,10 @@ func (r *Repository) getFilteredDB(hashes, kinds, inBlocks, accountIDs []string,
 	}
 	//Join Aliases
 	if !count {
-		selectQ = fmt.Sprintf("%s, %s", selectQ, "des.baker_name as destination_name, s.baker_name as source_name, del.baker_name as delegate_name")
-		db = db.Joins("left join tezos.public_bakers as des on operations.destination = des.delegate").
-			Joins("left join tezos.public_bakers as s on operations.source = s.delegate").
-			Joins("left join tezos.public_bakers as del on operations.delegate = del.delegate")
+		selectQ = fmt.Sprintf("%s, %s", selectQ, "des.alias as destination_name, s.alias as source_name, del.alias as delegate_name")
+		db = db.Joins("left join tezos.known_addresses as des on operations.destination = des.address").
+			Joins("left join tezos.known_addresses as s on operations.source = s.address").
+			Joins("left join tezos.known_addresses as del on operations.delegate = del.address")
 	}
 
 	db = db.Select(selectQ)
