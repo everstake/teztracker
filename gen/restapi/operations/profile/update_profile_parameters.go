@@ -42,7 +42,7 @@ type UpdateProfileParams struct {
 	/*
 	  In: body
 	*/
-	Data *models.UserProfile
+	Data *models.RequestUserProfile
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -60,7 +60,7 @@ func (o *UpdateProfileParams) BindRequest(r *http.Request, route *middleware.Mat
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.UserProfile
+		var body models.RequestUserProfile
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			res = append(res, errors.NewParseError("data", "body", "", err))
 		} else {

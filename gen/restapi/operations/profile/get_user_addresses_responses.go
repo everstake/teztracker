@@ -25,7 +25,7 @@ type GetUserAddressesOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []*models.UserAddress `json:"body,omitempty"`
+	Payload []*models.UserAddressWithBalance `json:"body,omitempty"`
 }
 
 // NewGetUserAddressesOK creates GetUserAddressesOK with default headers values
@@ -35,13 +35,13 @@ func NewGetUserAddressesOK() *GetUserAddressesOK {
 }
 
 // WithPayload adds the payload to the get user addresses o k response
-func (o *GetUserAddressesOK) WithPayload(payload []*models.UserAddress) *GetUserAddressesOK {
+func (o *GetUserAddressesOK) WithPayload(payload []*models.UserAddressWithBalance) *GetUserAddressesOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get user addresses o k response
-func (o *GetUserAddressesOK) SetPayload(payload []*models.UserAddress) {
+func (o *GetUserAddressesOK) SetPayload(payload []*models.UserAddressWithBalance) {
 	o.Payload = payload
 }
 
@@ -52,7 +52,7 @@ func (o *GetUserAddressesOK) WriteResponse(rw http.ResponseWriter, producer runt
 	payload := o.Payload
 	if payload == nil {
 		// return empty array
-		payload = make([]*models.UserAddress, 0, 50)
+		payload = make([]*models.UserAddressWithBalance, 0, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

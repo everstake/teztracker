@@ -5,14 +5,15 @@ import (
 	"github.com/everstake/teztracker/models"
 )
 
-func UserAddresses(in []models.UserAddress) []*genModels.UserAddress {
-	out := make([]*genModels.UserAddress, len(in))
+func UserAddresses(in []models.UserAddressWithBalance) []*genModels.UserAddressWithBalance {
+	out := make([]*genModels.UserAddressWithBalance, len(in))
 	for i := range in {
-		out[i] = &genModels.UserAddress{
-			Address:             in[i].Address,
-			DelegationsEnabled:  in[i].DelegationsEnabled,
-			InTransfersEnabled:  in[i].InTransfersEnabled,
-			OutTransfersEnabled: in[i].OutTransfersEnabled,
+		out[i] = &genModels.UserAddressWithBalance{
+			Address:             &in[i].Address,
+			DelegationsEnabled:  &in[i].DelegationsEnabled,
+			InTransfersEnabled:  &in[i].InTransfersEnabled,
+			OutTransfersEnabled: &in[i].OutTransfersEnabled,
+			Balance:             &in[i].Balance.Int64,
 		}
 	}
 	return out

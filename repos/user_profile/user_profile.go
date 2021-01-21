@@ -17,7 +17,7 @@ type (
 		UpdateUser(user models.User) error
 		GetVerifiedUsersAndAddresses(addresses []string) (users []models.UserAddressWithEmail, err error)
 
-		GetUserAddresses(accountID string) (addresses []models.UserAddress, err error)
+		GetUserAddresses(accountID string) (addresses []models.UserAddressWithBalance, err error)
 		GetUserAddress(accountID string, address string) (model models.UserAddress, found bool, err error)
 		CreateUserAddress(address models.UserAddress) error
 		DeleteUserAddress(accountID string, address string) error
@@ -78,8 +78,10 @@ func (r *Repository) GetVerifiedUsersAndAddresses(addresses []string) (items []m
 	return items, err
 }
 
-func (r *Repository) GetUserAddresses(accountID string) (addresses []models.UserAddress, err error) {
-	err = r.db.Where("account_id = ?", accountID).Find(&addresses).Error
+func (r *Repository) GetUserAddresses(accountID string) (addresses []models.UserAddressWithBalance, err error) {
+	err = r.db.Table("tezos.user_addresses").Select("user_addresses.*, accounts.balance").
+		Joins("left join tezos.accounts ON user_addresses.address = accounts.account_id").
+		Where("user_addresses.account_id = ?", accountID).Find(&addresses).Error
 	return addresses, err
 }
 
@@ -102,9 +104,9 @@ func (r *Repository) CreateUserAddress(address models.UserAddress) error {
 }
 
 func (r *Repository) DeleteUserAddress(accountID string, address string) error {
-	return r.db.Delete(&models.UserAddress{}).
+	return r.db.
 		Where("account_id = ?", accountID).
-		Where("address = ?", address).Error
+		Where("address = ?", address).Delete(&models.UserAddress{}).Error
 }
 
 func (r *Repository) UpdateUserAddress(address models.UserAddress) error {
@@ -126,7 +128,7 @@ func (r *Repository) GetUserAddressesCount(accountID string) (count uint64, err 
 }
 
 func (r *Repository) UserNotesList(accountID string) (notes []models.UserNote, err error) {
-	err = r.db.Model(&models.UserAddress{}).Where("account_id = ?", accountID).Find(&notes).Error
+	err = r.db.Model(&models.UserNote{}).Where("account_id = ?", accountID).Find(&notes).Error
 	return notes, err
 }
 
@@ -145,13 +147,13 @@ func (r *Repository) CreateUserNote(note models.UserNote) error {
 }
 
 func (r *Repository) UpdateUserNote(note models.UserNote) error {
-	return r.db.Where("account_id = ?", note.AccountID).Where("text = ?", note.Text).Update(&note).Error
+	return r.db.Model(&models.UserNote{}).Where("account_id = ?", note.AccountID).Where("text = ?", note.Text).Update(&note).Error
 }
 
 func (r *Repository) DeleteUserNote(accountID string, text string) error {
-	return r.db.Delete(&models.UserNote{}).
+	return r.db.
 		Where("account_id = ?", accountID).
-		Where("text = ?", text).Error
+		Where("text = ?", text).Delete(&models.UserNote{}).Error
 }
 
 func (r *Repository) GetUserNotesCount(accountID string) (count uint64, err error) {

@@ -117,7 +117,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/UserAddress"
+                "$ref": "#/definitions/UserAddressWithBalance"
               }
             }
           },
@@ -297,7 +297,7 @@ func init() {
             "name": "data",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/UserProfile"
+              "$ref": "#/definitions/RequestUserProfile"
             }
           }
         ],
@@ -5969,6 +5969,16 @@ func init() {
         }
       }
     },
+    "RequestUserProfile": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -6038,9 +6048,42 @@ func init() {
       }
     },
     "UserAddress": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled"
+      ],
       "properties": {
         "address": {
           "type": "string"
+        },
+        "delegations_enabled": {
+          "type": "boolean"
+        },
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserAddressWithBalance": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
         },
         "delegations_enabled": {
           "type": "boolean"
@@ -6058,12 +6101,23 @@ func init() {
         "alias": {
           "type": "string"
         },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
         "text": {
           "type": "string"
         }
       }
     },
     "UserProfile": {
+      "required": [
+        "email",
+        "username",
+        "verified"
+      ],
       "properties": {
         "email": {
           "type": "string"
@@ -6194,7 +6248,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/UserAddress"
+                "$ref": "#/definitions/UserAddressWithBalance"
               }
             }
           },
@@ -6374,7 +6428,7 @@ func init() {
             "name": "data",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/UserProfile"
+              "$ref": "#/definitions/RequestUserProfile"
             }
           }
         ],
@@ -12080,6 +12134,16 @@ func init() {
         }
       }
     },
+    "RequestUserProfile": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -12149,9 +12213,42 @@ func init() {
       }
     },
     "UserAddress": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled"
+      ],
       "properties": {
         "address": {
           "type": "string"
+        },
+        "delegations_enabled": {
+          "type": "boolean"
+        },
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserAddressWithBalance": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
         },
         "delegations_enabled": {
           "type": "boolean"
@@ -12169,12 +12266,23 @@ func init() {
         "alias": {
           "type": "string"
         },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
         "text": {
           "type": "string"
         }
       }
     },
     "UserProfile": {
+      "required": [
+        "email",
+        "username",
+        "verified"
+      ],
       "properties": {
         "email": {
           "type": "string"

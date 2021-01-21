@@ -13,13 +13,17 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// UserAddress user address
-// swagger:model UserAddress
-type UserAddress struct {
+// UserAddressWithBalance user address with balance
+// swagger:model UserAddressWithBalance
+type UserAddressWithBalance struct {
 
 	// address
 	// Required: true
 	Address *string `json:"address"`
+
+	// balance
+	// Required: true
+	Balance *int64 `json:"balance"`
 
 	// delegations enabled
 	// Required: true
@@ -34,11 +38,15 @@ type UserAddress struct {
 	OutTransfersEnabled *bool `json:"out_transfers_enabled"`
 }
 
-// Validate validates this user address
-func (m *UserAddress) Validate(formats strfmt.Registry) error {
+// Validate validates this user address with balance
+func (m *UserAddressWithBalance) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAddress(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateBalance(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -60,7 +68,7 @@ func (m *UserAddress) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UserAddress) validateAddress(formats strfmt.Registry) error {
+func (m *UserAddressWithBalance) validateAddress(formats strfmt.Registry) error {
 
 	if err := validate.Required("address", "body", m.Address); err != nil {
 		return err
@@ -69,7 +77,16 @@ func (m *UserAddress) validateAddress(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UserAddress) validateDelegationsEnabled(formats strfmt.Registry) error {
+func (m *UserAddressWithBalance) validateBalance(formats strfmt.Registry) error {
+
+	if err := validate.Required("balance", "body", m.Balance); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserAddressWithBalance) validateDelegationsEnabled(formats strfmt.Registry) error {
 
 	if err := validate.Required("delegations_enabled", "body", m.DelegationsEnabled); err != nil {
 		return err
@@ -78,7 +95,7 @@ func (m *UserAddress) validateDelegationsEnabled(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *UserAddress) validateInTransfersEnabled(formats strfmt.Registry) error {
+func (m *UserAddressWithBalance) validateInTransfersEnabled(formats strfmt.Registry) error {
 
 	if err := validate.Required("in_transfers_enabled", "body", m.InTransfersEnabled); err != nil {
 		return err
@@ -87,7 +104,7 @@ func (m *UserAddress) validateInTransfersEnabled(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *UserAddress) validateOutTransfersEnabled(formats strfmt.Registry) error {
+func (m *UserAddressWithBalance) validateOutTransfersEnabled(formats strfmt.Registry) error {
 
 	if err := validate.Required("out_transfers_enabled", "body", m.OutTransfersEnabled); err != nil {
 		return err
@@ -97,7 +114,7 @@ func (m *UserAddress) validateOutTransfersEnabled(formats strfmt.Registry) error
 }
 
 // MarshalBinary interface implementation
-func (m *UserAddress) MarshalBinary() ([]byte, error) {
+func (m *UserAddressWithBalance) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -105,8 +122,8 @@ func (m *UserAddress) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *UserAddress) UnmarshalBinary(b []byte) error {
-	var res UserAddress
+func (m *UserAddressWithBalance) UnmarshalBinary(b []byte) error {
+	var res UserAddressWithBalance
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
