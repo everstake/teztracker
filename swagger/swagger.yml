@@ -2862,7 +2862,7 @@ paths:
         - in: body
           name: data
           schema:
-            $ref: "#/definitions/UserProfile"
+            $ref: "#/definitions/RequestUserProfile"
       responses:
         '200':
           description: Update user profile
@@ -2887,7 +2887,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/UserAddress"
+              $ref: "#/definitions/UserAddressWithBalance"
           description: Get user addresses
         '400':
           description: Bad request
@@ -4148,6 +4148,12 @@ definitions:
         type: number
       payout_accuracy:
         type: string
+  RequestUserProfile:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
   UserProfile:
     properties:
       email:
@@ -4156,31 +4162,63 @@ definitions:
         type: string
       verified:
         type: boolean
-    UserAddress:
-      properties:
-        address:
-          type: string
-        delegations_enabled:
-          type: boolean
-        in_transfers_enabled:
-          type: boolean
-        out_transfers_enabled:
-          type: boolean
-    DeleteUserAddress:
-      properties:
-        address:
-          type: string
-    UserNote:
-      properties:
-        text:
-          type: string
-        alias:
-          type: string
-    DeleteUserNote:
-      properties:
-        text:
-          type: string
-    EmailToken:
-      properties:
-        token:
-          type: string
+    required:
+      - email
+      - username
+      - verified
+  UserAddress:
+    properties:
+      address:
+        type: string
+      delegations_enabled:
+        type: boolean
+      in_transfers_enabled:
+        type: boolean
+      out_transfers_enabled:
+        type: boolean
+    required:
+      - address
+      - delegations_enabled
+      - in_transfers_enabled
+      - out_transfers_enabled
+  UserAddressWithBalance:
+    properties:
+      address:
+        type: string
+      delegations_enabled:
+        type: boolean
+      in_transfers_enabled:
+        type: boolean
+      out_transfers_enabled:
+        type: boolean
+      balance:
+        type: integer
+        format: int64
+    required:
+      - address
+      - delegations_enabled
+      - in_transfers_enabled
+      - out_transfers_enabled
+      - balance
+  DeleteUserAddress:
+    properties:
+      address:
+        type: string
+  UserNote:
+    properties:
+      text:
+        type: string
+      alias:
+        type: string
+      tag:
+        type: string
+      description:
+        type: string
+  DeleteUserNote:
+    properties:
+      text:
+        type: string
+  EmailToken:
+    properties:
+      token:
+        type: string

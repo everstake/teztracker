@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"github.com/guregu/null"
 	"time"
 )
 
@@ -24,11 +25,18 @@ type UserAddress struct {
 	OutTransfersEnabled bool
 }
 
+type UserAddressWithBalance struct {
+	UserAddress
+	Balance null.Int
+}
+
 type UserNote struct {
-	ID        uint64
-	AccountID string
-	Text      string
-	Alias     string
+	ID          uint64
+	AccountID   string
+	Text        string
+	Alias       string
+	Tag         string
+	Description string
 }
 
 type UserAddressWithEmail struct {

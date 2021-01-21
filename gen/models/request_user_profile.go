@@ -11,30 +11,24 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// UserNote user note
-// swagger:model UserNote
-type UserNote struct {
+// RequestUserProfile request user profile
+// swagger:model RequestUserProfile
+type RequestUserProfile struct {
 
-	// alias
-	Alias string `json:"alias,omitempty"`
+	// email
+	Email string `json:"email,omitempty"`
 
-	// description
-	Description string `json:"description,omitempty"`
-
-	// tag
-	Tag string `json:"tag,omitempty"`
-
-	// text
-	Text string `json:"text,omitempty"`
+	// username
+	Username string `json:"username,omitempty"`
 }
 
-// Validate validates this user note
-func (m *UserNote) Validate(formats strfmt.Registry) error {
+// Validate validates this request user profile
+func (m *RequestUserProfile) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *UserNote) MarshalBinary() ([]byte, error) {
+func (m *RequestUserProfile) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -42,8 +36,8 @@ func (m *UserNote) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *UserNote) UnmarshalBinary(b []byte) error {
-	var res UserNote
+func (m *RequestUserProfile) UnmarshalBinary(b []byte) error {
+	var res RequestUserProfile
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

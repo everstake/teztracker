@@ -27,6 +27,9 @@ func (t *TezTracker) GetOrCreateUser(account string) (user models.User, err erro
 	if found {
 		return user, nil
 	}
+	if len(account) != 36 && account[:2] != "tz" {
+		return user, fmt.Errorf("invalid address format")
+	}
 	user = models.User{
 		AccountID: account,
 	}
@@ -46,13 +49,25 @@ func (t *TezTracker) UpdateUser(newUser models.User) error {
 	if !found {
 		return fmt.Errorf("profileRepo.GetUserProfile: not found")
 	}
+	sendVerification := false
 	if newUser.Email != user.Email && newUser.Email != "" {
 		if !isEmailValid(newUser.Email) {
 			return fmt.Errorf("profileRepo.GetUserProfile: invalid address")
 		}
+		sendVerification = true
 		newUser.Verified = false
 	}
-	return profileRepo.UpdateUser(newUser)
+	err = profileRepo.UpdateUser(newUser)
+	if err != nil {
+		return fmt.Errorf("profileRepo.UpdateUser: %s", err.Error())
+	}
+	if sendVerification {
+		err = t.EmailVerification(user.AccountID)
+		if err != nil {
+			return fmt.Errorf("EmailVerification: %s", err.Error())
+		}
+	}
+	return nil
 }
 
 func (t *TezTracker) EmailVerification(accountID string) error {
@@ -96,7 +111,7 @@ func (t *TezTracker) EmailVerification(accountID string) error {
 	return nil
 }
 
-func (t *TezTracker) GetUserAddresses(accountID string) (addresses []models.UserAddress, err error) {
+func (t *TezTracker) GetUserAddresses(accountID string) (addresses []models.UserAddressWithBalance, err error) {
 	return t.repoProvider.GetUserProfile().GetUserAddresses(accountID)
 }
 

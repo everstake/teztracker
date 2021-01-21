@@ -32,9 +32,9 @@ func (h *getUserProfileHandler) Handle(params profile.GetUserProfileParams) midd
 		return profile.NewGetUserProfileInternalServerError()
 	}
 	return profile.NewGetUserProfileOK().WithPayload(&genModels.UserProfile{
-		Email:    user.Email,
-		Username: user.Username,
-		Verified: user.Verified,
+		Email:    &user.Email,
+		Username: &user.Username,
+		Verified: &user.Verified,
 	})
 }
 
@@ -117,10 +117,10 @@ func (h *createOrUpdateUserAddressHandler) Handle(params profile.CreateOrUpdateU
 
 	err = service.CreateOrUpdateUserAddress(models.UserAddress{
 		AccountID:           user.AccountID,
-		Address:             params.Data.Address,
-		DelegationsEnabled:  params.Data.DelegationsEnabled,
-		InTransfersEnabled:  params.Data.InTransfersEnabled,
-		OutTransfersEnabled: params.Data.OutTransfersEnabled,
+		Address:             *params.Data.Address,
+		DelegationsEnabled:  *params.Data.DelegationsEnabled,
+		InTransfersEnabled:  *params.Data.InTransfersEnabled,
+		OutTransfersEnabled: *params.Data.OutTransfersEnabled,
 	})
 	if err == models.UserLimitReachedErr || err == models.AccountNotFoundErr {
 		return profile.NewCreateOrUpdateUserAddressBadRequest()
@@ -209,9 +209,11 @@ func (h *createOrUpdateUserNoteHandler) Handle(params profile.CreateOrUpdateNote
 	}
 
 	err = service.CreateOrUpdateUserNote(models.UserNote{
-		AccountID: user.AccountID,
-		Text:      params.Data.Text,
-		Alias:     params.Data.Alias,
+		AccountID:   user.AccountID,
+		Text:        params.Data.Text,
+		Alias:       params.Data.Alias,
+		Tag:         params.Data.Tag,
+		Description: params.Data.Description,
 	})
 	if err == models.UserLimitReachedErr || err == models.AccountNotFoundErr {
 		return profile.NewCreateOrUpdateNoteBadRequest()
