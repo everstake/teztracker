@@ -872,15 +872,15 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/v2/data/profile/address"] = profile.NewCreateOrUpdateUserAddress(o.context, o.ProfileCreateOrUpdateUserAddressHandler)
 
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/v2/data/profile/delete/address"] = profile.NewDeleteUserAddress(o.context, o.ProfileDeleteUserAddressHandler)
+	o.handlers["POST"]["/v2/data/profile/delete/address"] = profile.NewDeleteUserAddress(o.context, o.ProfileDeleteUserAddressHandler)
 
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/v2/data/profile/delete/note"] = profile.NewDeleteUserNote(o.context, o.ProfileDeleteUserNoteHandler)
+	o.handlers["POST"]["/v2/data/profile/delete/note"] = profile.NewDeleteUserNote(o.context, o.ProfileDeleteUserNoteHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

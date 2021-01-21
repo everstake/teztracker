@@ -131,7 +131,7 @@ func init() {
       }
     },
     "/v2/data/profile/delete/address": {
-      "delete": {
+      "post": {
         "consumes": [
           "application/json"
         ],
@@ -168,7 +168,7 @@ func init() {
       }
     },
     "/v2/data/profile/delete/note": {
-      "delete": {
+      "post": {
         "consumes": [
           "application/json"
         ],
@@ -6286,7 +6286,7 @@ func init() {
       }
     },
     "/v2/data/profile/delete/address": {
-      "delete": {
+      "post": {
         "consumes": [
           "application/json"
         ],
@@ -6323,7 +6323,7 @@ func init() {
       }
     },
     "/v2/data/profile/delete/note": {
-      "delete": {
+      "post": {
         "consumes": [
           "application/json"
         ],

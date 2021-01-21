@@ -2919,7 +2919,7 @@ paths:
       tags:
         - Profile
   '/v2/data/profile/delete/address':
-    delete:
+    post:
       operationId: deleteUserAddress
       consumes:
         - application/json
@@ -2988,7 +2988,7 @@ paths:
       tags:
         - Profile
   '/v2/data/profile/delete/note':
-    delete:
+    post:
       operationId: deleteUserNote
       consumes:
         - application/json
