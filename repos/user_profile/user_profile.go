@@ -157,7 +157,7 @@ func (r *Repository) DeleteUserNote(accountID string, text string) error {
 func (r *Repository) GetUserNotesCount(accountID string) (count uint64, err error) {
 	err = r.db.Model(&models.UserNote{}).
 		Select("count(*)").
-		Where("account_id = ?", accountID).First(&count).Error
+		Where("account_id = ?", accountID).Count(&count).Error
 	return count, err
 }
 
