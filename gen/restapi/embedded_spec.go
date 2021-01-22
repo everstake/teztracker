@@ -2675,7 +2675,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -2758,7 +2758,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -2816,7 +2816,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3265,7 +3265,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3313,7 +3313,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -8433,7 +8433,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -8516,7 +8516,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -8574,7 +8574,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9027,7 +9027,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9075,7 +9075,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "delphi"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",

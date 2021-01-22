@@ -135,7 +135,7 @@ func (o *GetBlocksPriorityChartInfoParams) bindNetwork(rawData []string, hasKey 
 // validateNetwork carries on validations for parameter Network
 func (o *GetBlocksPriorityChartInfoParams) validateNetwork(formats strfmt.Registry) error {
 
-	if err := validate.Enum("network", "path", o.Network, []interface{}{"mainnet", "delphi"}); err != nil {
+	if err := validate.Enum("network", "path", o.Network, []interface{}{"mainnet", "delphinet"}); err != nil {
 		return err
 	}
 

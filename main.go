@@ -32,8 +32,8 @@ func main() {
 	if cfg.Mainnet.SqlConnectionString != "" {
 		networks[models.NetworkMain] = cfg.Mainnet
 	}
-	if cfg.Delphi.SqlConnectionString != "" {
-		networks[models.NetworkDelphi] = cfg.Delphi
+	if cfg.Delphinet.SqlConnectionString != "" {
+		networks[models.NetworkDelphi] = cfg.Delphinet
 	}
 	if len(networks) == 0 {
 		log.Fatalln("no networks are configured")
