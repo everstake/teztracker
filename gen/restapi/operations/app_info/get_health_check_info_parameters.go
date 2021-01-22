@@ -90,7 +90,7 @@ func (o *GetHealthCheckInfoParams) bindNetwork(rawData []string, hasKey bool, fo
 // validateNetwork carries on validations for parameter Network
 func (o *GetHealthCheckInfoParams) validateNetwork(formats strfmt.Registry) error {
 
-	if err := validate.Enum("network", "path", o.Network, []interface{}{"mainnet", "carthagenet"}); err != nil {
+	if err := validate.Enum("network", "path", o.Network, []interface{}{"mainnet", "delphi"}); err != nil {
 		return err
 	}
 

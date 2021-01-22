@@ -33,8 +33,8 @@ func ToNetwork(net string) (models.Network, error) {
 	switch strings.ToLower(net) {
 	case "main", "mainnet":
 		return models.NetworkMain, nil
-	case "carthage", "carthagenet":
-		return models.NetworkCarthage, nil
+	case "delphi", "delphinet":
+		return models.NetworkDelphi, nil
 	}
 
 	return "", fmt.Errorf("not supported network")

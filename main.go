@@ -32,8 +32,8 @@ func main() {
 	if cfg.Mainnet.SqlConnectionString != "" {
 		networks[models.NetworkMain] = cfg.Mainnet
 	}
-	if cfg.Carthagenet.SqlConnectionString != "" {
-		networks[models.NetworkCarthage] = cfg.Carthagenet
+	if cfg.Delphi.SqlConnectionString != "" {
+		networks[models.NetworkDelphi] = cfg.Delphi
 	}
 	if len(networks) == 0 {
 		log.Fatalln("no networks are configured")
@@ -86,9 +86,9 @@ func main() {
 				log.Fatalln(err)
 			}
 
-			// Using models.NetworkMain instead of k due to stupid nodes configuration for carthagenet.
+			// Using models.NetworkMain instead of k due to stupid nodes configuration for delphi.
 			// todo: if something is not workign for testnets, check this one.
-			services.AddToCron(cron, cfg, db, ws, marketData, rpc, models.NetworkMain, k == models.NetworkCarthage)
+			services.AddToCron(cron, cfg, db, ws, marketData, rpc, models.NetworkMain, k == models.NetworkDelphi)
 		}
 
 		cron.Start()
