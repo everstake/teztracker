@@ -30,7 +30,7 @@ services:
       XTZ_Host: ${DELPHINET_XTZ_HOST}
       XTZ_Scheme: "${DELPHINET_XTZ_SCHEME}"
       XTZ_Port: "${DELPHINET_XTZ_PORT}"
-      XTZ_Network: "DELPHINET"
+      XTZ_Network: "carthagenet"
     # If using localhost db you may want to use the host network
     network_mode: "host"
     restart: on-failure
