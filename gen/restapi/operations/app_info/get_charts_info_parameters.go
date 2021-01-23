@@ -191,7 +191,7 @@ func (o *GetChartsInfoParams) bindNetwork(rawData []string, hasKey bool, formats
 // validateNetwork carries on validations for parameter Network
 func (o *GetChartsInfoParams) validateNetwork(formats strfmt.Registry) error {
 
-	if err := validate.Enum("network", "path", o.Network, []interface{}{"mainnet", "carthagenet"}); err != nil {
+	if err := validate.Enum("network", "path", o.Network, []interface{}{"mainnet", "delphinet"}); err != nil {
 		return err
 	}
 

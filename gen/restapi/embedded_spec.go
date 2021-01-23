@@ -3056,7 +3056,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3139,7 +3139,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3197,7 +3197,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3656,7 +3656,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3704,7 +3704,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9329,7 +9329,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9412,7 +9412,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9470,7 +9470,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9933,7 +9933,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9981,7 +9981,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",

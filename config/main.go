@@ -12,7 +12,7 @@ import (
 type Config struct {
 	Port                                  int
 	Mainnet                               NetworkConfig
-	Carthagenet                           NetworkConfig
+	Delphinet                             NetworkConfig
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
 	CounterIntervalHours                  int
 	FutureRightsIntervalMinutes           int

@@ -350,7 +350,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				//Outside network always main for RPC
 				serviceNetwork := network
 				if isTestNetwork {
-					serviceNetwork = models.NetworkCarthage
+					serviceNetwork = models.NetworkDelphi
 				}
 
 				service := New(repos.New(db), serviceNetwork)

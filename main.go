@@ -33,8 +33,8 @@ func main() {
 	if cfg.Mainnet.SqlConnectionString != "" {
 		networks[models.NetworkMain] = cfg.Mainnet
 	}
-	if cfg.Carthagenet.SqlConnectionString != "" {
-		networks[models.NetworkCarthage] = cfg.Carthagenet
+	if cfg.Delphinet.SqlConnectionString != "" {
+		networks[models.NetworkDelphi] = cfg.Delphinet
 	}
 	if len(networks) == 0 {
 		log.Fatalln("no networks are configured")
@@ -89,9 +89,9 @@ func main() {
 
 			mail := mailer.New(cfg.SmtpHost, cfg.SmtpPort, cfg.SmtpUser, cfg.SmtpPassword)
 
-			// Using models.NetworkMain instead of k due to stupid nodes configuration for carthagenet.
+			// Using models.NetworkMain instead of k due to stupid nodes configuration for delphi.
 			// todo: if something is not workign for testnets, check this one.
-			services.AddToCron(cron, cfg, db, ws, mail, marketData, rpc, models.NetworkMain, k == models.NetworkCarthage)
+			services.AddToCron(cron, cfg, db, ws, mail, marketData, rpc, models.NetworkMain, k == models.NetworkDelphi)
 		}
 
 		cron.Start()

@@ -3,9 +3,9 @@
 
 ## Project overwiew
 
-Programming language: `Go v1.13.6`
+Programming language: `Go v1.15.2`
 
-DB: `Postgres 10`
+DB: `Postgres 12`
 
 Indexer: `Conseil`
 
@@ -39,19 +39,21 @@ Environment variables are divided into 2 groups:
 
 2. TezTracker API server variables
 
-        TEZTRACKER_PORT	- api port
-        TEZTRACKER_API_DOCUMENTATION_PORT - api port of documentation ui    
-        TEZTRACKER_MAINNET_SQLCONNECTIONSTRING - raw Postgres connection string. example: postgresql://user:pass@127.0.0.1:5432/conseil?sslmode=disable
-        TEZTRACKER_LOG_LEVEL - default: info
-        TEZTRACKER_COUNTERINTERVALHOURS - update interval of chain counters. example: 2
-        TEZTRACKER_FUTURERIGHTSINTERVALMINUTES - check interval of future baking/endorsement rights
-        TEZTRACKER_SNAPSHOTCHECKINTERVALMINUTES - check interval of snapshots
-        TEZTRACKER_DOUBLEBAKINGCHECKINTERVALMINUTES - check interval of double baking operations
-        TEZTRACKER_DOUBLEENDORSEMENTCHECKINTERVALMINUTES - check interval of double endorsement operations
+        	TEZTRACKER_PORT	- api port
+        	TEZTRACKER_API_DOCUMENTATION_PORT - api port of documentation ui    
+        	TEZTRACKER_MAINNET_SQLCONNECTIONSTRING - raw Postgres connection string. example: postgresql://user:pass@127.0.0.1:5432/conseil?sslmode=disable
+        	TEZTRACKER_LOG_LEVEL - default: info
+        	TEZTRACKER_COUNTERINTERVALHOURS - update interval of chain counters. example: 2
+        	TEZTRACKER_FUTURERIGHTSINTERVALMINUTES - check interval of future baking/endorsement rights
+        	TEZTRACKER_SNAPSHOTCHECKINTERVALMINUTES - check interval of snapshots
+        	TEZTRACKER_DOUBLEBAKINGCHECKINTERVALMINUTES - check interval of double baking operations
+        	TEZTRACKER_DOUBLEENDORSEMENTCHECKINTERVALMINUTES - check interval of double endorsement operations
+		TEZTRACKER_ASSETSPARSEINTERVALMINUTES - parse interval of assets operations
+		TEZTRACKER_VOTINGROLLSINTERVALMINUTES - parse interval of voting rolls
 
 ### Build and deploy Conseil
 TezTracker relies on the [Conseil](https://github.com/Cryptonomic/Conseil) indexer. Follow the instructions provided below to deploy Conseil or read through the [README](https://github.com/Cryptonomic/Conseil/blob/master/README.md) in the Conseil GitHub repository.   
-Current explorer state works with [2020-january-release-19](https://github.com/Cryptonomic/Conseil/releases/tag/2020-january-release-19) Conseil release, so use correct conseil.sql file for db init.
+Current explorer state works with [2020-july-release-24](https://github.com/Cryptonomic/Conseil/releases/tag/2020-july-release-24) Conseil release, so use correct conseil.sql file for db init.
 
 Clone the teztracker repository and cd into the cloned folder.
 
