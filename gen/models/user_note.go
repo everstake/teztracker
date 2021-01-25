@@ -15,6 +15,9 @@ import (
 // swagger:model UserNote
 type UserNote struct {
 
+	// address
+	Address string `json:"address,omitempty"`
+
 	// alias
 	Alias string `json:"alias,omitempty"`
 
@@ -23,9 +26,6 @@ type UserNote struct {
 
 	// tag
 	Tag string `json:"tag,omitempty"`
-
-	// text
-	Text string `json:"text,omitempty"`
 }
 
 // Validate validates this user note
