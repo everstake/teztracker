@@ -27,12 +27,14 @@ create index user_addresses_address_index
 
 create table tezos.user_notes
 (
-    id         serial      not null
+    id          serial                                not null
         constraint user_notes_pk
             primary key,
-    account_id varchar(36) not null,
-    alias      varchar,
-    text       varchar     not null
+    account_id  varchar                               not null,
+    alias       varchar,
+    address     varchar                               not null,
+    tag         varchar default ''::character varying not null,
+    description text                                  not null
 );
 
 create

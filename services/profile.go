@@ -153,13 +153,13 @@ func (t *TezTracker) DeleteUserAddress(accountID string, address string) error {
 	return t.repoProvider.GetUserProfile().DeleteUserAddress(accountID, address)
 }
 
-func (t *TezTracker) GetUserNotes(accountID string) (notes []models.UserNote, err error) {
+func (t *TezTracker) GetUserNotes(accountID string) (notes []models.UserNoteWithBalance, err error) {
 	return t.repoProvider.GetUserProfile().UserNotesList(accountID)
 }
 
 func (t *TezTracker) CreateOrUpdateUserNote(note models.UserNote) error {
 	userProfileRepo := t.repoProvider.GetUserProfile()
-	userNote, found, err := userProfileRepo.FindUserNote(note.AccountID, note.Text)
+	userNote, found, err := userProfileRepo.FindUserNote(note.AccountID, note.Address)
 	if err != nil {
 		return fmt.Errorf("FindUserNote: %s", err.Error())
 	}
@@ -169,6 +169,9 @@ func (t *TezTracker) CreateOrUpdateUserNote(note models.UserNote) error {
 			return fmt.Errorf("UpdateUserNote: %s", err.Error())
 		}
 		return nil
+	}
+	if len(note.Address) != 36 {
+		return fmt.Errorf("invalid address")
 	}
 	count, err := userProfileRepo.GetUserNotesCount(userNote.AccountID)
 	if err != nil {
@@ -184,8 +187,8 @@ func (t *TezTracker) CreateOrUpdateUserNote(note models.UserNote) error {
 	return nil
 }
 
-func (t *TezTracker) DeleteUserNote(accountID string, text string) error {
-	return t.repoProvider.GetUserProfile().DeleteUserNote(accountID, text)
+func (t *TezTracker) DeleteUserNote(accountID string, address string) error {
+	return t.repoProvider.GetUserProfile().DeleteUserNote(accountID, address)
 }
 
 func (t *TezTracker) SendNewVerifications(pusher mailer.Mail) error {

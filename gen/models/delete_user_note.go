@@ -15,8 +15,8 @@ import (
 // swagger:model DeleteUserNote
 type DeleteUserNote struct {
 
-	// text
-	Text string `json:"text,omitempty"`
+	// address
+	Address string `json:"address,omitempty"`
 }
 
 // Validate validates this delete user note

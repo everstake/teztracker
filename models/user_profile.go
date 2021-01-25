@@ -33,10 +33,15 @@ type UserAddressWithBalance struct {
 type UserNote struct {
 	ID          uint64
 	AccountID   string
-	Text        string
+	Address     string
 	Alias       string
 	Tag         string
 	Description string
+}
+
+type UserNoteWithBalance struct {
+	UserNote
+	Balance null.Int
 }
 
 type UserAddressWithEmail struct {

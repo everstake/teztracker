@@ -264,7 +264,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/UserNote"
+                "$ref": "#/definitions/UserNoteWithBalance"
               }
             }
           },
@@ -5576,7 +5576,7 @@ func init() {
     },
     "DeleteUserNote": {
       "properties": {
-        "text": {
+        "address": {
           "type": "string"
         }
       }
@@ -6303,6 +6303,9 @@ func init() {
     },
     "UserNote": {
       "properties": {
+        "address": {
+          "type": "string"
+        },
         "alias": {
           "type": "string"
         },
@@ -6311,8 +6314,32 @@ func init() {
         },
         "tag": {
           "type": "string"
+        }
+      }
+    },
+    "UserNoteWithBalance": {
+      "required": [
+        "address",
+        "alias",
+        "tag",
+        "description",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
         },
-        "text": {
+        "alias": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
           "type": "string"
         }
       }
@@ -6600,7 +6627,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/UserNote"
+                "$ref": "#/definitions/UserNoteWithBalance"
               }
             }
           },
@@ -11945,7 +11972,7 @@ func init() {
     },
     "DeleteUserNote": {
       "properties": {
-        "text": {
+        "address": {
           "type": "string"
         }
       }
@@ -12673,6 +12700,9 @@ func init() {
     },
     "UserNote": {
       "properties": {
+        "address": {
+          "type": "string"
+        },
         "alias": {
           "type": "string"
         },
@@ -12681,8 +12711,32 @@ func init() {
         },
         "tag": {
           "type": "string"
+        }
+      }
+    },
+    "UserNoteWithBalance": {
+      "required": [
+        "address",
+        "alias",
+        "tag",
+        "description",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
         },
-        "text": {
+        "alias": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
           "type": "string"
         }
       }

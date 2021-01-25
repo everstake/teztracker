@@ -24,10 +24,10 @@ type (
 		UpdateUserAddress(address models.UserAddress) error
 		GetUserAddressesCount(accountID string) (count uint64, err error)
 
-		UserNotesList(accountID string) (notes []models.UserNote, err error)
-		FindUserNote(accountID string, text string) (note models.UserNote, found bool, err error)
+		UserNotesList(accountID string) (notes []models.UserNoteWithBalance, err error)
+		FindUserNote(accountID string, address string) (note models.UserNote, found bool, err error)
 		CreateUserNote(models.UserNote) error
-		DeleteUserNote(accountID string, text string) error
+		DeleteUserNote(accountID string, address string) error
 		UpdateUserNote(models.UserNote) error
 		GetUserNotesCount(accountID string) (count uint64, err error)
 
@@ -127,13 +127,15 @@ func (r *Repository) GetUserAddressesCount(accountID string) (count uint64, err 
 	return count, err
 }
 
-func (r *Repository) UserNotesList(accountID string) (notes []models.UserNote, err error) {
-	err = r.db.Model(&models.UserNote{}).Where("account_id = ?", accountID).Find(&notes).Error
+func (r *Repository) UserNotesList(accountID string) (notes []models.UserNoteWithBalance, err error) {
+	err = r.db.Table("tezos.user_notes").Select("user_notes.*, accounts.balance").
+		Joins("left join tezos.accounts ON user_notes.address = accounts.account_id").
+		Where("user_notes.account_id = ?", accountID).Find(&notes).Error
 	return notes, err
 }
 
-func (r *Repository) FindUserNote(accountID string, text string) (note models.UserNote, found bool, err error) {
-	if res := r.db.Model(&models.UserNote{}).Where("account_id = ?", accountID).Where("text = ?", text).First(&note); res.Error != nil {
+func (r *Repository) FindUserNote(accountID string, address string) (note models.UserNote, found bool, err error) {
+	if res := r.db.Model(&models.UserNote{}).Where("account_id = ?", accountID).Where("address = ?", address).First(&note); res.Error != nil {
 		if res.RecordNotFound() {
 			return note, false, nil
 		}
@@ -147,13 +149,13 @@ func (r *Repository) CreateUserNote(note models.UserNote) error {
 }
 
 func (r *Repository) UpdateUserNote(note models.UserNote) error {
-	return r.db.Model(&models.UserNote{}).Where("account_id = ?", note.AccountID).Where("text = ?", note.Text).Update(&note).Error
+	return r.db.Model(&models.UserNote{}).Where("account_id = ?", note.AccountID).Where("address = ?", note.Address).Update(&note).Error
 }
 
-func (r *Repository) DeleteUserNote(accountID string, text string) error {
+func (r *Repository) DeleteUserNote(accountID string, address string) error {
 	return r.db.
 		Where("account_id = ?", accountID).
-		Where("text = ?", text).Delete(&models.UserNote{}).Error
+		Where("address = ?", address).Delete(&models.UserNote{}).Error
 }
 
 func (r *Repository) GetUserNotesCount(accountID string) (count uint64, err error) {
