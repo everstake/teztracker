@@ -127,10 +127,6 @@ func init() {
             "in": "query"
           },
           {
-            "enum": [
-              "transfer",
-              "other"
-            ],
             "type": "array",
             "items": {
               "type": "string"
@@ -5876,10 +5872,6 @@ func init() {
             "in": "query"
           },
           {
-            "enum": [
-              "transfer",
-              "other"
-            ],
             "type": "array",
             "items": {
               "type": "string"

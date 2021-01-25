@@ -2743,7 +2743,6 @@ paths:
           type: array
           items:
             type: string
-          enum: [transfer, other]
         - in: query
           collectionFormat: multi
           name: block_level

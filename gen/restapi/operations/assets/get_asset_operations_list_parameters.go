@@ -335,20 +335,6 @@ func (o *GetAssetOperationsListParams) bindType(rawData []string, hasKey bool, f
 	}
 
 	o.Type = typeIR
-	if err := o.validateType(formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// validateType carries on validations for parameter Type
-func (o *GetAssetOperationsListParams) validateType(formats strfmt.Registry) error {
-
-	// Enum: [transfer other]
-	if err := validate.Enum("type", "query", o.Type, []interface{}{"transfer", "other"}); err != nil {
-		return err
-	}
 
 	return nil
 }
