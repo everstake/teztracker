@@ -6,6 +6,7 @@ package assets
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -46,10 +47,18 @@ type GetAssetOperationsListParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*
-	  Required: true
-	  In: path
+	  In: query
 	*/
-	AssetID string
+	AccountID []string
+	/*
+	  In: query
+	*/
+	AssetID []string
+	/*
+	  In: query
+	  Collection Format: multi
+	*/
+	BlockLevel []int64
 	/*
 	  Maximum: 300
 	  Minimum: 1
@@ -71,7 +80,7 @@ type GetAssetOperationsListParams struct {
 	/*
 	  In: query
 	*/
-	Type *string
+	Type []string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -85,8 +94,18 @@ func (o *GetAssetOperationsListParams) BindRequest(r *http.Request, route *middl
 
 	qs := runtime.Values(r.URL.Query())
 
-	rAssetID, rhkAssetID, _ := route.Params.GetOK("asset_id")
-	if err := o.bindAssetID(rAssetID, rhkAssetID, route.Formats); err != nil {
+	qAccountID, qhkAccountID, _ := qs.GetOK("account_id")
+	if err := o.bindAccountID(qAccountID, qhkAccountID, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qAssetID, qhkAssetID, _ := qs.GetOK("asset_id")
+	if err := o.bindAssetID(qAssetID, qhkAssetID, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qBlockLevel, qhkBlockLevel, _ := qs.GetOK("block_level")
+	if err := o.bindBlockLevel(qBlockLevel, qhkBlockLevel, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -116,17 +135,85 @@ func (o *GetAssetOperationsListParams) BindRequest(r *http.Request, route *middl
 	return nil
 }
 
-// bindAssetID binds and validates parameter AssetID from path.
-func (o *GetAssetOperationsListParams) bindAssetID(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
+// bindAccountID binds and validates array parameter AccountID from query.
+//
+// Arrays are parsed according to CollectionFormat: "" (defaults to "csv" when empty).
+func (o *GetAssetOperationsListParams) bindAccountID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+
+	var qvAccountID string
 	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
+		qvAccountID = rawData[len(rawData)-1]
 	}
 
-	// Required: true
-	// Parameter is provided by construction from the route
+	// CollectionFormat:
+	accountIDIC := swag.SplitByFormat(qvAccountID, "")
+	if len(accountIDIC) == 0 {
+		return nil
+	}
 
-	o.AssetID = raw
+	var accountIDIR []string
+	for _, accountIDIV := range accountIDIC {
+		accountIDI := accountIDIV
+
+		accountIDIR = append(accountIDIR, accountIDI)
+	}
+
+	o.AccountID = accountIDIR
+
+	return nil
+}
+
+// bindAssetID binds and validates array parameter AssetID from query.
+//
+// Arrays are parsed according to CollectionFormat: "" (defaults to "csv" when empty).
+func (o *GetAssetOperationsListParams) bindAssetID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+
+	var qvAssetID string
+	if len(rawData) > 0 {
+		qvAssetID = rawData[len(rawData)-1]
+	}
+
+	// CollectionFormat:
+	assetIDIC := swag.SplitByFormat(qvAssetID, "")
+	if len(assetIDIC) == 0 {
+		return nil
+	}
+
+	var assetIDIR []string
+	for _, assetIDIV := range assetIDIC {
+		assetIDI := assetIDIV
+
+		assetIDIR = append(assetIDIR, assetIDI)
+	}
+
+	o.AssetID = assetIDIR
+
+	return nil
+}
+
+// bindBlockLevel binds and validates array parameter BlockLevel from query.
+//
+// Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
+func (o *GetAssetOperationsListParams) bindBlockLevel(rawData []string, hasKey bool, formats strfmt.Registry) error {
+
+	// CollectionFormat: multi
+	blockLevelIC := rawData
+
+	if len(blockLevelIC) == 0 {
+		return nil
+	}
+
+	var blockLevelIR []int64
+	for i, blockLevelIV := range blockLevelIC {
+		blockLevelI, err := swag.ConvertInt64(blockLevelIV)
+		if err != nil {
+			return errors.InvalidType(fmt.Sprintf("%s.%v", "block_level", i), "query", "int64", blockLevelI)
+		}
+
+		blockLevelIR = append(blockLevelIR, blockLevelI)
+	}
+
+	o.BlockLevel = blockLevelIR
 
 	return nil
 }
@@ -224,20 +311,44 @@ func (o *GetAssetOperationsListParams) validateOffset(formats strfmt.Registry) e
 	return nil
 }
 
-// bindType binds and validates parameter Type from query.
+// bindType binds and validates array parameter Type from query.
+//
+// Arrays are parsed according to CollectionFormat: "" (defaults to "csv" when empty).
 func (o *GetAssetOperationsListParams) bindType(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
+
+	var qvType string
 	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
+		qvType = rawData[len(rawData)-1]
 	}
 
-	// Required: false
-	// AllowEmptyValue: false
-	if raw == "" { // empty values pass all other validations
+	// CollectionFormat:
+	typeIC := swag.SplitByFormat(qvType, "")
+	if len(typeIC) == 0 {
 		return nil
 	}
 
-	o.Type = &raw
+	var typeIR []string
+	for _, typeIV := range typeIC {
+		typeI := typeIV
+
+		typeIR = append(typeIR, typeI)
+	}
+
+	o.Type = typeIR
+	if err := o.validateType(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateType carries on validations for parameter Type
+func (o *GetAssetOperationsListParams) validateType(formats strfmt.Registry) error {
+
+	// Enum: [transfer other]
+	if err := validate.Enum("type", "query", o.Type, []interface{}{"transfer", "other"}); err != nil {
+		return err
+	}
 
 	return nil
 }

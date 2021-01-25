@@ -1,6 +1,8 @@
 package services
 
 import (
+	"blockwatch.cc/tzindex/chain"
+	"encoding/hex"
 	"github.com/everstake/teztracker/models"
 	"github.com/guregu/null"
 	"time"
@@ -129,4 +131,33 @@ func (t *TezTracker) GetAccountBalanceHistory(id string, from, to time.Time) (ba
 	}
 
 	return balances, nil
+}
+
+func (t *TezTracker) GetAccountAssetsBalance(address string) (balances []models.AccountAssetBalance, err error) {
+
+	adr, err := base58ToHexAddress(address)
+	if err != nil {
+		return balances, err
+	}
+
+	balances, err = t.repoProvider.GetAssets().GetAccountAssetsBalances(adr)
+	if err != nil {
+		return balances, nil
+	}
+
+	return balances, nil
+}
+
+func base58ToHexAddress(address string) (string, error) {
+	adr, err := chain.ParseAddress(address)
+	if err != nil {
+		return "", nil
+	}
+
+	bt, err := adr.MarshalBinary()
+	if err != nil {
+		return "", nil
+	}
+
+	return hex.EncodeToString(bt), nil
 }

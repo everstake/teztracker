@@ -16,12 +16,14 @@ import (
 
 // GetAssetOperationsListURL generates an URL for the get asset operations list operation
 type GetAssetOperationsListURL struct {
-	AssetID string
 	Network string
 
-	Limit  *int64
-	Offset *int64
-	Type   *string
+	AccountID  []string
+	AssetID    []string
+	BlockLevel []int64
+	Limit      *int64
+	Offset     *int64
+	Type       []string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -47,14 +49,7 @@ func (o *GetAssetOperationsListURL) SetBasePath(bp string) {
 func (o *GetAssetOperationsListURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/data/{network}/assets/{asset_id}/operations"
-
-	assetID := o.AssetID
-	if assetID != "" {
-		_path = strings.Replace(_path, "{asset_id}", assetID, -1)
-	} else {
-		return nil, errors.New("assetId is required on GetAssetOperationsListURL")
-	}
+	var _path = "/v2/data/{network}/assets/operations"
 
 	network := o.Network
 	if network != "" {
@@ -67,6 +62,54 @@ func (o *GetAssetOperationsListURL) Build() (*url.URL, error) {
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
+
+	var accountIDIR []string
+	for _, accountIDI := range o.AccountID {
+		accountIDIS := accountIDI
+		if accountIDIS != "" {
+			accountIDIR = append(accountIDIR, accountIDIS)
+		}
+	}
+
+	accountID := swag.JoinByFormat(accountIDIR, "")
+
+	if len(accountID) > 0 {
+		qsv := accountID[0]
+		if qsv != "" {
+			qs.Set("account_id", qsv)
+		}
+	}
+
+	var assetIDIR []string
+	for _, assetIDI := range o.AssetID {
+		assetIDIS := assetIDI
+		if assetIDIS != "" {
+			assetIDIR = append(assetIDIR, assetIDIS)
+		}
+	}
+
+	assetID := swag.JoinByFormat(assetIDIR, "")
+
+	if len(assetID) > 0 {
+		qsv := assetID[0]
+		if qsv != "" {
+			qs.Set("asset_id", qsv)
+		}
+	}
+
+	var blockLevelIR []string
+	for _, blockLevelI := range o.BlockLevel {
+		blockLevelIS := swag.FormatInt64(blockLevelI)
+		if blockLevelIS != "" {
+			blockLevelIR = append(blockLevelIR, blockLevelIS)
+		}
+	}
+
+	blockLevel := swag.JoinByFormat(blockLevelIR, "multi")
+
+	for _, qsv := range blockLevel {
+		qs.Add("block_level", qsv)
+	}
 
 	var limitQ string
 	if o.Limit != nil {
@@ -84,12 +127,21 @@ func (o *GetAssetOperationsListURL) Build() (*url.URL, error) {
 		qs.Set("offset", offsetQ)
 	}
 
-	var typeVarQ string
-	if o.Type != nil {
-		typeVarQ = *o.Type
+	var typeIR []string
+	for _, typeI := range o.Type {
+		typeIS := typeI
+		if typeIS != "" {
+			typeIR = append(typeIR, typeIS)
+		}
 	}
-	if typeVarQ != "" {
-		qs.Set("type", typeVarQ)
+
+	typeVar := swag.JoinByFormat(typeIR, "")
+
+	if len(typeVar) > 0 {
+		qsv := typeVar[0]
+		if qsv != "" {
+			qs.Set("type", qsv)
+		}
 	}
 
 	_result.RawQuery = qs.Encode()

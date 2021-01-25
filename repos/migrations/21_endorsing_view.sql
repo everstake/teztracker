@@ -33,7 +33,7 @@ AS
 $$
 BEGIN
   insert into tezos.baker_endorsements
-  select er.cycle,
+  select (er.level - 1) / 4096,
          er.delegate,
          er.level,
          er.slot,

@@ -144,36 +144,58 @@ type AccountDelegator struct {
 	Share     float64
 }
 
-type AccountReportFilter struct {
+type ReportFilter struct {
 	From         int64
 	To           int64
 	Limit        int64
 	Operations   []string
 	EndorsingReq bool
+	AssetsReq    bool
 }
 
-type AccountReport struct {
-	BlockLevel         uint64      `csv:"block level"`
-	OperationGroupHash null.String `csv:"-"`
-	Timestamp          time.Time   `csv:"timestamp"`
-	Kind               string      `csv:"operation type"`
-	Coin               string      `csv:"coin"`
+type OperationReport struct {
+	CommonReport
+
 	//DB field
 	Amount      float64 `csv:"-"`
-	Fee         float64 `csv:"fee"`
 	Source      string  `csv:"-"`
 	Destination string  `csv:"-"`
-	Status      string  `csv:"status"`
 
 	//CSV field
-	In   float64 `csv:"in"`
-	Out  float64 `csv:"out"`
-	Link string  `csv:"link"`
+	In  float64 `csv:"in"`
+	Out float64 `csv:"out"`
 }
 
-type BakerReport struct {
-	AccountReport
+type CommonReport struct {
+	BlockLevel uint64    `csv:"block level"`
+	Kind       string    `csv:"operation type"`
+	Timestamp  time.Time `csv:"timestamp"`
+	Coin       string    `csv:"coin"`
+	Fee        float64   `csv:"fee"`
+	Status     string    `csv:"status"`
+	//DB field
+	OperationGroupHash null.String `csv:"-"`
+
+	//CSV field
+	Link string `csv:"link"`
+}
+
+type AssetReport struct {
+	CommonReport
+
+	Amount      float64 `csv:"amount"`
+	Source      string  `csv:"source"`
+	Destination string  `csv:"destination"`
+}
+
+type ExtendReport struct {
+	OperationReport
 	//Baker operations
 	Reward float64 `csv:"reward"`
 	Loss   float64 `csv:"loss"`
+}
+
+type AccountAssetBalance struct {
+	AssetHolder
+	AssetInfo
 }
