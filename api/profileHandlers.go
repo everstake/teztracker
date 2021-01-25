@@ -185,7 +185,7 @@ func (h *getUserNotesHandler) Handle(params profile.GetUserNotesParams) middlewa
 		logrus.Errorf("failed get user notes: %s", err.Error())
 		return profile.NewGetUserNotesInternalServerError()
 	}
-	return profile.NewGetUserNotesOK().WithPayload(render.UserNotes(notes))
+	return profile.NewGetUserNotesOK().WithPayload(render.UserNotesWithBalance(notes))
 }
 
 type createOrUpdateUserNoteHandler struct {
@@ -210,7 +210,7 @@ func (h *createOrUpdateUserNoteHandler) Handle(params profile.CreateOrUpdateNote
 
 	err = service.CreateOrUpdateUserNote(models.UserNote{
 		AccountID:   user.AccountID,
-		Text:        params.Data.Text,
+		Address:     params.Data.Address,
 		Alias:       params.Data.Alias,
 		Tag:         params.Data.Tag,
 		Description: params.Data.Description,
@@ -245,7 +245,7 @@ func (h *deleteUserNoteHandler) Handle(params profile.DeleteUserNoteParams) midd
 		return profile.NewGetUserAddressesInternalServerError()
 	}
 
-	err = service.DeleteUserNote(user.AccountID, params.Data.Text)
+	err = service.DeleteUserNote(user.AccountID, params.Data.Address)
 	if err != nil {
 		logrus.Errorf("failed get user notes: %s", err.Error())
 		return profile.NewDeleteUserNoteInternalServerError()

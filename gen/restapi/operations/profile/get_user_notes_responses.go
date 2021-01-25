@@ -25,7 +25,7 @@ type GetUserNotesOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []*models.UserNote `json:"body,omitempty"`
+	Payload []*models.UserNoteWithBalance `json:"body,omitempty"`
 }
 
 // NewGetUserNotesOK creates GetUserNotesOK with default headers values
@@ -35,13 +35,13 @@ func NewGetUserNotesOK() *GetUserNotesOK {
 }
 
 // WithPayload adds the payload to the get user notes o k response
-func (o *GetUserNotesOK) WithPayload(payload []*models.UserNote) *GetUserNotesOK {
+func (o *GetUserNotesOK) WithPayload(payload []*models.UserNoteWithBalance) *GetUserNotesOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get user notes o k response
-func (o *GetUserNotesOK) SetPayload(payload []*models.UserNote) {
+func (o *GetUserNotesOK) SetPayload(payload []*models.UserNoteWithBalance) {
 	o.Payload = payload
 }
 
@@ -52,7 +52,7 @@ func (o *GetUserNotesOK) WriteResponse(rw http.ResponseWriter, producer runtime.
 	payload := o.Payload
 	if payload == nil {
 		// return empty array
-		payload = make([]*models.UserNote, 0, 50)
+		payload = make([]*models.UserNoteWithBalance, 0, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

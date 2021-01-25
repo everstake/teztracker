@@ -3035,7 +3035,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/UserNote"
+              $ref: "#/definitions/UserNoteWithBalance"
           description: Get user notes
         '400':
           description: Bad request
@@ -4292,7 +4292,7 @@ definitions:
         type: string
   UserNote:
     properties:
-      text:
+      address:
         type: string
       alias:
         type: string
@@ -4300,9 +4300,28 @@ definitions:
         type: string
       description:
         type: string
+  UserNoteWithBalance:
+    properties:
+      address:
+        type: string
+      alias:
+        type: string
+      tag:
+        type: string
+      description:
+        type: string
+      balance:
+        type: integer
+        format: int64
+    required:
+      - address
+      - alias
+      - tag
+      - description
+      - balance
   DeleteUserNote:
     properties:
-      text:
+      address:
         type: string
   EmailToken:
     properties:
