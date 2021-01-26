@@ -94,8 +94,14 @@ func (v *HolderBalance) Scan(value interface{}) (err error) {
 		return nil
 	}
 
+	var prefix string
+	//Check data len
+	if len(data) >= 2 {
+		prefix = data[0:2]
+	}
+
 	var bal string
-	switch data[0:2] {
+	switch prefix {
 	// bytes 0x
 	case "0x":
 		bt, err := hex.DecodeString(data[2:])
