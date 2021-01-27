@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 )
 
@@ -207,4 +208,64 @@ func (t *TezTracker) GetStakingRatio() (float64, error) {
 func (t *TezTracker) GetThirdPartyBakers() (bakers []models.ThirdPartyBakerAgg, err error) {
 	tpbRepo := t.repoProvider.GetThirdPartyBakers()
 	return tpbRepo.GetAggregatedBakers()
+}
+
+func (t *TezTracker) GetNumberOfDelegators() (items []models.BakerDelegators, err error) {
+	block, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return nil, fmt.Errorf("get LastBlock: %s", err.Error())
+	}
+	items, err = t.repoProvider.GetBaker().NumberOfDelegators(uint64(block.MetaCycle))
+	if err != nil {
+		return nil, fmt.Errorf("NumberOfDelegators: %s", err.Error())
+	}
+	return items, nil
+}
+
+func (t *TezTracker) GetBakersStakeChange() (items []models.BakerDelegators, err error) {
+	block, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return nil, fmt.Errorf("get LastBlock: %s", err.Error())
+	}
+	prevStakes, err := t.repoProvider.GetBaker().GetBakersStake(uint64(block.MetaCycle - 1))
+	if err != nil {
+		return nil, fmt.Errorf("BakersStake: %s", err.Error())
+	}
+	prevStakesMap := make(map[string]int64)
+	for _, stake := range prevStakes {
+		prevStakesMap[stake.Address] = stake.Value
+	}
+	lastStakes, err := t.repoProvider.GetBaker().GetBakersStake(uint64(block.MetaCycle))
+	if err != nil {
+		return nil, fmt.Errorf("BakersStake: %s", err.Error())
+	}
+	items = make([]models.BakerDelegators, len(lastStakes))
+	for i := range lastStakes {
+		var diff int64
+		p, ok := prevStakesMap[lastStakes[i].Address]
+		if ok {
+			diff = lastStakes[i].Value - p
+		}
+		items[i] = models.BakerDelegators{
+			Baker:   lastStakes[i].Baker,
+			Address: lastStakes[i].Address,
+			Value:   diff,
+		}
+	}
+	return items, nil
+}
+
+func (t *TezTracker) GetBakersVoting() (voting models.BakersVoting, err error) {
+	bakers, err := t.repoProvider.GetBaker().GetBakersVoting()
+	if err != nil {
+		return voting, fmt.Errorf("GetBakersVoting: %s", err.Error())
+	}
+	count, err := t.repoProvider.GetVotingPeriod().ProposalsCount()
+	if err != nil {
+		return voting, fmt.Errorf("ProposalsCount: %s", err.Error())
+	}
+	return models.BakersVoting{
+		ProposalsCount: count,
+		Bakers:         bakers,
+	}, nil
 }

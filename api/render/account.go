@@ -121,3 +121,22 @@ func AccountSecurityDeposit(acb models.AccountRewardsCount) *genModels.AccountSe
 		ExpectedTotalDeposit:       acb.ExpectedTotalSecurityDeposit,
 	}
 }
+
+func BakersDelegators(items []models.BakerDelegators) (result []*genModels.BakerDelegators) {
+	result = make([]*genModels.BakerDelegators, len(items))
+	for i := range items {
+		result[i] = &genModels.BakerDelegators{
+			Address: &items[i].Address,
+			Baker:   &items[i].Baker,
+			Value:   &items[i].Value,
+		}
+	}
+	return result
+}
+
+func BakersVoting(item models.BakersVoting) (result *genModels.BakersVoting) {
+	return &genModels.BakersVoting{
+		Bakers:         BakersDelegators(item.Bakers),
+		ProposalsCount: item.ProposalsCount,
+	}
+}

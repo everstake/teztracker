@@ -24,6 +24,7 @@ type (
 		PeriodNonVotersList(id int64, limit uint, offset uint) (periodProposals []models.Voter, err error)
 		PeriodNonVotersCount(id int64) (count int64, err error)
 		ProtocolsList(limit uint, offset uint) ([]models.Protocol, error)
+		ProposalsCount() (count int64, err error)
 	}
 )
 
@@ -196,4 +197,9 @@ func (r *Repository) ProtocolsList(limit uint, offset uint) (protocolsList []mod
 	}
 
 	return protocolsList, nil
+}
+
+func (r *Repository) ProposalsCount() (count int64, err error) {
+	err = r.db.Table("tezos.voting_proposal").Count(&count).Error
+	return count, err
 }

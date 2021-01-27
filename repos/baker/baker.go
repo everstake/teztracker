@@ -32,6 +32,10 @@ type (
 
 		TotalBakingRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
 		TotalEndorsementRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
+
+		NumberOfDelegators(cycle uint64) (numbers []models.BakerDelegators, err error)
+		GetBakersStake(cycle uint64) (stakes []models.BakerDelegators, err error)
+		GetBakersVoting() (stakes []models.BakerDelegators, err error)
 	}
 
 	BakerCounter struct {
@@ -263,4 +267,39 @@ func (r *Repository) SavePublicBaker(baker models.BakerRegistry) (err error) {
 	}
 
 	return nil
+}
+
+func (r *Repository) NumberOfDelegators(cycle uint64) (numbers []models.BakerDelegators, err error) {
+	q := fmt.Sprintf("SELECT count(delegators_by_cycle.*) as value, delegators_by_cycle.delegate_value as address " +
+		"from tezos.delegators_by_cycle WHERE cycle = %d GROUP BY delegate_value", cycle)
+	err = r.db.Table(fmt.Sprintf("(%s) as delegators", q)).Select("delegators.*, known_addresses.alias as baker").
+		Joins("left join tezos.known_addresses ON delegators.address = known_addresses.address").
+		Joins("left join tezos.bakers ON delegators.address = bakers.pkh").
+		Where("bakers.deactivated IS false").
+		Order("delegators.value DESC").
+		Find(&numbers).Error
+	return numbers, err
+}
+
+func (r *Repository) GetBakersStake(cycle uint64) (stakes []models.BakerDelegators, err error) {
+	q := fmt.Sprintf("SELECT sum(delegators_by_cycle.balance) as value, delegators_by_cycle.delegate_value as address " +
+		"from tezos.delegators_by_cycle WHERE cycle = %d GROUP BY delegate_value", cycle)
+	err = r.db.Table(fmt.Sprintf("(%s) as delegators", q)).Select("delegators.*, known_addresses.alias as baker").
+		Joins("left join tezos.known_addresses ON delegators.address = known_addresses.address").
+		Joins("left join tezos.bakers ON delegators.address = bakers.pkh").
+		Where("bakers.deactivated IS false").
+		Order("delegators.value DESC").
+		Find(&stakes).Error
+	return stakes, err
+}
+
+func (r *Repository) GetBakersVoting() (stakes []models.BakerDelegators, err error) {
+	q := fmt.Sprintf("SELECT count(voting_view.source) as value, voting_view.source as address from tezos.voting_view GROUP BY source")
+	err = r.db.Table(fmt.Sprintf("(%s) as delegators", q)).Select("delegators.*, known_addresses.alias as baker").
+		Joins("left join tezos.known_addresses ON delegators.address = known_addresses.address").
+		Joins("left join tezos.bakers ON delegators.address = bakers.pkh").
+		Where("bakers.deactivated IS false").
+		Order("delegators.value DESC").
+		Find(&stakes).Error
+	return stakes, err
 }

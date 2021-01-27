@@ -131,3 +131,14 @@ func (v *ThirdPartyProviders) Scan(value interface{}) (err error) {
 	*v = bakers
 	return nil
 }
+
+type BakerDelegators struct {
+	Baker   string
+	Address string
+	Value   int64
+}
+
+type BakersVoting struct {
+	ProposalsCount int64
+	Bakers         []BakerDelegators
+}
