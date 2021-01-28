@@ -149,8 +149,17 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AppInfoGetBakerChartInfoHandler: app_info.GetBakerChartInfoHandlerFunc(func(params app_info.GetBakerChartInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetBakerChartInfo has not yet been implemented")
 		}),
+		AccountsGetBakersDelegatorsHandler: accounts.GetBakersDelegatorsHandlerFunc(func(params accounts.GetBakersDelegatorsParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetBakersDelegators has not yet been implemented")
+		}),
 		AccountsGetBakersListHandler: accounts.GetBakersListHandlerFunc(func(params accounts.GetBakersListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetBakersList has not yet been implemented")
+		}),
+		AccountsGetBakersStakeChangeHandler: accounts.GetBakersStakeChangeHandlerFunc(func(params accounts.GetBakersStakeChangeParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetBakersStakeChange has not yet been implemented")
+		}),
+		AccountsGetBakersVotingHandler: accounts.GetBakersVotingHandlerFunc(func(params accounts.GetBakersVotingParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetBakersVoting has not yet been implemented")
 		}),
 		BlocksGetBakingRightsHandler: blocks.GetBakingRightsHandlerFunc(func(params blocks.GetBakingRightsParams) middleware.Responder {
 			return middleware.NotImplemented("operation BlocksGetBakingRights has not yet been implemented")
@@ -354,8 +363,14 @@ type TezTrackerAPI struct {
 	FeesGetAvgFeesHandler fees.GetAvgFeesHandler
 	// AppInfoGetBakerChartInfoHandler sets the operation handler for the get baker chart info operation
 	AppInfoGetBakerChartInfoHandler app_info.GetBakerChartInfoHandler
+	// AccountsGetBakersDelegatorsHandler sets the operation handler for the get bakers delegators operation
+	AccountsGetBakersDelegatorsHandler accounts.GetBakersDelegatorsHandler
 	// AccountsGetBakersListHandler sets the operation handler for the get bakers list operation
 	AccountsGetBakersListHandler accounts.GetBakersListHandler
+	// AccountsGetBakersStakeChangeHandler sets the operation handler for the get bakers stake change operation
+	AccountsGetBakersStakeChangeHandler accounts.GetBakersStakeChangeHandler
+	// AccountsGetBakersVotingHandler sets the operation handler for the get bakers voting operation
+	AccountsGetBakersVotingHandler accounts.GetBakersVotingHandler
 	// BlocksGetBakingRightsHandler sets the operation handler for the get baking rights operation
 	BlocksGetBakingRightsHandler blocks.GetBakingRightsHandler
 	// VotingGetBallotsByPeriodIDHandler sets the operation handler for the get ballots by period ID operation
@@ -621,8 +636,20 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "app_info.GetBakerChartInfoHandler")
 	}
 
+	if o.AccountsGetBakersDelegatorsHandler == nil {
+		unregistered = append(unregistered, "accounts.GetBakersDelegatorsHandler")
+	}
+
 	if o.AccountsGetBakersListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetBakersListHandler")
+	}
+
+	if o.AccountsGetBakersStakeChangeHandler == nil {
+		unregistered = append(unregistered, "accounts.GetBakersStakeChangeHandler")
+	}
+
+	if o.AccountsGetBakersVotingHandler == nil {
+		unregistered = append(unregistered, "accounts.GetBakersVotingHandler")
 	}
 
 	if o.BlocksGetBakingRightsHandler == nil {
@@ -1029,7 +1056,22 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/bakers/delegators"] = accounts.NewGetBakersDelegators(o.context, o.AccountsGetBakersDelegatorsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/bakers"] = accounts.NewGetBakersList(o.context, o.AccountsGetBakersListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/bakers/stake/change"] = accounts.NewGetBakersStakeChange(o.context, o.AccountsGetBakersStakeChangeHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/bakers/voting"] = accounts.NewGetBakersVoting(o.context, o.AccountsGetBakersVotingHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

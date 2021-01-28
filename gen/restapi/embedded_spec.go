@@ -2622,6 +2622,138 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/bakers/delegators": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getBakersDelegators",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get number of baker delegators",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakerDelegators"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/bakers/stake/change": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getBakersStakeChange",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get bakers stake change",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakerDelegators"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/bakers/voting": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getBakersVoting",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get bakers voting data",
+            "schema": {
+              "$ref": "#/definitions/BakersVoting"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/baking_rights": {
       "get": {
         "produces": [
@@ -5080,6 +5212,25 @@ func init() {
         }
       }
     },
+    "BakerDelegators": {
+      "required": [
+        "baker",
+        "address",
+        "value"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "baker": {
+          "type": "string"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "BakerInfo": {
       "type": "object",
       "required": [
@@ -5172,6 +5323,19 @@ func init() {
         },
         "bakerInfo": {
           "$ref": "#/definitions/BakerInfo"
+        }
+      }
+    },
+    "BakersVoting": {
+      "properties": {
+        "bakers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BakerDelegators"
+          }
+        },
+        "proposals_count": {
+          "type": "integer"
         }
       }
     },
@@ -9006,6 +9170,138 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/bakers/delegators": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getBakersDelegators",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get number of baker delegators",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakerDelegators"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/bakers/stake/change": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getBakersStakeChange",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get bakers stake change",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BakerDelegators"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/bakers/voting": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getBakersVoting",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get bakers voting data",
+            "schema": {
+              "$ref": "#/definitions/BakersVoting"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/baking_rights": {
       "get": {
         "produces": [
@@ -11476,6 +11772,25 @@ func init() {
         }
       }
     },
+    "BakerDelegators": {
+      "required": [
+        "baker",
+        "address",
+        "value"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "baker": {
+          "type": "string"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "BakerInfo": {
       "type": "object",
       "required": [
@@ -11568,6 +11883,19 @@ func init() {
         },
         "bakerInfo": {
           "$ref": "#/definitions/BakerInfo"
+        }
+      }
+    },
+    "BakersVoting": {
+      "properties": {
+        "bakers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BakerDelegators"
+          }
+        },
+        "proposals_count": {
+          "type": "integer"
         }
       }
     },

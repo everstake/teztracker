@@ -2889,6 +2889,93 @@ paths:
           description: Internal error
       tags:
         - Mempool
+  '/v2/data/{platform}/{network}/bakers/delegators':
+    get:
+      operationId: getBakersDelegators
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Get number of baker delegators
+          schema:
+            items:
+              $ref: >-
+                #/definitions/BakerDelegators
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/bakers/stake/change':
+    get:
+      operationId: getBakersStakeChange
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Get bakers stake change
+          schema:
+            items:
+              $ref: >-
+                #/definitions/BakerDelegators
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/bakers/voting':
+    get:
+      operationId: getBakersVoting
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Get bakers voting data
+          schema:
+            $ref: '#/definitions/BakersVoting'
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
   '/v2/{network}/ws':
     get:
       schemes: ["ws"]
@@ -4326,3 +4413,24 @@ definitions:
     properties:
       token:
         type: string
+  BakerDelegators:
+    properties:
+      baker:
+        type: string
+      address:
+        type: string
+      value:
+        type: integer
+        format: int64
+    required:
+      - baker
+      - address
+      - value
+  BakersVoting:
+    properties:
+      bakers:
+        type: array
+        items:
+          $ref: '#/definitions/BakerDelegators'
+      proposals_count:
+        type: integer
