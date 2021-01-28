@@ -246,7 +246,9 @@ func (r *Repository) PublicBakersCount() (count int64, err error) {
 func (r *Repository) PublicBakersList(limit, offset uint, favorites []string) (bakers []models.Baker, err error) {
 	db := r.db.Select("pb.baker_name as name,delegate as account_id, bw.*, (10000 - split)/100 as fee ").Table("tezos.public_bakers as pb").
 		Joins(fmt.Sprintf("left join %s as bw on bw.account_id = pb.delegate", bakerMaterializedView)).
-		Where("is_hidden IS false")
+		Joins("left join tezos.bakers on bakers.pkh = pb.delegate").
+		Where("is_hidden IS false").
+		Where("bakers.deactivated IS false")
 
 	if len(favorites) != 0 {
 		q := "CASE account_id"
@@ -257,7 +259,7 @@ func (r *Repository) PublicBakersList(limit, offset uint, favorites []string) (b
 		db = db.Order(q)
 	}
 
-	err = db.Order("COALESCE(staking_balance,0) desc").
+	err = db.Order("COALESCE(bw.staking_balance,0) desc").
 		Limit(limit).
 		Offset(offset).
 		Find(&bakers).Error
