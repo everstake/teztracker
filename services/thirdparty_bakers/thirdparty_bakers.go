@@ -15,6 +15,7 @@ const (
 	MyTezosBakerProvider = "mytezosbaker"
 	TezosNodesProvider   = "tezos-nodes"
 	TzstatsProvider      = "tzstats"
+	mainProvider         = BakingBadProvider
 )
 
 type (
@@ -44,20 +45,38 @@ func getProviders() map[string]BakersProvider {
 func UpdateBakers(ctx context.Context, unit UnitOfWork) error {
 	bakersRepo := unit.GetThirdPartyBakers()
 	var bakers []models.ThirdPartyBaker
-	for name, provider := range getProviders() {
+	providers := getProviders()
+	mainBakerProvider, ok := providers[mainProvider]
+	if !ok {
+		return fmt.Errorf("not found main provider")
+	}
+	addressesWhiteList := make(map[string]struct{})
+	mainProviderBakers, err := mainBakerProvider.GetBakers()
+	if err != nil {
+		return fmt.Errorf("mainBakerProvider.GetBakers: %s", err.Error())
+	}
+	for _, baker := range mainProviderBakers {
+		addressesWhiteList[baker.Address] = struct{}{}
+	}
+	for name, provider := range providers {
 		items, err := provider.GetBakers()
 		if err != nil {
 			return fmt.Errorf("provider(%s): %s", name, err.Error())
 		}
+		var validItems []models.ThirdPartyBaker
 		for key := range items {
+			if _, ok := addressesWhiteList[items[key].Address]; !ok {
+				continue
+			}
 			items[key].Provider = name
+			validItems = append(validItems, items[key])
 		}
 		bakers = append(bakers, items...)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	unit.Start(ctx)
 	defer cancel()
-	err := bakersRepo.DeleteAll()
+	err = bakersRepo.DeleteAll()
 	if err != nil {
 		return fmt.Errorf("bakersRepo.DeleteAll: %s", err.Error())
 	}
