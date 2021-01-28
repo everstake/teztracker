@@ -13,7 +13,7 @@ import (
 const (
 	apiURL      = "https://api.baking-bad.org/v2"
 	noDataField = "no_data"
-	routeBakers = "/bakers"
+	routeBakers = "/bakers?health=active"
 )
 
 type (

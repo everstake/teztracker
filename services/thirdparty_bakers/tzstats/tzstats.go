@@ -43,6 +43,7 @@ type (
 		SpendableBalance float64 `json:"spendable_balance"`
 		FrozenDeposits   float64 `json:"frozen_deposits"`
 		FrozenFees       float64 `json:"frozen_fees"`
+		IsActiveDelegate bool    `json:"is_active_delegate"`
 	}
 )
 
@@ -90,7 +91,6 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 	if len(incomes) > bakersMaxCount {
 		incomes = incomes[:bakersMaxCount]
 	}
-	thirdPartyBakers = make([]models.ThirdPartyBaker, len(incomes))
 	for i, income := range incomes {
 		if len(income) == 0 {
 			continue
@@ -104,19 +104,22 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 		if err != nil {
 			return nil, fmt.Errorf("can`t get account: %s", err.Error())
 		}
+		if !acc.IsActiveDelegate {
+			continue
+		}
 		var efficiency float64
 		if acc.BlocksBaked > 0 {
 			efficiency = float64(acc.BlocksBaked) / float64(acc.BlocksBaked+acc.BlocksMissed)
 		}
 		totalBalance := acc.SpendableBalance + acc.FrozenDeposits + acc.FrozenFees
 		capacity := (totalBalance / networkBond) * networkStake
-		thirdPartyBakers[i] = models.ThirdPartyBaker{
+		thirdPartyBakers = append(thirdPartyBakers, models.ThirdPartyBaker{
 			Number:            i + 1,
 			Address:           address,
 			StakingBalance:    int64(acc.StakingBalance * 1e6),
 			AvailableCapacity: int64((capacity - acc.StakingBalance) * 1e6),
 			Efficiency:        efficiency,
-		}
+		})
 	}
 	return thirdPartyBakers, nil
 }
