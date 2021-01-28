@@ -222,7 +222,11 @@ func (r *Repository) BakerRegistryList() (bakers []models.BakerRegistry, err err
 
 // Count counts a number of bakers sutisfying the filter.
 func (r *Repository) PublicBakersCount() (count int64, err error) {
-	err = r.db.Table("tezos.public_bakers").Where("is_hidden IS false").Count(&count).Error
+	err = r.db.Table("tezos.public_bakers").
+		Joins("left join tezos.bakers on public_bakers.delegate = bakers.pkh").
+		Where("is_hidden IS false").
+		Where("bakers.deactivated IS false").
+		Count(&count).Error
 	if err != nil {
 		return 0, err
 	}
