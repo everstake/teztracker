@@ -275,6 +275,7 @@ func (r *Repository) NumberOfDelegators(cycle uint64) (numbers []models.BakerDel
 	err = r.db.Table(fmt.Sprintf("(%s) as delegators", q)).Select("delegators.*, known_addresses.alias as baker").
 		Joins("left join tezos.known_addresses ON delegators.address = known_addresses.address").
 		Joins("left join tezos.bakers ON delegators.address = bakers.pkh").
+		Joins("right join tezos.public_bakers ON delegators.address = public_bakers.delegate").
 		Where("bakers.deactivated IS false").
 		Order("delegators.value DESC").
 		Find(&numbers).Error
@@ -287,6 +288,7 @@ func (r *Repository) GetBakersStake(cycle uint64) (stakes []models.BakerDelegato
 	err = r.db.Table(fmt.Sprintf("(%s) as delegators", q)).Select("delegators.*, known_addresses.alias as baker").
 		Joins("left join tezos.known_addresses ON delegators.address = known_addresses.address").
 		Joins("left join tezos.bakers ON delegators.address = bakers.pkh").
+		Joins("right join tezos.public_bakers ON delegators.address = public_bakers.delegate").
 		Where("bakers.deactivated IS false").
 		Order("delegators.value DESC").
 		Find(&stakes).Error
@@ -298,6 +300,7 @@ func (r *Repository) GetBakersVoting() (stakes []models.BakerDelegators, err err
 	err = r.db.Table(fmt.Sprintf("(%s) as delegators", q)).Select("delegators.*, known_addresses.alias as baker").
 		Joins("left join tezos.known_addresses ON delegators.address = known_addresses.address").
 		Joins("left join tezos.bakers ON delegators.address = bakers.pkh").
+		Joins("right join tezos.public_bakers ON delegators.address = public_bakers.delegate").
 		Where("bakers.deactivated IS false").
 		Order("delegators.value DESC").
 		Find(&stakes).Error
