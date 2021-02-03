@@ -1,8 +1,11 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/everstake/teztracker/models"
+	"io/ioutil"
+	"net/http"
 )
 
 const (
@@ -20,6 +23,7 @@ const (
 	TokensPerRoll              = 8000
 	TotalLocked                = (BlockSecurityDeposit + EndorsementSecurityDeposit*BlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
 	BlockLockEstimate          = BlockReward + BlockSecurityDeposit + BlockEndorsers*(EndorsementReward+EndorsementSecurityDeposit)
+	bakerMediaSource           = "https://staging.api.tzkt.io/v1/accounts/%s?metadata=true"
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
@@ -267,4 +271,55 @@ func (t *TezTracker) GetBakersVoting() (voting models.BakersVoting, err error) {
 		ProposalsCount: count,
 		Bakers:         bakers,
 	}, nil
+}
+
+func (t *TezTracker) UpdateBakersSocialMedia() error {
+	bakersRepo := t.repoProvider.GetBaker()
+	bakers, err := bakersRepo.PublicBakersList(10000, 0, nil)
+	if err != nil {
+		return fmt.Errorf("bakersRepo.PublicBakersList: %s", err.Error())
+	}
+	for _, baker := range bakers {
+		media, err := getBakerMediaData(baker.AccountID)
+		if err != nil {
+			return fmt.Errorf("getBakerMediaData: %s", err.Error())
+		}
+		baker.Media = string(media)
+		err = bakersRepo.UpdateBaker(baker)
+		if err != nil {
+			return fmt.Errorf("bakersRepo.UpdateBaker: %s", err.Error())
+		}
+	}
+	return nil
+}
+
+type bakerInfo struct {
+	Metadata struct {
+		Site     string `json:"site,omitempty"`
+		Twitter  string `json:"twitter,omitempty"`
+		Telegram string `json:"telegram,omitempty"`
+		Reddit   string `json:"reddit,omitempty"`
+	}
+}
+
+func getBakerMediaData(address string) (media []byte, err error) {
+	resp, err := http.Get(fmt.Sprintf(bakerMediaSource, address))
+	if err != nil {
+		return media, fmt.Errorf("http.Get: %s", err.Error())
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return media, fmt.Errorf("ioutil.ReadAll: %s", err.Error())
+	}
+	if resp.StatusCode != http.StatusOK {
+		return media, fmt.Errorf("bad request status: %d", resp.StatusCode)
+	}
+	var info bakerInfo
+	err = json.Unmarshal(data, &info)
+	if err != nil {
+		return media, fmt.Errorf("json.Unmarshal: %s", err.Error())
+	}
+	media, _ = json.Marshal(info.Metadata)
+	return media, nil
 }

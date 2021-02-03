@@ -28,6 +28,7 @@ type Config struct {
 	SmtpPort                              int
 	SmtpUser                              string
 	SmtpPassword                          string
+	BakersSocialMediaHours                int
 }
 
 type NetworkConfig struct {

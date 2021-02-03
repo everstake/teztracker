@@ -29,6 +29,7 @@ type (
 		BakerRegistryList() ([]models.BakerRegistry, error)
 		SavePublicBaker(models.BakerRegistry) error
 		PublicBakersSearchList() ([]models.PublicBakerSearch, error)
+		UpdateBaker(baker models.Baker) error
 
 		TotalBakingRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
 		TotalEndorsementRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
@@ -248,7 +249,7 @@ func (r *Repository) PublicBakersCount() (count int64, err error) {
 }
 
 func (r *Repository) PublicBakersList(limit, offset uint, favorites []string) (bakers []models.Baker, err error) {
-	db := r.db.Select("pb.baker_name as name,delegate as account_id, bw.*, (10000 - split)/100 as fee ").Table("tezos.public_bakers as pb").
+	db := r.db.Select("pb.baker_name as name, pb.media, delegate as account_id, bw.*, (10000 - split)/100 as fee ").Table("tezos.public_bakers as pb").
 		Joins(fmt.Sprintf("left join %s as bw on bw.account_id = pb.delegate", bakerMaterializedView)).
 		Joins("left join tezos.bakers on bakers.pkh = pb.delegate").
 		Where("is_hidden IS false").
@@ -331,4 +332,12 @@ func (r *Repository) GetBakersVoting() (stakes []models.BakerDelegators, err err
 		Order("delegators.value DESC").
 		Find(&stakes).Error
 	return stakes, err
+}
+
+func (r *Repository) UpdateBaker(baker models.Baker) error {
+	return r.db.Table("tezos.public_bakers").
+		Where("delegate = ?", baker.AccountID).
+		Updates(map[string]interface{}{
+			"media": baker.Media,
+		}).Error
 }
