@@ -63,7 +63,7 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err error) {
-	if res := r.db.Select("tezos.baker_view.*, baker_name as name, pb.media, (10000 - split)/100 as fee").
+	if res := r.db.Select("tezos.baker_view.*, baker_name as name, public_bakers.media, (10000 - split)/100 as fee").
 		Table(bakerMaterializedView).
 		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
 		Where("account_id = ?", accountID).
@@ -81,7 +81,7 @@ func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
 func (r *Repository) List(limit, offset uint, favorites []string) (bakers []models.Baker, err error) {
-	db := r.db.Select("tezos.baker_view.*,baker_name as name, pb.media").Table(bakerMaterializedView).
+	db := r.db.Select("tezos.baker_view.*,baker_name as name, public_bakers.media").Table(bakerMaterializedView).
 		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate")
 
 	if len(favorites) != 0 {
