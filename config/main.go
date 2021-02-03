@@ -24,6 +24,7 @@ type Config struct {
 	AssetsParseIntervalMinutes            int
 	InfoWSEventsIntervalMinutes           int
 	ThirdPartyBakersIntervalMinutes       int
+	BakersSocialMediaHours                int
 }
 
 type NetworkConfig struct {

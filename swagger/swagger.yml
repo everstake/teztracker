@@ -3012,6 +3012,17 @@ definitions:
       stakingCapacity:
         format: int64
         type: integer
+      media:
+        type: object
+        properties:
+          twitter:
+            format: string
+          telegram:
+            format: string
+          site:
+            format: string
+          reddit:
+            format: string
     required:
       - stakingBalance
       - evaluatedBalance
