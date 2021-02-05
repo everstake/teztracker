@@ -9,6 +9,7 @@ import (
 	"github.com/everstake/teztracker/services/mailer"
 	"github.com/everstake/teztracker/services/public_baker"
 	"github.com/everstake/teztracker/services/rolls"
+	"github.com/everstake/teztracker/services/thirdparty_bakers"
 	"github.com/everstake/teztracker/ws"
 	"sync/atomic"
 	"time"
@@ -309,6 +310,28 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				}
 			} else {
 				log.Tracef("skipping check email verifications as the previous job is still running")
+			}
+		})
+	}
+
+	if cfg.ThirdPartyBakersIntervalMinutes > 0 && !isTestNetwork {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.ThirdPartyBakersIntervalMinutes) * time.Minute
+		log.Infof("Sheduling update third party bakers %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := repos.New(db)
+				err := thirdparty_bakers.UpdateBakers(context.TODO(), unitOfWork)
+				if err != nil {
+					log.Errorf("third party bakers failed: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("updating third party bakers as the previous job is still running")
 			}
 		})
 	}

@@ -341,6 +341,24 @@ paths:
           description: Internal error
       tags:
         - App Info
+  '/v2/data/thirdparty/bakers':
+    get:
+      operationId: getThirdPartyBakersHandler
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Application info endpoint
+          schema:
+            items:
+              $ref: '#/definitions/ThirdPartyBakers'
+            type: array
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - App Info
   '/v2/data/{platform}/{network}/accounts':
     get:
       operationId: getAccountsList
@@ -4125,6 +4143,39 @@ definitions:
         type: string
       contents:
         type: object
+  ThirdPartyBakers:
+    properties:
+      baker:
+        type: string
+      providers:
+        type: array
+        items:
+          $ref: '#/definitions/ThirdPartyProvider'
+  ThirdPartyProvider:
+    properties:
+      provider:
+        type: string
+      number:
+        type: integer
+        format: int64
+      name:
+        type: string
+      address:
+        type: string
+      yield:
+        type: number
+      staking_balance:
+        type: integer
+        format: int64
+      fee:
+        type: number
+      available_capacity:
+        type: integer
+        format: int64
+      efficiency:
+        type: number
+      payout_accuracy:
+        type: string
   RequestUserProfile:
     properties:
       email:

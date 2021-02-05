@@ -42,16 +42,16 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 			return "tezos." + defaultTableName
 		}
 
-		m, err := mempool.NewMempool(v)
+		hub := ws.NewHub()
+		//Start hub
+		go hub.Run()
+
+		m, err := mempool.NewMempool(v, hub)
 		if err != nil {
 			return nil, err
 		}
 
 		go m.MonitorMempool()
-
-		hub := ws.NewHub()
-		//Start hub
-		go hub.Run()
 
 		var mail mailer.Mail
 		switch k {

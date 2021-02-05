@@ -233,6 +233,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		GetSnapshotsHandler: GetSnapshotsHandlerFunc(func(params GetSnapshotsParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetSnapshots has not yet been implemented")
 		}),
+		AppInfoGetThirdPartyBakersHandlerHandler: app_info.GetThirdPartyBakersHandlerHandlerFunc(func(params app_info.GetThirdPartyBakersHandlerParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetThirdPartyBakersHandler has not yet been implemented")
+		}),
 		ProfileGetUserAddressesHandler: profile.GetUserAddressesHandlerFunc(func(params profile.GetUserAddressesParams) middleware.Responder {
 			return middleware.NotImplemented("operation ProfileGetUserAddresses has not yet been implemented")
 		}),
@@ -404,6 +407,8 @@ type TezTrackerAPI struct {
 	AccountsGetPublicBakersListForSearchHandler accounts.GetPublicBakersListForSearchHandler
 	// GetSnapshotsHandler sets the operation handler for the get snapshots operation
 	GetSnapshotsHandler GetSnapshotsHandler
+	// AppInfoGetThirdPartyBakersHandlerHandler sets the operation handler for the get third party bakers handler operation
+	AppInfoGetThirdPartyBakersHandlerHandler app_info.GetThirdPartyBakersHandlerHandler
 	// ProfileGetUserAddressesHandler sets the operation handler for the get user addresses operation
 	ProfileGetUserAddressesHandler profile.GetUserAddressesHandler
 	// ProfileGetUserNotesHandler sets the operation handler for the get user notes operation
@@ -721,6 +726,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.GetSnapshotsHandler == nil {
 		unregistered = append(unregistered, "GetSnapshotsHandler")
+	}
+
+	if o.AppInfoGetThirdPartyBakersHandlerHandler == nil {
+		unregistered = append(unregistered, "app_info.GetThirdPartyBakersHandlerHandler")
 	}
 
 	if o.ProfileGetUserAddressesHandler == nil {
@@ -1147,6 +1156,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/snapshots"] = NewGetSnapshots(o.context, o.GetSnapshotsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/thirdparty/bakers"] = app_info.NewGetThirdPartyBakersHandler(o.context, o.AppInfoGetThirdPartyBakersHandlerHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
