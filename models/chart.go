@@ -16,7 +16,7 @@ type ChartData struct {
 }
 
 type BlockPriority struct {
-	Cycle          int64
+	BakingCycle
 	Blocks         int64
 	ZeroPriority   int64
 	FirstPriority  int64

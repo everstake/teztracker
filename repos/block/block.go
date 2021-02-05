@@ -159,10 +159,9 @@ func (r *Repository) BakedBlocksList(accountID string, cycle int64, limit uint, 
 }
 
 func (r *Repository) BlocksPriority(limit uint) (data []models.BlockPriority, err error) {
-	err = r.db.Select("meta_cycle as cycle, count(1) blocks, sum(zero_priority) zero_priority, sum(first_priority) first_priority, sum(second_priority) second_priority, sum(third_priority) third_priority").
-		Table("tezos.block_priority_counter_view").
-		Group("meta_cycle").
-		Order("meta_cycle desc").
+	err = r.db.Select("*").
+		Table("tezos.block_priority_cycle_chart_view bpc").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on bpc.cycle = cp.cycle").
 		Limit(10).
 		Find(&data).Error
 	if err != nil {

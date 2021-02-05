@@ -7,6 +7,7 @@ import (
 	"github.com/everstake/teztracker/services/cmc"
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/ws"
+	"github.com/go-openapi/runtime"
 	"github.com/jinzhu/gorm"
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
@@ -27,6 +28,9 @@ type WSProvider interface {
 // SetHandlers initializes the API handlers with underlying services.
 func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, marketDataProvider *cmc.CoinGecko) {
 	serv.Logger = logrus.Infof
+	//TODO probably process by io.Pipe
+	serv.CsvProducer = runtime.CSVProducer()
+
 	serv.BlocksGetBlocksHeadHandler = &getHeadBlockHandler{db}
 	serv.BlocksGetBlocksListHandler = &getBlockListHandler{db}
 	serv.BlocksGetBlockEndorsementsHandler = &getBlockEndorsementsHandler{db}
@@ -59,6 +63,7 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, ma
 	serv.AccountsGetAccountRewardsListHandler = &getAccountRewardsListHandler{db}
 	serv.AccountsGetAccountDelegatorsByCycleListHandler = &getAccountDelegatorsByCycleListHandler{db}
 	serv.AccountsGetAccountSecurityDepositListHandler = &getBakerSecurityDepositFutureListHandler{db}
+	serv.AccountsGetAccountReportHandler = &getAccountReportHandler{db}
 	serv.BlocksGetBakingRightsHandler = &getBakingRightsHandler{db}
 	serv.BlocksGetFutureBakingRightsHandler = &getFutureBakingRightsHandler{db}
 	serv.AccountsGetAccountFutureEndorsingHandler = &getAccountFutureEndorsingHandler{db}
@@ -79,8 +84,20 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, ma
 	serv.AssetsGetAssetTokenInfoHandler = &getAssetInfoHandler{db}
 	serv.AssetsGetAssetsListHandler = &getAssetsListHandler{db}
 	serv.AssetsGetAssetOperationsListHandler = &getAssetOperationListHandler{db}
+	serv.AssetsGetAssetReportHandler = &getAssetReportHandler{db}
 	//	Mempool
 	serv.MempoolGetMempoolOperationsHandler = &getMempoolHandler{db}
 	//	WS
 	serv.WsConnectToWSHandler = &serveWS{provider: db}
+	// user profile
+	serv.ProfileGetUserProfileHandler = &getUserProfileHandler{db}
+	serv.ProfileUpdateProfileHandler = &updateUserProfileHandler{db}
+	serv.ProfileGetUserAddressesHandler = &getUserAddressesHandler{db}
+	serv.ProfileCreateOrUpdateUserAddressHandler = &createOrUpdateUserAddressHandler{db}
+	serv.ProfileDeleteUserAddressHandler = &deleteUserAddressHandler{db}
+	serv.ProfileGetUserNotesHandler = &getUserNotesHandler{db}
+	serv.ProfileCreateOrUpdateNoteHandler = &createOrUpdateUserNoteHandler{db}
+	serv.ProfileDeleteUserNoteHandler = &deleteUserNoteHandler{db}
+	serv.ProfileVerifyEmailHandler = &verifyEmailHandler{db}
+	serv.ProfileVerifyEmailTokenHandler = &verifyEmailTokenHandler{db}
 }

@@ -60,3 +60,8 @@ func (t *TezTracker) TokenHolders(assetID string) (holders []models.AssetHolder,
 
 	return holders, nil
 }
+
+func (t *TezTracker) GetAssetReport(assetID string, from, to int64, operations []string) (resp []byte, err error) {
+
+	return nil, nil
+}

@@ -37,7 +37,7 @@ func (r *Repository) BakingTotal(accountID string) (total models.AccountBaking, 
 }
 
 func (r *Repository) BakingList(accountID string, limit uint, offset uint) (count int64, baking []models.AccountBaking, err error) {
-	db := r.db.Table("tezos.baker_cycle_bakings_view").
+	db := r.db.Table("tezos.baker_cycle_bakings_view bcv").
 		Model(&models.AccountBaking{}).
 		Where("delegate = ?", accountID)
 
@@ -46,7 +46,9 @@ func (r *Repository) BakingList(accountID string, limit uint, offset uint) (coun
 		return 0, baking, err
 	}
 
-	err = db.Order("cycle desc").Limit(limit).
+	err = db.Select("*").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on bcv.cycle = cp.cycle").
+		Order("bcv.cycle desc").Limit(limit).
 		Offset(offset).
 		Find(&baking).Error
 
@@ -54,11 +56,16 @@ func (r *Repository) BakingList(accountID string, limit uint, offset uint) (coun
 }
 
 func (r *Repository) FutureBakingList(accountID string) (baking []models.AccountBaking, err error) {
-	db := r.db.Table("tezos.baker_future_baking_rights_view").
+	err = r.db.Select("*").
+		Table("tezos.baker_future_baking_rights_view bfr").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on bfr.cycle = cp.cycle").
 		Model(&models.AccountBaking{}).
-		Where("delegate = ?", accountID)
+		Where("delegate = ?", accountID).
+		Order("bfr.cycle desc").Find(&baking).Error
 
-	err = db.Order("cycle desc").Find(&baking).Error
+	if err != nil {
+		return nil, err
+	}
 
-	return baking, err
+	return baking, nil
 }

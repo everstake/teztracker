@@ -6,6 +6,7 @@ import (
 
 const (
 	PreservedCycles            = 5
+	Precision                  = 6
 	XTZ                        = 1000000
 	BlockSecurityDeposit       = 512 * XTZ
 	EndorsementSecurityDeposit = 64 * XTZ
@@ -22,14 +23,14 @@ const (
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
-func (t *TezTracker) PublicBakerList(limits Limiter) (bakers []models.Baker, count int64, err error) {
+func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (bakers []models.Baker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.PublicBakersCount()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	bakers, err = r.PublicBakersList(limits.Limit(), limits.Offset())
+	bakers, err = r.PublicBakersList(limits.Limit(), limits.Offset(), favorites)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -61,14 +62,14 @@ func (t *TezTracker) PublicBakersSearchList() (list []models.PublicBakerSearch, 
 	return list, nil
 }
 
-func (t *TezTracker) BakerList(limits Limiter) (bakers []models.Baker, count int64, err error) {
+func (t *TezTracker) BakerList(limits Limiter, favorites []string) (bakers []models.Baker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.Count()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	bakers, err = r.List(limits.Limit(), limits.Offset())
+	bakers, err = r.List(limits.Limit(), limits.Offset(), favorites)
 	return bakers, count, err
 }
 

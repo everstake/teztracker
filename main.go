@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/everstake/teztracker/services/cmc"
+	"github.com/everstake/teztracker/services/mailer"
 	"os"
 	"strings"
 
@@ -39,7 +40,7 @@ func main() {
 		log.Fatalln("no networks are configured")
 	}
 
-	provider, err := infrustructure.New(networks)
+	provider, err := infrustructure.New(networks, cfg)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -86,9 +87,11 @@ func main() {
 				log.Fatalln(err)
 			}
 
+			mail := mailer.New(cfg.SmtpHost, cfg.SmtpPort, cfg.SmtpUser, cfg.SmtpPassword)
+
 			// Using models.NetworkMain instead of k due to stupid nodes configuration for carthagenet.
 			// todo: if something is not workign for testnets, check this one.
-			services.AddToCron(cron, cfg, db, ws, marketData, rpc, models.NetworkMain, k == models.NetworkCarthage)
+			services.AddToCron(cron, cfg, db, ws, mail, marketData, rpc, models.NetworkMain, k == models.NetworkCarthage)
 		}
 
 		cron.Start()

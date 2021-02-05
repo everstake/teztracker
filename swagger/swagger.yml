@@ -481,6 +481,13 @@ paths:
           name: order
           description: Not used
           type: string
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query compatibility endpoint for accounts
@@ -529,6 +536,13 @@ paths:
         - in: query
           name: after_id
           type: string
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query compatibility endpoint for accounts
@@ -606,6 +620,13 @@ paths:
           name: order
           description: Not used
           type: string
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query compatibility endpoint for contract accounts
@@ -651,6 +672,13 @@ paths:
           type: integer
           default: 0
           minimum: 0
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query Endpoint for getting list of baker accounts ordered by staking balance.
@@ -696,6 +724,13 @@ paths:
           type: integer
           default: 0
           minimum: 0
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: favorites
+          description: favorites accounts
+          type: array
       responses:
         '200':
           description: Query Endpoint for getting list of baker accounts ordered by staking balance.
@@ -772,6 +807,57 @@ paths:
           schema:
             $ref: >-
               #/definitions/AccountsRow
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/{accountId}/report':
+    get:
+      operationId: getAccountReport
+      produces:
+        - text/csv
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+        - in: query
+          name: from
+          required: true
+          type: integer
+        - in: query
+          name: to
+          required: true
+          type: integer
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_type
+          description: Not used
+          type: array
+      responses:
+        '200':
+          description: CSV file to download
+          schema:
+            type: array
+            items:
+              type: integer
+              format: uint8
         '400':
           description: Bad request
         '404':
@@ -2587,6 +2673,57 @@ paths:
           description: Not Found
       tags:
         - Assets
+  '/v2/data/{platform}/{network}/assets/{assetId}/report':
+    get:
+      operationId: getAssetReport
+      produces:
+        - text/csv
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: assetId
+          required: true
+          type: string
+        - in: query
+          name: from
+          required: true
+          type: integer
+        - in: query
+          name: to
+          required: true
+          type: integer
+        - collectionFormat: multi
+          in: query
+          items:
+            type: string
+          name: operation_type
+          description: Not used
+          type: array
+      responses:
+        '200':
+          description: CSV file to download
+          schema:
+            type: array
+            items:
+              type: integer
+              format: uint8
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Assets
   '/v2/data/{network}/assets/{asset_id}/operations':
     get:
       operationId: getAssetOperationsList
@@ -2719,6 +2856,226 @@ paths:
           description: Not Found
       tags:
         - WS
+  '/v2/data/profile':
+    get:
+      operationId: getUserProfile
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+      responses:
+        '200':
+          schema:
+            $ref: "#/definitions/UserProfile"
+          description: Get user profile
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/update':
+    post:
+      operationId: updateProfile
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/RequestUserProfile"
+      responses:
+        '200':
+          description: Update user profile
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/addresses':
+    get:
+      operationId: getUserAddresses
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserAddressWithBalance"
+          description: Get user addresses
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/address':
+    post:
+      operationId: createOrUpdateUserAddress
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/UserAddress"
+      responses:
+        '200':
+          description: Create or update user address
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/delete/address':
+    post:
+      operationId: deleteUserAddress
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/DeleteUserAddress"
+      responses:
+        '200':
+          description: Deleted user address
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/notes':
+    get:
+      operationId: getUserNotes
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserNoteWithBalance"
+          description: Get user notes
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/note':
+    post:
+      operationId: createOrUpdateNote
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/UserNote"
+      responses:
+        '200':
+          description: Updated user note
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/delete/note':
+    post:
+      operationId: deleteUserNote
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/DeleteUserNote"
+      responses:
+        '200':
+          description: Deleted user note
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/verify/email':
+    post:
+      operationId: verifyEmail
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: address
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Verified user email
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
+  '/v2/data/profile/verify/email/token':
+    post:
+      operationId: verifyEmailToken
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: data
+          schema:
+            $ref: "#/definitions/EmailToken"
+      responses:
+        '200':
+          description: Verified user email token
+        '400':
+          description: Bad request
+        '500':
+          description: Internal error
+      tags:
+        - Profile
 definitions:
   Info:
     properties:
@@ -3280,6 +3637,12 @@ definitions:
     properties:
       cycle:
         type: integer
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
+        type: integer
+        format: int64
       snapshot_block:
         type: integer
       rolls:
@@ -3437,6 +3800,12 @@ definitions:
       cycle:
         type: integer
         format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
+        type: integer
+        format: int64
       blocks:
         type: integer
         format: int64
@@ -3468,6 +3837,12 @@ definitions:
   AccountEndorsingRow:
     properties:
       cycle:
+        type: integer
+        format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
         type: integer
         format: int64
       slots:
@@ -3519,6 +3894,12 @@ definitions:
   AccountRewardsRow:
     properties:
       cycle:
+        type: integer
+        format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
         type: integer
         format: int64
       delegators:
@@ -3617,6 +3998,12 @@ definitions:
       cycle:
         type: integer
         format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
+        type: integer
+        format: int64
       blocks:
         type: integer
         format: int64
@@ -3642,6 +4029,12 @@ definitions:
   AccountSecurityDepositRow:
     properties:
       cycle:
+        type: integer
+        format: int64
+      cycleStart:
+        type: integer
+        format: int64
+      cycleEnd:
         type: integer
         format: int64
       staking_balance:
@@ -3782,4 +4175,97 @@ definitions:
       efficiency:
         type: number
       payout_accuracy:
+        type: string
+  RequestUserProfile:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+  UserProfile:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+      verified:
+        type: boolean
+    required:
+      - email
+      - username
+      - verified
+  UserAddress:
+    properties:
+      address:
+        type: string
+      delegations_enabled:
+        type: boolean
+      in_transfers_enabled:
+        type: boolean
+      out_transfers_enabled:
+        type: boolean
+    required:
+      - address
+      - delegations_enabled
+      - in_transfers_enabled
+      - out_transfers_enabled
+  UserAddressWithBalance:
+    properties:
+      address:
+        type: string
+      delegations_enabled:
+        type: boolean
+      in_transfers_enabled:
+        type: boolean
+      out_transfers_enabled:
+        type: boolean
+      balance:
+        type: integer
+        format: int64
+    required:
+      - address
+      - delegations_enabled
+      - in_transfers_enabled
+      - out_transfers_enabled
+      - balance
+  DeleteUserAddress:
+    properties:
+      address:
+        type: string
+  UserNote:
+    properties:
+      address:
+        type: string
+      alias:
+        type: string
+      tag:
+        type: string
+      description:
+        type: string
+  UserNoteWithBalance:
+    properties:
+      address:
+        type: string
+      alias:
+        type: string
+      tag:
+        type: string
+      description:
+        type: string
+      balance:
+        type: integer
+        format: int64
+    required:
+      - address
+      - alias
+      - tag
+      - description
+      - balance
+  DeleteUserNote:
+    properties:
+      address:
+        type: string
+  EmailToken:
+    properties:
+      token:
         type: string

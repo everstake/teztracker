@@ -12,6 +12,7 @@ import (
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
 	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/thirdparty_bakers"
+	"github.com/everstake/teztracker/repos/user_profile"
 	"github.com/everstake/teztracker/repos/voting_periods"
 
 	"github.com/everstake/teztracker/repos/account"
@@ -131,6 +132,10 @@ func (u *Provider) GetAssets() assets.Repo {
 
 func (u *Provider) GetThirdPartyBakers() thirdparty_bakers.Repo {
 	return thirdparty_bakers.New(u.getDB())
+}
+
+func (u *Provider) GetUserProfile() user_profile.Repo {
+	return user_profile.New(u.getDB())
 }
 
 func (u *Provider) Start(ctx context.Context) {

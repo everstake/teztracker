@@ -78,6 +78,9 @@ CREATE INDEX ix_operations_voting_proposal_source_kind_period
   on tezos.operations (proposal, source, kind, period)
   where ballot_period is not null;
 
+CREATE INDEX blocks_timestamp_index
+	ON tezos.blocks (timestamp desc);
+
 //Probably excess
 CREATE INDEX accounts_history_asof_index
 	ON tezos.accounts_history (asof);

@@ -1,6 +1,7 @@
 package account
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 	"time"
@@ -25,6 +26,8 @@ type (
 		RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error)
 		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
+		GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
+		GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
 	}
 )
 
@@ -66,6 +69,15 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 	}
 
 	db = db.Model(models.AccountListView{})
+
+	if len(filter.Favorites) != 0 {
+		q := "CASE account_id"
+		for i, favorite := range filter.Favorites {
+			q = fmt.Sprintf("%s WHEN '%s' THEN %d", q, favorite, i)
+		}
+		q = fmt.Sprintf("%s ELSE %d END", q, len(filter.Favorites))
+		db = db.Order(q)
+	}
 
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
 		db = db.Order("created_at desc")
@@ -161,7 +173,8 @@ func (r *Repository) PrevBalance(accountId string, from time.Time) (found bool, 
 
 func (r *Repository) RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error) {
 
-	err = r.db.Table("tezos.rewards_counter").
+	err = r.db.Select("*").Table("tezos.rewards_counter").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on rewards_counter.cycle = cp.cycle").
 		Where("baker = ?", accountID).
 		Limit(limit).
 		Find(&rewards).Error
@@ -180,6 +193,7 @@ func (r *Repository) RewardsList(accountID string, limit uint, offset uint) (cou
 
 	err = db.Select("*").
 		Table("tezos.rewards_counter").
+		Joins("LEFT JOIN tezos.cycle_periods_view cp on rewards_counter.cycle = cp.cycle").
 		Limit(limit).
 		Offset(offset).
 		Find(&rewards).Error
@@ -211,4 +225,61 @@ func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, 
 	}
 
 	return delegators, nil
+}
+
+func (r *Repository) GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
+	columns := []string{"operations.block_level", "timestamp", "operations.kind", "operations.operation_group_hash", "'XTZ' coin", "amount", "operations.status", "operations.source", "destination", "0 loss", "fee"}
+
+	db := r.db
+	req := r.db.Select(columns).
+		Table("tezos.operations").
+		Where("operations.delegate = ? OR operations.pkh = ? OR operations.source = ? OR operations.public_key = ? OR operations.destination = ? OR operations.originated_contracts = ?", accountID, accountID, accountID, accountID, accountID, accountID).
+		Where("operations.kind IN (?)", params.Operations).
+		Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+		Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+		Order("operations.block_level desc")
+
+	db = req
+
+	if params.EndorsingReq {
+
+		columns = append(columns, "bu.change reward")
+		subQ := req.Select(columns).Joins("left join tezos.balance_updates bu on (operations.operation_group_hash = bu.operation_group_hash and category = 'rewards')").SubQuery()
+
+		missedEndorsementsSubQ := r.db.
+			Select("baker_endorsements.level block_level, timestamp, 'endorsement' kind,'' operation_group_hash, 'XTZ' coin, 0 amount, '' status, '' source, '' destination, case when missed = 1 then 1.25 ELSE 0 END loss, 0 fee, reward").
+			Table("tezos.baker_endorsements").
+			Joins("left join tezos.blocks on blocks.level+1 = baker_endorsements.level").
+			Where("delegate = ?", accountID).
+			Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+			Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+			Where("missed = 1").
+			Order("baker_endorsements.level desc").SubQuery()
+
+		db = r.db.Raw("SELECT * FROM ? op UNION ? ORDER BY block_level desc", subQ, missedEndorsementsSubQ)
+	}
+
+	err = db.Limit(params.Limit).Find(&report).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return report, nil
+}
+
+func (r *Repository) GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
+
+	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward, case when missed = 1 then 40 ELSE 0 END loss, 0 fee, '' status").
+		Table("tezos.baker_bakings").
+		Joins("left join tezos.blocks on blocks.level = baker_bakings.level").
+		Where("delegate = ?", accountID).
+		Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+		Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+		Order("blocks.level desc").
+		Limit(params.Limit).Find(&report).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return report, nil
 }

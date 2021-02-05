@@ -68,10 +68,11 @@ const (
 )
 
 type AccountFilter struct {
-	Type     AccountType
-	OrderBy  AccountOrderField
-	Delegate string
-	After    string
+	Type      AccountType
+	OrderBy   AccountOrderField
+	Delegate  string
+	After     string
+	Favorites []string
 }
 
 type AccountBalance struct {
@@ -80,7 +81,7 @@ type AccountBalance struct {
 }
 
 type AccountBaking struct {
-	Cycle        int64
+	BakingCycle
 	Status       RewardStatus
 	Count        int64
 	Missed       int64
@@ -91,7 +92,7 @@ type AccountBaking struct {
 }
 
 type AccountEndorsing struct {
-	Cycle        int64
+	BakingCycle
 	Status       RewardStatus
 	Count        int64
 	Missed       int64
@@ -99,9 +100,10 @@ type AccountEndorsing struct {
 	TotalDeposit int64
 }
 
+//TODO refactor Account rewards models
 type AccountReward struct {
+	BakingCycle
 	Status                 RewardStatus
-	Cycle                  int64
 	Delegators             int64
 	StakingBalance         int64
 	BakingRewards          int64
@@ -115,9 +117,9 @@ type AccountReward struct {
 }
 
 type AccountRewardsCount struct {
+	BakingCycle
 	Status                 RewardStatus
 	StakingBalance         int64
-	Cycle                  int64
 	BakingCount            int64
 	BakingReward           int64
 	StolenBaking           int64
@@ -140,4 +142,38 @@ type AccountDelegator struct {
 	Cycle     int64
 	Balance   int64
 	Share     float64
+}
+
+type AccountReportFilter struct {
+	From         int64
+	To           int64
+	Limit        int64
+	Operations   []string
+	EndorsingReq bool
+}
+
+type AccountReport struct {
+	BlockLevel         uint64      `csv:"block level"`
+	OperationGroupHash null.String `csv:"-"`
+	Timestamp          time.Time   `csv:"timestamp"`
+	Kind               string      `csv:"operation type"`
+	Coin               string      `csv:"coin"`
+	//DB field
+	Amount      float64 `csv:"-"`
+	Fee         float64 `csv:"fee"`
+	Source      string  `csv:"-"`
+	Destination string  `csv:"-"`
+	Status      string  `csv:"status"`
+
+	//CSV field
+	In   float64 `csv:"in"`
+	Out  float64 `csv:"out"`
+	Link string  `csv:"link"`
+}
+
+type BakerReport struct {
+	AccountReport
+	//Baker operations
+	Reward float64 `csv:"reward"`
+	Loss   float64 `csv:"loss"`
 }

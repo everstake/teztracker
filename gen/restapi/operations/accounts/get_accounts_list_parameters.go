@@ -85,6 +85,11 @@ type GetAccountsListParams struct {
 	  Collection Format: multi
 	*/
 	BlockProtocol []string
+	/*favorites accounts
+	  In: query
+	  Collection Format: multi
+	*/
+	Favorites []string
 	/*
 	  Maximum: 500
 	  Minimum: 1
@@ -191,6 +196,11 @@ func (o *GetAccountsListParams) BindRequest(r *http.Request, route *middleware.M
 
 	qBlockProtocol, qhkBlockProtocol, _ := qs.GetOK("block_protocol")
 	if err := o.bindBlockProtocol(qBlockProtocol, qhkBlockProtocol, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qFavorites, qhkFavorites, _ := qs.GetOK("favorites")
+	if err := o.bindFavorites(qFavorites, qhkFavorites, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -441,6 +451,30 @@ func (o *GetAccountsListParams) bindBlockProtocol(rawData []string, hasKey bool,
 	}
 
 	o.BlockProtocol = blockProtocolIR
+
+	return nil
+}
+
+// bindFavorites binds and validates array parameter Favorites from query.
+//
+// Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
+func (o *GetAccountsListParams) bindFavorites(rawData []string, hasKey bool, formats strfmt.Registry) error {
+
+	// CollectionFormat: multi
+	favoritesIC := rawData
+
+	if len(favoritesIC) == 0 {
+		return nil
+	}
+
+	var favoritesIR []string
+	for _, favoritesIV := range favoritesIC {
+		favoritesI := favoritesIV
+
+		favoritesIR = append(favoritesIR, favoritesI)
+	}
+
+	o.Favorites = favoritesIR
 
 	return nil
 }

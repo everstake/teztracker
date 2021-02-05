@@ -23,6 +23,10 @@ type Config struct {
 	BakerRegistryCheckIntervalMinutes     int
 	AssetsParseIntervalMinutes            int
 	InfoWSEventsIntervalMinutes           int
+	SmtpHost                              string
+	SmtpPort                              int
+	SmtpUser                              string
+	SmtpPassword                          string
 	ThirdPartyBakersIntervalMinutes       int
 }
 
