@@ -25,7 +25,7 @@ type Provider struct {
 	networks map[models.Network]NetworkContext
 }
 
-func New(configs map[models.Network]config.NetworkConfig, cfg config.Config, production bool) (*Provider, error) {
+func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*Provider, error) {
 	provider := &Provider{
 		networks: make(map[models.Network]NetworkContext),
 	}
@@ -55,7 +55,7 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config, pro
 
 		var mail mailer.Mail
 		mail = mailer.NewFakeMailer()
-		if models.NetworkMain == k && production {
+		if models.NetworkMain == k && cfg.Production {
 			mail = mailer.New(cfg.SmtpHost, cfg.SmtpPort, cfg.SmtpUser, cfg.SmtpPassword)
 		}
 
