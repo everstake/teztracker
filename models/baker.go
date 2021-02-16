@@ -87,6 +87,7 @@ type ThirdPartyBaker struct {
 
 type ThirdPartyBakerAgg struct {
 	Address        string
+	Alias          string
 	StakingBalance int64
 	Providers      ThirdPartyProviders
 }

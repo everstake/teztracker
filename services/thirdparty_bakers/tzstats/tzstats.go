@@ -109,7 +109,7 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 		}
 		var efficiency float64
 		if acc.BlocksBaked > 0 {
-			efficiency = float64(acc.BlocksBaked) / float64(acc.BlocksBaked+acc.BlocksMissed)
+			efficiency = (float64(acc.BlocksBaked) / float64(acc.BlocksBaked+acc.BlocksMissed)) * 100
 		}
 		totalBalance := acc.SpendableBalance + acc.FrozenDeposits + acc.FrozenFees
 		capacity := (totalBalance / networkBond) * networkStake

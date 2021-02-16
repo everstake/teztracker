@@ -18,6 +18,9 @@ import (
 // swagger:model ThirdPartyBakers
 type ThirdPartyBakers struct {
 
+	// alias
+	Alias string `json:"alias,omitempty"`
+
 	// baker
 	Baker string `json:"baker,omitempty"`
 

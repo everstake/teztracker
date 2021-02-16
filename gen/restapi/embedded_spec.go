@@ -6070,6 +6070,9 @@ func init() {
     },
     "ThirdPartyBakers": {
       "properties": {
+        "alias": {
+          "type": "string"
+        },
         "baker": {
           "type": "string"
         },
@@ -12380,6 +12383,9 @@ func init() {
     },
     "ThirdPartyBakers": {
       "properties": {
+        "alias": {
+          "type": "string"
+        },
         "baker": {
           "type": "string"
         },

@@ -10,13 +10,14 @@ func ThirdPartyBakers(bakers []models.ThirdPartyBakerAgg) (result []*genModels.T
 	for i, b := range bakers {
 		result[i] = &genModels.ThirdPartyBakers{
 			Baker:     b.Address,
+			Alias:     b.Alias,
 			Providers: ThirdPartyBakersProviders(b.Providers),
 		}
 	}
 	return result
 }
 
-func ThirdPartyBakersProviders (tp models.ThirdPartyProviders) []*genModels.ThirdPartyProvider {
+func ThirdPartyBakersProviders(tp models.ThirdPartyProviders) []*genModels.ThirdPartyProvider {
 	providers := make([]*genModels.ThirdPartyProvider, len(tp))
 	for i, p := range tp {
 		providers[i] = ThirdPartyBakersItem(p)
@@ -24,7 +25,7 @@ func ThirdPartyBakersProviders (tp models.ThirdPartyProviders) []*genModels.Thir
 	return providers
 }
 
-func ThirdPartyBakersItem (p models.ThirdPartyBaker) *genModels.ThirdPartyProvider {
+func ThirdPartyBakersItem(p models.ThirdPartyBaker) *genModels.ThirdPartyProvider {
 	return &genModels.ThirdPartyProvider{
 		Address:           p.Address,
 		AvailableCapacity: p.AvailableCapacity,
@@ -38,5 +39,3 @@ func ThirdPartyBakersItem (p models.ThirdPartyBaker) *genModels.ThirdPartyProvid
 		Yield:             p.Yield,
 	}
 }
-
-

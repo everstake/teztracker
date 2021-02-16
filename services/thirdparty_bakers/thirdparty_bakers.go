@@ -68,10 +68,11 @@ func UpdateBakers(ctx context.Context, unit UnitOfWork) error {
 			if _, ok := addressesWhiteList[items[key].Address]; !ok {
 				continue
 			}
-			items[key].Provider = name
-			validItems = append(validItems, items[key])
+			item := items[key]
+			item.Provider = name
+			validItems = append(validItems, item)
 		}
-		bakers = append(bakers, items...)
+		bakers = append(bakers, validItems...)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	unit.Start(ctx)

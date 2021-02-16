@@ -4147,6 +4147,8 @@ definitions:
     properties:
       baker:
         type: string
+      alias:
+        type: string
       providers:
         type: array
         items:
