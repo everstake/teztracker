@@ -54,11 +54,9 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 		go m.MonitorMempool()
 
 		var mail mailer.Mail
-		switch k {
-		case models.NetworkMain:
+		mail = mailer.NewFakeMailer()
+		if models.NetworkMain == k && cfg.Production {
 			mail = mailer.New(cfg.SmtpHost, cfg.SmtpPort, cfg.SmtpUser, cfg.SmtpPassword)
-		default:
-			mail = mailer.NewFakeMailer()
 		}
 
 		//TODO make graceful stop
