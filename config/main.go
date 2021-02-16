@@ -14,6 +14,7 @@ type Config struct {
 	Mainnet                               NetworkConfig
 	Delphinet                             NetworkConfig
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
+	Production                            bool
 	CounterIntervalHours                  int
 	FutureRightsIntervalMinutes           int
 	SnapshotCheckIntervalMinutes          int
