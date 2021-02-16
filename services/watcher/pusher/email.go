@@ -12,17 +12,20 @@ import (
 type EmailPusher struct {
 	mail    mailer.Mail
 	service services.Provider
+	enabled bool
 }
 
 func NewEmailPusher(mail mailer.Mail, service services.Provider) *EmailPusher {
+	_, ok := mail.(*mailer.Mailer)
 	return &EmailPusher{
 		mail:    mail,
 		service: service,
+		enabled: ok,
 	}
 }
 
 func (p EmailPusher) Push(event wsmodels.EventType, data interface{}) (err error) {
-	if p.mail == nil {
+	if !p.enabled {
 		return nil
 	}
 	switch event {
