@@ -22,6 +22,9 @@ func NewEmailPusher(mail mailer.Mail, service services.Provider) *EmailPusher {
 }
 
 func (p EmailPusher) Push(event wsmodels.EventType, data interface{}) (err error) {
+	if p.mail == nil {
+		return nil
+	}
 	switch event {
 	case wsmodels.EventTypeOperation:
 		err = p.sendOperation(data)
