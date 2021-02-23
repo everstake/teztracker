@@ -24,6 +24,357 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/profile": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user profile",
+            "schema": {
+              "$ref": "#/definitions/UserProfile"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/address": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "createOrUpdateUserAddress",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserAddress"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create or update user address"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/addresses": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserAddresses",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user addresses",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserAddressWithBalance"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/delete/address": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "deleteUserAddress",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserAddress"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted user address"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/delete/note": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "deleteUserNote",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserNote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted user note"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/note": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "createOrUpdateNote",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserNote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated user note"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/notes": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserNotes",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user notes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserNoteWithBalance"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/update": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "updateProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/RequestUserProfile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update user profile"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmail",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email/token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmailToken",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EmailToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email token"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/thirdparty/bakers": {
       "get": {
         "produces": [
@@ -819,6 +1170,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -1723,6 +2084,16 @@ func init() {
             "type": "string",
             "name": "after_id",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2138,6 +2509,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -2807,7 +3188,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -2890,7 +3271,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -2948,7 +3329,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3067,6 +3448,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -3397,7 +3788,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3445,7 +3836,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -4156,6 +4547,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -5241,6 +5642,20 @@ func init() {
         }
       }
     },
+    "DeleteUserAddress": {
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "DeleteUserNote": {
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      }
+    },
     "DoubleOperationDetails": {
       "properties": {
         "baker_reward": {
@@ -5278,6 +5693,13 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "EmailToken": {
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -5779,6 +6201,16 @@ func init() {
         }
       }
     },
+    "RequestUserProfile": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -5802,6 +6234,9 @@ func init() {
     },
     "ThirdPartyBakers": {
       "properties": {
+        "alias": {
+          "type": "string"
+        },
         "baker": {
           "type": "string"
         },
@@ -5897,6 +6332,116 @@ func init() {
         }
       }
     },
+    "UserAddress": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "delegations_enabled": {
+          "type": "boolean"
+        },
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserAddressWithBalance": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegations_enabled": {
+          "type": "boolean"
+        },
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserNote": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "UserNoteWithBalance": {
+      "required": [
+        "address",
+        "alias",
+        "tag",
+        "description",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "UserProfile": {
+      "required": [
+        "email",
+        "username",
+        "verified"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
+        }
+      }
+    },
     "VoteStats": {
       "properties": {
         "numVoters": {
@@ -5922,6 +6467,357 @@ func init() {
     "version": "0.0.1"
   },
   "paths": {
+    "/v2/data/profile": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user profile",
+            "schema": {
+              "$ref": "#/definitions/UserProfile"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/address": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "createOrUpdateUserAddress",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserAddress"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create or update user address"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/addresses": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserAddresses",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user addresses",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserAddressWithBalance"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/delete/address": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "deleteUserAddress",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserAddress"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted user address"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/delete/note": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "deleteUserNote",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserNote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted user note"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/note": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "createOrUpdateNote",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserNote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated user note"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/notes": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "getUserNotes",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user notes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserNoteWithBalance"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/update": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "updateProfile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/RequestUserProfile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Update user profile"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmail",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email/token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmailToken",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EmailToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email token"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/thirdparty/bakers": {
       "get": {
         "produces": [
@@ -6727,6 +7623,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -7639,6 +8545,16 @@ func init() {
             "type": "string",
             "name": "after_id",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8057,6 +8973,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -8729,7 +9655,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -8812,7 +9738,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -8870,7 +9796,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -8990,6 +9916,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -9323,7 +10259,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9371,7 +10307,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "delphinet"
             ],
             "type": "string",
             "description": "Not used",
@@ -10086,6 +11022,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -11172,6 +12118,20 @@ func init() {
         }
       }
     },
+    "DeleteUserAddress": {
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "DeleteUserNote": {
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      }
+    },
     "DoubleOperationDetails": {
       "properties": {
         "baker_reward": {
@@ -11209,6 +12169,13 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "EmailToken": {
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -11711,6 +12678,16 @@ func init() {
         }
       }
     },
+    "RequestUserProfile": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -11734,6 +12711,9 @@ func init() {
     },
     "ThirdPartyBakers": {
       "properties": {
+        "alias": {
+          "type": "string"
+        },
         "baker": {
           "type": "string"
         },
@@ -11826,6 +12806,116 @@ func init() {
         "balance": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "UserAddress": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "delegations_enabled": {
+          "type": "boolean"
+        },
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserAddressWithBalance": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegations_enabled": {
+          "type": "boolean"
+        },
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserNote": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "UserNoteWithBalance": {
+      "required": [
+        "address",
+        "alias",
+        "tag",
+        "description",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "UserProfile": {
+      "required": [
+        "email",
+        "username",
+        "verified"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
         }
       }
     },

@@ -1,6 +1,7 @@
 package account
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 	"time"
@@ -69,6 +70,15 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 	}
 
 	db = db.Model(models.AccountListView{})
+
+	if len(filter.Favorites) != 0 {
+		q := "CASE account_id"
+		for i, favorite := range filter.Favorites {
+			q = fmt.Sprintf("%s WHEN '%s' THEN %d", q, favorite, i)
+		}
+		q = fmt.Sprintf("%s ELSE %d END", q, len(filter.Favorites))
+		db = db.Order(q)
+	}
 
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
 		db = db.Order("created_at desc")

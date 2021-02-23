@@ -23,6 +23,7 @@ type GetContractsListURL struct {
 	AccountID       []string
 	AccountManager  []string
 	AfterID         *string
+	Favorites       []string
 	Limit           *int64
 	Offset          *int64
 	Order           *string
@@ -121,6 +122,20 @@ func (o *GetContractsListURL) Build() (*url.URL, error) {
 	}
 	if afterIDQ != "" {
 		qs.Set("after_id", afterIDQ)
+	}
+
+	var favoritesIR []string
+	for _, favoritesI := range o.Favorites {
+		favoritesIS := favoritesI
+		if favoritesIS != "" {
+			favoritesIR = append(favoritesIR, favoritesIS)
+		}
+	}
+
+	favorites := swag.JoinByFormat(favoritesIR, "multi")
+
+	for _, qsv := range favorites {
+		qs.Add("favorites", qsv)
 	}
 
 	var limitQ string

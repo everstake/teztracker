@@ -56,8 +56,12 @@ func (t *TezTracker) GetAccountSecurityDepositList(accountID string) (rewards []
 	availableBond := bal.Balance - int64(bal.FrozenBalance)
 	unfrozenCycle := PreservedCycles + 1
 	var futureEndorsementDeposit, futureBakingDeposit int64
+	cycles := PreservedCycles
+	if cycles > len(rewards) {
+		cycles = len(rewards)
+	}
 	//Start from active cycle
-	for i := PreservedCycles; i >= 0; i-- {
+	for i := cycles; i >= 0; i-- {
 		//Calc future deposit
 		futureEndorsementDeposit = rewards[i].FutureEndorsementCount * EndorsementSecurityDeposit
 		futureBakingDeposit = rewards[i].FutureBakingCount * BlockSecurityDeposit
