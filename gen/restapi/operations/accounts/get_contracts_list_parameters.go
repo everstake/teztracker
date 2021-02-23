@@ -64,6 +64,11 @@ type GetContractsListParams struct {
 	  In: query
 	*/
 	AfterID *string
+	/*favorites accounts
+	  In: query
+	  Collection Format: multi
+	*/
+	Favorites []string
 	/*
 	  Maximum: 500
 	  Minimum: 1
@@ -125,6 +130,11 @@ func (o *GetContractsListParams) BindRequest(r *http.Request, route *middleware.
 
 	qAfterID, qhkAfterID, _ := qs.GetOK("after_id")
 	if err := o.bindAfterID(qAfterID, qhkAfterID, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qFavorites, qhkFavorites, _ := qs.GetOK("favorites")
+	if err := o.bindFavorites(qFavorites, qhkFavorites, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -250,6 +260,30 @@ func (o *GetContractsListParams) bindAfterID(rawData []string, hasKey bool, form
 	}
 
 	o.AfterID = &raw
+
+	return nil
+}
+
+// bindFavorites binds and validates array parameter Favorites from query.
+//
+// Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
+func (o *GetContractsListParams) bindFavorites(rawData []string, hasKey bool, formats strfmt.Registry) error {
+
+	// CollectionFormat: multi
+	favoritesIC := rawData
+
+	if len(favoritesIC) == 0 {
+		return nil
+	}
+
+	var favoritesIR []string
+	for _, favoritesIV := range favoritesIC {
+		favoritesI := favoritesIV
+
+		favoritesIR = append(favoritesIR, favoritesI)
+	}
+
+	o.Favorites = favoritesIR
 
 	return nil
 }

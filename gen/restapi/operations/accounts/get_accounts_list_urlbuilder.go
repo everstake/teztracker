@@ -27,6 +27,7 @@ type GetAccountsListURL struct {
 	BlockLevel           []int64
 	BlockNetid           []string
 	BlockProtocol        []string
+	Favorites            []string
 	Limit                *int64
 	Offset               *int64
 	OperationDestination []string
@@ -186,6 +187,20 @@ func (o *GetAccountsListURL) Build() (*url.URL, error) {
 
 	for _, qsv := range blockProtocol {
 		qs.Add("block_protocol", qsv)
+	}
+
+	var favoritesIR []string
+	for _, favoritesI := range o.Favorites {
+		favoritesIS := favoritesI
+		if favoritesIS != "" {
+			favoritesIR = append(favoritesIR, favoritesIS)
+		}
+	}
+
+	favorites := swag.JoinByFormat(favoritesIR, "multi")
+
+	for _, qsv := range favorites {
+		qs.Add("favorites", qsv)
 	}
 
 	var limitQ string

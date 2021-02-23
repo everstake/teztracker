@@ -51,7 +51,7 @@ func (t *TezTracker) GetBakerChartInfo(limits Limiter) (data []models.BakerChart
 
 	totalRolls := stakedBalance / TokensPerRoll / XTZ
 
-	bakers, err := br.List(limits.Limit(), 0)
+	bakers, err := br.List(limits.Limit(), 0, nil)
 	if err != nil {
 		return nil, err
 	}
