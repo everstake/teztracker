@@ -21,6 +21,8 @@ type (
 		GetAccountAssetsBalances(hexAddress string) (holders []models.AccountAssetBalance, err error)
 		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 		CreateAssetOperations(models.AssetOperation) error
+		FindOperations(operationIDs []int64, limit uint64) (operations []models.AssetOperation, err error)
+		GetRegisteredToken(tokenID uint64) (token models.RegisteredToken, err error)
 	}
 )
 
@@ -164,4 +166,21 @@ func (r *Repository) GetAssetReport(tokenID uint64, params models.ReportFilter) 
 	}
 
 	return report, nil
+}
+
+func (r *Repository) FindOperations(operationIDs []int64, limit uint64) (operations []models.AssetOperation, err error) {
+	q := r.db.Model(&models.AssetOperation{})
+	if len(operationIDs) > 0 {
+		q = q.Where("operation_id in (?)", operationIDs)
+	}
+	if limit != 0 {
+		q = q.Limit(limit)
+	}
+	err = q.Find(&operations).Error
+	return operations, err
+}
+
+func (r *Repository) GetRegisteredToken(tokenID uint64) (token models.RegisteredToken, err error) {
+	err = r.db.Model(&models.RegisteredToken{}).Where("id = ?", tokenID).First(&token).Error
+	return token, err
 }

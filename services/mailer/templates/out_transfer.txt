@@ -1,0 +1,3 @@
+<p>Outgoing Transaction operation</p>
+<p>FROM address {from} TO address {to} {amount} {token}</p>
+<p><a href="https://teztracker.com/en/mainnet/tx/{operation}">Link to Teztracker</a></p>

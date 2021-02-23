@@ -9,23 +9,25 @@ import (
 )
 
 // AccountList retrives up to limit of account before the specified id.
-func (t *TezTracker) AccountList(before string, limits Limiter) (accs []models.AccountListView, count int64, err error) {
+func (t *TezTracker) AccountList(before string, limits Limiter, favorites []string) (accs []models.AccountListView, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
-		Type:    models.AccountTypeAccount,
-		OrderBy: models.AccountOrderFieldCreatedAt,
-		After:   before,
+		Type:      models.AccountTypeAccount,
+		OrderBy:   models.AccountOrderFieldCreatedAt,
+		After:     before,
+		Favorites: favorites,
 	}
 	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
 	return accs, count, err
 }
 
-func (t *TezTracker) AccountTopBalanceList(before string, limits Limiter) (accs []models.AccountListView, count int64, err error) {
+func (t *TezTracker) AccountTopBalanceList(before string, limits Limiter, favorites []string) (accs []models.AccountListView, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
-		Type:    models.AccountTypeBoth,
-		OrderBy: models.AccountOrderFieldBalance,
-		After:   before,
+		Type:      models.AccountTypeBoth,
+		OrderBy:   models.AccountOrderFieldBalance,
+		After:     before,
+		Favorites: favorites,
 	}
 	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
 	if err != nil {
@@ -39,12 +41,13 @@ func (t *TezTracker) AccountTopBalanceList(before string, limits Limiter) (accs 
 }
 
 // ContractList retrives up to limit of contract before the specified id.
-func (t *TezTracker) ContractList(before string, limits Limiter) (accs []models.AccountListView, count int64, err error) {
+func (t *TezTracker) ContractList(before string, limits Limiter, favorites []string) (accs []models.AccountListView, count int64, err error) {
 	r := t.repoProvider.GetAccount()
 	filter := models.AccountFilter{
-		Type:    models.AccountTypeContract,
-		OrderBy: models.AccountOrderFieldCreatedAt,
-		After:   before,
+		Type:      models.AccountTypeContract,
+		OrderBy:   models.AccountOrderFieldCreatedAt,
+		After:     before,
+		Favorites: favorites,
 	}
 	count, accs, err = r.List(limits.Limit(), limits.Offset(), filter)
 	return accs, count, err

@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/lib/pq"
 	"time"
 )
@@ -71,8 +72,29 @@ type BakerRegistry struct {
 	IsHidden                               bool           `json:"is_hidden"`
 }
 
-func (pb *BakerRegistry) Unmarshal(data []byte) (err error) {
+type ThirdPartyBaker struct {
+	Provider          string  `json:"provider"`
+	Number            int     `json:"number"`
+	Name              string  `json:"name"`
+	Address           string  `json:"address"`
+	Yield             float64 `json:"yield"`
+	StakingBalance    int64   `json:"staking_balance,omitempty"`
+	Fee               float64 `json:"fee"`
+	AvailableCapacity int64   `json:"available_capacity,omitempty"`
+	Efficiency        float64 `json:"efficiency,omitempty"`
+	PayoutAccuracy    string  `json:"payout_accuracy,omitempty"`
+}
 
+type ThirdPartyBakerAgg struct {
+	Address        string
+	Alias          string
+	StakingBalance int64
+	Providers      ThirdPartyProviders
+}
+
+type ThirdPartyProviders []ThirdPartyBaker
+
+func (pb *BakerRegistry) Unmarshal(data []byte) (err error) {
 	err = json.Unmarshal(data, &pb)
 	if err != nil {
 		return err
@@ -91,5 +113,22 @@ func (pb *BakerRegistry) Unmarshal(data []byte) (err error) {
 
 	pb.BakerOffchainRegistryUrl = string(bytes)
 
+	return nil
+}
+
+func (v *ThirdPartyProviders) Scan(value interface{}) (err error) {
+	if value == nil {
+		return nil
+	}
+	data, ok := value.([]byte)
+	if !ok {
+		return fmt.Errorf("invalid type")
+	}
+	var bakers []ThirdPartyBaker
+	err = json.Unmarshal(data, &bakers)
+	if err != nil {
+		return fmt.Errorf("json.Unmarshal: %s", err.Error())
+	}
+	*v = bakers
 	return nil
 }

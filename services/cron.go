@@ -6,8 +6,10 @@ import (
 	"github.com/everstake/teztracker/api/render"
 	"github.com/everstake/teztracker/services/assets"
 	"github.com/everstake/teztracker/services/cmc"
+	"github.com/everstake/teztracker/services/mailer"
 	"github.com/everstake/teztracker/services/public_baker"
 	"github.com/everstake/teztracker/services/rolls"
+	"github.com/everstake/teztracker/services/thirdparty_bakers"
 	"github.com/everstake/teztracker/ws"
 	"sync/atomic"
 	"time"
@@ -28,7 +30,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, marketDataProvider *cmc.CoinGecko, rpcConfig client.TransportConfig, network models.Network, isTestNetwork bool) {
+func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail mailer.Mail, marketDataProvider *cmc.CoinGecko, rpcConfig client.TransportConfig, network models.Network, isTestNetwork bool) {
 
 	if cfg.CounterIntervalHours > 0 {
 		dur := time.Duration(cfg.CounterIntervalHours) * time.Hour
@@ -291,6 +293,49 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mark
 		})
 	}
 
+	if !isTestNetwork { // dispatch user verifications every minutes
+		var jobIsRunning uint32
+
+		log.Infof("Sheduling check email verifications")
+		cron.AddFunc(gron.Every(time.Minute), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				service := New(repos.New(db), models.NetworkMain)
+				err := service.SendNewVerifications(mail)
+				if err != nil {
+					log.Errorf("dispatch mail verification failed: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("skipping check email verifications as the previous job is still running")
+			}
+		})
+	}
+
+	if cfg.ThirdPartyBakersIntervalMinutes > 0 && !isTestNetwork {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.ThirdPartyBakersIntervalMinutes) * time.Minute
+		log.Infof("Sheduling update third party bakers %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := repos.New(db)
+				err := thirdparty_bakers.UpdateBakers(context.TODO(), unitOfWork)
+				if err != nil {
+					log.Errorf("third party bakers failed: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("updating third party bakers as the previous job is still running")
+			}
+		})
+	}
+
 	//Info cron
 	func() {
 		var jobIsRunning uint32
@@ -305,7 +350,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mark
 				//Outside network always main for RPC
 				serviceNetwork := network
 				if isTestNetwork {
-					serviceNetwork = models.NetworkCarthage
+					serviceNetwork = models.NetworkDelphi
 				}
 
 				service := New(repos.New(db), serviceNetwork)

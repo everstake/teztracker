@@ -19,8 +19,9 @@ type GetPublicBakersListURL struct {
 	Network  string
 	Platform string
 
-	Limit  *int64
-	Offset *int64
+	Favorites []string
+	Limit     *int64
+	Offset    *int64
 
 	_basePath string
 	// avoid unkeyed usage
@@ -66,6 +67,20 @@ func (o *GetPublicBakersListURL) Build() (*url.URL, error) {
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
+
+	var favoritesIR []string
+	for _, favoritesI := range o.Favorites {
+		favoritesIS := favoritesI
+		if favoritesIS != "" {
+			favoritesIR = append(favoritesIR, favoritesIS)
+		}
+	}
+
+	favorites := swag.JoinByFormat(favoritesIR, "multi")
+
+	for _, qsv := range favorites {
+		qs.Add("favorites", qsv)
+	}
 
 	var limitQ string
 	if o.Limit != nil {

@@ -5,6 +5,7 @@ import (
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos"
+	"github.com/everstake/teztracker/services/mailer"
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/services/watcher"
@@ -24,7 +25,7 @@ type Provider struct {
 	networks map[models.Network]NetworkContext
 }
 
-func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
+func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*Provider, error) {
 	provider := &Provider{
 		networks: make(map[models.Network]NetworkContext),
 	}
@@ -41,19 +42,25 @@ func New(configs map[models.Network]config.NetworkConfig) (*Provider, error) {
 			return "tezos." + defaultTableName
 		}
 
-		m, err := mempool.NewMempool(v)
+		hub := ws.NewHub()
+		//Start hub
+		go hub.Run()
+
+		m, err := mempool.NewMempool(v, hub)
 		if err != nil {
 			return nil, err
 		}
 
 		go m.MonitorMempool()
 
-		hub := ws.NewHub()
-		//Start hub
-		go hub.Run()
+		var mail mailer.Mail
+		mail = mailer.NewFakeMailer()
+		if models.NetworkMain == k && cfg.Production {
+			mail = mailer.New(cfg.SmtpHost, cfg.SmtpPort, cfg.SmtpUser, cfg.SmtpPassword)
+		}
 
 		//TODO make graceful stop
-		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db))
+		w := watcher.NewWatcher(v.SqlConnectionString, hub, repos.New(db), mail)
 
 		//Start watcher
 		go w.Start()
