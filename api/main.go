@@ -89,4 +89,15 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, ma
 	serv.MempoolGetMempoolOperationsHandler = &getMempoolHandler{db}
 	//	WS
 	serv.WsConnectToWSHandler = &serveWS{provider: db}
+	// user profile
+	serv.ProfileGetUserProfileHandler = &getUserProfileHandler{db}
+	serv.ProfileUpdateProfileHandler = &updateUserProfileHandler{db}
+	serv.ProfileGetUserAddressesHandler = &getUserAddressesHandler{db}
+	serv.ProfileCreateOrUpdateUserAddressHandler = &createOrUpdateUserAddressHandler{db}
+	serv.ProfileDeleteUserAddressHandler = &deleteUserAddressHandler{db}
+	serv.ProfileGetUserNotesHandler = &getUserNotesHandler{db}
+	serv.ProfileCreateOrUpdateNoteHandler = &createOrUpdateUserNoteHandler{db}
+	serv.ProfileDeleteUserNoteHandler = &deleteUserNoteHandler{db}
+	serv.ProfileVerifyEmailHandler = &verifyEmailHandler{db}
+	serv.ProfileVerifyEmailTokenHandler = &verifyEmailTokenHandler{db}
 }

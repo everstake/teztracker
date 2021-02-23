@@ -13,7 +13,7 @@ import (
 const (
 	apiURL      = "https://api.baking-bad.org/v2"
 	noDataField = "no_data"
-	routeBakers = "/bakers"
+	routeBakers = "/bakers?health=active"
 )
 
 type (
@@ -70,7 +70,7 @@ func (api *API) GetBakers() (thirdPartyBakers []models.ThirdPartyBaker, err erro
 			Number:            i + 1,
 			Name:              b.Name,
 			Address:           b.Address,
-			Yield:             b.EstimatedRoi,
+			Yield:             b.EstimatedRoi * 100,
 			StakingBalance:    stakingBalance,
 			Fee:               b.Fee,
 			AvailableCapacity: int64(b.FreeSpace * 1e6),

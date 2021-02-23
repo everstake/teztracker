@@ -36,11 +36,12 @@ func (r *Repository) getDb() *gorm.DB {
 
 // Get all aggregated third party bakers
 func (r *Repository) GetAggregatedBakers() (bakers []models.ThirdPartyBakerAgg, err error) {
-	err = r.db.Select("address,max(staking_balance) as staking_balance,json_agg(json_build_object('provider',provider,'number',number,'name',name,'address',address,'yield',yield,'staking_balance',staking_balance,'fee',fee,'available_capacity',available_capacity,'efficiency',efficiency,'payout_accuracy',payout_accuracy)) as providers").
+	err = r.db.Select("third_party_bakers.address,max(alias) as alias,max(staking_balance) as staking_balance,json_agg(json_build_object('provider',provider,'number',number,'name',name,'address',third_party_bakers.address,'yield',yield,'staking_balance',staking_balance,'fee',fee,'available_capacity',available_capacity,'efficiency',efficiency,'payout_accuracy',payout_accuracy)) as providers").
 		Model(models.ThirdPartyBakerAgg{}).
 		Table(thirdPartyBakersTable).
+		Joins("left join tezos.known_addresses ON third_party_bakers.address = known_addresses.address").
 		Order("staking_balance DESC").
-		Group("address").
+		Group("third_party_bakers.address").
 		Find(&bakers).
 		Error
 	return bakers, err
