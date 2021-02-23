@@ -176,3 +176,9 @@ type BakerReport struct {
 	Reward float64 `csv:"reward"`
 	Loss   float64 `csv:"loss"`
 }
+
+type BakerChanges struct {
+	Baker      string
+	Balance    int64
+	Delegators int64
+}

@@ -17,6 +17,7 @@ import (
 	"github.com/everstake/teztracker/repos/operation_groups"
 	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/snapshots"
+	"github.com/everstake/teztracker/repos/storage"
 	"github.com/everstake/teztracker/repos/thirdparty_bakers"
 	"github.com/everstake/teztracker/repos/voting_periods"
 )
@@ -49,6 +50,7 @@ type (
 		GetChart() chart.Repo
 		GetAssets() assets.Repo
 		GetThirdPartyBakers() thirdparty_bakers.Repo
+		GetStorage() storage.Repo
 	}
 
 	Limiter interface {

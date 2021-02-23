@@ -51,6 +51,14 @@ func (t *TezTracker) PublicBakerList(limits Limiter) (bakers []models.Baker, cou
 		bakers[i].StakingCapacity = t.calcBakerCapacity(bakers[i], snap.Rolls)
 	}
 
+	var changes map[string]models.BakerChanges
+	err = t.repoProvider.GetStorage().Get(models.BakersChangesStorageKey, &changes)
+	if err != nil {
+		return nil, 0, fmt.Errorf("GetStorage: Get: %s", err.Error())
+	}
+
+
+
 	return bakers, count, nil
 }
 

@@ -27,6 +27,7 @@ type (
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
 		GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
 		GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
+		GetBakerChangesByLastCycle() (bakers []models.BakerChanges, err error)
 	}
 )
 
@@ -272,4 +273,20 @@ func (r *Repository) GetBakingReport(accountID string, params models.AccountRepo
 	}
 
 	return report, nil
+}
+
+func (r *Repository) GetBakerChangesByLastCycle() (bakers []models.BakerChanges, err error) {
+	q := `SELECT t1.baker as baker, t1.balance - t2.balance as balance, t1.delegators - t2.delegators as delegators
+	from (
+         select delegate_value as baker, sum(balance) as balance, count(account_id) as delegators
+         from tezos.delegators_by_cycle
+         where cycle = (select max(cycle) from tezos.delegators_by_cycle)
+         group by delegate_value) as t1
+         left join (
+    select delegate_value as baker, sum(balance) as balance, count(account_id) as delegators
+    from tezos.delegators_by_cycle
+    where cycle = (select max(cycle) from tezos.delegators_by_cycle) - 1
+    group by delegate_value) as t2 ON t1.baker = t2.baker;`
+	err = r.db.Raw(q).Find(&bakers).Error
+	return bakers, nil
 }
