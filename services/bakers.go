@@ -24,7 +24,7 @@ const (
 	TokensPerRoll              = 8000
 	TotalLocked                = (BlockSecurityDeposit + EndorsementSecurityDeposit*BlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
 	BlockLockEstimate          = BlockReward + BlockSecurityDeposit + BlockEndorsers*(EndorsementReward+EndorsementSecurityDeposit)
-	bakerMediaSource           = "https://staging.api.tzkt.io/v1/accounts/%s?metadata=true"
+	bakerMediaSource           = "https://api.tzkt.io/v1/accounts/%s?metadata=true"
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
@@ -240,7 +240,7 @@ type bakerInfo struct {
 		Twitter  string `json:"twitter,omitempty"`
 		Telegram string `json:"telegram,omitempty"`
 		Reddit   string `json:"reddit,omitempty"`
-	}
+	} `json:"metadata"`
 }
 
 func getBakerMediaData(address string) (media []byte, err error) {
