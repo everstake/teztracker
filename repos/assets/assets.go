@@ -1,6 +1,7 @@
 package assets
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
@@ -15,7 +16,9 @@ type (
 		GetTokensList() (int64, []models.AssetInfo, error)
 		GetTokenInfo(tokenID string) (models.AssetInfo, error)
 		GetTokenHolders(tokenID string) ([]models.AssetHolder, error)
-		GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
+		GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, blockLevels []int64, limit, offset uint) (count int64, info []models.AssetOperationReport, err error)
+		GetAssetReport(tokenID uint64, params models.ReportFilter) ([]models.AssetReport, error)
+		GetAccountAssetsBalances(hexAddress string) (holders []models.AccountAssetBalance, err error)
 		GetUnprocessedAssetTxs(tokenID string) ([]models.Operation, error)
 		CreateAssetOperations(models.AssetOperation) error
 		FindOperations(operationIDs []int64, limit uint64) (operations []models.AssetOperation, err error)
@@ -66,7 +69,29 @@ func (r *Repository) GetTokenInfo(tokenID string) (info models.AssetInfo, err er
 }
 
 func (r *Repository) GetTokenHolders(tokenID string) (holders []models.AssetHolder, err error) {
+	err = r.db.
+		Select("key as address, value balance").
+		Table("tezos.big_map_contents").
+		Joins("LEFT JOIN tezos.originated_account_maps oam on oam.big_map_id = big_map_contents.big_map_id").
+		Joins("LEFT JOIN tezos.big_maps bms on oam.big_map_id = bms.big_map_id").
+		Where("account_id = ?", tokenID).
+		//Get only ledger bigmap
+		Where("key_type IN ('address','bytes')").
+		Where("value is not null").
+		Find(&holders).Error
+	return holders, err
+}
 
+func (r *Repository) GetAccountAssetsBalances(hexAddress string) (holders []models.AccountAssetBalance, err error) {
+
+	err = r.db.
+		Select("key as address, value balance, asset_info.*").
+		Table("tezos.big_map_contents").
+		Joins("LEFT JOIN tezos.originated_account_maps oam on oam.big_map_id = big_map_contents.big_map_id").
+		Joins("LEFT JOIN tezos.asset_info on asset_info.account_id = oam.account_id").
+		Where("key like ?", fmt.Sprint("%", hexAddress, "%")).
+		Where("value is not null").
+		Find(&holders).Error
 	return holders, err
 }
 
@@ -83,14 +108,30 @@ func (r *Repository) GetUnprocessedAssetTxs(tokenID string) (ops []models.Operat
 	return ops, nil
 }
 
-func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, offset uint) (count int64, info []models.AssetOperationReport, err error) {
+func (r *Repository) GetAssetOperations(tokenIDs, operationTypes, accountIDs []string, blockLevels []int64, limit, offset uint) (count int64, info []models.AssetOperationReport, err error) {
 
-	db := r.db.Select("*").Table(assetOperations).Where("token_id = ?", tokenID)
+	db := r.db.Select("*").Table(assetOperations)
 
-	if isTransfer {
-		db = db.Where("type = ?", "transfer")
-	} else {
-		db = db.Where("type != ?", "transfer")
+	if len(tokenIDs) > 0 {
+		db = db.Joins("LEFT JOIN tezos.registered_tokens on id = token_id")
+		db = db.Where("account_id IN (?)", tokenIDs)
+	}
+
+	if len(operationTypes) == 1 {
+		switch operationTypes[0] {
+		case "transfer":
+			db = db.Where("type = ?", "transfer")
+		case "other":
+			db = db.Where("type != ?", "transfer")
+		}
+	}
+
+	if len(accountIDs) > 0 {
+		db = db.Where("asset_operations.sender IN (?) OR asset_operations.receiver IN (?)", accountIDs, accountIDs)
+	}
+
+	if len(blockLevels) > 0 {
+		db = db.Where("asset_operations.block_level IN (?)", blockLevels)
 	}
 
 	err = db.Count(&count).Error
@@ -107,6 +148,24 @@ func (r *Repository) GetAssetOperations(tokenID uint64, isTransfer bool, limit, 
 	}
 
 	return count, info, nil
+}
+
+func (r *Repository) GetAssetReport(tokenID uint64, params models.ReportFilter) (report []models.AssetReport, err error) {
+	err = r.db.
+		Select("block_level, timestamp, type kind, operation_group_hash, ticker coin, amount :: decimal / (10 ^ scale) amount, 'applied' status, sender source, receiver destination, 0 fee").
+		Table("tezos.asset_operations").
+		Joins("left join tezos.registered_tokens on token_id = id").
+		Where("token_id = ?", tokenID).
+		Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+		Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+		Limit(params.Limit).
+		Order("timestamp desc").
+		Find(&report).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return report, nil
 }
 
 func (r *Repository) FindOperations(operationIDs []int64, limit uint64) (operations []models.AssetOperation, err error) {

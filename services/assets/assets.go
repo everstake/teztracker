@@ -207,6 +207,7 @@ func ProcessAssetOperations(ctx context.Context, unit UnitOfWork, provider Asset
 			}
 
 			err = repo.CreateAssetOperations(models.AssetOperation{
+				BlockLevel:         groupHashOperations[0].BlockLevel.Int64,
 				TokenId:            tokens[tI].ID,
 				OperationId:        groupHashOperations[0].OperationID.Int64,
 				OperationGroupHash: op.Hash,
