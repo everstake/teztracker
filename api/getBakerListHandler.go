@@ -26,7 +26,7 @@ func (h *getBakerListHandler) Handle(params accounts.GetBakersListParams) middle
 	service := services.New(repos.New(db), net)
 	limiter := NewLimiter(params.Limit, params.Offset)
 
-	accs, count, err := service.BakerList(limiter)
+	accs, count, err := service.BakerList(limiter, params.Favorites)
 	if err != nil {
 		logrus.Errorf("failed to get accounts: %s", err.Error())
 		return accounts.NewGetBakersListNotFound()
@@ -51,7 +51,7 @@ func (h *getPublicBakerListHandler) Handle(params accounts.GetPublicBakersListPa
 	service := services.New(repos.New(db), net)
 	limiter := NewLimiter(params.Limit, params.Offset)
 
-	accs, count, err := service.PublicBakerList(limiter)
+	accs, count, err := service.PublicBakerList(limiter, params.Favorites)
 	if err != nil {
 		logrus.Errorf("failed to get accounts: %s", err.Error())
 		return accounts.NewGetBakersListNotFound()

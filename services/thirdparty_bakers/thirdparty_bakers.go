@@ -6,14 +6,16 @@ import (
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/thirdparty_bakers"
 	"github.com/everstake/teztracker/services/thirdparty_bakers/bakingbad"
-	"github.com/everstake/teztracker/services/thirdparty_bakers/mytezosbaker"
 	"github.com/everstake/teztracker/services/thirdparty_bakers/tezosnodes"
+	"github.com/everstake/teztracker/services/thirdparty_bakers/tzstats"
 )
 
 const (
 	BakingBadProvider    = "baking-bad"
 	MyTezosBakerProvider = "mytezosbaker"
 	TezosNodesProvider   = "tezos-nodes"
+	TzstatsProvider      = "tzstats"
+	mainProvider         = BakingBadProvider
 )
 
 type (
@@ -34,29 +36,48 @@ type ThirdPartyBakers struct {
 
 func getProviders() map[string]BakersProvider {
 	return map[string]BakersProvider{
-		BakingBadProvider:    bakingbad.New(),
-		MyTezosBakerProvider: mytezosbaker.New(),
-		TezosNodesProvider:   tezosnodes.New(),
+		BakingBadProvider:  bakingbad.New(),
+		TezosNodesProvider: tezosnodes.New(),
+		TzstatsProvider:    tzstats.New(),
 	}
 }
 
 func UpdateBakers(ctx context.Context, unit UnitOfWork) error {
 	bakersRepo := unit.GetThirdPartyBakers()
 	var bakers []models.ThirdPartyBaker
-	for name, provider := range getProviders() {
+	providers := getProviders()
+	mainBakerProvider, ok := providers[mainProvider]
+	if !ok {
+		return fmt.Errorf("not found main provider")
+	}
+	addressesWhiteList := make(map[string]struct{})
+	mainProviderBakers, err := mainBakerProvider.GetBakers()
+	if err != nil {
+		return fmt.Errorf("mainBakerProvider.GetBakers: %s", err.Error())
+	}
+	for _, baker := range mainProviderBakers {
+		addressesWhiteList[baker.Address] = struct{}{}
+	}
+	for name, provider := range providers {
 		items, err := provider.GetBakers()
 		if err != nil {
 			return fmt.Errorf("provider(%s): %s", name, err.Error())
 		}
+		var validItems []models.ThirdPartyBaker
 		for key := range items {
-			items[key].Provider = name
+			if _, ok := addressesWhiteList[items[key].Address]; !ok {
+				continue
+			}
+			item := items[key]
+			item.Provider = name
+			validItems = append(validItems, item)
 		}
-		bakers = append(bakers, items...)
+		bakers = append(bakers, validItems...)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	unit.Start(ctx)
 	defer cancel()
-	err := bakersRepo.DeleteAll()
+	err = bakersRepo.DeleteAll()
 	if err != nil {
 		return fmt.Errorf("bakersRepo.DeleteAll: %s", err.Error())
 	}

@@ -14,6 +14,7 @@ type Config struct {
 	Mainnet                               NetworkConfig
 	Delphinet                             NetworkConfig
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
+	Production                            bool
 	CounterIntervalHours                  int
 	FutureRightsIntervalMinutes           int
 	SnapshotCheckIntervalMinutes          int
@@ -23,6 +24,10 @@ type Config struct {
 	BakerRegistryCheckIntervalMinutes     int
 	AssetsParseIntervalMinutes            int
 	InfoWSEventsIntervalMinutes           int
+	SmtpHost                              string
+	SmtpPort                              int
+	SmtpUser                              string
+	SmtpPassword                          string
 	ThirdPartyBakersIntervalMinutes       int
 }
 
