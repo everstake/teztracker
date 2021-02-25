@@ -76,7 +76,7 @@ func (r *Repository) GetTokenHolders(tokenID string) (holders []models.AssetHold
 		Joins("LEFT JOIN tezos.big_maps bms on oam.big_map_id = bms.big_map_id").
 		Where("account_id = ?", tokenID).
 		//Get only ledger bigmap
-		Where("key_type IN ('address','bytes')").
+		Where("key_type IN ('address','bytes','(address :user)')").
 		Where("value is not null").
 		Find(&holders).Error
 	return holders, err
