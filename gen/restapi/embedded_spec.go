@@ -5143,6 +5143,23 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "media": {
+          "type": "object",
+          "properties": {
+            "reddit": {
+              "format": "string"
+            },
+            "site": {
+              "format": "string"
+            },
+            "telegram": {
+              "format": "string"
+            },
+            "twitter": {
+              "format": "string"
+            }
+          }
+        },
         "name": {
           "type": "string"
         },
@@ -11541,6 +11558,23 @@ func init() {
         "frozenBalance": {
           "type": "integer",
           "format": "int64"
+        },
+        "media": {
+          "type": "object",
+          "properties": {
+            "reddit": {
+              "format": "string"
+            },
+            "site": {
+              "format": "string"
+            },
+            "telegram": {
+              "format": "string"
+            },
+            "twitter": {
+              "format": "string"
+            }
+          }
         },
         "name": {
           "type": "string"

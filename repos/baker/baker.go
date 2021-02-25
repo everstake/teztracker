@@ -29,6 +29,7 @@ type (
 		BakerRegistryList() ([]models.BakerRegistry, error)
 		SavePublicBaker(models.BakerRegistry) error
 		PublicBakersSearchList() ([]models.PublicBakerSearch, error)
+		UpdateBaker(baker models.Baker) error
 
 		TotalBakingRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
 		TotalEndorsementRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
@@ -58,7 +59,7 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err error) {
-	if res := r.db.Select("tezos.baker_view.*, baker_name as name, (10000 - split)/100 as fee").
+	if res := r.db.Select("tezos.baker_view.*, baker_name as name, public_bakers.media, (10000 - split)/100 as fee").
 		Table(bakerMaterializedView).
 		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
 		Where("account_id = ?", accountID).
@@ -76,7 +77,7 @@ func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
 func (r *Repository) List(limit, offset uint, favorites []string) (bakers []models.Baker, err error) {
-	db := r.db.Select("tezos.baker_view.*,baker_name as name").Table(bakerMaterializedView).
+	db := r.db.Select("tezos.baker_view.*,baker_name as name, public_bakers.media").Table(bakerMaterializedView).
 		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate")
 
 	if len(favorites) != 0 {
@@ -240,7 +241,7 @@ func (r *Repository) PublicBakersCount() (count int64, err error) {
 }
 
 func (r *Repository) PublicBakersList(limit, offset uint, favorites []string) (bakers []models.Baker, err error) {
-	db := r.db.Select("pb.baker_name as name,delegate as account_id, bw.*, (10000 - split)/100 as fee ").Table("tezos.public_bakers as pb").
+	db := r.db.Select("pb.baker_name as name, pb.media,delegate as account_id, bw.*, (10000 - split)/100 as fee ").Table("tezos.public_bakers as pb").
 		Joins(fmt.Sprintf("left join %s as bw on bw.account_id = pb.delegate", bakerMaterializedView)).
 		Where("is_hidden IS false")
 
@@ -283,4 +284,12 @@ func (r *Repository) SavePublicBaker(baker models.BakerRegistry) (err error) {
 	}
 
 	return nil
+}
+
+func (r *Repository) UpdateBaker(baker models.Baker) error {
+	return r.db.Table("tezos.public_bakers").
+		Where("delegate = ?", baker.AccountID).
+		Updates(map[string]interface{}{
+			"media": baker.Media,
+		}).Error
 }

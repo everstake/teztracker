@@ -43,6 +43,7 @@ type BakerStats struct {
 	FrozenBakingRewards      int64     `json:"frozen_baking_rewards"`
 	EndorsementCount         int64     `json:"endorsement_count"`
 	BakingCount              int64     `json:"baking_count"`
+	Media                    string    `json:"media"`
 
 	//	From old resp
 	BakingDeposits      int64
