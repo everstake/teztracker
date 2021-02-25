@@ -82,6 +82,8 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, ma
 	serv.AccountsGetBakersDelegatorsHandler = &getBakersDelegators{db}
 	serv.AccountsGetBakersStakeChangeHandler = &getBakersStakeChange{db}
 	serv.AccountsGetBakersVotingHandler = &getBakersVoting{db}
+	serv.AccountsGetAccountsAggCountHandler = &getAccountsAggCount{db}
+	serv.AccountsGetAccountsTotalAggCountHandler = &getAccountsTotalAggCount{db}
 	//	Assets
 	serv.AssetsGetAssetTokenHoldersListHandler = &getAssetHoldersHandler{db}
 	serv.AssetsGetAssetTokenInfoHandler = &getAssetInfoHandler{db}

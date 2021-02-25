@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/guregu/null"
 	"time"
@@ -129,4 +130,27 @@ func (t *TezTracker) GetAccountBalanceHistory(id string, from, to time.Time) (ba
 	}
 
 	return balances, nil
+}
+
+func (t *TezTracker) GetAccountCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	repo := t.repoProvider.GetAccount()
+	return repo.GetCountByPeriod(filter)
+}
+
+func (t *TezTracker) GetTotalAccountCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	repo := t.repoProvider.GetAccount()
+	items, err = repo.GetCountByPeriod(filter)
+	if err != nil {
+		return nil, fmt.Errorf("GetCountByPeriod: %s", err.Error())
+	}
+	total, err := repo.GetCount(time.Time{}, filter.To)
+	if err != nil {
+		return nil, fmt.Errorf("GetCount: %s", err.Error())
+	}
+	for i := 0; i < len(items); i++ {
+		v := items[i]
+		v.Value += total
+		items[i] = v
+	}
+	return items, nil
 }

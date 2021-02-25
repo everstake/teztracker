@@ -8,6 +8,7 @@ import (
 	"github.com/everstake/teztracker/repos/baking"
 	"github.com/everstake/teztracker/repos/block"
 	"github.com/everstake/teztracker/repos/chart"
+	"github.com/everstake/teztracker/repos/daily_stats"
 	"github.com/everstake/teztracker/repos/double_baking"
 	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
@@ -53,6 +54,7 @@ type (
 		GetThirdPartyBakers() thirdparty_bakers.Repo
 		GetUserProfile() user_profile.Repo
 		GetStorage() storage.Repo
+		GetDailyStats() daily_stats.Repo
 	}
 
 	Limiter interface {

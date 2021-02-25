@@ -5,6 +5,16 @@ import (
 	"github.com/everstake/teztracker/models"
 )
 
+// PublicBaker renders an app level model to a generated OpenAPI model.
+func PublicBaker(a models.PublicBaker) *genModels.BakersRow {
+	return &genModels.BakersRow{
+		AccountID:        a.AccountID,
+		StakeChange:      a.StakeChange,
+		DelegatorsChange: a.DelegatorsChange,
+		BakerInfo:        BakerInfo(&a.Baker),
+	}
+}
+
 // Baker renders an app level model to a generated OpenAPI model.
 func Baker(a models.Baker) *genModels.BakersRow {
 	return &genModels.BakersRow{
@@ -22,10 +32,10 @@ func Bakers(ams []models.Baker) []*genModels.BakersRow {
 	return accs
 }
 
-func PublicBakers(ams []models.Baker) []genModels.PublicBaker {
+func PublicBakers(ams []models.PublicBaker) []genModels.PublicBaker {
 	accs := make([]genModels.PublicBaker, len(ams))
 	for i := range ams {
-		bakerRow := Baker(ams[i])
+		bakerRow := PublicBaker(ams[i])
 		accs[i] = genModels.PublicBaker{BakersRow: *bakerRow}
 	}
 	return accs

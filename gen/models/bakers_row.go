@@ -21,6 +21,12 @@ type BakersRow struct {
 
 	// baker info
 	BakerInfo *BakerInfo `json:"bakerInfo,omitempty"`
+
+	// delegators change
+	DelegatorsChange int64 `json:"delegators_change,omitempty"`
+
+	// stake change
+	StakeChange int64 `json:"stake_change,omitempty"`
 }
 
 // Validate validates this bakers row

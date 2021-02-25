@@ -7,6 +7,7 @@ import (
 	"github.com/everstake/teztracker/repos/assets"
 	"github.com/everstake/teztracker/repos/baking"
 	"github.com/everstake/teztracker/repos/chart"
+	"github.com/everstake/teztracker/repos/daily_stats"
 	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
@@ -141,6 +142,10 @@ func (u *Provider) GetUserProfile() user_profile.Repo {
 
 func (u *Provider) GetStorage() storage.Repo {
 	return storage.New(u.getDB())
+}
+
+func (u *Provider) GetDailyStats() daily_stats.Repo {
+	return daily_stats.New(u.getDB())
 }
 
 func (u *Provider) Start(ctx context.Context) {

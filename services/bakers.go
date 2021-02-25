@@ -24,14 +24,14 @@ const (
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
-func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (bakers []models.Baker, count int64, err error) {
+func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (publicBakers []models.PublicBaker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.PublicBakersCount()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	bakers, err = r.PublicBakersList(limits.Limit(), limits.Offset(), favorites)
+	bakers, err := r.PublicBakersList(limits.Limit(), limits.Offset(), favorites)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -51,15 +51,25 @@ func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (bakers
 		bakers[i].StakingCapacity = t.calcBakerCapacity(bakers[i], snap.Rolls)
 	}
 
+	// insert bakers changes
 	var changes map[string]models.BakerChanges
 	err = t.repoProvider.GetStorage().Get(models.BakersChangesStorageKey, &changes)
 	if err != nil {
 		return nil, 0, fmt.Errorf("GetStorage: Get: %s", err.Error())
 	}
-
-
-
-	return bakers, count, nil
+	publicBakers = make([]models.PublicBaker, len(bakers))
+	for i, baker := range bakers {
+		pb := models.PublicBaker{
+			Baker: baker,
+		}
+		change, ok := changes[baker.AccountID]
+		if ok {
+			pb.StakeChange = change.Balance
+			pb.DelegatorsChange = change.Delegators
+		}
+		publicBakers[i] = pb
+	}
+	return publicBakers, count, nil
 }
 
 func (t *TezTracker) PublicBakersSearchList() (list []models.PublicBakerSearch, err error) {

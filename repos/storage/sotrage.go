@@ -34,7 +34,6 @@ func (r *Repository) getDb() *gorm.DB {
 }
 
 func (r *Repository) Set(key string, value interface{}) error {
-	fmt.Println(key, value == nil)
 	if value == nil || key == "" {
 		return fmt.Errorf("invalid key or data")
 	}
@@ -61,15 +60,15 @@ func (r *Repository) Get(key string, dst interface{}) error {
 	if dst == nil || key == "" {
 		return fmt.Errorf("invalid key or data")
 	}
-	var data string
-	res := r.getDb().Where("key = ?", key).First(&data)
+	var model models.Storage
+	res := r.getDb().Select("value").Where("key = ?", key).First(&model)
 	if res.Error != nil {
 		return res.Error
 	}
 	if res.RecordNotFound() {
 		return fmt.Errorf("not found by key: %s", key)
 	}
-	err := json.Unmarshal([]byte(data), dst)
+	err := json.Unmarshal([]byte(model.Value), dst)
 	if err != nil {
 		return fmt.Errorf("json.Unmarshal: %s", err.Error())
 	}

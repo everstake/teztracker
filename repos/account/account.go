@@ -29,6 +29,9 @@ type (
 		GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
 		GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
 		GetBakerChangesByLastCycle() (bakers []models.BakerChanges, err error)
+		GetCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
+		GetCount(from time.Time, to time.Time) (count int64, err error)
+		GetCountWhereBalance(lessThen int64) (count int64, err error)
 	}
 )
 
@@ -299,4 +302,40 @@ func (r *Repository) GetBakerChangesByLastCycle() (bakers []models.BakerChanges,
     group by delegate_value) as t2 ON t1.baker = t2.baker;`
 	err = r.db.Raw(q).Find(&bakers).Error
 	return bakers, nil
+}
+
+func (r *Repository) GetCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	err = filter.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
+	}
+	q := r.db.Select(fmt.Sprintf("count(*) as value, date_trunc('%s', created_at) as date", filter.Period)).
+		Table("tezos.account_created_at").Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("created_at >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("created_at <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
+}
+
+func (r *Repository) GetCount(from time.Time, to time.Time) (count int64, err error) {
+	q := r.db.Select("count(*) as value").Table("tezos.account_created_at")
+	if !from.IsZero() {
+		q = q.Where("created_at >= ?", from)
+	}
+	if !to.IsZero() {
+		q = q.Where("created_at <= ?", to)
+	}
+	err = q.Count(&count).Error
+	return count, err
+}
+
+func (r *Repository) GetCountWhereBalance(lessThen int64) (count int64, err error) {
+	err = r.db.Table("tezos.accounts").
+		Where("balance < ?", lessThen).
+		Count(&count).Error
+	return count, err
 }
