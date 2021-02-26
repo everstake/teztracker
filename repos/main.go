@@ -7,10 +7,12 @@ import (
 	"github.com/everstake/teztracker/repos/assets"
 	"github.com/everstake/teztracker/repos/baking"
 	"github.com/everstake/teztracker/repos/chart"
+	"github.com/everstake/teztracker/repos/daily_stats"
 	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
 	"github.com/everstake/teztracker/repos/rolls"
+	"github.com/everstake/teztracker/repos/storage"
 	"github.com/everstake/teztracker/repos/thirdparty_bakers"
 	"github.com/everstake/teztracker/repos/user_profile"
 	"github.com/everstake/teztracker/repos/voting_periods"
@@ -136,6 +138,14 @@ func (u *Provider) GetThirdPartyBakers() thirdparty_bakers.Repo {
 
 func (u *Provider) GetUserProfile() user_profile.Repo {
 	return user_profile.New(u.getDB())
+}
+
+func (u *Provider) GetStorage() storage.Repo {
+	return storage.New(u.getDB())
+}
+
+func (u *Provider) GetDailyStats() daily_stats.Repo {
+	return daily_stats.New(u.getDB())
 }
 
 func (u *Provider) Start(ctx context.Context) {

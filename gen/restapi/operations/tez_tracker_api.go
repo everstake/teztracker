@@ -122,11 +122,17 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetAccountTotalEndorsingHandler: accounts.GetAccountTotalEndorsingHandlerFunc(func(params accounts.GetAccountTotalEndorsingParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountTotalEndorsing has not yet been implemented")
 		}),
+		AccountsGetAccountsAggCountHandler: accounts.GetAccountsAggCountHandlerFunc(func(params accounts.GetAccountsAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountsAggCount has not yet been implemented")
+		}),
 		AccountsGetAccountsListHandler: accounts.GetAccountsListHandlerFunc(func(params accounts.GetAccountsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountsList has not yet been implemented")
 		}),
 		AccountsGetAccountsTopBalanceListHandler: accounts.GetAccountsTopBalanceListHandlerFunc(func(params accounts.GetAccountsTopBalanceListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountsTopBalanceList has not yet been implemented")
+		}),
+		AccountsGetAccountsTotalAggCountHandler: accounts.GetAccountsTotalAggCountHandlerFunc(func(params accounts.GetAccountsTotalAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountsTotalAggCount has not yet been implemented")
 		}),
 		AssetsGetAssetOperationsListHandler: assets.GetAssetOperationsListHandlerFunc(func(params assets.GetAssetOperationsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AssetsGetAssetOperationsList has not yet been implemented")
@@ -345,10 +351,14 @@ type TezTrackerAPI struct {
 	AccountsGetAccountTotalBakingHandler accounts.GetAccountTotalBakingHandler
 	// AccountsGetAccountTotalEndorsingHandler sets the operation handler for the get account total endorsing operation
 	AccountsGetAccountTotalEndorsingHandler accounts.GetAccountTotalEndorsingHandler
+	// AccountsGetAccountsAggCountHandler sets the operation handler for the get accounts agg count operation
+	AccountsGetAccountsAggCountHandler accounts.GetAccountsAggCountHandler
 	// AccountsGetAccountsListHandler sets the operation handler for the get accounts list operation
 	AccountsGetAccountsListHandler accounts.GetAccountsListHandler
 	// AccountsGetAccountsTopBalanceListHandler sets the operation handler for the get accounts top balance list operation
 	AccountsGetAccountsTopBalanceListHandler accounts.GetAccountsTopBalanceListHandler
+	// AccountsGetAccountsTotalAggCountHandler sets the operation handler for the get accounts total agg count operation
+	AccountsGetAccountsTotalAggCountHandler accounts.GetAccountsTotalAggCountHandler
 	// AssetsGetAssetOperationsListHandler sets the operation handler for the get asset operations list operation
 	AssetsGetAssetOperationsListHandler assets.GetAssetOperationsListHandler
 	// AssetsGetAssetReportHandler sets the operation handler for the get asset report operation
@@ -600,12 +610,20 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "accounts.GetAccountTotalEndorsingHandler")
 	}
 
+	if o.AccountsGetAccountsAggCountHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountsAggCountHandler")
+	}
+
 	if o.AccountsGetAccountsListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountsListHandler")
 	}
 
 	if o.AccountsGetAccountsTopBalanceListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountsTopBalanceListHandler")
+	}
+
+	if o.AccountsGetAccountsTotalAggCountHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountsTotalAggCountHandler")
 	}
 
 	if o.AssetsGetAssetOperationsListHandler == nil {
@@ -1011,12 +1029,22 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/agg"] = accounts.NewGetAccountsAggCount(o.context, o.AccountsGetAccountsAggCountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts"] = accounts.NewGetAccountsList(o.context, o.AccountsGetAccountsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/top_balance"] = accounts.NewGetAccountsTopBalanceList(o.context, o.AccountsGetAccountsTopBalanceListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/total/agg"] = accounts.NewGetAccountsTotalAggCount(o.context, o.AccountsGetAccountsTotalAggCountHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

@@ -3,6 +3,7 @@ package services
 import (
 	"blockwatch.cc/tzindex/chain"
 	"encoding/hex"
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/guregu/null"
 	"time"
@@ -160,4 +161,27 @@ func base58ToHexAddress(address string) (string, error) {
 	}
 
 	return hex.EncodeToString(bt), nil
+}
+
+func (t *TezTracker) GetAccountCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	repo := t.repoProvider.GetAccount()
+	return repo.GetCountByPeriod(filter)
+}
+
+func (t *TezTracker) GetTotalAccountCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	repo := t.repoProvider.GetAccount()
+	items, err = repo.GetCountByPeriod(filter)
+	if err != nil {
+		return nil, fmt.Errorf("GetCountByPeriod: %s", err.Error())
+	}
+	total, err := repo.GetCount(time.Time{}, filter.To)
+	if err != nil {
+		return nil, fmt.Errorf("GetCount: %s", err.Error())
+	}
+	for i := 0; i < len(items); i++ {
+		v := items[i]
+		v.Value += total
+		items[i] = v
+	}
+	return items, nil
 }

@@ -76,7 +76,7 @@ func (r *Repository) GetTokenHolders(tokenID string) (holders []models.AssetHold
 		Joins("LEFT JOIN tezos.big_maps bms on oam.big_map_id = bms.big_map_id").
 		Where("account_id = ?", tokenID).
 		//Get only ledger bigmap
-		Where("key_type IN ('address','bytes')").
+		Where("key_type IN ('address','bytes','(address :user)')").
 		Where("value is not null").
 		Find(&holders).Error
 	return holders, err
@@ -150,23 +150,6 @@ func (r *Repository) GetAssetOperations(tokenIDs, operationTypes, accountIDs []s
 	return count, info, nil
 }
 
-func (r *Repository) FindOperations(operationIDs []int64, limit uint64) (operations []models.AssetOperation, err error) {
-	q := r.db.Model(&models.AssetOperation{})
-	if len(operationIDs) > 0 {
-		q = q.Where("operation_id in (?)", operationIDs)
-	}
-	if limit != 0 {
-		q = q.Limit(limit)
-	}
-	err = q.Find(&operations).Error
-	return operations, err
-}
-
-func (r *Repository) GetRegisteredToken(tokenID uint64) (token models.RegisteredToken, err error) {
-	err = r.db.Model(&models.RegisteredToken{}).Where("id = ?", tokenID).First(&token).Error
-	return token, err
-}
-
 func (r *Repository) GetAssetReport(tokenID uint64, params models.ReportFilter) (report []models.AssetReport, err error) {
 	err = r.db.
 		Select("block_level, timestamp, type kind, operation_group_hash, ticker coin, amount :: decimal / (10 ^ scale) amount, 'applied' status, sender source, receiver destination, 0 fee").
@@ -183,4 +166,21 @@ func (r *Repository) GetAssetReport(tokenID uint64, params models.ReportFilter) 
 	}
 
 	return report, nil
+}
+
+func (r *Repository) FindOperations(operationIDs []int64, limit uint64) (operations []models.AssetOperation, err error) {
+	q := r.db.Model(&models.AssetOperation{})
+	if len(operationIDs) > 0 {
+		q = q.Where("operation_id in (?)", operationIDs)
+	}
+	if limit != 0 {
+		q = q.Limit(limit)
+	}
+	err = q.Find(&operations).Error
+	return operations, err
+}
+
+func (r *Repository) GetRegisteredToken(tokenID uint64) (token models.RegisteredToken, err error) {
+	err = r.db.Model(&models.RegisteredToken{}).Where("id = ?", tokenID).First(&token).Error
+	return token, err
 }

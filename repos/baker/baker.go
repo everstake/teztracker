@@ -296,6 +296,14 @@ func (r *Repository) SavePublicBaker(baker models.BakerRegistry) (err error) {
 	return nil
 }
 
+func (r *Repository) UpdateBaker(baker models.Baker) error {
+	return r.db.Table("tezos.public_bakers").
+		Where("delegate = ?", baker.AccountID).
+		Updates(map[string]interface{}{
+			"media": baker.Media,
+		}).Error
+}
+
 func (r *Repository) NumberOfDelegators(cycle uint64) (numbers []models.BakerDelegators, err error) {
 	q := fmt.Sprintf("SELECT count(delegators_by_cycle.*) as value, delegators_by_cycle.delegate_value as address " +
 		"from tezos.delegators_by_cycle WHERE cycle = %d GROUP BY delegate_value", cycle)
@@ -332,12 +340,4 @@ func (r *Repository) GetBakersVoting() (stakes []models.BakerDelegators, err err
 		Order("delegators.value DESC").
 		Find(&stakes).Error
 	return stakes, err
-}
-
-func (r *Repository) UpdateBaker(baker models.Baker) error {
-	return r.db.Table("tezos.public_bakers").
-		Where("delegate = ?", baker.AccountID).
-		Updates(map[string]interface{}{
-			"media": baker.Media,
-		}).Error
 }

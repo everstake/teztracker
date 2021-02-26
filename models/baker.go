@@ -13,6 +13,12 @@ type Baker struct {
 	BakerStats
 }
 
+type PublicBaker struct {
+	Baker
+	DelegatorsChange int64 `json:"delegators"`
+	StakeChange      int64 `json:"stake_change"`
+}
+
 type PublicBakerSearch struct {
 	Delegate  string
 	BakerName string

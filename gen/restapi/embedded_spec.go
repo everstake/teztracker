@@ -1230,6 +1230,75 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/baking/{accountId}": {
       "get": {
         "produces": [
@@ -2139,6 +2208,75 @@ func init() {
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/total/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountsTotalAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
           }
         }
       }
@@ -5128,6 +5266,18 @@ func init() {
         }
       }
     },
+    "AggTimeInt": {
+      "properties": {
+        "date": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "AssetOperation": {
       "required": [
         "amount",
@@ -5340,6 +5490,14 @@ func init() {
         },
         "bakerInfo": {
           "$ref": "#/definitions/BakerInfo"
+        },
+        "delegators_change": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stake_change": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -7787,6 +7945,75 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/accounts/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/accounts/baking/{accountId}": {
       "get": {
         "produces": [
@@ -8704,6 +8931,75 @@ func init() {
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/total/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountsTotalAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
           }
         }
       }
@@ -11708,6 +12004,18 @@ func init() {
         }
       }
     },
+    "AggTimeInt": {
+      "properties": {
+        "date": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "AssetOperation": {
       "required": [
         "amount",
@@ -11920,6 +12228,14 @@ func init() {
         },
         "bakerInfo": {
           "$ref": "#/definitions/BakerInfo"
+        },
+        "delegators_change": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "stake_change": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

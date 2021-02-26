@@ -27,14 +27,14 @@ const (
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
-func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (bakers []models.Baker, count int64, err error) {
+func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (publicBakers []models.PublicBaker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.PublicBakersCount()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	bakers, err = r.PublicBakersList(limits.Limit(), limits.Offset(), favorites)
+	bakers, err := r.PublicBakersList(limits.Limit(), limits.Offset(), favorites)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -54,7 +54,25 @@ func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (bakers
 		bakers[i].StakingCapacity = t.calcBakerCapacity(bakers[i], snap.Rolls)
 	}
 
-	return bakers, count, nil
+	// insert bakers changes
+	var changes map[string]models.BakerChanges
+	err = t.repoProvider.GetStorage().Get(models.BakersChangesStorageKey, &changes)
+	if err != nil {
+		return nil, 0, fmt.Errorf("GetStorage: Get: %s", err.Error())
+	}
+	publicBakers = make([]models.PublicBaker, len(bakers))
+	for i, baker := range bakers {
+		pb := models.PublicBaker{
+			Baker: baker,
+		}
+		change, ok := changes[baker.AccountID]
+		if ok {
+			pb.StakeChange = change.Balance
+			pb.DelegatorsChange = change.Delegators
+		}
+		publicBakers[i] = pb
+	}
+	return publicBakers, count, nil
 }
 
 func (t *TezTracker) PublicBakersSearchList() (list []models.PublicBakerSearch, err error) {
@@ -213,6 +231,57 @@ func (t *TezTracker) GetThirdPartyBakers() (bakers []models.ThirdPartyBakerAgg, 
 	return tpbRepo.GetAggregatedBakers()
 }
 
+func (t *TezTracker) UpdateBakersSocialMedia() error {
+	bakersRepo := t.repoProvider.GetBaker()
+	bakers, err := bakersRepo.PublicBakersList(10000, 0, nil)
+	if err != nil {
+		return fmt.Errorf("bakersRepo.PublicBakersList: %s", err.Error())
+	}
+	for _, baker := range bakers {
+		media, err := getBakerMediaData(baker.AccountID)
+		if err != nil {
+			return fmt.Errorf("getBakerMediaData: %s", err.Error())
+		}
+		baker.Media = string(media)
+		err = bakersRepo.UpdateBaker(baker)
+		if err != nil {
+			return fmt.Errorf("bakersRepo.UpdateBaker: %s", err.Error())
+		}
+	}
+	return nil
+}
+
+type bakerInfo struct {
+	Metadata struct {
+		Site     string `json:"site,omitempty"`
+		Twitter  string `json:"twitter,omitempty"`
+		Telegram string `json:"telegram,omitempty"`
+		Reddit   string `json:"reddit,omitempty"`
+	} `json:"metadata"`
+}
+
+func getBakerMediaData(address string) (media []byte, err error) {
+	resp, err := http.Get(fmt.Sprintf(bakerMediaSource, address))
+	if err != nil {
+		return media, fmt.Errorf("http.Get: %s", err.Error())
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return media, fmt.Errorf("ioutil.ReadAll: %s", err.Error())
+	}
+	if resp.StatusCode != http.StatusOK {
+		return media, fmt.Errorf("bad request status: %d", resp.StatusCode)
+	}
+	var info bakerInfo
+	err = json.Unmarshal(data, &info)
+	if err != nil {
+		return media, fmt.Errorf("json.Unmarshal: %s", err.Error())
+	}
+	media, _ = json.Marshal(info.Metadata)
+	return media, nil
+}
+
 func (t *TezTracker) GetNumberOfDelegators() (items []models.BakerDelegators, err error) {
 	block, err := t.repoProvider.GetBlock().Last()
 	if err != nil {
@@ -271,55 +340,4 @@ func (t *TezTracker) GetBakersVoting() (voting models.BakersVoting, err error) {
 		ProposalsCount: count,
 		Bakers:         bakers,
 	}, nil
-}
-
-func (t *TezTracker) UpdateBakersSocialMedia() error {
-	bakersRepo := t.repoProvider.GetBaker()
-	bakers, err := bakersRepo.PublicBakersList(10000, 0, nil)
-	if err != nil {
-		return fmt.Errorf("bakersRepo.PublicBakersList: %s", err.Error())
-	}
-	for _, baker := range bakers {
-		media, err := getBakerMediaData(baker.AccountID)
-		if err != nil {
-			return fmt.Errorf("getBakerMediaData: %s", err.Error())
-		}
-		baker.Media = string(media)
-		err = bakersRepo.UpdateBaker(baker)
-		if err != nil {
-			return fmt.Errorf("bakersRepo.UpdateBaker: %s", err.Error())
-		}
-	}
-	return nil
-}
-
-type bakerInfo struct {
-	Metadata struct {
-		Site     string `json:"site,omitempty"`
-		Twitter  string `json:"twitter,omitempty"`
-		Telegram string `json:"telegram,omitempty"`
-		Reddit   string `json:"reddit,omitempty"`
-	} `json:"metadata"`
-}
-
-func getBakerMediaData(address string) (media []byte, err error) {
-	resp, err := http.Get(fmt.Sprintf(bakerMediaSource, address))
-	if err != nil {
-		return media, fmt.Errorf("http.Get: %s", err.Error())
-	}
-	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return media, fmt.Errorf("ioutil.ReadAll: %s", err.Error())
-	}
-	if resp.StatusCode != http.StatusOK {
-		return media, fmt.Errorf("bad request status: %d", resp.StatusCode)
-	}
-	var info bakerInfo
-	err = json.Unmarshal(data, &info)
-	if err != nil {
-		return media, fmt.Errorf("json.Unmarshal: %s", err.Error())
-	}
-	media, _ = json.Marshal(info.Metadata)
-	return media, nil
 }

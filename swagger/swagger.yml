@@ -2976,6 +2976,94 @@ paths:
           description: Internal error
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/agg':
+    get:
+      operationId: getAccountsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/total/agg':
+    get:
+      operationId: getAccountsTotalAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
   '/v2/{network}/ws':
     get:
       schemes: ["ws"]
@@ -3342,6 +3430,12 @@ definitions:
     properties:
       accountId:
         type: string
+      stake_change:
+        format: int64
+        type: integer
+      delegators_change:
+        format: int64
+        type: integer
       bakerInfo:
         $ref: >-
           #/definitions/BakerInfo
@@ -4447,3 +4541,11 @@ definitions:
           $ref: '#/definitions/BakerDelegators'
       proposals_count:
         type: integer
+  AggTimeInt:
+    properties:
+      date:
+        type: integer
+        format: int64
+      value:
+        type: integer
+        format: int64
