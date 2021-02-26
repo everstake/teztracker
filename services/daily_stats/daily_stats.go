@@ -27,6 +27,7 @@ func NewDailyStats(providers []services.Provider) *DailyStats {
 		providers: providers,
 		tasks: map[string]statsFunc{
 			models.LowBalanceAccountsStatKey: AccountsWithLowBalance,
+			models.InactiveAccountsStatKey:   InActiveAccounts,
 		},
 	}
 }

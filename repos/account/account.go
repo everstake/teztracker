@@ -32,6 +32,7 @@ type (
 		GetCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
 		GetCount(from time.Time, to time.Time) (count int64, err error)
 		GetCountWhereBalance(lessThen int64) (count int64, err error)
+		GetCountActive(from time.Time) (count int64, err error)
 	}
 )
 
@@ -351,6 +352,14 @@ func (r *Repository) GetCount(from time.Time, to time.Time) (count int64, err er
 func (r *Repository) GetCountWhereBalance(lessThen int64) (count int64, err error) {
 	err = r.db.Table("tezos.accounts").
 		Where("balance < ?", lessThen).
+		Count(&count).Error
+	return count, err
+}
+
+func (r *Repository) GetCountActive(from time.Time) (count int64, err error) {
+	err = r.db.Table("tezos.operations").
+		Select("count(DISTINCT source)").
+		Where("timestamp > ?", from).
 		Count(&count).Error
 	return count, err
 }
