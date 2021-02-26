@@ -61,6 +61,9 @@ type BakerInfo struct {
 	// Required: true
 	FrozenBalance *int64 `json:"frozenBalance"`
 
+	// media
+	Media *BakerInfoMedia `json:"media,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
@@ -125,6 +128,10 @@ func (m *BakerInfo) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateFrozenBalance(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMedia(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -245,6 +252,24 @@ func (m *BakerInfo) validateFrozenBalance(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *BakerInfo) validateMedia(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Media) { // not required
+		return nil
+	}
+
+	if m.Media != nil {
+		if err := m.Media.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("media")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *BakerInfo) validateRolls(formats strfmt.Registry) error {
 
 	if err := validate.Required("rolls", "body", m.Rolls); err != nil {
@@ -283,6 +308,46 @@ func (m *BakerInfo) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *BakerInfo) UnmarshalBinary(b []byte) error {
 	var res BakerInfo
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// BakerInfoMedia baker info media
+// swagger:model BakerInfoMedia
+type BakerInfoMedia struct {
+
+	// reddit
+	Reddit string `json:"reddit,omitempty"`
+
+	// site
+	Site string `json:"site,omitempty"`
+
+	// telegram
+	Telegram string `json:"telegram,omitempty"`
+
+	// twitter
+	Twitter string `json:"twitter,omitempty"`
+}
+
+// Validate validates this baker info media
+func (m *BakerInfoMedia) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *BakerInfoMedia) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *BakerInfoMedia) UnmarshalBinary(b []byte) error {
+	var res BakerInfoMedia
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -71,6 +71,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetAccountHandler: accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccount has not yet been implemented")
 		}),
+		AccountsGetAccountAssetsBalancesListHandler: accounts.GetAccountAssetsBalancesListHandlerFunc(func(params accounts.GetAccountAssetsBalancesListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountAssetsBalancesList has not yet been implemented")
+		}),
 		AccountsGetAccountBakedBlocksListHandler: accounts.GetAccountBakedBlocksListHandlerFunc(func(params accounts.GetAccountBakedBlocksListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountBakedBlocksList has not yet been implemented")
 		}),
@@ -314,6 +317,8 @@ type TezTrackerAPI struct {
 	ProfileDeleteUserNoteHandler profile.DeleteUserNoteHandler
 	// AccountsGetAccountHandler sets the operation handler for the get account operation
 	AccountsGetAccountHandler accounts.GetAccountHandler
+	// AccountsGetAccountAssetsBalancesListHandler sets the operation handler for the get account assets balances list operation
+	AccountsGetAccountAssetsBalancesListHandler accounts.GetAccountAssetsBalancesListHandler
 	// AccountsGetAccountBakedBlocksListHandler sets the operation handler for the get account baked blocks list operation
 	AccountsGetAccountBakedBlocksListHandler accounts.GetAccountBakedBlocksListHandler
 	// AccountsGetAccountBakingListHandler sets the operation handler for the get account baking list operation
@@ -535,6 +540,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetAccountHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountHandler")
+	}
+
+	if o.AccountsGetAccountAssetsBalancesListHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountAssetsBalancesListHandler")
 	}
 
 	if o.AccountsGetAccountBakedBlocksListHandler == nil {
@@ -935,6 +944,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}/assets"] = accounts.NewGetAccountAssetsBalancesList(o.context, o.AccountsGetAccountAssetsBalancesListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/baking/{accountId}/blocks/{cycleId}"] = accounts.NewGetAccountBakedBlocksList(o.context, o.AccountsGetAccountBakedBlocksListHandler)
 
 	if o.handlers["GET"] == nil {
@@ -1035,7 +1049,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/data/{network}/assets/{asset_id}/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
+	o.handlers["GET"]["/v2/data/{network}/assets/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

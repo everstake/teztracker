@@ -336,6 +336,28 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 		})
 	}
 
+	if cfg.BakersSocialMediaHours > 0 && !isTestNetwork {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.BakersSocialMediaHours) * time.Hour
+		log.Infof("Sheduling update bakers social media %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := repos.New(db)
+				err := New(unitOfWork, network).UpdateBakersSocialMedia()
+				if err != nil {
+					log.Errorf("UpdateBakersSocialMedia failed: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("updating bakers social media as the previous job is still running")
+			}
+		})
+	}
+
 	{
 		var jobIsRunning uint32
 

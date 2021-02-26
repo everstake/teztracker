@@ -866,6 +866,42 @@ paths:
           description: Internal error
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/accounts/{accountId}/assets':
+    get:
+      operationId: getAccountAssetsBalancesList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: network
+          description: Not used
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for account
+          schema:
+            type: array
+            items:
+              $ref: >-
+                #/definitions/AccountAssetBalanceRow
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
   '/v2/data/{platform}/{network}/accounts/{accountId}/delegators':
     get:
       operationId: getAccountDelegators
@@ -2724,16 +2760,12 @@ paths:
           description: Internal error
       tags:
         - Assets
-  '/v2/data/{network}/assets/{asset_id}/operations':
+  '/v2/data/{network}/assets/operations':
     get:
       operationId: getAssetOperationsList
       produces:
         - application/json
       parameters:
-        - in: path
-          name: asset_id
-          required: true
-          type: string
         - in: path
           name: network
           required: true
@@ -2750,8 +2782,26 @@ paths:
           default: 0
           minimum: 0
         - in: query
+          name: asset_id
+          type: array
+          items:
+            type: string
+        - in: query
+          name: account_id
+          type: array
+          items:
+            type: string
+        - in: query
           name: type
-          type: string
+          type: array
+          items:
+            type: string
+        - in: query
+          collectionFormat: multi
+          name: block_level
+          type: array
+          items:
+            type: integer
       responses:
         '200':
           description: Query compatibility endpoint for token operations
@@ -3448,6 +3498,17 @@ definitions:
       stakingCapacity:
         format: int64
         type: integer
+      media:
+        type: object
+        properties:
+          twitter:
+            format: string
+          telegram:
+            format: string
+          site:
+            format: string
+          reddit:
+            format: string
     required:
       - stakingBalance
       - evaluatedBalance
@@ -4248,13 +4309,12 @@ definitions:
     properties:
       name:
         type: string
+      ticker:
+        type: string
       account_id:
         type: string
       manager:
         type: string
-      balance:
-        type: integer
-        format: int64
       precision:
         type: integer
         format: int64
@@ -4265,7 +4325,6 @@ definitions:
         type: integer
         format: int64
     required:
-      - balance
       - precision
   AssetOperation:
     properties:
@@ -4297,6 +4356,15 @@ definitions:
       - fee
       - gas_limit
       - storage_limit
+  AccountAssetBalanceRow:
+    properties:
+      account_id:
+        type: string
+      balance:
+        type: integer
+        format: int64
+      token_info:
+        $ref: '#/definitions/TokenAssetRow'
   TokenHolderRow:
     properties:
       account_id:

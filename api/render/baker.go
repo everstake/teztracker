@@ -1,6 +1,7 @@
 package render
 
 import (
+	"encoding/json"
 	genModels "github.com/everstake/teztracker/gen/models"
 	"github.com/everstake/teztracker/models"
 )
@@ -55,6 +56,11 @@ func BakerInfo(bi *models.Baker) *genModels.BakerInfo {
 		return nil
 	}
 
+	media := &genModels.BakerInfoMedia{}
+	if len(bi.Media) != 0 {
+		json.Unmarshal([]byte(bi.Media), media)
+	}
+
 	bakingSince := bi.BakingSince.Unix()
 
 	return &genModels.BakerInfo{
@@ -74,5 +80,6 @@ func BakerInfo(bi *models.Baker) *genModels.BakerInfo {
 		EndorsementDeposits: &bi.EndorsementDeposits,
 		EndorsementRewards:  &bi.EndorsementRewards,
 		TotalPaidFees:       bi.TotalPaidFees,
+		Media:               media,
 	}
 }

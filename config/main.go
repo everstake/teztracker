@@ -29,6 +29,7 @@ type Config struct {
 	SmtpUser                              string
 	SmtpPassword                          string
 	ThirdPartyBakersIntervalMinutes       int
+	BakersSocialMediaHours                int
 }
 
 type NetworkConfig struct {
