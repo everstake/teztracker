@@ -3064,6 +3064,216 @@ paths:
           description: Internal error
       tags:
         - Accounts
+  '/v2/data/{platform}/{network}/contracts/agg':
+    get:
+      operationId: getContractsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get contracts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/contracts/total/agg':
+    get:
+      operationId: getContractsTotalAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get contracts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/low/balance/total/agg':
+    get:
+      operationId: getLowBalanceTotalAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get low balance accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/active/accounts/agg':
+    get:
+      operationId: getActiveAccountsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get active accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/inactive/accounts/agg':
+    get:
+      operationId: getInactiveAccountsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get inactive accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
   '/v2/{network}/ws':
     get:
       schemes: ["ws"]

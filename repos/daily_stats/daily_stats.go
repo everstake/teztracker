@@ -1,6 +1,7 @@
 package daily_stats
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
@@ -15,6 +16,7 @@ type (
 
 	Repo interface {
 		Create(stat models.DailyStat) error
+		GetDailyStats(key string, filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
 	}
 )
 
@@ -34,3 +36,20 @@ func (r *Repository) Create(stat models.DailyStat) error {
 	return r.getDb().Create(stat).Error
 }
 
+func (r *Repository) GetDailyStats(key string, filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	err = filter.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
+	}
+	q := r.db.Select(fmt.Sprintf("count(*) as value, date_trunc('%s', date) as date", filter.Period)).
+		Table("tezos.daily_stats").Where("key = ?", key).Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("date >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("date <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
+
+}
