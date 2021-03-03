@@ -16,7 +16,7 @@ type (
 
 	Repo interface {
 		Create(stat models.DailyStat) error
-		GetDailyStats(key string, filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
+		GetDailyStats(key string, aggType string, filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
 	}
 )
 
@@ -36,12 +36,12 @@ func (r *Repository) Create(stat models.DailyStat) error {
 	return r.getDb().Create(stat).Error
 }
 
-func (r *Repository) GetDailyStats(key string, filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+func (r *Repository) GetDailyStats(key string, aggType string, filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
 	err = filter.Validate()
 	if err != nil {
 		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
 	}
-	q := r.db.Select(fmt.Sprintf("count(*) as value, date_trunc('%s', date) as date", filter.Period)).
+	q := r.db.Select(fmt.Sprintf("CAST(%s(value) AS INTEGER) as value, date_trunc('%s', date) as date", aggType, filter.Period)).
 		Table("tezos.daily_stats").Where("key = ?", key).Group("date")
 	if !filter.From.IsZero() {
 		q = q.Where("date >= ?", filter.From)

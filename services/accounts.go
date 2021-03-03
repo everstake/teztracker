@@ -244,9 +244,9 @@ func (t *TezTracker) GetActiveAccounts(period string) (items []models.AggTimeInt
 }
 
 func (t *TezTracker) GetAccountsWithLowBalance(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
-	return t.repoProvider.GetDailyStats().GetDailyStats(models.LowBalanceAccountsStatKey, filter)
+	return t.repoProvider.GetDailyStats().GetDailyStats(models.LowBalanceAccountsStatKey, "avg", filter)
 }
 
 func (t *TezTracker) GetInactiveAccounts(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
-	return t.repoProvider.GetDailyStats().GetDailyStats(models.InactiveAccountsStatKey, filter)
+	return t.repoProvider.GetDailyStats().GetDailyStats(models.InactiveAccountsStatKey, "avg", filter)
 }

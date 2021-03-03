@@ -386,7 +386,7 @@ func (r *Repository) GetContractsCountByPeriod(filter models.AggTimeFilter) (ite
 		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
 	}
 	q := r.db.Select(fmt.Sprintf("count(*) as value, date_trunc('%s', created_at) as date", filter.Period)).
-		Table("tezos.account_created_at").Where("account_id LIKE KT%").Group("date")
+		Table("tezos.account_created_at").Where("account_id LIKE 'KT%'").Group("date")
 	if !filter.From.IsZero() {
 		q = q.Where("created_at >= ?", filter.From)
 	}
@@ -398,7 +398,7 @@ func (r *Repository) GetContractsCountByPeriod(filter models.AggTimeFilter) (ite
 }
 
 func (r *Repository) GetContractsCount(from time.Time, to time.Time) (count int64, err error) {
-	q := r.db.Select("count(*) as value").Table("tezos.account_created_at").Where("account_id LIKE KT%")
+	q := r.db.Select("count(*) as value").Table("tezos.account_created_at").Where("account_id LIKE 'KT%'")
 	if !from.IsZero() {
 		q = q.Where("created_at >= ?", from)
 	}
