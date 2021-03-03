@@ -2609,6 +2609,62 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/active/accounts/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getActiveAccountsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get active accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/assets/{assetId}/report": {
       "get": {
         "produces": [
@@ -3699,6 +3755,144 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/contracts/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getContractsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get contracts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/contracts/total/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getContractsTotalAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get contracts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/double_bakings": {
       "get": {
         "produces": [
@@ -4026,6 +4220,75 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/inactive/accounts/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getInactiveAccountsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get inactive accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/info": {
       "get": {
         "produces": [
@@ -4079,6 +4342,75 @@ func init() {
           },
           "400": {
             "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/low/balance/total/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getLowBalanceTotalAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get low balance accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal error"
@@ -9334,6 +9666,62 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/active/accounts/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getActiveAccountsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get active accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/assets/{assetId}/report": {
       "get": {
         "produces": [
@@ -10429,6 +10817,144 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/contracts/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getContractsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get contracts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/contracts/total/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getContractsTotalAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get contracts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/double_bakings": {
       "get": {
         "produces": [
@@ -10759,6 +11285,75 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/inactive/accounts/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getInactiveAccountsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get inactive accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/info": {
       "get": {
         "produces": [
@@ -10812,6 +11407,75 @@ func init() {
           },
           "400": {
             "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/low/balance/total/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getLowBalanceTotalAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get low balance accounts count by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal error"

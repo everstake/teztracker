@@ -7,6 +7,7 @@ import (
 
 const (
 	LowBalanceAccountsStatKey = "low_balance_accounts"
+	InactiveAccountsStatKey   = "inactive_accounts"
 )
 
 type DailyStat struct {

@@ -134,6 +134,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetAccountsTotalAggCountHandler: accounts.GetAccountsTotalAggCountHandlerFunc(func(params accounts.GetAccountsTotalAggCountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountsTotalAggCount has not yet been implemented")
 		}),
+		AccountsGetActiveAccountsAggCountHandler: accounts.GetActiveAccountsAggCountHandlerFunc(func(params accounts.GetActiveAccountsAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetActiveAccountsAggCount has not yet been implemented")
+		}),
 		AssetsGetAssetOperationsListHandler: assets.GetAssetOperationsListHandlerFunc(func(params assets.GetAssetOperationsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AssetsGetAssetOperationsList has not yet been implemented")
 		}),
@@ -194,8 +197,14 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AppInfoGetChartsInfoHandler: app_info.GetChartsInfoHandlerFunc(func(params app_info.GetChartsInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetChartsInfo has not yet been implemented")
 		}),
+		AccountsGetContractsAggCountHandler: accounts.GetContractsAggCountHandlerFunc(func(params accounts.GetContractsAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetContractsAggCount has not yet been implemented")
+		}),
 		AccountsGetContractsListHandler: accounts.GetContractsListHandlerFunc(func(params accounts.GetContractsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetContractsList has not yet been implemented")
+		}),
+		AccountsGetContractsTotalAggCountHandler: accounts.GetContractsTotalAggCountHandlerFunc(func(params accounts.GetContractsTotalAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetContractsTotalAggCount has not yet been implemented")
 		}),
 		OperationsListGetDoubleBakingsListHandler: operations_list.GetDoubleBakingsListHandlerFunc(func(params operations_list.GetDoubleBakingsListParams) middleware.Responder {
 			return middleware.NotImplemented("operation OperationsListGetDoubleBakingsList has not yet been implemented")
@@ -209,8 +218,14 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AppInfoGetHealthCheckInfoHandler: app_info.GetHealthCheckInfoHandlerFunc(func(params app_info.GetHealthCheckInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetHealthCheckInfo has not yet been implemented")
 		}),
+		AccountsGetInactiveAccountsAggCountHandler: accounts.GetInactiveAccountsAggCountHandlerFunc(func(params accounts.GetInactiveAccountsAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetInactiveAccountsAggCount has not yet been implemented")
+		}),
 		AppInfoGetInfoHandler: app_info.GetInfoHandlerFunc(func(params app_info.GetInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetInfo has not yet been implemented")
+		}),
+		AccountsGetLowBalanceTotalAggCountHandler: accounts.GetLowBalanceTotalAggCountHandlerFunc(func(params accounts.GetLowBalanceTotalAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetLowBalanceTotalAggCount has not yet been implemented")
 		}),
 		MempoolGetMempoolOperationsHandler: mempool.GetMempoolOperationsHandlerFunc(func(params mempool.GetMempoolOperationsParams) middleware.Responder {
 			return middleware.NotImplemented("operation MempoolGetMempoolOperations has not yet been implemented")
@@ -359,6 +374,8 @@ type TezTrackerAPI struct {
 	AccountsGetAccountsTopBalanceListHandler accounts.GetAccountsTopBalanceListHandler
 	// AccountsGetAccountsTotalAggCountHandler sets the operation handler for the get accounts total agg count operation
 	AccountsGetAccountsTotalAggCountHandler accounts.GetAccountsTotalAggCountHandler
+	// AccountsGetActiveAccountsAggCountHandler sets the operation handler for the get active accounts agg count operation
+	AccountsGetActiveAccountsAggCountHandler accounts.GetActiveAccountsAggCountHandler
 	// AssetsGetAssetOperationsListHandler sets the operation handler for the get asset operations list operation
 	AssetsGetAssetOperationsListHandler assets.GetAssetOperationsListHandler
 	// AssetsGetAssetReportHandler sets the operation handler for the get asset report operation
@@ -399,8 +416,12 @@ type TezTrackerAPI struct {
 	AppInfoGetBlocksPriorityChartInfoHandler app_info.GetBlocksPriorityChartInfoHandler
 	// AppInfoGetChartsInfoHandler sets the operation handler for the get charts info operation
 	AppInfoGetChartsInfoHandler app_info.GetChartsInfoHandler
+	// AccountsGetContractsAggCountHandler sets the operation handler for the get contracts agg count operation
+	AccountsGetContractsAggCountHandler accounts.GetContractsAggCountHandler
 	// AccountsGetContractsListHandler sets the operation handler for the get contracts list operation
 	AccountsGetContractsListHandler accounts.GetContractsListHandler
+	// AccountsGetContractsTotalAggCountHandler sets the operation handler for the get contracts total agg count operation
+	AccountsGetContractsTotalAggCountHandler accounts.GetContractsTotalAggCountHandler
 	// OperationsListGetDoubleBakingsListHandler sets the operation handler for the get double bakings list operation
 	OperationsListGetDoubleBakingsListHandler operations_list.GetDoubleBakingsListHandler
 	// OperationsListGetDoubleEndorsementsListHandler sets the operation handler for the get double endorsements list operation
@@ -409,8 +430,12 @@ type TezTrackerAPI struct {
 	BlocksGetFutureBakingRightsHandler blocks.GetFutureBakingRightsHandler
 	// AppInfoGetHealthCheckInfoHandler sets the operation handler for the get health check info operation
 	AppInfoGetHealthCheckInfoHandler app_info.GetHealthCheckInfoHandler
+	// AccountsGetInactiveAccountsAggCountHandler sets the operation handler for the get inactive accounts agg count operation
+	AccountsGetInactiveAccountsAggCountHandler accounts.GetInactiveAccountsAggCountHandler
 	// AppInfoGetInfoHandler sets the operation handler for the get info operation
 	AppInfoGetInfoHandler app_info.GetInfoHandler
+	// AccountsGetLowBalanceTotalAggCountHandler sets the operation handler for the get low balance total agg count operation
+	AccountsGetLowBalanceTotalAggCountHandler accounts.GetLowBalanceTotalAggCountHandler
 	// MempoolGetMempoolOperationsHandler sets the operation handler for the get mempool operations operation
 	MempoolGetMempoolOperationsHandler mempool.GetMempoolOperationsHandler
 	// VotingGetNonVotersByPeriodIDHandler sets the operation handler for the get non voters by period ID operation
@@ -626,6 +651,10 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "accounts.GetAccountsTotalAggCountHandler")
 	}
 
+	if o.AccountsGetActiveAccountsAggCountHandler == nil {
+		unregistered = append(unregistered, "accounts.GetActiveAccountsAggCountHandler")
+	}
+
 	if o.AssetsGetAssetOperationsListHandler == nil {
 		unregistered = append(unregistered, "assets.GetAssetOperationsListHandler")
 	}
@@ -706,8 +735,16 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "app_info.GetChartsInfoHandler")
 	}
 
+	if o.AccountsGetContractsAggCountHandler == nil {
+		unregistered = append(unregistered, "accounts.GetContractsAggCountHandler")
+	}
+
 	if o.AccountsGetContractsListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetContractsListHandler")
+	}
+
+	if o.AccountsGetContractsTotalAggCountHandler == nil {
+		unregistered = append(unregistered, "accounts.GetContractsTotalAggCountHandler")
 	}
 
 	if o.OperationsListGetDoubleBakingsListHandler == nil {
@@ -726,8 +763,16 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "app_info.GetHealthCheckInfoHandler")
 	}
 
+	if o.AccountsGetInactiveAccountsAggCountHandler == nil {
+		unregistered = append(unregistered, "accounts.GetInactiveAccountsAggCountHandler")
+	}
+
 	if o.AppInfoGetInfoHandler == nil {
 		unregistered = append(unregistered, "app_info.GetInfoHandler")
+	}
+
+	if o.AccountsGetLowBalanceTotalAggCountHandler == nil {
+		unregistered = append(unregistered, "accounts.GetLowBalanceTotalAggCountHandler")
 	}
 
 	if o.MempoolGetMempoolOperationsHandler == nil {
@@ -1049,6 +1094,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/active/accounts/agg"] = accounts.NewGetActiveAccountsAggCount(o.context, o.AccountsGetActiveAccountsAggCountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{network}/assets/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
 
 	if o.handlers["GET"] == nil {
@@ -1149,7 +1199,17 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/contracts/agg"] = accounts.NewGetContractsAggCount(o.context, o.AccountsGetContractsAggCountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/contracts"] = accounts.NewGetContractsList(o.context, o.AccountsGetContractsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/contracts/total/agg"] = accounts.NewGetContractsTotalAggCount(o.context, o.AccountsGetContractsTotalAggCountHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1174,7 +1234,17 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/inactive/accounts/agg"] = accounts.NewGetInactiveAccountsAggCount(o.context, o.AccountsGetInactiveAccountsAggCountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/info"] = app_info.NewGetInfo(o.context, o.AppInfoGetInfoHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/low/balance/total/agg"] = accounts.NewGetLowBalanceTotalAggCount(o.context, o.AccountsGetLowBalanceTotalAggCountHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

@@ -32,6 +32,10 @@ type (
 		GetCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
 		GetCount(from time.Time, to time.Time) (count int64, err error)
 		GetCountWhereBalance(lessThen int64) (count int64, err error)
+		GetCountActive(from time.Time) (count int64, err error)
+		GetCountActiveByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
+		GetContractsCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
+		GetContractsCount(from time.Time, to time.Time) (count int64, err error)
 	}
 )
 
@@ -352,5 +356,55 @@ func (r *Repository) GetCountWhereBalance(lessThen int64) (count int64, err erro
 	err = r.db.Table("tezos.accounts").
 		Where("balance < ?", lessThen).
 		Count(&count).Error
+	return count, err
+}
+
+func (r *Repository) GetCountActive(from time.Time) (count int64, err error) {
+	err = r.db.Table("tezos.operations").
+		Select("count(DISTINCT source)").
+		Where("timestamp > ?", from).
+		Count(&count).Error
+	return count, err
+}
+
+func (r *Repository) GetCountActiveByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	q := r.db.Select(fmt.Sprintf("count(DISTINCT source) as value, date_trunc('%s', timestamp) as date", filter.Period)).
+		Table("tezos.operations").Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("timestamp >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("timestamp <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
+}
+
+func (r *Repository) GetContractsCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	err = filter.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
+	}
+	q := r.db.Select(fmt.Sprintf("count(*) as value, date_trunc('%s', created_at) as date", filter.Period)).
+		Table("tezos.account_created_at").Where("account_id LIKE 'KT%'").Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("created_at >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("created_at <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
+}
+
+func (r *Repository) GetContractsCount(from time.Time, to time.Time) (count int64, err error) {
+	q := r.db.Select("count(*) as value").Table("tezos.account_created_at").Where("account_id LIKE 'KT%'")
+	if !from.IsZero() {
+		q = q.Where("created_at >= ?", from)
+	}
+	if !to.IsZero() {
+		q = q.Where("created_at <= ?", to)
+	}
+	err = q.Count(&count).Error
 	return count, err
 }
