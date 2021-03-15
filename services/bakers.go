@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/everstake/teztracker/models"
+	"github.com/shopspring/decimal"
 	"io/ioutil"
 	"net/http"
+	"sort"
 )
 
 const (
@@ -24,6 +26,7 @@ const (
 	TotalLocked                = (BlockSecurityDeposit + EndorsementSecurityDeposit*BlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
 	BlockLockEstimate          = BlockReward + BlockSecurityDeposit + BlockEndorsers*(EndorsementReward+EndorsementSecurityDeposit)
 	bakerMediaSource           = "https://api.tzkt.io/v1/accounts/%s?metadata=true"
+	holdingPointStorageKey     = "holding_points"
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
@@ -340,4 +343,48 @@ func (t *TezTracker) GetBakersVoting() (voting models.BakersVoting, err error) {
 		ProposalsCount: count,
 		Bakers:         bakers,
 	}, nil
+}
+
+func (t *TezTracker) SaveHoldingPoints() error {
+	points := []float64{0.05, 0.33, 0.51, 0.8}
+	bakers, err := t.repoProvider.GetBaker().List(100000, 0, nil)
+	if err != nil {
+		return fmt.Errorf("repoProvider.Baker: List: %s", err.Error())
+	}
+	sort.Slice(bakers, func(i, j int) bool {
+		return bakers[i].StakingBalance > bakers[j].StakingBalance
+	})
+	var total int64
+	for _, baker := range bakers {
+		total += baker.StakingBalance
+	}
+	fmt.Println(total)
+	var holdingPoints []models.HoldingPoint
+	for _, point := range points {
+		var amount int64
+		var count int64
+		for _, baker := range bakers {
+			amount += baker.StakingBalance
+			count++
+			p, _ := decimal.NewFromInt(amount).Div(decimal.NewFromInt(total)).Float64()
+			if p >= point {
+				break
+			}
+		}
+		holdingPoints = append(holdingPoints, models.HoldingPoint{
+			Percent: point,
+			Amount:  amount,
+			Count:   count,
+		})
+	}
+	err = t.repoProvider.GetStorage().Set(holdingPointStorageKey, holdingPoints)
+	if err != nil {
+		return fmt.Errorf("GetStorage: Set: %s", err.Error())
+	}
+	return nil
+}
+
+func (t *TezTracker) GetHoldingPoints() (items []models.HoldingPoint, err error) {
+	err = t.repoProvider.GetStorage().Get(holdingPointStorageKey, &items)
+	return items, err
 }

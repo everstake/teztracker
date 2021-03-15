@@ -3,10 +3,13 @@ package services
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/everstake/teztracker/models"
 	"github.com/guregu/null"
 )
+
+const lostRewardsCacheKey = "lost_rewards"
 
 // ErrNotFound is an error returned when the requested entity doesn't exist in the repository.
 var ErrNotFound = fmt.Errorf("not found")
@@ -61,4 +64,44 @@ func (t *TezTracker) GetBlockWithOperationGroups(hashOrLevel string) (block mode
 	}
 	block.OperationGroups = ogs
 	return block, nil
+}
+
+func (t *TezTracker) SaveLostRewardsInCache() error {
+	repo := t.repoProvider.GetBlock()
+	for period, duration := range models.GetChartPeriods() {
+		items, err := repo.GetLostRewardsAgg(models.AggTimeFilter{
+			From:   time.Now().Add(-duration),
+			Period: period,
+		})
+		if err != nil {
+			return fmt.Errorf("repo.GetLostRewardsAgg: %s", err.Error())
+		}
+		storageKey := fmt.Sprintf("%s_%s", lostRewardsCacheKey, period)
+		err = t.repoProvider.GetStorage().Set(storageKey, items)
+		if err != nil {
+			return fmt.Errorf("GetStorage: Set: %s", err.Error())
+		}
+	}
+	return nil
+}
+
+func (t *TezTracker) GetLostRewards(period string) (items []models.AggTimeInt, err error) {
+	err = models.ValidatePeriod(period)
+	if err != nil {
+		return items, fmt.Errorf("ValidatePeriod: %s", err.Error())
+	}
+	storageKey := fmt.Sprintf("%s_%s", lostRewardsCacheKey, period)
+	err = t.repoProvider.GetStorage().Get(storageKey, &items)
+	if err != nil {
+		return items, fmt.Errorf("GetStorage: Set: %s", err.Error())
+	}
+	return items, nil
+}
+
+func (t *TezTracker) GetLostBlocksCountAgg(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	return t.repoProvider.GetBlock().GetLostBlocksCountAgg(filter)
+}
+
+func (t *TezTracker) GetLostEndorsingCountAgg(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	return t.repoProvider.GetEndorsing().GetLostEndorsingCountAgg(filter)
 }

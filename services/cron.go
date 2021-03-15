@@ -393,7 +393,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 		var jobIsRunning uint32
 
 		dur := time.Hour
-		log.Infof("Sheduling update active accounts in cache %s", dur)
+		log.Infof("Sheduling charts cache in cache %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
 			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
@@ -402,11 +402,21 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				unitOfWork := New(repos.New(db), network)
 				err := unitOfWork.SaveActiveAccountsInCache()
 				if err != nil {
-					log.Errorf("update active accounts: SaveActiveAccountsInCache: %s", err.Error())
+					log.Errorf("update charts cache: SaveActiveAccountsInCache: %s", err.Error())
+					return
+				}
+				err = unitOfWork.SaveLostRewardsInCache()
+				if err != nil {
+					log.Errorf("update charts cache: SaveLostRewardsInCache: %s", err.Error())
+					return
+				}
+				err = unitOfWork.SaveHoldingPoints()
+				if err != nil {
+					log.Errorf("update charts cache: SaveHoldingPoints: %s", err.Error())
 					return
 				}
 			} else {
-				log.Tracef("update active accounts in cache as the previous job is still running")
+				log.Tracef("charts cache as the previous job is still running")
 			}
 		})
 	}

@@ -1845,6 +1845,128 @@ paths:
           description: Internal error
       tags:
         - Blocks
+  '/v2/data/{platform}/{network}/lost/blocks/agg':
+    get:
+      operationId: getLostBlocksAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get count of lost blocks agg by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Blocks
+  '/v2/data/{platform}/{network}/lost/endorsements/agg':
+    get:
+      operationId: getLostEndorsermentsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get count of lost endorserments agg by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Blocks
+  '/v2/data/{platform}/{network}/lost/rewards/agg':
+    get:
+      operationId: getLostRewardsAgg
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get amount of lost rewards agg by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Blocks
   '/v2/data/{platform}/{network}/operation_groups':
     get:
       operationId: getOperationGroups
@@ -2997,7 +3119,7 @@ paths:
           enum: [day, week, month]
         - in: query
           name: from
-          required: true
+          required: false
           type: integer
           format: int64
         - in: query
@@ -3041,7 +3163,7 @@ paths:
           enum: [day, week, month]
         - in: query
           name: from
-          required: true
+          required: false
           type: integer
           format: int64
         - in: query
@@ -3085,7 +3207,7 @@ paths:
           enum: [day, week, month]
         - in: query
           name: from
-          required: true
+          required: false
           type: integer
           format: int64
         - in: query
@@ -3129,7 +3251,7 @@ paths:
           enum: [day, week, month]
         - in: query
           name: from
-          required: true
+          required: false
           type: integer
           format: int64
         - in: query
@@ -3173,7 +3295,7 @@ paths:
           enum: [day, week, month]
         - in: query
           name: from
-          required: true
+          required: false
           type: integer
           format: int64
         - in: query
@@ -3251,7 +3373,7 @@ paths:
           enum: [day, week, month]
         - in: query
           name: from
-          required: true
+          required: false
           type: integer
           format: int64
         - in: query
@@ -3266,6 +3388,35 @@ paths:
             items:
               $ref: "#/definitions/AggTimeInt"
           description: Get inactive accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/bakers/holding':
+    get:
+      operationId: getBakersHolding
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/HoldingPoint"
+          description: Get bakers holding points
         '400':
           description: Bad request
         '404':
@@ -4759,3 +4910,13 @@ definitions:
       value:
         type: integer
         format: int64
+  HoldingPoint:
+    properties:
+      count:
+        type: integer
+        format: int64
+      amount:
+        type: integer
+        format: int64
+      percent:
+        type: number

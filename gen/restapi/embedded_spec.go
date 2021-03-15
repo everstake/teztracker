@@ -1267,8 +1267,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -2249,8 +2248,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -2846,6 +2844,51 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/BakerDelegators"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/bakers/holding": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getBakersHolding",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get bakers holding points",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/HoldingPoint"
               }
             }
           },
@@ -3792,8 +3835,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -3861,8 +3903,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -4257,8 +4298,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -4349,6 +4389,198 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/lost/blocks/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getLostBlocksAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get count of lost blocks agg by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/lost/endorsements/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getLostEndorsermentsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get count of lost endorserments agg by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/lost/rewards/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getLostRewardsAgg",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get amount of lost rewards agg by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/low/balance/total/agg": {
       "get": {
         "produces": [
@@ -4386,8 +4618,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -6354,6 +6585,21 @@ func init() {
       "properties": {
         "status": {
           "type": "boolean"
+        }
+      }
+    },
+    "HoldingPoint": {
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "percent": {
+          "type": "number"
         }
       }
     },
@@ -8314,8 +8560,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -9304,8 +9549,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -9904,6 +10148,51 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/BakerDelegators"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/bakers/holding": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getBakersHolding",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get bakers holding points",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/HoldingPoint"
               }
             }
           },
@@ -10854,8 +11143,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -10923,8 +11211,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -11322,8 +11609,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -11414,6 +11700,198 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/lost/blocks/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getLostBlocksAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get count of lost blocks agg by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/lost/endorsements/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getLostEndorsermentsAggCount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get count of lost endorserments agg by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/lost/rewards/agg": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Blocks"
+        ],
+        "operationId": "getLostRewardsAgg",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": [
+              "day",
+              "week",
+              "month"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get amount of lost rewards agg by period",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AggTimeInt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/low/balance/total/agg": {
       "get": {
         "produces": [
@@ -11451,8 +11929,7 @@ func init() {
             "type": "integer",
             "format": "int64",
             "name": "from",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
@@ -13424,6 +13901,21 @@ func init() {
       "properties": {
         "status": {
           "type": "boolean"
+        }
+      }
+    },
+    "HoldingPoint": {
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "percent": {
+          "type": "number"
         }
       }
     },

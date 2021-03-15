@@ -161,6 +161,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetBakersDelegatorsHandler: accounts.GetBakersDelegatorsHandlerFunc(func(params accounts.GetBakersDelegatorsParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetBakersDelegators has not yet been implemented")
 		}),
+		AccountsGetBakersHoldingHandler: accounts.GetBakersHoldingHandlerFunc(func(params accounts.GetBakersHoldingParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetBakersHolding has not yet been implemented")
+		}),
 		AccountsGetBakersListHandler: accounts.GetBakersListHandlerFunc(func(params accounts.GetBakersListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetBakersList has not yet been implemented")
 		}),
@@ -223,6 +226,15 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		AppInfoGetInfoHandler: app_info.GetInfoHandlerFunc(func(params app_info.GetInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppInfoGetInfo has not yet been implemented")
+		}),
+		BlocksGetLostBlocksAggCountHandler: blocks.GetLostBlocksAggCountHandlerFunc(func(params blocks.GetLostBlocksAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation BlocksGetLostBlocksAggCount has not yet been implemented")
+		}),
+		BlocksGetLostEndorsermentsAggCountHandler: blocks.GetLostEndorsermentsAggCountHandlerFunc(func(params blocks.GetLostEndorsermentsAggCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation BlocksGetLostEndorsermentsAggCount has not yet been implemented")
+		}),
+		BlocksGetLostRewardsAggHandler: blocks.GetLostRewardsAggHandlerFunc(func(params blocks.GetLostRewardsAggParams) middleware.Responder {
+			return middleware.NotImplemented("operation BlocksGetLostRewardsAgg has not yet been implemented")
 		}),
 		AccountsGetLowBalanceTotalAggCountHandler: accounts.GetLowBalanceTotalAggCountHandlerFunc(func(params accounts.GetLowBalanceTotalAggCountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetLowBalanceTotalAggCount has not yet been implemented")
@@ -392,6 +404,8 @@ type TezTrackerAPI struct {
 	AppInfoGetBakerChartInfoHandler app_info.GetBakerChartInfoHandler
 	// AccountsGetBakersDelegatorsHandler sets the operation handler for the get bakers delegators operation
 	AccountsGetBakersDelegatorsHandler accounts.GetBakersDelegatorsHandler
+	// AccountsGetBakersHoldingHandler sets the operation handler for the get bakers holding operation
+	AccountsGetBakersHoldingHandler accounts.GetBakersHoldingHandler
 	// AccountsGetBakersListHandler sets the operation handler for the get bakers list operation
 	AccountsGetBakersListHandler accounts.GetBakersListHandler
 	// AccountsGetBakersStakeChangeHandler sets the operation handler for the get bakers stake change operation
@@ -434,6 +448,12 @@ type TezTrackerAPI struct {
 	AccountsGetInactiveAccountsAggCountHandler accounts.GetInactiveAccountsAggCountHandler
 	// AppInfoGetInfoHandler sets the operation handler for the get info operation
 	AppInfoGetInfoHandler app_info.GetInfoHandler
+	// BlocksGetLostBlocksAggCountHandler sets the operation handler for the get lost blocks agg count operation
+	BlocksGetLostBlocksAggCountHandler blocks.GetLostBlocksAggCountHandler
+	// BlocksGetLostEndorsermentsAggCountHandler sets the operation handler for the get lost endorserments agg count operation
+	BlocksGetLostEndorsermentsAggCountHandler blocks.GetLostEndorsermentsAggCountHandler
+	// BlocksGetLostRewardsAggHandler sets the operation handler for the get lost rewards agg operation
+	BlocksGetLostRewardsAggHandler blocks.GetLostRewardsAggHandler
 	// AccountsGetLowBalanceTotalAggCountHandler sets the operation handler for the get low balance total agg count operation
 	AccountsGetLowBalanceTotalAggCountHandler accounts.GetLowBalanceTotalAggCountHandler
 	// MempoolGetMempoolOperationsHandler sets the operation handler for the get mempool operations operation
@@ -687,6 +707,10 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "accounts.GetBakersDelegatorsHandler")
 	}
 
+	if o.AccountsGetBakersHoldingHandler == nil {
+		unregistered = append(unregistered, "accounts.GetBakersHoldingHandler")
+	}
+
 	if o.AccountsGetBakersListHandler == nil {
 		unregistered = append(unregistered, "accounts.GetBakersListHandler")
 	}
@@ -769,6 +793,18 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AppInfoGetInfoHandler == nil {
 		unregistered = append(unregistered, "app_info.GetInfoHandler")
+	}
+
+	if o.BlocksGetLostBlocksAggCountHandler == nil {
+		unregistered = append(unregistered, "blocks.GetLostBlocksAggCountHandler")
+	}
+
+	if o.BlocksGetLostEndorsermentsAggCountHandler == nil {
+		unregistered = append(unregistered, "blocks.GetLostEndorsermentsAggCountHandler")
+	}
+
+	if o.BlocksGetLostRewardsAggHandler == nil {
+		unregistered = append(unregistered, "blocks.GetLostRewardsAggHandler")
 	}
 
 	if o.AccountsGetLowBalanceTotalAggCountHandler == nil {
@@ -1139,6 +1175,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/bakers/holding"] = accounts.NewGetBakersHolding(o.context, o.AccountsGetBakersHoldingHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/bakers"] = accounts.NewGetBakersList(o.context, o.AccountsGetBakersListHandler)
 
 	if o.handlers["GET"] == nil {
@@ -1240,6 +1281,21 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/info"] = app_info.NewGetInfo(o.context, o.AppInfoGetInfoHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/lost/blocks/agg"] = blocks.NewGetLostBlocksAggCount(o.context, o.BlocksGetLostBlocksAggCountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/lost/endorsements/agg"] = blocks.NewGetLostEndorsermentsAggCount(o.context, o.BlocksGetLostEndorsermentsAggCountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/lost/rewards/agg"] = blocks.NewGetLostRewardsAgg(o.context, o.BlocksGetLostRewardsAggHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

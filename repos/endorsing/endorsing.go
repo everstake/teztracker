@@ -1,6 +1,7 @@
 package endorsing
 
 import (
+	"fmt"
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
@@ -15,6 +16,7 @@ type (
 		FutureEndorsingList(accountID string) ([]models.AccountEndorsing, error)
 		EndorsingTotal(string) (models.AccountEndorsing, error)
 		EndorsingList(accountID string, limit uint, offset uint) (int64, []models.AccountEndorsing, error)
+		GetLostEndorsingCountAgg(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
 	}
 )
 
@@ -67,4 +69,24 @@ func (r *Repository) FutureEndorsingList(accountID string) (endorsing []models.A
 	}
 
 	return endorsing, nil
+}
+
+func (r *Repository) GetLostEndorsingCountAgg(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	err = filter.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
+	}
+	q := r.db.Select(fmt.Sprintf("count(*) as value, date_trunc('%s', blocks.timestamp) as date", filter.Period)).
+		Table("tezos.baker_endorsements").
+		Joins("left join tezos.blocks ON baker_endorsements.level = blocks.level").
+		Where("baker_endorsements.missed != 0").
+		Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("blocks.timestamp >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("blocks.timestamp <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
 }
