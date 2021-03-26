@@ -23,8 +23,17 @@ type (
 	}
 )
 
-func (agg AggTimeFilter) Validate() error {
-	return ValidatePeriod(agg.Period)
+func (agg *AggTimeFilter) Validate() error {
+	err := ValidatePeriod(agg.Period)
+	if err != nil {
+		return err
+	}
+	if agg.From.IsZero() {
+		periods := GetChartPeriods()
+		duration := periods[agg.Period]
+		agg.From = time.Now().Add(-duration)
+	}
+	return nil
 }
 
 func GetChartPeriods() map[string]time.Duration {

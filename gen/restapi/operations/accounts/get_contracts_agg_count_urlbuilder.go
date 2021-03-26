@@ -19,7 +19,7 @@ type GetContractsAggCountURL struct {
 	Network  string
 	Platform string
 
-	From   int64
+	From   *int64
 	Period string
 	To     *int64
 
@@ -68,7 +68,10 @@ func (o *GetContractsAggCountURL) Build() (*url.URL, error) {
 
 	qs := make(url.Values)
 
-	fromQ := swag.FormatInt64(o.From)
+	var fromQ string
+	if o.From != nil {
+		fromQ = swag.FormatInt64(*o.From)
+	}
 	if fromQ != "" {
 		qs.Set("from", fromQ)
 	}

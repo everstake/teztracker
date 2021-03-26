@@ -10,18 +10,12 @@ import (
 	"net/url"
 	golangswaggerpaths "path"
 	"strings"
-
-	"github.com/go-openapi/swag"
 )
 
-// GetAccountsTotalAggCountURL generates an URL for the get accounts total agg count operation
-type GetAccountsTotalAggCountURL struct {
+// GetBakersHoldingURL generates an URL for the get bakers holding operation
+type GetBakersHoldingURL struct {
 	Network  string
 	Platform string
-
-	From   *int64
-	Period string
-	To     *int64
 
 	_basePath string
 	// avoid unkeyed usage
@@ -31,7 +25,7 @@ type GetAccountsTotalAggCountURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetAccountsTotalAggCountURL) WithBasePath(bp string) *GetAccountsTotalAggCountURL {
+func (o *GetBakersHoldingURL) WithBasePath(bp string) *GetBakersHoldingURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -39,63 +33,38 @@ func (o *GetAccountsTotalAggCountURL) WithBasePath(bp string) *GetAccountsTotalA
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetAccountsTotalAggCountURL) SetBasePath(bp string) {
+func (o *GetBakersHoldingURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *GetAccountsTotalAggCountURL) Build() (*url.URL, error) {
+func (o *GetBakersHoldingURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/v2/data/{platform}/{network}/accounts/total/agg"
+	var _path = "/v2/data/{platform}/{network}/bakers/holding"
 
 	network := o.Network
 	if network != "" {
 		_path = strings.Replace(_path, "{network}", network, -1)
 	} else {
-		return nil, errors.New("network is required on GetAccountsTotalAggCountURL")
+		return nil, errors.New("network is required on GetBakersHoldingURL")
 	}
 
 	platform := o.Platform
 	if platform != "" {
 		_path = strings.Replace(_path, "{platform}", platform, -1)
 	} else {
-		return nil, errors.New("platform is required on GetAccountsTotalAggCountURL")
+		return nil, errors.New("platform is required on GetBakersHoldingURL")
 	}
 
 	_basePath := o._basePath
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
-	qs := make(url.Values)
-
-	var fromQ string
-	if o.From != nil {
-		fromQ = swag.FormatInt64(*o.From)
-	}
-	if fromQ != "" {
-		qs.Set("from", fromQ)
-	}
-
-	periodQ := o.Period
-	if periodQ != "" {
-		qs.Set("period", periodQ)
-	}
-
-	var toQ string
-	if o.To != nil {
-		toQ = swag.FormatInt64(*o.To)
-	}
-	if toQ != "" {
-		qs.Set("to", toQ)
-	}
-
-	_result.RawQuery = qs.Encode()
-
 	return &_result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *GetAccountsTotalAggCountURL) Must(u *url.URL, err error) *url.URL {
+func (o *GetBakersHoldingURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -106,17 +75,17 @@ func (o *GetAccountsTotalAggCountURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *GetAccountsTotalAggCountURL) String() string {
+func (o *GetBakersHoldingURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *GetAccountsTotalAggCountURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *GetBakersHoldingURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on GetAccountsTotalAggCountURL")
+		return nil, errors.New("scheme is required for a full url on GetBakersHoldingURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on GetAccountsTotalAggCountURL")
+		return nil, errors.New("host is required for a full url on GetBakersHoldingURL")
 	}
 
 	base, err := o.Build()
@@ -130,6 +99,6 @@ func (o *GetAccountsTotalAggCountURL) BuildFull(scheme, host string) (*url.URL, 
 }
 
 // StringFull returns the string representation of a complete url
-func (o *GetAccountsTotalAggCountURL) StringFull(scheme, host string) string {
+func (o *GetBakersHoldingURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

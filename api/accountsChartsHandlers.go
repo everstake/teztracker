@@ -28,9 +28,9 @@ func (h *getAccountsAggCount) Handle(params accounts.GetAccountsAggCountParams) 
 
 	service := services.New(repos.New(db), net)
 
-	filter := models.AggTimeFilter{
-		From:   time.Unix(params.From, 0),
-		Period: params.Period,
+	filter := models.AggTimeFilter{Period: params.Period}
+	if params.From != nil && *params.From > 0 {
+		filter.From = time.Unix(*params.From, 0)
 	}
 	if params.To != nil && *params.To > 0 {
 		filter.To = time.Unix(*params.To, 0)
@@ -61,9 +61,9 @@ func (h *getAccountsTotalAggCount) Handle(params accounts.GetAccountsTotalAggCou
 
 	service := services.New(repos.New(db), net)
 
-	filter := models.AggTimeFilter{
-		From:   time.Unix(params.From, 0),
-		Period: params.Period,
+	filter := models.AggTimeFilter{Period: params.Period}
+	if params.From != nil && *params.From > 0 {
+		filter.From = time.Unix(*params.From, 0)
 	}
 	if params.To != nil && *params.To > 0 {
 		filter.To = time.Unix(*params.To, 0)
@@ -94,9 +94,9 @@ func (h *getContractsAggCount) Handle(params accounts.GetContractsAggCountParams
 
 	service := services.New(repos.New(db), net)
 
-	filter := models.AggTimeFilter{
-		From:   time.Unix(params.From, 0),
-		Period: params.Period,
+	filter := models.AggTimeFilter{Period: params.Period}
+	if params.From != nil && *params.From > 0 {
+		filter.From = time.Unix(*params.From, 0)
 	}
 	if params.To != nil && *params.To > 0 {
 		filter.To = time.Unix(*params.To, 0)
@@ -127,9 +127,9 @@ func (h *getContractsTotalAggCount) Handle(params accounts.GetContractsTotalAggC
 
 	service := services.New(repos.New(db), net)
 
-	filter := models.AggTimeFilter{
-		From:   time.Unix(params.From, 0),
-		Period: params.Period,
+	filter := models.AggTimeFilter{Period: params.Period}
+	if params.From != nil && *params.From > 0 {
+		filter.From = time.Unix(*params.From, 0)
 	}
 	if params.To != nil && *params.To > 0 {
 		filter.To = time.Unix(*params.To, 0)
@@ -184,9 +184,9 @@ func (h *getInactiveAccountsAggCount) Handle(params accounts.GetInactiveAccounts
 		return accounts.NewGetInactiveAccountsAggCountNotFound()
 	}
 
-	filter := models.AggTimeFilter{
-		From:   time.Unix(params.From, 0),
-		Period: params.Period,
+	filter := models.AggTimeFilter{Period: params.Period}
+	if params.From != nil && *params.From > 0 {
+		filter.From = time.Unix(*params.From, 0)
 	}
 	if params.To != nil && *params.To > 0 {
 		filter.To = time.Unix(*params.To, 0)
@@ -217,9 +217,9 @@ func (h *getLowBalanceTotalAggCount) Handle(params accounts.GetLowBalanceTotalAg
 		return accounts.NewGetLowBalanceTotalAggCountNotFound()
 	}
 
-	filter := models.AggTimeFilter{
-		From:   time.Unix(params.From, 0),
-		Period: params.Period,
+	filter := models.AggTimeFilter{Period: params.Period}
+	if params.From != nil && *params.From > 0 {
+		filter.From = time.Unix(*params.From, 0)
 	}
 	if params.To != nil && *params.To > 0 {
 		filter.To = time.Unix(*params.To, 0)
@@ -232,4 +232,28 @@ func (h *getLowBalanceTotalAggCount) Handle(params accounts.GetLowBalanceTotalAg
 	}
 
 	return accounts.NewGetLowBalanceTotalAggCountOK().WithPayload(render.AggTimeInt(resp))
+}
+
+
+type getBakersHolding struct {
+	provider DbProvider
+}
+
+func (h *getBakersHolding) Handle(params accounts.GetBakersHoldingParams) middleware.Responder {
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetBakersHoldingBadRequest()
+	}
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetBakersHoldingNotFound()
+	}
+	service := services.New(repos.New(db), net)
+	resp, err := service.GetHoldingPoints()
+	if err != nil {
+		log.Errorf("GetHoldingPoints error: %s", err)
+		return accounts.NewGetBakersHoldingInternalServerError()
+	}
+
+	return accounts.NewGetBakersHoldingOK().WithPayload(render.BakersHoldings(resp))
 }

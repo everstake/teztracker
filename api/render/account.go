@@ -140,3 +140,15 @@ func BakersVoting(item models.BakersVoting) (result *genModels.BakersVoting) {
 		ProposalsCount: item.ProposalsCount,
 	}
 }
+
+func BakersHoldings(items []models.HoldingPoint) (result []*genModels.HoldingPoint) {
+	result = make([]*genModels.HoldingPoint, len(items))
+	for i := range items {
+		result[i] = &genModels.HoldingPoint{
+			Amount:  items[i].Amount,
+			Count:   items[i].Count,
+			Percent: items[i].Percent,
+		}
+	}
+	return result
+}

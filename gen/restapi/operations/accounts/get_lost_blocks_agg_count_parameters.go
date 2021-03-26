@@ -17,18 +17,18 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetLowBalanceTotalAggCountParams creates a new GetLowBalanceTotalAggCountParams object
+// NewGetLostBlocksAggCountParams creates a new GetLostBlocksAggCountParams object
 // no default values defined in spec.
-func NewGetLowBalanceTotalAggCountParams() GetLowBalanceTotalAggCountParams {
+func NewGetLostBlocksAggCountParams() GetLostBlocksAggCountParams {
 
-	return GetLowBalanceTotalAggCountParams{}
+	return GetLostBlocksAggCountParams{}
 }
 
-// GetLowBalanceTotalAggCountParams contains all the bound params for the get low balance total agg count operation
+// GetLostBlocksAggCountParams contains all the bound params for the get lost blocks agg count operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters getLowBalanceTotalAggCount
-type GetLowBalanceTotalAggCountParams struct {
+// swagger:parameters getLostBlocksAggCount
+type GetLostBlocksAggCountParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -61,8 +61,8 @@ type GetLowBalanceTotalAggCountParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewGetLowBalanceTotalAggCountParams() beforehand.
-func (o *GetLowBalanceTotalAggCountParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewGetLostBlocksAggCountParams() beforehand.
+func (o *GetLostBlocksAggCountParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -101,7 +101,7 @@ func (o *GetLowBalanceTotalAggCountParams) BindRequest(r *http.Request, route *m
 }
 
 // bindFrom binds and validates parameter From from query.
-func (o *GetLowBalanceTotalAggCountParams) bindFrom(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetLostBlocksAggCountParams) bindFrom(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -123,7 +123,7 @@ func (o *GetLowBalanceTotalAggCountParams) bindFrom(rawData []string, hasKey boo
 }
 
 // bindNetwork binds and validates parameter Network from path.
-func (o *GetLowBalanceTotalAggCountParams) bindNetwork(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetLostBlocksAggCountParams) bindNetwork(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -138,7 +138,7 @@ func (o *GetLowBalanceTotalAggCountParams) bindNetwork(rawData []string, hasKey 
 }
 
 // bindPeriod binds and validates parameter Period from query.
-func (o *GetLowBalanceTotalAggCountParams) bindPeriod(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetLostBlocksAggCountParams) bindPeriod(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	if !hasKey {
 		return errors.Required("period", "query")
 	}
@@ -163,7 +163,7 @@ func (o *GetLowBalanceTotalAggCountParams) bindPeriod(rawData []string, hasKey b
 }
 
 // validatePeriod carries on validations for parameter Period
-func (o *GetLowBalanceTotalAggCountParams) validatePeriod(formats strfmt.Registry) error {
+func (o *GetLostBlocksAggCountParams) validatePeriod(formats strfmt.Registry) error {
 
 	if err := validate.Enum("period", "query", o.Period, []interface{}{"day", "week", "month"}); err != nil {
 		return err
@@ -173,7 +173,7 @@ func (o *GetLowBalanceTotalAggCountParams) validatePeriod(formats strfmt.Registr
 }
 
 // bindPlatform binds and validates parameter Platform from path.
-func (o *GetLowBalanceTotalAggCountParams) bindPlatform(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetLostBlocksAggCountParams) bindPlatform(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -188,7 +188,7 @@ func (o *GetLowBalanceTotalAggCountParams) bindPlatform(rawData []string, hasKey
 }
 
 // bindTo binds and validates parameter To from query.
-func (o *GetLowBalanceTotalAggCountParams) bindTo(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetLostBlocksAggCountParams) bindTo(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

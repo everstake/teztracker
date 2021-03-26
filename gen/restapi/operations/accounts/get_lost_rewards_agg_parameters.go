@@ -11,32 +11,27 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetLowBalanceTotalAggCountParams creates a new GetLowBalanceTotalAggCountParams object
+// NewGetLostRewardsAggParams creates a new GetLostRewardsAggParams object
 // no default values defined in spec.
-func NewGetLowBalanceTotalAggCountParams() GetLowBalanceTotalAggCountParams {
+func NewGetLostRewardsAggParams() GetLostRewardsAggParams {
 
-	return GetLowBalanceTotalAggCountParams{}
+	return GetLostRewardsAggParams{}
 }
 
-// GetLowBalanceTotalAggCountParams contains all the bound params for the get low balance total agg count operation
+// GetLostRewardsAggParams contains all the bound params for the get lost rewards agg operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters getLowBalanceTotalAggCount
-type GetLowBalanceTotalAggCountParams struct {
+// swagger:parameters getLostRewardsAgg
+type GetLostRewardsAggParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*
-	  In: query
-	*/
-	From *int64
 	/*
 	  Required: true
 	  In: path
@@ -52,27 +47,18 @@ type GetLowBalanceTotalAggCountParams struct {
 	  In: path
 	*/
 	Platform string
-	/*
-	  In: query
-	*/
-	To *int64
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewGetLowBalanceTotalAggCountParams() beforehand.
-func (o *GetLowBalanceTotalAggCountParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewGetLostRewardsAggParams() beforehand.
+func (o *GetLostRewardsAggParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
 	qs := runtime.Values(r.URL.Query())
-
-	qFrom, qhkFrom, _ := qs.GetOK("from")
-	if err := o.bindFrom(qFrom, qhkFrom, route.Formats); err != nil {
-		res = append(res, err)
-	}
 
 	rNetwork, rhkNetwork, _ := route.Params.GetOK("network")
 	if err := o.bindNetwork(rNetwork, rhkNetwork, route.Formats); err != nil {
@@ -89,41 +75,14 @@ func (o *GetLowBalanceTotalAggCountParams) BindRequest(r *http.Request, route *m
 		res = append(res, err)
 	}
 
-	qTo, qhkTo, _ := qs.GetOK("to")
-	if err := o.bindTo(qTo, qhkTo, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
 }
 
-// bindFrom binds and validates parameter From from query.
-func (o *GetLowBalanceTotalAggCountParams) bindFrom(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: false
-	// AllowEmptyValue: false
-	if raw == "" { // empty values pass all other validations
-		return nil
-	}
-
-	value, err := swag.ConvertInt64(raw)
-	if err != nil {
-		return errors.InvalidType("from", "query", "int64", raw)
-	}
-	o.From = &value
-
-	return nil
-}
-
 // bindNetwork binds and validates parameter Network from path.
-func (o *GetLowBalanceTotalAggCountParams) bindNetwork(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetLostRewardsAggParams) bindNetwork(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -138,7 +97,7 @@ func (o *GetLowBalanceTotalAggCountParams) bindNetwork(rawData []string, hasKey 
 }
 
 // bindPeriod binds and validates parameter Period from query.
-func (o *GetLowBalanceTotalAggCountParams) bindPeriod(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetLostRewardsAggParams) bindPeriod(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	if !hasKey {
 		return errors.Required("period", "query")
 	}
@@ -163,7 +122,7 @@ func (o *GetLowBalanceTotalAggCountParams) bindPeriod(rawData []string, hasKey b
 }
 
 // validatePeriod carries on validations for parameter Period
-func (o *GetLowBalanceTotalAggCountParams) validatePeriod(formats strfmt.Registry) error {
+func (o *GetLostRewardsAggParams) validatePeriod(formats strfmt.Registry) error {
 
 	if err := validate.Enum("period", "query", o.Period, []interface{}{"day", "week", "month"}); err != nil {
 		return err
@@ -173,7 +132,7 @@ func (o *GetLowBalanceTotalAggCountParams) validatePeriod(formats strfmt.Registr
 }
 
 // bindPlatform binds and validates parameter Platform from path.
-func (o *GetLowBalanceTotalAggCountParams) bindPlatform(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetLostRewardsAggParams) bindPlatform(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -183,28 +142,6 @@ func (o *GetLowBalanceTotalAggCountParams) bindPlatform(rawData []string, hasKey
 	// Parameter is provided by construction from the route
 
 	o.Platform = raw
-
-	return nil
-}
-
-// bindTo binds and validates parameter To from query.
-func (o *GetLowBalanceTotalAggCountParams) bindTo(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: false
-	// AllowEmptyValue: false
-	if raw == "" { // empty values pass all other validations
-		return nil
-	}
-
-	value, err := swag.ConvertInt64(raw)
-	if err != nil {
-		return errors.InvalidType("to", "query", "int64", raw)
-	}
-	o.To = &value
 
 	return nil
 }

@@ -34,10 +34,9 @@ type GetContractsAggCountParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*
-	  Required: true
 	  In: query
 	*/
-	From int64
+	From *int64
 	/*
 	  Required: true
 	  In: path
@@ -103,25 +102,22 @@ func (o *GetContractsAggCountParams) BindRequest(r *http.Request, route *middlew
 
 // bindFrom binds and validates parameter From from query.
 func (o *GetContractsAggCountParams) bindFrom(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("from", "query")
-	}
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
-	// Required: true
+	// Required: false
 	// AllowEmptyValue: false
-	if err := validate.RequiredString("from", "query", raw); err != nil {
-		return err
+	if raw == "" { // empty values pass all other validations
+		return nil
 	}
 
 	value, err := swag.ConvertInt64(raw)
 	if err != nil {
 		return errors.InvalidType("from", "query", "int64", raw)
 	}
-	o.From = value
+	o.From = &value
 
 	return nil
 }
