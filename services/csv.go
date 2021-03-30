@@ -82,11 +82,8 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 		if j < len(bakingReport) && report[i].BlockLevel <= bakingReport[j].BlockLevel {
 			//Formatting
 			bakingReport[j].Reward = bakingReport[j].Reward / precisionMultiplier
-
-			//Block not missed
-			if bakingReport[j].Loss == 0 {
-				report[i].Link = fmt.Sprintf(frontHost, fmt.Sprint(t.net, netPostfix), fmt.Sprintf(blockRoute, report[i].BlockLevel))
-			}
+			//Set up front link
+			report[i].Link = fmt.Sprintf(frontHost, fmt.Sprint(t.net, netPostfix), fmt.Sprintf(blockRoute, report[i].BlockLevel))
 
 			record = bakingReport[j]
 			j++
