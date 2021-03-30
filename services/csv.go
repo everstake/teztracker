@@ -10,8 +10,11 @@ import (
 )
 
 const (
-	limit     = 250000
-	frontHost = "https://teztracker.everstake.one/en/mainnet/tx/%s"
+	limit      = 250000
+	frontHost  = "https://teztracker.everstake.one/en/%s/%s"
+	netPostfix = "net"
+	txRoute    = "tx/%s"
+	blockRoute = "block/%d"
 )
 
 var header = []string{"block level", "timestamp", "operation", "coin", "in", "out", "from", "to", "fee", "reward", "loss", "status", "link"}
@@ -79,12 +82,18 @@ func (t *TezTracker) GetAccountReport(accountID string, from, to int64, operatio
 		if j < len(bakingReport) && report[i].BlockLevel <= bakingReport[j].BlockLevel {
 			//Formatting
 			bakingReport[j].Reward = bakingReport[j].Reward / precisionMultiplier
+
+			//Block not missed
+			if bakingReport[j].Loss == 0 {
+				report[i].Link = fmt.Sprintf(frontHost, fmt.Sprint(t.net, netPostfix), fmt.Sprintf(blockRoute, report[i].BlockLevel))
+			}
+
 			record = bakingReport[j]
 			j++
 		} else {
-			//TODO get front host from env
+
 			if report[i].OperationGroupHash.Valid {
-				report[i].Link = fmt.Sprintf(frontHost, report[i].OperationGroupHash.String)
+				report[i].Link = fmt.Sprintf(frontHost, fmt.Sprint(t.net, netPostfix), fmt.Sprintf(txRoute, report[i].OperationGroupHash.String))
 			}
 
 			//Formatting
