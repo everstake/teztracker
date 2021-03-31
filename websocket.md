@@ -233,15 +233,21 @@ The Assets Streams push assets operations.
 **Update Speed:** Real-time
 ```javascript
 {
-   "amount":0,
-   "fee":14572,
-   "from":"tz1gmajxhmKt22CbcsSA7WWXSATgbuVEmzTC",
-   "gas_limit":141263,
-   "operation_group_hash":"onitV2kqHU3oN8eLM9WJErogia98RMjfykNGb8EVrcsMHuhyvBE",
-   "storage_limit":0,
-   "timestamp":1617195963,
-   "to":"KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn",
-   "type":"removeLiquidity"
+   "event":"asset_operations",
+   "data":{
+      "event":"asset_operations",
+      "data":{
+         "amount":0,
+         "fee":14572,
+         "from":"tz1gmajxhmKt22CbcsSA7WWXSATgbuVEmzTC",
+         "gas_limit":141263,
+         "operation_group_hash":"onitV2kqHU3oN8eLM9WJErogia98RMjfykNGb8EVrcsMHuhyvBE",
+         "storage_limit":0,
+         "timestamp":1617195963,
+         "to":"KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn",
+         "type":"removeLiquidity"
+      }
+   }
 }
 ```
 
@@ -253,20 +259,26 @@ The Mempool Streams push mempool operations.
 **Update Speed:** Real-time
 ```javascript
 {
-   "branch":"BLXiyEanSwm1HVT4tBgSr2usDxkfEGF7jzp8u71vy5ahSLFcpch",
-   "contents":[
-      {
-         "kind":"transaction",
-         "source":"tz1bDXD6nNSrebqmAnnKKwnX1QdePSMCj4MX",
-         "fee":"20700",
-         "counter":"267390",
-         "gas_limit":"100000",
-         "storage_limit":"300",
-         "amount":"400000",
-         "destination":"tz1dbRQEGe6Xa69UJp2fm8JUBSYmfJrYvvkL"
+   "event":"mempool",
+   "data":{
+      "event":"mempool",
+      "data":{
+         "branch":"BLXiyEanSwm1HVT4tBgSr2usDxkfEGF7jzp8u71vy5ahSLFcpch",
+         "contents":[
+            {
+               "kind":"transaction",
+               "source":"tz1bDXD6nNSrebqmAnnKKwnX1QdePSMCj4MX",
+               "fee":"20700",
+               "counter":"267390",
+               "gas_limit":"100000",
+               "storage_limit":"300",
+               "amount":"400000",
+               "destination":"tz1dbRQEGe6Xa69UJp2fm8JUBSYmfJrYvvkL"
+            }
+         ],
+         "protocol":"PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA",
+         "signature":"sigZEUX46VctHUGJKcNgJo6FX9YV9EnFyaw1jMdWoL9dQKEYDoYcZAAMH7Lm99r86G2g9PaApgeEePV1FgtDkWmAB87ne78G"
       }
-   ],
-   "protocol":"PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA",
-   "signature":"sigZEUX46VctHUGJKcNgJo6FX9YV9EnFyaw1jMdWoL9dQKEYDoYcZAAMH7Lm99r86G2g9PaApgeEePV1FgtDkWmAB87ne78G"
+   }
 }
 ```
