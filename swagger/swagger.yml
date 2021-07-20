@@ -169,7 +169,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, edonet]
+          enum: [mainnet, florencenet]
         - in: query
           name: currency
           type: string
@@ -203,7 +203,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, edonet]
+          enum: [mainnet, florencenet]
       produces:
         - application/json
       responses:
@@ -232,7 +232,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, edonet]
+          enum: [mainnet, florencenet]
         - in: query
           name: from
           type: integer
@@ -284,7 +284,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, edonet]
+          enum: [mainnet, florencenet]
         - in: query
           name: limit
           type: integer
@@ -320,7 +320,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, edonet]
+          enum: [mainnet, florencenet]
         - in: query
           name: limit
           type: integer

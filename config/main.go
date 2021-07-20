@@ -12,7 +12,7 @@ import (
 type Config struct {
 	Port                                  int
 	Mainnet                               NetworkConfig
-	Edonet                                NetworkConfig
+	Florencenet                           NetworkConfig
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
 	Production                            bool
 	CounterIntervalHours                  int
