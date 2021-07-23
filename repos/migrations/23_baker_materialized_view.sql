@@ -34,6 +34,9 @@ CREATE TRIGGER baker_baking_since
   FOR EACH ROW
 EXECUTE PROCEDURE insert_baker_baking_since();
 
+INSERT INTO tezos.baker_baking_since(pkh, baking_since)
+SELECT pkh, min(asof)  from tezos.bakers_history group by pkh;
+
 CREATE OR REPLACE VIEW tezos.baker_endorsement_view as
 SELECT delegate,
        count(1) AS endorsements

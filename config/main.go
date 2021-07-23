@@ -16,7 +16,6 @@ type Config struct {
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
 	Production                            bool
 	CounterIntervalHours                  int
-	FutureRightsIntervalMinutes           int
 	SnapshotCheckIntervalMinutes          int
 	VotingRollsIntervalMinutes            int
 	DoubleBakingCheckIntervalMinutes      int

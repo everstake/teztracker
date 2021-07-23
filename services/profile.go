@@ -202,13 +202,13 @@ func (t *TezTracker) SendNewVerifications(pusher mailer.Mail) error {
 			"token": verification.Token,
 		})
 		if err != nil {
-			log.Error("SendNewVerifications: pusher.Send: %s", err.Error())
+			log.Errorf("SendNewVerifications: pusher.Send: %s", err)
 			continue
 		}
 		verification.Sent = true
 		err = userRepo.UpdateEmailVerification(verification)
 		if err != nil {
-			log.Error("SendNewVerifications: userRepo.UpdateEmailVerifications: %s", err.Error())
+			log.Errorf("SendNewVerifications: userRepo.UpdateEmailVerifications: %s", err)
 			continue
 		}
 	}

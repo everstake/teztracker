@@ -32,10 +32,10 @@ LANGUAGE plpgsql
 AS
 $$
 BEGIN
-  insert into tezos.baker_endorsements
-  select (er.level - 1) / 4096,
+  insert into tezos.baker_endorsements(cycle, delegate, level, slot, reward, missed)
+  select (er.block_level - 1) / 4096,
          er.delegate,
-         er.level,
+         er.block_level,
          er.slot,
          op.reward,
          CASE WHEN op.delegate is null THEN 1 ELSE 0 END as missed
@@ -49,9 +49,9 @@ BEGIN
         from tezos.operations op
                left join tezos.balance_updates bu
                          on (op.operation_group_hash = bu.operation_group_hash and category = 'rewards')
-        where op.kind = 'endorsement'
-          and op.level = NEW.meta_level-5) as op on er.level = op.level and op.elem = er.slot::varchar
-  where er.level = NEW.meta_level-5;
+        where (op.kind = 'endorsement' OR op.kind = 'endorsement_with_slot')
+          and op.level = NEW.meta_level-5) as op on er.block_level = op.level and op.elem = er.slot::varchar
+  where er.block_level = NEW.meta_level-5;
 
   IF NEW.meta_cycle_position <= 5 THEN
    INSERT INTO tezos.baker_cycle_endorsements (SELECT * FROM tezos.baker_cycle_endorsements_view

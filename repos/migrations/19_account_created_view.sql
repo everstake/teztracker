@@ -25,6 +25,9 @@ CREATE TRIGGER account_created_at
   FOR EACH ROW
 EXECUTE PROCEDURE insert_account_created_at();
 
+INSERT INTO tezos.account_created_at (account_id, created_at)
+SELECT account_id , min(asof) FROM accounts_history GROUP BY account_id ON CONFLICT DO NOTHING;
+
 CREATE VIEW account_list_view AS
 SELECT accounts.*, created_at, blocks.timestamp last_active, aka.alias account_name, ka.alias as delegate_name
 FROM "tezos"."accounts"

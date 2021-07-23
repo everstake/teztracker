@@ -28,9 +28,10 @@ type (
 )
 
 const (
-	endorsementKind = "endorsement"
-	delegationKind  = "delegation"
-	activationKind  = "activate_account"
+	endorsementKind     = "endorsement"
+	endorsementWithSlot = "endorsement_with_slot"
+	delegationKind      = "delegation"
+	activationKind      = "activate_account"
 )
 
 // New creates an instance of repository using the provided db.
@@ -97,7 +98,7 @@ func (r *Repository) getFilteredDB(hashes, kinds, inBlocks, accountIDs []string,
 				switch kind {
 				case delegationKind:
 					db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source and operations.kind='delegation')")
-				case endorsementKind:
+				case endorsementKind, endorsementWithSlot:
 					selectQ = fmt.Sprintf("%s, %s", selectQ, "bur.change endorsement_reward, bud.change endorsement_deposit")
 					db = db.Joins("left join tezos.balance_updates as bur on (operations.operation_group_hash = bur.operation_group_hash and bur.category='rewards')").
 						Joins("left join tezos.balance_updates as bud on (operations.operation_group_hash = bud.operation_group_hash and bud.category='deposits')")
@@ -158,7 +159,7 @@ func (r *Repository) List(hashes, kinds []string, inBlocks, accountIDs []string,
 		Offset(offset)
 
 	//TODO Join with baker_endorsements
-	if len(inBlocks) == 1 && len(kinds) == 1 && kinds[0] == endorsementKind {
+	if len(inBlocks) == 1 && len(kinds) == 1 && (kinds[0] == endorsementKind || kinds[0] == endorsementWithSlot) {
 		db = r.db.Raw("SELECT * from (?) as s left join tezos.balance_updates on (s.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')", db.SubQuery())
 	}
 
@@ -198,7 +199,7 @@ func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (o
 func (r *Repository) EndorsementsFor(blockLevel int64) (operations []models.Operation, err error) {
 	err = r.db.Select("*").Model(&models.Operation{}).
 		Joins("left join tezos.balance_updates on (operations.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')").
-		Where("operations.kind = ?", endorsementKind).
+		Where("operations.kind = ? OR operations.kind = ?", endorsementKind, endorsementWithSlot).
 		// the endorsements of the block with blockLevel can only be in a block with level (blockLevel + 1)
 		Where("operations.block_level = ?", blockLevel+1).
 		Order("operation_id DESC").
@@ -229,7 +230,7 @@ func (r *Repository) AccountOperationCount(acc string) (counts []models.Operatio
 func (r *Repository) AccountEndorsements(accountID string, cycle int64, limit uint, offset uint) (count int64, operations []models.Operation, err error) {
 	db := r.db.Model(&models.Operation{}).
 		Where("delegate = ?", accountID).
-		Where("kind = ?", endorsementKind).
+		Where("kind = ? OR kind = ?", endorsementKind, endorsementWithSlot).
 		Where("cycle = ?", cycle)
 
 	err = db.Count(&count).Error

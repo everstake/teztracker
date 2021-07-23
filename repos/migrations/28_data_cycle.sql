@@ -66,3 +66,8 @@ CREATE TRIGGER cycle_periods_insert
   ON tezos.blocks
   FOR EACH ROW
 EXECUTE PROCEDURE tezos.cycle_periods();
+
+INSERT INTO tezos.cycle_periods
+ SELECT meta_cycle, min(timestamp), max(timestamp)
+ FROM tezos.blocks
+ where meta_cycle >= 0 and meta_cycle <= (select max(meta_cycle) -1 FROM tezos.blocks) group by meta_cycle;

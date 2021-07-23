@@ -125,7 +125,7 @@ func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (cou
 		db = db.Where("block_level >= ?", startingLevel)
 	}
 
-	err = db.Select("SUM(count) as count, SUM(count*trunc(1/priority,6)) as weight, baker").
+	err = db.Select("SUM(number_of_slots) as count, SUM(count*trunc(1/priority,6)) as weight, baker").
 		Group("baker").Scan(&counter).Error
 	if err != nil {
 		return nil, err

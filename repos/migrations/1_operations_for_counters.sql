@@ -16,6 +16,9 @@ select block_level,
        consumed_gas
 from tezos.operations;
 
+create unique index operations_operation_id
+	on operations (operation_id);
+
 CREATE TABLE tezos.operation_counters(
     cnt_id SERIAL PRIMARY KEY,
     cnt_last_op_id int not null,
