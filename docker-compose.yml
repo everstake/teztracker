@@ -97,6 +97,7 @@ services:
       #todo: if the scheme is not http or host/port are different then for lorry - pass it through
       TEZTRACKER_MAINNET_NODERPC_HOST: "${XTZ_HOST}:${XTZ_PORT}"
       TEZTRACKER_MAINNET_NODERPC_SCHEMES: "${XTZ_SCHEME}"
+
       TEZTRACKER_FLORENCENET_NODERPC_HOST: "${FLORENCENET_XTZ_HOST}:${FLORENCENET_XTZ_PORT}"
       TEZTRACKER_FLORENCENET_NODERPC_SCHEMES: "${FLORENCENET_XTZ_SCHEME}"
     # If using localhost db you may want to use the host network

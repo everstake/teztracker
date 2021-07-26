@@ -17,7 +17,7 @@ select block_level,
 from tezos.operations;
 
 create unique index operations_operation_id
-	on operations (operation_id);
+	on tezos.operations (operation_id);
 
 CREATE TABLE tezos.operation_counters(
     cnt_id SERIAL PRIMARY KEY,

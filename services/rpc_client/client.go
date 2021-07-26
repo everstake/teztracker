@@ -8,6 +8,7 @@ import (
 	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
 	"github.com/everstake/teztracker/services/rpc_client/client/operations"
 	"github.com/everstake/teztracker/services/rpc_client/client/voting"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -148,6 +149,11 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 		level := cycle*t.BlocksInCycle() + 1
 		blockToUse = strconv.FormatInt(level, 10)
 	}
+
+	log.Print(cycle)
+	log.Print(t.network)
+	log.Print(blockToUse)
+
 	params := snapshots.NewGetRollSnapshotParamsWithContext(ctx).
 		WithCycle(cycle).
 		WithNetwork(t.network).

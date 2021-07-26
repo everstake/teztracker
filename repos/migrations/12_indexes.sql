@@ -42,7 +42,7 @@ CREATE INDEX ix_operations_voting_proposal_source_kind_period
   on tezos.operations (proposal, source, kind, period)
   where ((kind::text = 'proposals'::text) or (kind::text = 'ballot'::text)) and proposal is not null;
 
-CREATE INDEX ix_operations_voting_proposal_source_kind_period
+CREATE INDEX ix_operations_voting_proposal_source_kind_period_ballot
   on tezos.operations (proposal, source, kind, period)
   where ballot_period is not null;
 
@@ -85,6 +85,10 @@ CREATE INDEX concurrently ix_balance_updates_operation_group_hash_rewards
 
 CREATE INDEX blocks_timestamp_index
 	ON tezos.blocks (timestamp desc);
+
+CREATE INDEX IF NOT EXISTS ix_blocks_baker
+    ON tezos.blocks USING btree
+    (baker ASC NULLS LAST);
 
 -- accounts_history
 

@@ -14,7 +14,7 @@ CREATE OR REPLACE VIEW tezos.baker_cycle_endorsements_view AS
     GROUP BY delegate, cycle) s;
 
 CREATE TABLE tezos.baker_cycle_endorsements
- AS (SELECT * FROM baker_cycle_endorsements_view);
+ AS (SELECT * FROM tezos.baker_cycle_endorsements_view);
 
 alter table tezos.baker_cycle_endorsements
 	add constraint baker_cycle_endorsements_pk
@@ -32,7 +32,7 @@ LANGUAGE plpgsql
 AS
 $$
 BEGIN
-  insert into tezos.baker_endorsements(cycle, delegate, level, slot, reward, missed)
+insert into tezos.baker_endorsements(cycle, delegate, level, slot, reward, missed)
   select (er.block_level - 1) / 4096,
          er.delegate,
          er.block_level,
@@ -45,15 +45,15 @@ BEGIN
                op.delegate,
                op.level,
                json_array_elements_text(slots :: json) as elem,
-               change / json_array_length(slots :: json)  reward
+               CASE WHEN op.cycle >= 208 THEN CASE WHEN bu.priority > 0 THEN 1250000 / 1.5 ELSE 1250000 END ELSE 2000000  END as  reward
         from tezos.operations op
-               left join tezos.balance_updates bu
-                         on (op.operation_group_hash = bu.operation_group_hash and category = 'rewards')
+               left join tezos.blocks bu
+                         on (op.block_level = bu.level)
         where (op.kind = 'endorsement' OR op.kind = 'endorsement_with_slot')
-          and op.level = NEW.meta_level-5) as op on er.block_level = op.level and op.elem = er.slot::varchar
-  where er.block_level = NEW.meta_level-5;
+        ) as op on er.block_level = op.level and op.elem = er.slot::varchar
+        where er.block_level = NEW.meta_level-7;
 
-  IF NEW.meta_cycle_position <= 5 THEN
+  IF NEW.meta_cycle_position <= 7 THEN
    INSERT INTO tezos.baker_cycle_endorsements (SELECT * FROM tezos.baker_cycle_endorsements_view
     where tezos.baker_cycle_endorsements_view.cycle = NEW.meta_cycle-1)
     ON CONFLICT ON CONSTRAINT baker_cycle_endorsements_pk

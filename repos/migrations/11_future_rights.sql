@@ -13,7 +13,7 @@ $right_with_cycle$ LANGUAGE plpgsql;
 
 CREATE TRIGGER baking_right_with_cycle
 BEFORE INSERT OR UPDATE ON tezos.baking_rights
-    FOR EACH ROW EXECUTE FUNCTION right_with_cycle();
+    FOR EACH ROW EXECUTE FUNCTION tezos.right_with_cycle();
 
 CREATE INDEX IF NOT EXISTS baking_rights_level_priority_index
 	ON tezos.baking_rights (block_level, priority);
@@ -40,7 +40,7 @@ SELECT *
 FROM tezos.endorsing_rights
 WHERE block_level > (SELECT level FROM tezos.blocks ORDER BY level DESC LIMIT 1);
 
-CREATE INDEX IF NOT EXISTS INDEX endorsing_rights_delegate_cycle_idx
+CREATE INDEX IF NOT EXISTS endorsing_rights_delegate_cycle_idx
     ON tezos.endorsing_rights USING btree (delegate,cycle);
 
 CREATE TRIGGER endorsing_right_with_cycle

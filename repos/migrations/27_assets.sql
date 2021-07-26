@@ -11,7 +11,7 @@ CREATE TABLE tezos.asset_operations
     type varchar,
     data varchar,
     timestamp timestamp
-)
+);
 
 CREATE VIEW tezos.asset_info AS
 SELECT registered_tokens.*, accounts.balance, operations.timestamp, operations.source
