@@ -20,6 +20,8 @@ import (
 	operation_groups "github.com/everstake/teztracker/repos/operation_groups"
 	rolls "github.com/everstake/teztracker/repos/rolls"
 	snapshots "github.com/everstake/teztracker/repos/snapshots"
+	thirdparty_bakers "github.com/everstake/teztracker/repos/thirdparty_bakers"
+	user_profile "github.com/everstake/teztracker/repos/user_profile"
 	voting_periods "github.com/everstake/teztracker/repos/voting_periods"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
@@ -250,6 +252,30 @@ func (m *MockProvider) GetAssets() assets.Repo {
 // GetAssets indicates an expected call of GetAssets
 func (mr *MockProviderMockRecorder) GetAssets() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAssets", reflect.TypeOf((*MockProvider)(nil).GetAssets))
+}
+
+// GetThirdPartyBakers mocks base method
+func (m *MockProvider) GetThirdPartyBakers() thirdparty_bakers.Repo {
+	ret := m.ctrl.Call(m, "GetThirdPartyBakers")
+	ret0, _ := ret[0].(thirdparty_bakers.Repo)
+	return ret0
+}
+
+// GetThirdPartyBakers indicates an expected call of GetThirdPartyBakers
+func (mr *MockProviderMockRecorder) GetThirdPartyBakers() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetThirdPartyBakers", reflect.TypeOf((*MockProvider)(nil).GetThirdPartyBakers))
+}
+
+// GetUserProfile mocks base method
+func (m *MockProvider) GetUserProfile() user_profile.Repo {
+	ret := m.ctrl.Call(m, "GetUserProfile")
+	ret0, _ := ret[0].(user_profile.Repo)
+	return ret0
+}
+
+// GetUserProfile indicates an expected call of GetUserProfile
+func (mr *MockProviderMockRecorder) GetUserProfile() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserProfile", reflect.TypeOf((*MockProvider)(nil).GetUserProfile))
 }
 
 // MockLimiter is a mock of Limiter interface

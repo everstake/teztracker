@@ -5,6 +5,7 @@ go 1.23
 require (
 	blockwatch.cc/tzindex v0.0.0-20200216192617-519bcd88724c
 	github.com/bullblock-io/go-tezos/v2 v2.0.5
+	github.com/echa/log v1.0.0
 	github.com/go-openapi/errors v0.19.2
 	github.com/go-openapi/loads v0.19.2
 	github.com/go-openapi/runtime v0.19.3

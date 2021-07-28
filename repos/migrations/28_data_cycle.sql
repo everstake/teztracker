@@ -1,5 +1,5 @@
 create index blocks_meta_cycle_index
-	on blocks (meta_cycle desc);
+	on tezos.blocks (meta_cycle desc);
 
 CREATE FUNCTION tezos.cycles(integer, integer)
    RETURNS TABLE(cycle integer, cycle_start TIMESTAMP WITHOUT TIME ZONE, cycle_end TIMESTAMP WITHOUT TIME ZONE)
@@ -36,9 +36,9 @@ ALTER TABLE tezos.cycle_periods
 		primary key (cycle);
 
 CREATE VIEW tezos.cycle_periods_view AS
-select * from cycle_periods
+select * from tezos.cycle_periods
 UNION
-select * from tezos.cycles( (select max(cycle) from cycle_periods), (select max(cycle) + 6 from cycle_periods) )
+select * from tezos.cycles( (select max(cycle) from tezos.cycle_periods), (select max(cycle) + 6 from tezos.cycle_periods) )
 order by cycle desc;
 
 CREATE VIEW tezos.snapshots_view AS
@@ -66,3 +66,8 @@ CREATE TRIGGER cycle_periods_insert
   ON tezos.blocks
   FOR EACH ROW
 EXECUTE PROCEDURE tezos.cycle_periods();
+
+INSERT INTO tezos.cycle_periods
+ SELECT meta_cycle, min(timestamp), max(timestamp)
+ FROM tezos.blocks
+ where meta_cycle >= 0 and meta_cycle <= (select max(meta_cycle) -1 FROM tezos.blocks) group by meta_cycle;

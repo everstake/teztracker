@@ -144,7 +144,7 @@ func (o *GetInfoParams) bindNetwork(rawData []string, hasKey bool, formats strfm
 // validateNetwork carries on validations for parameter Network
 func (o *GetInfoParams) validateNetwork(formats strfmt.Registry) error {
 
-	if err := validate.Enum("network", "path", o.Network, []interface{}{"mainnet", "edonet"}); err != nil {
+	if err := validate.Enum("network", "path", o.Network, []interface{}{"mainnet", "florencenet"}); err != nil {
 		return err
 	}
 

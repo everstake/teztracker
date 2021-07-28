@@ -20,7 +20,6 @@ import (
 	"github.com/everstake/teztracker/services/counter"
 	"github.com/everstake/teztracker/services/double_baking"
 	"github.com/everstake/teztracker/services/double_endorsement"
-	"github.com/everstake/teztracker/services/future_rights"
 	"github.com/everstake/teztracker/services/rpc_client"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/services/snapshots"
@@ -47,56 +46,6 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 		})
 	} else {
 		log.Infof("no sheduling counter due to missing CounterIntervalHours in config")
-	}
-	if cfg.FutureRightsIntervalMinutes > 0 {
-		var jobIsRunning uint32
-
-		dur := time.Duration(cfg.FutureRightsIntervalMinutes) * time.Minute
-		log.Infof("Sheduling future rights parser saver every %s", dur)
-		cron.AddFunc(gron.Every(dur), func() {
-			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
-			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
-				defer atomic.StoreUint32(&jobIsRunning, 0)
-				unitOfWork := repos.New(db)
-
-				rpc := rpc_client.New(rpcConfig, string(network), isTestNetwork)
-				count, err := future_rights.SaveNewBakingRights(context.TODO(), unitOfWork, rpc)
-				if err != nil {
-					log.Errorf("BakingRights saver failed: %s", err.Error())
-					return
-				}
-				log.Tracef("BakingRights saved %d rights", count)
-			} else {
-				log.Tracef("skipping BakingRights saver as the previous job is still running")
-			}
-		})
-	} else {
-		log.Infof("no sheduling future rights parser due to missing FutureRightsIntervalMinutes in config")
-	}
-	if cfg.FutureRightsIntervalMinutes > 0 {
-		var jobIsRunning uint32
-
-		dur := time.Duration(cfg.FutureRightsIntervalMinutes) * time.Minute
-		log.Infof("Sheduling future rights parser saver every %s", dur)
-		cron.AddFunc(gron.Every(dur), func() {
-			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
-			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
-				defer atomic.StoreUint32(&jobIsRunning, 0)
-				unitOfWork := repos.New(db)
-
-				rpc := rpc_client.New(rpcConfig, string(network), isTestNetwork)
-				count, err := future_rights.SaveNewEndorsementRights(context.TODO(), unitOfWork, rpc)
-				if err != nil {
-					log.Errorf("EndorsementRights saver failed: %s", err.Error())
-					return
-				}
-				log.Tracef("EndorsementRights saved %d rights", count)
-			} else {
-				log.Tracef("skipping EndorsementRights saver as the previous job is still running")
-			}
-		})
-	} else {
-		log.Infof("no sheduling future rights parser due to missing FutureRightsIntervalMinutes in config")
 	}
 	if cfg.SnapshotCheckIntervalMinutes > 0 {
 		var jobIsRunning uint32
@@ -372,7 +321,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				//Outside network always main for RPC
 				serviceNetwork := network
 				if isTestNetwork {
-					serviceNetwork = models.NetworkEdo
+					serviceNetwork = models.NetworkFlorence
 				}
 
 				service := New(repos.New(db), serviceNetwork)

@@ -7,7 +7,7 @@ CREATE TABLE tezos.account_created_at
 );
 
 CREATE INDEX IF NOT EXISTS ix_account_created_at
-    ON account_created_at USING btree
+    ON tezos.account_created_at USING btree
     (created_at DESC);
 
 CREATE OR REPLACE FUNCTION insert_account_created_at()
@@ -24,6 +24,9 @@ CREATE TRIGGER account_created_at
   ON tezos.accounts
   FOR EACH ROW
 EXECUTE PROCEDURE insert_account_created_at();
+
+INSERT INTO tezos.account_created_at (account_id, created_at)
+SELECT account_id , min(asof) FROM tezos.accounts_history GROUP BY account_id ON CONFLICT DO NOTHING;
 
 CREATE VIEW account_list_view AS
 SELECT accounts.*, created_at, blocks.timestamp last_active, aka.alias account_name, ka.alias as delegate_name
