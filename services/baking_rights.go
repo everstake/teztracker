@@ -173,13 +173,8 @@ func (t *TezTracker) GetAccountFutureBakingRights(accountID string, cycle int64,
 	}
 
 	for i := range futureRights {
-		reward := BlockReward
-		if futureRights[i].Priority > 0 {
-			reward = LowPriorityBlockReward
-		}
-
-		futureRights[i].Reward = int64(reward)
-		futureRights[i].Deposit = BlockSecurityDeposit
+		futureRights[i].Reward = getBlockRewardByCycle(futureRights[i].Cycle, int64(futureRights[i].Priority))
+		futureRights[i].Deposit = getBlockSecurityDepositByCycle(futureRights[i].Cycle)
 	}
 
 	return count, futureRights, nil

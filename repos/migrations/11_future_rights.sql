@@ -1,10 +1,19 @@
 --Future baking rights
 
-CREATE FUNCTION tezos.right_with_cycle() RETURNS trigger AS $right_with_cycle$
+CREATE OR REPLACE FUNCTION tezos.right_with_cycle() RETURNS trigger AS $right_with_cycle$
+    declare
+        blocksPerCycle integer;
     BEGIN
-        -- Check that empname and salary are given
+
         IF NEW.cycle IS NULL THEN
-            NEW.cycle := DIV(NEW.block_level - 1, 4096);
+        -- TODO check level
+            IF NEW.block_level >= 1613825 THEN
+             blocksPerCycle = 8192;
+            ELSE
+             blocksPerCycle = 4096;
+            END IF;
+
+            NEW.cycle := DIV(NEW.block_level - 1, blocksPerCycle);
         END IF;
 
         RETURN NEW;
@@ -18,7 +27,9 @@ BEFORE INSERT OR UPDATE ON tezos.baking_rights
 CREATE INDEX IF NOT EXISTS baking_rights_level_priority_index
 	ON tezos.baking_rights (block_level, priority);
 
-UPDATE tezos.baking_rights SET cycle = DIV(block_level - 1, 4096) WHERE cycle is null and block_hash is null;
+UPDATE tezos.baking_rights SET cycle = DIV(block_level - 1, 8192) WHERE cycle is null and block_hash is null and block_level >= 1613825;
+UPDATE tezos.baking_rights SET cycle = DIV(block_level - 1, 4096) WHERE cycle is null and block_hash is null and block_level < 1613825;
+
 
 CREATE OR REPLACE VIEW tezos.future_baking_rights_view AS
 SELECT *
@@ -47,7 +58,8 @@ CREATE TRIGGER endorsing_right_with_cycle
     BEFORE INSERT OR UPDATE ON tezos.endorsing_rights
     FOR EACH ROW EXECUTE FUNCTION tezos.right_with_cycle();
 
-UPDATE tezos.endorsing_rights SET cycle = DIV(block_level - 1, 4096) WHERE cycle is null and block_hash is null;
+UPDATE tezos.endorsing_rights SET cycle = DIV(block_level - 1, 8192) WHERE cycle is null and block_hash is null and block_level >= 1613825;
+UPDATE tezos.endorsing_rights SET cycle = DIV(block_level - 1, 4096) WHERE cycle is null and block_hash is null and block_level < 1613825;
 
 CREATE OR REPLACE VIEW tezos.baker_future_endorsement_view as
     select delegate, cycle, count(1) as count
