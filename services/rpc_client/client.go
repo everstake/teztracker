@@ -8,7 +8,6 @@ import (
 	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
 	"github.com/everstake/teztracker/services/rpc_client/client/operations"
 	"github.com/everstake/teztracker/services/rpc_client/client/voting"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -25,7 +24,8 @@ import (
 )
 
 const headBlock = "head"
-const BlocksInCycle = 4096
+const BlocksInCycle = 4096 * 2
+const BlocksPerRollSnapshot = 256 * 2
 
 type Tezos struct {
 	client        *client.Tezosrpc
@@ -150,10 +150,6 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 		blockToUse = strconv.FormatInt(level, 10)
 	}
 
-	log.Print(cycle)
-	log.Print(t.network)
-	log.Print(blockToUse)
-
 	params := snapshots.NewGetRollSnapshotParamsWithContext(ctx).
 		WithCycle(cycle).
 		WithNetwork(t.network).
@@ -164,7 +160,7 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 	}
 	snapshot := resp.Payload
 	snap.Cycle = cycle
-	snap.BlockLevel = ((cycle-7)*t.BlocksInCycle() + 1) + (snapshot+1)*256 - 1
+	snap.BlockLevel = ((cycle-7)*t.BlocksInCycle() + 1) + (snapshot+1)*BlocksPerRollSnapshot - 1
 	rollParams := snapshots.NewGetRollsParamsWithContext(ctx).
 		WithCycle(cycle).
 		WithNetwork(t.network).

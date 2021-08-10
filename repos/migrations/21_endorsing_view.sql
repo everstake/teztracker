@@ -26,6 +26,31 @@ CREATE OR REPLACE VIEW tezos.baker_current_cycle_endorsements_view AS
     WHERE cycle = (select meta_cycle from tezos.blocks order by level desc limit 1)
     GROUP BY delegate, cycle;
 
+
+CREATE OR REPLACE FUNCTION tezos.endorsement_reward(integer, integer)
+   RETURNS integer
+   LANGUAGE plpgsql
+AS $$
+    declare
+        reward integer;
+    BEGIN
+
+    	case
+		  when $1 >= 388 then
+             reward = 78125;
+		  when $1 >= 208 then
+             reward = 1250000;
+		  else
+	        RETURN 2000000;
+		 end case;
+
+        IF $2 > 0 THEN
+            reward = reward / 1.5;
+        END IF;
+    RETURN reward;
+END $$;
+
+
 CREATE OR REPLACE FUNCTION tezos.baker_endorsement()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -47,7 +72,7 @@ $$
         NEW.delegate,
         NEW.block_level -1, --meta_level
         json_array_elements_text(NEW.slots :: json) :: integer,
-        CASE WHEN NEW.cycle >= 208 THEN CASE WHEN priority > 0 THEN 1250000 / 1.5 ELSE 1250000 END ELSE 2000000  END,
+        tezos.endorsement_reward(NEW.cycle, priority),
         0)
         ON CONFLICT ON CONSTRAINT baker_endorsements_pkey
         DO UPDATE SET reward = excluded.reward, missed = excluded.missed;
@@ -69,7 +94,7 @@ $$
 BEGIN
 
   insert into tezos.baker_endorsements(cycle, delegate, level, slot, reward, missed)
-  select (er.block_level - 1) / 4096,
+  select er.cycle,
          er.delegate,
          er.block_level,
          er.slot,
@@ -81,7 +106,7 @@ BEGIN
                op.delegate,
                op.level,
                json_array_elements_text(slots :: json) as elem,
-               CASE WHEN op.cycle >= 208 THEN CASE WHEN bu.priority > 0 THEN 1250000 / 1.5 ELSE 1250000 END ELSE 2000000  END as  reward
+               tezos.endorsement_reward(op.cycle, bu.priority) as reward,
         from tezos.operations op
                left join tezos.blocks bu
                          on (op.block_level = bu.level)
