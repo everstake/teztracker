@@ -46,6 +46,9 @@ CREATE INDEX ix_operations_voting_proposal_source_kind_period_ballot
   on tezos.operations (proposal, source, kind, period)
   where ballot_period is not null;
 
+create index operations_destination_index
+	on tezos.operations (destination);
+
 -- accounts
 
 CREATE INDEX ix_accounts_balance

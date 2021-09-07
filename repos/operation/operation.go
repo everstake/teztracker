@@ -2,6 +2,7 @@ package operation
 
 import (
 	"fmt"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/go-openapi/validate"
 	"github.com/jinzhu/gorm"
@@ -17,6 +18,7 @@ type (
 	Repo interface {
 		List(ids, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error)
 		ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error)
+		ContractOperationsList(contractID string, kinds, entrypoints []string, lastBlock int64, offset, limit uint, orderSide string) (operations []models.Operation, count int64, err error)
 		Count(ids, kinds, inBlocks, accountIDs []string, maxOperationID int64) (count int64, err error)
 		EndorsementsFor(blockLevel int64) (operations []models.Operation, err error)
 		Last() (operation models.Operation, err error)
@@ -147,7 +149,7 @@ func (r *Repository) getFilteredDB(hashes, kinds, inBlocks, accountIDs []string,
 // limit defines the limit for the maximum number of operations returned.
 // since is used to paginate results based on the operation id.
 // As the result is ordered descendingly the operations with operation_id < since will be returned.
-func (r *Repository) List(hashes, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error) {
+func (r *Repository) List(hashes, kinds, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error) {
 	db := r.getFilteredDB(hashes, kinds, inBlocks, accountIDs, operationsIDs, false)
 
 	if since > 0 {
@@ -166,6 +168,35 @@ func (r *Repository) List(hashes, kinds []string, inBlocks, accountIDs []string,
 	err = db.Find(&operations).Error
 
 	return operations, err
+}
+
+func (r *Repository) ContractOperationsList(contractID string, kinds, entrypoints []string, lastBlock int64, offset, limit uint, orderSide string) (operations []models.Operation, count int64, err error) {
+	db := r.db.Model(&models.Operation{}).
+		Where("destination = ? and kind IN (?)", contractID, kinds).
+		Where("status = 'applied'")
+
+	if len(entrypoints) > 0 {
+		db = db.Where(" parameters_entrypoints IN (?)", entrypoints)
+	}
+
+	if lastBlock > 0 {
+		db = db.Where("block_level > ?", lastBlock)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = db.Order(fmt.Sprint("block_level ", orderSide)).
+		Offset(offset).
+		Limit(limit).
+		Find(&operations).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return operations, count, nil
 }
 
 func (r *Repository) ListDoubleEndorsementsWithoutLevel(limit, offset uint) (operations []models.Operation, err error) {

@@ -4,7 +4,9 @@ go 1.23
 
 require (
 	blockwatch.cc/tzindex v0.0.0-20200216192617-519bcd88724c
+	github.com/anchorageoss/tezosprotocol/v2 v2.2.0
 	github.com/bullblock-io/go-tezos/v2 v2.0.5
+	github.com/ecadlabs/go-tezos v0.0.0-20200223205028-5c5678907b1d
 	github.com/echa/log v1.0.0
 	github.com/go-openapi/errors v0.19.2
 	github.com/go-openapi/loads v0.19.2

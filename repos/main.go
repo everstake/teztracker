@@ -10,6 +10,7 @@ import (
 	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
+	"github.com/everstake/teztracker/repos/nft"
 	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/thirdparty_bakers"
 	"github.com/everstake/teztracker/repos/user_profile"
@@ -136,6 +137,10 @@ func (u *Provider) GetThirdPartyBakers() thirdparty_bakers.Repo {
 
 func (u *Provider) GetUserProfile() user_profile.Repo {
 	return user_profile.New(u.getDB())
+}
+
+func (u *Provider) GetNFT() nft.Repo {
+	return nft.New(u.getDB())
 }
 
 func (u *Provider) Start(ctx context.Context) {

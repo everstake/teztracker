@@ -2,6 +2,8 @@ package infrustructure
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos"
@@ -11,7 +13,6 @@ import (
 	"github.com/everstake/teztracker/services/watcher"
 	"github.com/everstake/teztracker/ws"
 	"github.com/jinzhu/gorm"
-	"strings"
 )
 
 type NetworkContext struct {

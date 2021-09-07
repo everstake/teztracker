@@ -1,13 +1,14 @@
 package models
 
 import (
-	"blockwatch.cc/tzindex/chain"
-	script "blockwatch.cc/tzindex/micheline"
 	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	"blockwatch.cc/tzindex/chain"
+	script "blockwatch.cc/tzindex/micheline"
 )
 
 type AssetInfo struct {
@@ -29,6 +30,7 @@ func (v *HolderAddress) Scan(value interface{}) (err error) {
 	if value == nil {
 		return nil
 	}
+
 	data, ok := value.(string)
 	if !ok {
 		return fmt.Errorf("invalid type")
@@ -38,6 +40,17 @@ func (v *HolderAddress) Scan(value interface{}) (err error) {
 		return fmt.Errorf("unknown format")
 	}
 
+	if data[0:2] == "Pa" {
+
+		arr := strings.Split(data, " ")
+		if len(arr) < 3 {
+			return fmt.Errorf("Wrong pair")
+		}
+
+		data = arr[1]
+	}
+
+	//Remove 0x prefix
 	bt, err := hex.DecodeString(data[2:])
 	if err != nil {
 		return err
@@ -85,8 +98,15 @@ func (v *HolderBalance) Scan(value interface{}) (err error) {
 		return nil
 	}
 
-	data, ok := value.(string)
-	if !ok {
+	var data string
+
+	switch value.(type) {
+	case string:
+		data = value.(string)
+	case int64:
+		*v = HolderBalance(value.(int64))
+		return nil
+	default:
 		return fmt.Errorf("invalid type")
 	}
 

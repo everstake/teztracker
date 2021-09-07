@@ -77,6 +77,9 @@ type OperationsRow struct {
 	// endorsement reward
 	EndorsementReward int64 `json:"endorsementReward,omitempty"`
 
+	// entrypoint
+	Entrypoint string `json:"entrypoint,omitempty"`
+
 	// fee
 	Fee int64 `json:"fee,omitempty"`
 

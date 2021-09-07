@@ -3,26 +3,29 @@ package services
 import (
 	"context"
 	"fmt"
+	"sync/atomic"
+	"time"
+
 	"github.com/everstake/teztracker/api/render"
 	"github.com/everstake/teztracker/services/assets"
 	"github.com/everstake/teztracker/services/cmc"
+	"github.com/everstake/teztracker/services/counter"
+	"github.com/everstake/teztracker/services/double_baking"
+	"github.com/everstake/teztracker/services/double_endorsement"
+	"github.com/everstake/teztracker/services/ipfs"
 	"github.com/everstake/teztracker/services/mailer"
+	"github.com/everstake/teztracker/services/nft"
 	"github.com/everstake/teztracker/services/public_baker"
 	"github.com/everstake/teztracker/services/rolls"
+	"github.com/everstake/teztracker/services/snapshots"
 	"github.com/everstake/teztracker/services/thirdparty_bakers"
 	"github.com/everstake/teztracker/ws"
-	"sync/atomic"
-	"time"
 
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos"
-	"github.com/everstake/teztracker/services/counter"
-	"github.com/everstake/teztracker/services/double_baking"
-	"github.com/everstake/teztracker/services/double_endorsement"
 	"github.com/everstake/teztracker/services/rpc_client"
 	"github.com/everstake/teztracker/services/rpc_client/client"
-	"github.com/everstake/teztracker/services/snapshots"
 	wsmodels "github.com/everstake/teztracker/ws/models"
 	"github.com/jinzhu/gorm"
 	"github.com/roylee0704/gron"
@@ -240,6 +243,62 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				log.Tracef("skipping assets operations parse as the previous job is still running")
 			}
 		})
+	}
+
+	if cfg.NFTTokensParseIntervalSeconds > 0 {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.NFTTokensParseIntervalSeconds) * time.Second
+
+		log.Infof("Sheduling parse nft tokens %s", dur)
+
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := repos.New(db)
+				ipfsClient, err := ipfs.NewIPFSClient(cfg.IPFSClient)
+				if err != nil {
+					log.Fatalf("Wrong IPFS client url: %s")
+				}
+
+				err = nft.ProcessNFTMintOperations(context.TODO(), unitOfWork, ipfsClient)
+				if err != nil {
+					log.Errorf("nft tokens failed: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("skipping nft tokens parse as the previous job is still running")
+			}
+		})
+
+	}
+
+	if cfg.NFTTokensParseIntervalSeconds > 0 {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.NFTTokensParseIntervalSeconds) * time.Second
+
+		log.Infof("Sheduling update nft tokens %s", dur)
+
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := repos.New(db)
+
+				err := nft.ProcessNFTOperations(context.TODO(), unitOfWork)
+				if err != nil {
+					log.Errorf("nft tokens update failed: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("skipping nft tokens update as the previous job is still running")
+			}
+		})
+
 	}
 
 	if !isTestNetwork { // dispatch user verifications every minutes

@@ -22,6 +22,8 @@ type Config struct {
 	DoubleEndorsementCheckIntervalMinutes int
 	BakerRegistryCheckIntervalMinutes     int
 	AssetsParseIntervalMinutes            int
+	IPFSClient                            string
+	NFTTokensParseIntervalSeconds         int
 	InfoWSEventsIntervalMinutes           int
 	SmtpHost                              string
 	SmtpPort                              int

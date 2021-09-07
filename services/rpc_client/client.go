@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/everstake/teztracker/services/michelson"
-	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
-	"github.com/everstake/teztracker/services/rpc_client/client/operations"
-	"github.com/everstake/teztracker/services/rpc_client/client/voting"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/everstake/teztracker/services/michelson"
+	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
+	"github.com/everstake/teztracker/services/rpc_client/client/operations"
+	"github.com/everstake/teztracker/services/rpc_client/client/voting"
 
 	script "blockwatch.cc/tzindex/micheline"
 	tzblock "github.com/bullblock-io/go-tezos/v2/block"
@@ -164,6 +165,9 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 	}
 	snapshot := resp.Payload
 	snap.Cycle = cycle
+
+	//TODO make additional fix
+
 	snap.BlockLevel = ((cycle-7)*t.BlocksInCycle() + 1) + (snapshot+1)*256 - 1
 	rollParams := snapshots.NewGetRollsParamsWithContext(ctx).
 		WithCycle(cycle).

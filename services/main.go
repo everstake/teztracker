@@ -13,6 +13,7 @@ import (
 	"github.com/everstake/teztracker/repos/endorsing"
 	"github.com/everstake/teztracker/repos/future_baking_rights"
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
+	"github.com/everstake/teztracker/repos/nft"
 	"github.com/everstake/teztracker/repos/operation"
 	"github.com/everstake/teztracker/repos/operation_groups"
 	"github.com/everstake/teztracker/repos/rolls"
@@ -51,6 +52,7 @@ type (
 		GetAssets() assets.Repo
 		GetThirdPartyBakers() thirdparty_bakers.Repo
 		GetUserProfile() user_profile.Repo
+		GetNFT() nft.Repo
 	}
 
 	Limiter interface {

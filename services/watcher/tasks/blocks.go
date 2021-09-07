@@ -16,7 +16,7 @@ func NewBlockTask(repos services.Provider) Block {
 	return Block{repos: repos}
 }
 
-func (b Block) GetEventData(data interface{}) ( interface{}, error) {
+func (b Block) GetEventData(data interface{}) (interface{}, error) {
 
 	bt, err := json.Marshal(data)
 	if err != nil {
