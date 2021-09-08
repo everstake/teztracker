@@ -25,7 +25,11 @@ import (
 )
 
 const headBlock = "head"
-const BlocksInCycle = 4096 * 2
+const (
+	GranadaBlocksInCycle int64 = 4096 * 2
+	GranadaCycle               = 387
+)
+
 const BlocksPerRollSnapshot = 256 * 2
 
 type Tezos struct {
@@ -35,11 +39,18 @@ type Tezos struct {
 	tzcClient     *tzblock.BlockService
 }
 
-func (t *Tezos) BlocksInCycle() int64 {
-	if t.isTestNetwork {
-		return BlocksInCycle / 2
+func (t *Tezos) BlocksInCycle(cycle int64) int64 {
+	blocksInCycle := GranadaBlocksInCycle
+
+	if cycle < GranadaCycle {
+		blocksInCycle = blocksInCycle / 2
 	}
-	return BlocksInCycle
+
+	if t.isTestNetwork {
+		blocksInCycle = blocksInCycle / 2
+	}
+
+	return blocksInCycle
 }
 
 func New(cfg client.TransportConfig, network string, isTestNetwork bool) *Tezos {
@@ -144,10 +155,18 @@ func genVotingRollsToModel(r genmodels.VotingRolls) models.Roll {
 	}
 }
 
+func (t *Tezos) blocksCount(cycle int64) int64 {
+	if cycle < GranadaCycle {
+		return cycle * t.BlocksInCycle(cycle)
+	}
+
+	return (GranadaCycle-1)*t.BlocksInCycle(GranadaCycle-1) + (cycle-GranadaCycle)*t.BlocksInCycle(cycle)
+}
+
 func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool) (snap models.Snapshot, err error) {
 	blockToUse := headBlock
 	if !useHead {
-		level := cycle*t.BlocksInCycle() + 1
+		level := cycle*t.BlocksInCycle(cycle) + 1
 		blockToUse = strconv.FormatInt(level, 10)
 	}
 
@@ -161,9 +180,9 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 	}
 	snapshot := resp.Payload
 	snap.Cycle = cycle
-	snap.BlockLevel = ((cycle-7)*t.BlocksInCycle() + 1) + (snapshot+1)*BlocksPerRollSnapshot - 1
 
-	//TODO check
+	//TODO check BlocksPerRollSnapshot
+	snap.BlockLevel = (t.blocksCount(cycle-7) + 1) + (snapshot+1)*BlocksPerRollSnapshot - 1
 
 	rollParams := snapshots.NewGetRollsParamsWithContext(ctx).
 		WithCycle(cycle).
