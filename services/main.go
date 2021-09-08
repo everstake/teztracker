@@ -76,7 +76,7 @@ func (t *TezTracker) Health() (err error) {
 }
 
 const (
-	BlocksInMainnetCycle = 4096
+	BlocksInMainnetCycle = 4096 * 2
 )
 
 func (t *TezTracker) BlocksInCycle() int64 {

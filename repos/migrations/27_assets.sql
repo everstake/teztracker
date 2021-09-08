@@ -13,6 +13,9 @@ CREATE TABLE tezos.asset_operations
     timestamp timestamp
 );
 
+alter table tezos.registered_tokens
+	add ticker varchar;
+
 CREATE VIEW tezos.asset_info AS
 SELECT registered_tokens.*, accounts.balance, operations.timestamp, operations.source
 FROM tezos.registered_tokens

@@ -9,21 +9,39 @@ import (
 )
 
 const (
-	PreservedCycles            = 5
-	XTZ                        = 1000000
-	BlockSecurityDeposit       = 512 * XTZ
-	EndorsementSecurityDeposit = 64 * XTZ
-	BlockReward                = 40 * XTZ
-	LowPriorityBlockReward     = 6 * XTZ
-	BabylonBlockReward         = 24 * XTZ
-	EndorsementReward          = 1.25 * XTZ
-	BabylonEndorsementRewards  = 1.75 * XTZ
-	CarthageCycle              = 208
-	BlockEndorsers             = 32
-	TokensPerRoll              = 8000
-	TotalLocked                = (BlockSecurityDeposit + EndorsementSecurityDeposit*BlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
-	BlockLockEstimate          = BlockReward + BlockSecurityDeposit + BlockEndorsers*(EndorsementReward+EndorsementSecurityDeposit)
-	bakerMediaSource           = "https://api.tzkt.io/v1/accounts/%s?metadata=true"
+	PreservedCycles = 5
+	XTZ             = 1000000
+
+	GranadaBlockSecurityDeposit  = 640 * XTZ
+	FlorenceBlockSecurityDeposit = 512 * XTZ
+
+	GranadaEndorsementSecurityDeposit  = 2.5 * XTZ
+	FlorenceEndorsementSecurityDeposit = 64 * XTZ
+
+	GranadaBlockReward  = 20 * XTZ
+	FlorenceBlockReward = 40 * XTZ
+
+	GradanaLowPriorityBlockReward  = 3 * XTZ
+	FlorenceLowPriorityBlockReward = 6 * XTZ
+
+	BabylonBlockReward = 24 * XTZ
+
+	GranadaEndorsementReward  = 1.25 * XTZ
+	FlorenceEndorsementReward = 1.25 * XTZ
+	BabylonEndorsementRewards = 1.75 * XTZ
+	CarthageCycle             = 208
+	GranadaCycle              = 388
+
+	GranadaBlockEndorsers  = 256
+	FlorenceBlockEndorsers = 32
+
+	TokensPerRoll = 8000
+
+	TotalLocked = (GranadaBlockSecurityDeposit + GranadaEndorsementSecurityDeposit*GranadaBlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
+
+	BlockLockEstimate = GranadaBlockReward + GranadaBlockSecurityDeposit + GranadaBlockEndorsers*(GranadaEndorsementReward+GranadaEndorsementSecurityDeposit)
+
+	bakerMediaSource = "https://api.tzkt.io/v1/accounts/%s?metadata=true"
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
@@ -140,10 +158,10 @@ func (t *TezTracker) GetBakerInfo(accountID string) (bi *models.Baker, err error
 
 func (t *TezTracker) calcDepositRewards(bi *models.BakerStats, accountID string) (err error) {
 
-	bi.BakingDeposits = bi.BakingCount * BlockSecurityDeposit
+	bi.BakingDeposits = bi.BakingCount * GranadaBlockSecurityDeposit
 	bi.BakingRewards = bi.FrozenBakingRewards
 
-	bi.EndorsementDeposits = bi.EndorsementCount * EndorsementSecurityDeposit
+	bi.EndorsementDeposits = bi.EndorsementCount * GranadaBlockSecurityDeposit
 	bi.EndorsementRewards = bi.FrozenEndorsementRewards
 
 	return nil

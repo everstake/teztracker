@@ -17,7 +17,7 @@ func (t *TezTracker) GetAccountEndorsingList(accountID string, limits Limiter) (
 
 	for i := range list {
 		list[i].Status = getRewardStatus(list[i].Cycle, lastBlock.MetaCycle)
-		list[i].TotalDeposit = list[i].Count * EndorsementSecurityDeposit
+		list[i].TotalDeposit = list[i].Count * getEndorsementSecurityDepositByCycle(list[i].Cycle)
 	}
 
 	return count, list, nil
@@ -30,7 +30,7 @@ func (t *TezTracker) GetAccountEndorsingTotal(accountID string) (total models.Ac
 	}
 
 	total.Count -= total.Missed
-	total.TotalDeposit = total.Count * EndorsementSecurityDeposit
+	total.TotalDeposit = total.Count * GranadaEndorsementSecurityDeposit
 
 	return total, nil
 }
@@ -42,7 +42,7 @@ func (t *TezTracker) GetAccountEndorsementsList(accountID string, cycle int64, l
 	}
 
 	for i := range list {
-		list[i].EndorsementDeposit = EndorsementSecurityDeposit
+		list[i].EndorsementDeposit = getEndorsementSecurityDepositByCycle(list[i].Cycle)
 	}
 
 	return count, list, nil
@@ -61,8 +61,8 @@ func (t *TezTracker) GetAccountFutureEndorsementsList(accountID string) (list []
 
 	for i := range list {
 		list[i].Status = getRewardStatus(list[i].Cycle, lastBlock.MetaCycle)
-		list[i].TotalDeposit = list[i].Count * EndorsementSecurityDeposit
-		list[i].Reward = list[i].Count * EndorsementReward
+		list[i].TotalDeposit = list[i].Count * getEndorsementSecurityDepositByCycle(list[i].Cycle)
+		list[i].Reward = list[i].Count * getEndorsementRewardByCycle(list[i].Cycle)
 	}
 
 	return list, nil
