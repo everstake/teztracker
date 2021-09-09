@@ -1,6 +1,22 @@
 create index blocks_meta_cycle_index
 	on tezos.blocks (meta_cycle desc);
 
+CREATE FUNCTION tezos.blockInCycle(integer)
+    RETURNS RECORD
+    LANGUAGE plpgsql
+AS $$
+    DECLARE
+    ret RECORD;
+
+    BEGIN
+    IF $1 >= 387 THEN
+        SELECT 8192 :: integer, '30 seconds'::interval INTO ret;
+      ELSE
+        SELECT 4096 :: integer, '1 minute'::interval INTO ret;
+    END IF;
+    RETURN ret;
+END $$;
+
 CREATE FUNCTION tezos.cycles(integer, integer)
    RETURNS TABLE(cycle integer, cycle_start TIMESTAMP WITHOUT TIME ZONE, cycle_end TIMESTAMP WITHOUT TIME ZONE)
    LANGUAGE plpgsql
@@ -9,19 +25,26 @@ AS $$
     start TIMESTAMP WITHOUT TIME ZONE;
     last_block_time TIMESTAMP WITHOUT TIME ZONE;
     cycle_position integer;
+    blocksPerCycle integer;
+    blockInterval interval;
     BEGIN
+
+    SELECT blocks, interv into blocksPerCycle, blockInterval from tezos.blockInCycle($1) AS (blocks integer, interv interval);
 
     select min(timestamp), max(meta_cycle_position), max(timestamp) into start, cycle_position, last_block_time from tezos.blocks where meta_cycle = $1;
     cycle := $1;
     cycle_start := start;
-    cycle_end := last_block_time + (4096 - cycle_position -1) * '1 minute'::interval;
+    cycle_end := last_block_time + (blocksPerCycle - cycle_position -1) * blockInterval;
     return next;
 
     FOR l_counter IN $1+1..$2
     LOOP
+      SELECT blocks, interv into blocksPerCycle, blockInterval from tezos.blockInCycle(l_counter) AS (blocks integer, interv interval);
+
       cycle := l_counter;
-      cycle_start :=  cycle_end + '1 minute'::interval;
-      cycle_end := cycle_start + interval '2 days 20 hours 16 minutes';
+
+      cycle_start :=  cycle_end + blockInterval;
+      cycle_end := cycle_start + (blocksPerCycle * blockInterval);  --interval '2 days 20 hours 16 minutes';
     return next;
     END LOOP;
 END $$;
