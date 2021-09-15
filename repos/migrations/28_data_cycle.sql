@@ -58,10 +58,10 @@ ALTER TABLE tezos.cycle_periods
 	add constraint cycle_periods_pk
 		primary key (cycle);
 
-CREATE VIEW tezos.cycle_periods_view AS
+CREATE OR REPLACE VIEW tezos.cycle_periods_view AS
 select * from tezos.cycle_periods
 UNION
-select * from tezos.cycles( (select max(cycle) from tezos.cycle_periods), (select max(cycle) + 6 from tezos.cycle_periods) )
+select * from tezos.cycles( (select max(cycle) + 1 from tezos.cycle_periods), (select max(cycle) + 6 from tezos.cycle_periods) )
 order by cycle desc;
 
 CREATE VIEW tezos.snapshots_view AS

@@ -59,5 +59,7 @@ CREATE TABLE tezos.voting_proposal
   title        varchar,
   short_description varchar,
   proposal_file varchar,
-  proposer varchar
+  proposer varchar,
+  is_main bool default false not null,
+  perion integer not null
 );
