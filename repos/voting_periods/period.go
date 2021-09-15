@@ -102,7 +102,7 @@ func (r *Repository) ProposalsList(id *int64, limit uint) (periodProposals []mod
 
 	if id != nil {
 		db = db.Joins("left join tezos.voting_proposal on proposal = hash").
-			Where("period = ?", &id)
+			Where("proposal_stat_view.period = ?", &id)
 	} else {
 		db = db.Joins("left join tezos.voting_proposal on (proposal = hash and voting_proposal.period = proposal_stat_view.period)").
 			Where("voting_proposal.is_main IS TRUE")
