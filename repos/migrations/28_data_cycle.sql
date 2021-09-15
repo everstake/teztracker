@@ -1,7 +1,7 @@
 create index blocks_meta_cycle_index
 	on tezos.blocks (meta_cycle desc);
 
-CREATE FUNCTION tezos.blockInCycle(integer)
+CREATE OR REPLACE FUNCTION tezos.blockInCycle(integer)
     RETURNS RECORD
     LANGUAGE plpgsql
 AS $$
@@ -9,7 +9,7 @@ AS $$
     ret RECORD;
 
     BEGIN
-    IF $1 >= 387 THEN
+    IF $1 >= 388 THEN
         SELECT 8192 :: integer, '30 seconds'::interval INTO ret;
       ELSE
         SELECT 4096 :: integer, '1 minute'::interval INTO ret;
@@ -17,7 +17,7 @@ AS $$
     RETURN ret;
 END $$;
 
-CREATE FUNCTION tezos.cycles(integer, integer)
+CREATE OR REPLACE FUNCTION tezos.cycles(integer, integer)
    RETURNS TABLE(cycle integer, cycle_start TIMESTAMP WITHOUT TIME ZONE, cycle_end TIMESTAMP WITHOUT TIME ZONE)
    LANGUAGE plpgsql
 AS $$

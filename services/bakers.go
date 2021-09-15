@@ -3,9 +3,10 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/everstake/teztracker/models"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/everstake/teztracker/models"
 )
 
 const (

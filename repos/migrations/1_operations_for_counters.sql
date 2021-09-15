@@ -2,7 +2,7 @@ CREATE OR REPLACE VIEW tezos.operations_for_counters AS
 select block_level,
        amount,
        fee,
-       case when operations.kind = 'endorsement' then 1 else 0 end                 as isendorsement,
+       case when operations.kind = 'endorsement' or operations.kind = 'endorsement_with_slot' then 1 else 0 end                 as isendorsement,
        case when operations.kind = 'proposals' then 1 else 0 end                   as isproposals,
        case when operations.kind = 'seed_nonce_revelation' then 1 else 0 end       as isseed_nonce_revelation,
        case when operations.kind = 'delegation' then 1 else 0 end                  as isdelegation,

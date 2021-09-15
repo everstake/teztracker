@@ -106,7 +106,7 @@ BEGIN
                op.delegate,
                op.level,
                json_array_elements_text(slots :: json) as elem,
-               tezos.endorsement_reward(op.cycle, bu.priority) as reward,
+               tezos.endorsement_reward(op.cycle, bu.priority) as reward
         from tezos.operations op
                left join tezos.blocks bu
                          on (op.block_level = bu.level)

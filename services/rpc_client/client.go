@@ -27,7 +27,7 @@ import (
 const headBlock = "head"
 const (
 	GranadaBlocksInCycle int64 = 4096 * 2
-	GranadaCycle               = 387
+	GranadaCycle               = 388
 )
 
 const BlocksPerRollSnapshot = 256 * 2

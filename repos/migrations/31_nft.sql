@@ -10,7 +10,7 @@ CREATE TABLE tezos.nft_contracts
     tokens_big_map integer,
     operations_num integer,
     last_height integer,
-    last_update_height integer,
+    last_update_height integer
 );
 
 create unique index nft_contracts_account_id_uindex
