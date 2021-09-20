@@ -29,6 +29,7 @@ import (
 	"github.com/everstake/teztracker/repos"
 	"github.com/everstake/teztracker/services/rpc_client"
 	"github.com/everstake/teztracker/services/rpc_client/client"
+	wsmodels "github.com/everstake/teztracker/ws/models"
 	"github.com/jinzhu/gorm"
 	"github.com/roylee0704/gron"
 	log "github.com/sirupsen/logrus"
