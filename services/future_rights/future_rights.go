@@ -46,7 +46,7 @@ func SaveNewBakingRights(ctx context.Context, unit UnitOfWork, provider RightsPr
 	lastKnownRightsBlock := provider.CyclesBlocksCount(lastCycle + 6)
 
 	rightsRepo := unit.GetFutureBakingRight()
-	found, lastRight, err := rightsRepo.Last()
+	found, lastRight, err := rightsRepo.LastFuture()
 	if err != nil {
 		return 0, err
 	}

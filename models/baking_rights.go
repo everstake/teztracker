@@ -22,6 +22,7 @@ type RightFilter struct {
 	PriorityTo   int
 	Limit        null.Int
 	Offset       null.Int
+	IsFuture     bool
 }
 
 type FutureBakingRight struct {

@@ -11,6 +11,7 @@ import (
 func (t *TezTracker) BakingRightsList(blockLevelOrHash []string, priorityTo int, limiter Limiter) (count int64, blocksWithRights []models.Block, err error) {
 	filter := models.RightFilter{
 		PriorityTo: priorityTo,
+		IsFuture:   false,
 	}
 	count = int64(len(blockLevelOrHash))
 
@@ -58,6 +59,7 @@ func (t *TezTracker) BakingRightsList(blockLevelOrHash []string, priorityTo int,
 	if err != nil {
 		return count, nil, err
 	}
+
 	blockMap := map[int64]*models.Block{}
 	for i := range blocks {
 		blockMap[blocks[i].Level.Int64] = &blocks[i]
@@ -89,6 +91,7 @@ func (t *TezTracker) FutureBakingRightsList(priorityTo int, limiter Limiter) (co
 	}
 	filter := models.RightFilter{
 		PriorityTo: priorityTo,
+		IsFuture:   true,
 	}
 	for ; rangeStart <= rangeEnd; rangeStart++ {
 		filter.BlockLevels = append(filter.BlockLevels, rangeStart)
@@ -133,7 +136,9 @@ func (t *TezTracker) GetBlockBakingRights(hashOrLevel string) (rights []models.F
 		}
 		level = block.Level.Int64
 	}
-	filter := models.RightFilter{}
+	filter := models.RightFilter{
+		IsFuture: true,
+	}
 	filter.BlockLevels = []int64{level}
 	repo := t.repoProvider.GetFutureBakingRight()
 	rights, err = repo.ListDesc(filter)
@@ -160,6 +165,7 @@ func (t *TezTracker) GetAccountFutureBakingRights(accountID string, cycle int64,
 		},
 		PriorityTo: 10,
 		Delegates:  []string{accountID},
+		IsFuture:   true,
 	}
 
 	count, err = repo.Count(filter)
