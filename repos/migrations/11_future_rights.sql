@@ -1,6 +1,6 @@
 --Future baking rights
 
-CREATE OR REPLACE FUNCTION tezos.cycle_by_level(integer) RETURNS INTEGER AS $cycle_by_level$
+CREATE OR REPLACE FUNCTION tezos.cycle_by_level(bigint) RETURNS INTEGER AS $cycle_by_level$
     BEGIN
         if $1 <= 1589248 THEN
             RETURN DIV($1 - 1, 4096);
@@ -46,9 +46,11 @@ GROUP BY cycle, delegate;
 
 --Future endorsing rights
 CREATE OR REPLACE VIEW tezos.future_endorsement_rights_view AS
-SELECT *
-FROM tezos.endorsing_rights
-WHERE block_level > (SELECT level FROM tezos.blocks ORDER BY level DESC LIMIT 1);
+SELECT delegate, block_level, min(er.block_hash) block_hash, array_agg(slot) slots, min(estimated_time) estimated_time, min(cycle) "cycle",
+       min(governance_period) governance_period, min(endorsed_block) , min(invalidated_asof) invalidated_asof, min(fork_id) fork_id
+FROM tezos.endorsing_rights er
+WHERE block_level > (SELECT level FROM tezos.blocks ORDER BY level DESC LIMIT 1)
+GROUP BY er.delegate, er.block_level;
 
 CREATE INDEX IF NOT EXISTS endorsing_rights_delegate_cycle_idx
     ON tezos.endorsing_rights USING btree (delegate,cycle);
@@ -61,5 +63,6 @@ UPDATE tezos.endorsing_rights SET cycle = tezos.cycle_by_level(block_level) WHER
 
 CREATE OR REPLACE VIEW tezos.baker_future_endorsement_view as
     select delegate, cycle, count(1) as count
-    from tezos.future_endorsement_rights_view
+    from tezos.endorsing_rights
+    WHERE block_level > (SELECT level FROM tezos.blocks ORDER BY level DESC LIMIT 1)
     group by delegate, cycle;

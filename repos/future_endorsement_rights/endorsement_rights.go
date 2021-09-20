@@ -3,6 +3,7 @@ package future_endorsement_rights
 import (
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
+	gormbulk "github.com/t-tiger/gorm-bulk-insert"
 )
 
 type (
@@ -15,6 +16,7 @@ type (
 		Last() (found bool, right models.FutureEndorsementRight, err error)
 		List(filter models.RightFilter, limit, offset uint) (rights []models.FutureEndorsementRight, err error)
 		Count(models.RightFilter) (count int64, err error)
+		CreateBulk(rights []models.EndorsementRight) error
 	}
 )
 
@@ -85,4 +87,15 @@ func (r *Repository) Count(filter models.RightFilter) (count int64, err error) {
 	}
 
 	return count, nil
+}
+
+func (r *Repository) CreateBulk(rights []models.EndorsementRight) error {
+	insertRecords := make([]interface{}, len(rights))
+	for i := range rights {
+		insertRecords[i] = rights[i]
+	}
+
+	db := r.db.Table("tezos.endorsing_rights")
+
+	return gormbulk.BulkInsert(db, insertRecords, 2000)
 }

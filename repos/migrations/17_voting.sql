@@ -25,17 +25,16 @@ SELECT sum(rolls) AS rolls, count(1) AS bakers, min(block_level) AS block_level,
 FROM tezos.voting_view
 GROUP BY proposal, period, kind, ballot;
 
-CREATE OR REPLACE VIEW tezos.double_voting_by_period AS
-SELECT  p.period, sum(p.rolls)/2 AS rolls, count(1)/2 AS bakers
-FROM tezos.voting_view AS p inner join tezos.voting_view AS w on (p.period=w.period and p.source=w.source and p.proposal<>w.proposal)
-GROUP BY p.period;
+CREATE OR REPLACE VIEW tezos.voting_participation AS
+select period, count(1) bakers, sum(rolls) rolls FROM
+(select  DISTINCT period, source, rolls  from tezos.voting_view) s GROUP BY period;
 
 CREATE OR REPLACE VIEW tezos.period_stat_view AS
-SELECT s.rolls - coalesce(v.rolls, 0) AS rolls, s.bakers - coalesce(v.bakers, 0) AS bakers, block_level, s.period, kind
-FROM (SELECT sum(rolls) AS rolls, sum(bakers) AS bakers, min(block_level) AS block_level, period, kind
+SELECT vp.rolls AS rolls, vp.bakers AS bakers, block_level, s.period, kind
+FROM (SELECT min(block_level) AS block_level, period, kind
       FROM tezos.proposal_stat_view
       GROUP BY period, kind) AS s
-       left join tezos.double_voting_by_period AS v on s.period = v.period;
+       left join tezos.voting_participation AS vp on s.period = vp.period;
 
 CREATE TABLE tezos.voting_period
 (

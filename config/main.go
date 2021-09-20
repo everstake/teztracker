@@ -17,6 +17,7 @@ type Config struct {
 	Production                            bool
 	CounterIntervalHours                  int
 	SnapshotCheckIntervalMinutes          int
+	FutureRightsIntervalMinutes           int
 	VotingRollsIntervalMinutes            int
 	DoubleBakingCheckIntervalMinutes      int
 	DoubleEndorsementCheckIntervalMinutes int

@@ -3,6 +3,7 @@ package future_baking_rights
 import (
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
+	gormbulk "github.com/t-tiger/gorm-bulk-insert"
 )
 
 type (
@@ -16,6 +17,8 @@ type (
 		ListDesc(filter models.RightFilter) (rights []models.FutureBakingRight, err error)
 		Last() (found bool, right models.FutureBakingRight, err error)
 		Find(filter models.RightFilter) (found bool, right models.FutureBakingRight, err error)
+		Create(right models.FutureBakingRight) error
+		CreateBulk(rights []models.FutureBakingRight) error
 		Count(models.RightFilter) (count int64, err error)
 	}
 )
@@ -109,4 +112,20 @@ func (r *Repository) Count(filter models.RightFilter) (count int64, err error) {
 	}
 
 	return count, nil
+}
+
+// Create creates a FutureBakingRight.
+func (r *Repository) Create(right models.FutureBakingRight) error {
+	return r.db.Table("tezos.baking_rights").Model(&right).Create(&right).Error
+}
+
+func (r *Repository) CreateBulk(rights []models.FutureBakingRight) error {
+	insertRecords := make([]interface{}, len(rights))
+	for i := range rights {
+		insertRecords[i] = rights[i]
+	}
+
+	db := r.db.Table("tezos.baking_rights")
+
+	return gormbulk.BulkInsert(db, insertRecords, 2000)
 }

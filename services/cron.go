@@ -8,17 +8,20 @@ import (
 
 	"github.com/everstake/teztracker/api/render"
 	"github.com/everstake/teztracker/services/assets"
-	"github.com/everstake/teztracker/services/cmc"
 	"github.com/everstake/teztracker/services/counter"
 	"github.com/everstake/teztracker/services/double_baking"
 	"github.com/everstake/teztracker/services/double_endorsement"
 	"github.com/everstake/teztracker/services/ipfs"
-	"github.com/everstake/teztracker/services/mailer"
 	"github.com/everstake/teztracker/services/nft"
 	"github.com/everstake/teztracker/services/public_baker"
 	"github.com/everstake/teztracker/services/rolls"
 	"github.com/everstake/teztracker/services/snapshots"
 	"github.com/everstake/teztracker/services/thirdparty_bakers"
+
+	"github.com/everstake/teztracker/services/future_rights"
+
+	"github.com/everstake/teztracker/services/cmc"
+	"github.com/everstake/teztracker/services/mailer"
 	"github.com/everstake/teztracker/ws"
 
 	"github.com/everstake/teztracker/config"
@@ -26,7 +29,6 @@ import (
 	"github.com/everstake/teztracker/repos"
 	"github.com/everstake/teztracker/services/rpc_client"
 	"github.com/everstake/teztracker/services/rpc_client/client"
-	wsmodels "github.com/everstake/teztracker/ws/models"
 	"github.com/jinzhu/gorm"
 	"github.com/roylee0704/gron"
 	log "github.com/sirupsen/logrus"
@@ -74,6 +76,62 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 		})
 	} else {
 		log.Infof("no sheduling snapshots parser due to missing FutureRightsIntervalMinutes in config")
+	}
+
+	if cfg.FutureRightsIntervalMinutes > 0 {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.FutureRightsIntervalMinutes) * time.Minute
+		log.Infof("Sheduling future rights parser saver every %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+				unitOfWork := repos.New(db)
+
+				rpc := rpc_client.New(rpcConfig, string(network), isTestNetwork)
+				count, err := future_rights.SaveNewBakingRights(context.TODO(), unitOfWork, rpc)
+				if err != nil {
+					log.Errorf("BakingRights saver failed: %s", err.Error())
+					return
+				}
+				log.Tracef("BakingRights saved %d rights", count)
+			} else {
+				log.Tracef("skipping BakingRights saver as the previous job is still running")
+			}
+		})
+	} else {
+		log.Infof("no sheduling future rights parser due to missing FutureRightsIntervalMinutes in config")
+	}
+
+	if cfg.FutureRightsIntervalMinutes > 0 {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.FutureRightsIntervalMinutes) * time.Minute
+
+		//TODO Remove
+		dur = 10 * time.Second
+		//
+		log.Infof("Sheduling future rights parser saver every %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+				unitOfWork := repos.New(db)
+
+				rpc := rpc_client.New(rpcConfig, string(network), isTestNetwork)
+				count, err := future_rights.SaveNewEndorsementRights(context.TODO(), unitOfWork, rpc)
+				if err != nil {
+					log.Errorf("BakingRights saver failed: %s", err.Error())
+					return
+				}
+				log.Tracef("EndorsementRights saved %d rights", count)
+			} else {
+				log.Tracef("skipping EndorsementRights saver as the previous job is still running")
+			}
+		})
+	} else {
+		log.Infof("no sheduling future rights parser due to missing FutureRightsIntervalMinutes in config")
 	}
 
 	if cfg.VotingRollsIntervalMinutes > 0 {
