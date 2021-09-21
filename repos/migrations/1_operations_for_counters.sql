@@ -27,3 +27,7 @@ CREATE TABLE tezos.operation_counters(
     cnt_created_at timestamp with time zone NULL DEFAULT NULL,
     CONSTRAINT operation_counters_last_op_foreign FOREIGN KEY (cnt_last_op_id) REFERENCES tezos.operations (operation_id)
 );
+
+CREATE OR REPLACE VIEW tezos.last_operation_counters AS
+SELECT * FROM tezos.operation_counters
+WHERE cnt_last_op_id = (SELECT max(cnt_last_op_id) FROM tezos.operation_counters);

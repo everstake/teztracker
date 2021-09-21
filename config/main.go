@@ -15,7 +15,7 @@ type Config struct {
 	Florencenet                           NetworkConfig
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
 	Production                            bool
-	CounterIntervalHours                  int
+	CounterIntervalSeconds                int
 	SnapshotCheckIntervalMinutes          int
 	FutureRightsIntervalMinutes           int
 	VotingRollsIntervalMinutes            int

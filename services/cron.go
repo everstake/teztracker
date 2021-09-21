@@ -37,8 +37,8 @@ import (
 
 func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail mailer.Mail, marketDataProvider *cmc.CoinGecko, rpcConfig client.TransportConfig, network models.Network, isTestNetwork bool) {
 
-	if cfg.CounterIntervalHours > 0 {
-		dur := time.Duration(cfg.CounterIntervalHours) * time.Hour
+	if cfg.CounterIntervalSeconds > 0 {
+		dur := time.Duration(cfg.CounterIntervalSeconds) * time.Second
 		log.Infof("Sheduling counter saver every %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			unitOfWork := repos.New(db)
@@ -110,9 +110,6 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 
 		dur := time.Duration(cfg.FutureRightsIntervalMinutes) * time.Minute
 
-		//TODO Remove
-		dur = 10 * time.Second
-		//
 		log.Infof("Sheduling future rights parser saver every %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
