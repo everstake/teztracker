@@ -46,7 +46,7 @@ $$
                NEW.kind,
                NEW.source,
                NEW.block_level,
-               coalesce(ballot, 'yay'),
+               coalesce(NEW.ballot, 'yay'),
                rollsN
                );
     RETURN NEW;
