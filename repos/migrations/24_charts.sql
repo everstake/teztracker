@@ -34,7 +34,7 @@ CREATE TABLE tezos.whale_accounts_periods
   PRIMARY KEY (day)
 );
 
-CREATE OR REPLACE FUNCTION insert_whale_stat(data integer) RETURNS integer AS
+CREATE OR REPLACE FUNCTION tezos.insert_whale_stat(data integer) RETURNS integer AS
 $$
 BEGIN
   INSERT INTO tezos.whale_accounts_periods

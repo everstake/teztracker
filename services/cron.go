@@ -11,14 +11,14 @@ import (
 	"github.com/everstake/teztracker/services/counter"
 	"github.com/everstake/teztracker/services/double_baking"
 	"github.com/everstake/teztracker/services/double_endorsement"
+	"github.com/everstake/teztracker/services/future_rights"
 	"github.com/everstake/teztracker/services/ipfs"
 	"github.com/everstake/teztracker/services/nft"
 	"github.com/everstake/teztracker/services/public_baker"
-	"github.com/everstake/teztracker/services/rolls"
 	"github.com/everstake/teztracker/services/snapshots"
 	"github.com/everstake/teztracker/services/thirdparty_bakers"
 
-	"github.com/everstake/teztracker/services/future_rights"
+	"github.com/everstake/teztracker/services/rolls"
 
 	"github.com/everstake/teztracker/services/cmc"
 	"github.com/everstake/teztracker/services/mailer"
