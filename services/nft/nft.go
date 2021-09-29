@@ -2,6 +2,7 @@ package nft
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"blockwatch.cc/tzindex/micheline"
@@ -36,8 +37,8 @@ func ProcessNFTMintOperations(ctx context.Context, unit UnitOfWork, ipfsClient I
 	for i := range list {
 
 		var nftTokens []models.NFTToken
-
-		operations, _, err := repo.ContractOperationsList(list[i].AccountId, []string{"transaction"}, []string{"mint"}, list[i].LastHeight, 0, 2, models.SortAsc)
+		//Limit 20 to avoid restarts by ipfs timeout
+		operations, _, err := repo.ContractOperationsList(list[i].AccountId, []string{"transaction"}, []string{"mint"}, list[i].LastHeight, 0, 20, models.SortAsc)
 		if err != nil {
 			return err
 		}
@@ -64,7 +65,7 @@ func ProcessNFTMintOperations(ctx context.Context, unit UnitOfWork, ipfsClient I
 					return err
 				}
 			default:
-
+				return fmt.Errorf("Unknown contract")
 			}
 			nftTokens = append(nftTokens, contractTokens...)
 

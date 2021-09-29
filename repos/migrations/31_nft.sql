@@ -33,7 +33,7 @@ CREATE TABLE tezos.nft_tokens
   contract_id integer,
   token_id integer,
   name varchar,
-  descriprion varchar,
+  description varchar,
   decimals integer,
   category varchar,
   amount integer,
@@ -48,21 +48,6 @@ CREATE TABLE tezos.nft_tokens
 alter table tezos.nft_tokens
 	add constraint nft_tokens_pk
 		primary key (contract_id, token_id);
-
-
-CREATE TABLE tezos.nft_operations
-(
-    block_level integer,
-    token_id  integer,
-    operation_id integer constraint nft_operations_pkey primary key,
-    operation_group_hash varchar,
-    sender varchar,
-    receiver varchar,
-    amount numeric,
-    type varchar,
-    data varchar,
-    timestamp timestamp
-);
 
 CREATE VIEW tezos.nft_tokens_ledger_view AS
 select big_map_id, SPLIT_PART(key, ' ', 2) address, SPLIT_PART(key, ' ', 3) token_id, value from big_map_contents where value  :: integer > 0;

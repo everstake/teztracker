@@ -316,7 +316,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				unitOfWork := repos.New(db)
 				ipfsClient, err := ipfs.NewIPFSClient(cfg.IPFSClient)
 				if err != nil {
-					log.Fatalf("Wrong IPFS client url: %s")
+					log.Fatalf("Wrong IPFS client url: %s", err)
 				}
 
 				err = nft.ProcessNFTMintOperations(context.TODO(), unitOfWork, ipfsClient)
@@ -328,7 +328,6 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				log.Tracef("skipping nft tokens parse as the previous job is still running")
 			}
 		})
-
 	}
 
 	if cfg.NFTTokensParseIntervalSeconds > 0 {
