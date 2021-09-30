@@ -26,15 +26,3 @@ func WhaleAccounts(data whales.Data) *genModels.WhaleAccounts {
 		Transfers: transfers,
 	}
 }
-
-func WhaleTransfers(data whales.Data) []*genModels.LargeTransfer {
-	transfers := make([]*genModels.LargeTransfer, len(data.LargeTransfers))
-	for i := range data.LargeTransfers {
-		transfers[i] = &genModels.LargeTransfer{
-			Amount: data.LargeTransfers[i].Amount,
-			From:   data.LargeTransfers[i].Source,
-			To:     data.LargeTransfers[i].Destination,
-		}
-	}
-	return transfers
-}

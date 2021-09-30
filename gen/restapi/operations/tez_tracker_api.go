@@ -245,8 +245,8 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetWhaleAccountsHandler: accounts.GetWhaleAccountsHandlerFunc(func(params accounts.GetWhaleAccountsParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetWhaleAccounts has not yet been implemented")
 		}),
-		AccountsGetWhaleTranfersHandler: accounts.GetWhaleTranfersHandlerFunc(func(params accounts.GetWhaleTranfersParams) middleware.Responder {
-			return middleware.NotImplemented("operation AccountsGetWhaleTranfers has not yet been implemented")
+		OperationsListGetWhaleTranfersHandler: operations_list.GetWhaleTranfersHandlerFunc(func(params operations_list.GetWhaleTranfersParams) middleware.Responder {
+			return middleware.NotImplemented("operation OperationsListGetWhaleTranfers has not yet been implemented")
 		}),
 		ProfileUpdateProfileHandler: profile.UpdateProfileHandlerFunc(func(params profile.UpdateProfileParams) middleware.Responder {
 			return middleware.NotImplemented("operation ProfileUpdateProfile has not yet been implemented")
@@ -412,8 +412,8 @@ type TezTrackerAPI struct {
 	ProfileGetUserProfileHandler profile.GetUserProfileHandler
 	// AccountsGetWhaleAccountsHandler sets the operation handler for the get whale accounts operation
 	AccountsGetWhaleAccountsHandler accounts.GetWhaleAccountsHandler
-	// AccountsGetWhaleTranfersHandler sets the operation handler for the get whale tranfers operation
-	AccountsGetWhaleTranfersHandler accounts.GetWhaleTranfersHandler
+	// OperationsListGetWhaleTranfersHandler sets the operation handler for the get whale tranfers operation
+	OperationsListGetWhaleTranfersHandler operations_list.GetWhaleTranfersHandler
 	// ProfileUpdateProfileHandler sets the operation handler for the update profile operation
 	ProfileUpdateProfileHandler profile.UpdateProfileHandler
 
@@ -739,8 +739,8 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "accounts.GetWhaleAccountsHandler")
 	}
 
-	if o.AccountsGetWhaleTranfersHandler == nil {
-		unregistered = append(unregistered, "accounts.GetWhaleTranfersHandler")
+	if o.OperationsListGetWhaleTranfersHandler == nil {
+		unregistered = append(unregistered, "operations_list.GetWhaleTranfersHandler")
 	}
 
 	if o.ProfileUpdateProfileHandler == nil {
@@ -1171,7 +1171,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/data/{platform}/{network}/whale/transfers"] = accounts.NewGetWhaleTranfers(o.context, o.AccountsGetWhaleTranfersHandler)
+	o.handlers["GET"]["/v2/data/{platform}/{network}/whale/transfers"] = operations_list.NewGetWhaleTranfers(o.context, o.OperationsListGetWhaleTranfersHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

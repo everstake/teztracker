@@ -2,16 +2,15 @@ package whales
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos"
 	"github.com/jinzhu/gorm"
-	"sync"
-	"time"
 )
 
 const (
-	numberWhaleAccounts       = 500
-	minAmountForLargeTransfer = 3e11
+	numberWhaleAccounts = 500
 )
 
 var Service *Whales
@@ -26,9 +25,8 @@ type (
 		data Data
 	}
 	Data struct {
-		Accounts       []models.Account
-		Transfers      []models.Operation
-		LargeTransfers []models.Operation
+		Accounts  []models.Account
+		Transfers []models.Operation
 	}
 )
 
@@ -54,10 +52,7 @@ func (w *Whales) Update() error {
 	if err != nil {
 		return fmt.Errorf("updateWhaleAccounts: %s", err.Error())
 	}
-	err = w.updateLargeTransfers()
-	if err != nil {
-		return fmt.Errorf("updateLargeTransfers: %s", err.Error())
-	}
+
 	return nil
 }
 
@@ -93,24 +88,6 @@ func (w *Whales) updateWhaleAccounts() error {
 		n := w.networks[net]
 		n.data.Transfers = transfers
 		n.data.Accounts = richAccounts
-		w.networks[net] = n
-		w.mu.Unlock()
-	}
-	return nil
-}
-
-func (w *Whales) updateLargeTransfers() error {
-	for net, item := range w.networks {
-		reposProvider := repos.New(item.db)
-		operationsRepo := reposProvider.GetOperation()
-		since := time.Now().Add(-time.Hour * 24 * 30)
-		transfers, err := operationsRepo.LargeTransfers(minAmountForLargeTransfer, 0, since)
-		if err != nil {
-			return fmt.Errorf("operationsRepo.LargeTransfers: %s", err.Error())
-		}
-		w.mu.Lock()
-		n := w.networks[net]
-		n.data.LargeTransfers = transfers
 		w.networks[net] = n
 		w.mu.Unlock()
 	}

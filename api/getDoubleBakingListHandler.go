@@ -32,7 +32,6 @@ func (h *getDoubleBakingsListHandler) Handle(params ops.GetDoubleBakingsListPara
 	if err != nil {
 		logrus.Errorf("failed to get operations: %s", err.Error())
 		return ops.NewGetDoubleBakingsListNotFound()
-
 	}
 
 	return ops.NewGetDoubleBakingsListOK().WithPayload(render.DoubleOperations(operations)).WithXTotalCount(count)

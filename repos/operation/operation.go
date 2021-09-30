@@ -2,10 +2,11 @@ package operation
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/go-openapi/validate"
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
 //go:generate mockgen -source ./operation.go -destination ./mock_operation/main.go Repo
@@ -25,7 +26,7 @@ type (
 		UpdateLevel(operation models.Operation) error
 		AccountOperationCount(string) ([]models.OperationCount, error)
 		AccountEndorsements(accountID string, cycle int64, limit uint, offset uint) (count int64, operations []models.Operation, err error)
-		LargeTransfers(minAmount int64, limit int64, sinceDate time.Time) (operations []models.Operation, err error)
+		LargeTransfers(minAmount, cycle int64, limit, offset uint, sinceDate time.Time) (operations []models.Operation, err error)
 	}
 )
 
@@ -251,17 +252,19 @@ func (r *Repository) AccountEndorsements(accountID string, cycle int64, limit ui
 	return count, operations, nil
 }
 
-func (r *Repository) LargeTransfers(minAmount int64, limit int64, sinceDate time.Time) (operations []models.Operation, err error) {
-	db := r.db.Model(&models.Operation{}).Where("kind = ?", transactionKind)
+func (r *Repository) LargeTransfers(minAmount, cycle int64, limit, offset uint, sinceDate time.Time) (operations []models.Operation, err error) {
+	db := r.db.Model(&models.Operation{}).Where("kind = ? and status = ?", transactionKind, "applied")
 	if minAmount > 0 {
 		db = db.Where("amount > ?", minAmount)
 	}
-	if limit > 0 {
-		db = db.Limit(limit)
+
+	if cycle > 0 {
+		db = db.Where("cycle = ?", cycle)
 	}
 	if !sinceDate.IsZero() {
 		db = db.Where("timestamp > ?", sinceDate)
 	}
-	err = db.Find(&operations).Error
+
+	err = db.Limit(limit).Offset(offset).Order("amount desc").Find(&operations).Error
 	return operations, err
 }

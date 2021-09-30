@@ -23,6 +23,10 @@ CREATE INDEX ix_operations_delegations_operation_id
     (operation_id)
       WHERE kind='delegation';
 
+CREATE INDEX operations_kind_status_amount_index
+	ON tezos.operations (kind ASC, status ASC, amount DESC)
+    WHERE kind='transaction' AND status = 'applied';
+
 CREATE INDEX ix_accounts_balance
     ON tezos.accounts USING btree
     (balance);
