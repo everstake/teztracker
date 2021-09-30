@@ -23,7 +23,7 @@ func (t *TezTracker) GetNFTContractOperations(contractID string, limits Limiter)
 		return operations, 0, err
 	}
 
-	return operations, 0, err
+	return operations, count, err
 }
 
 func (t *TezTracker) GetNFTContractOperationsChart(contractID, period string, from, to int64) (chart []models.ChartData, err error) {
