@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"blockwatch.cc/tzindex/micheline"
+	"blockwatch.cc/tzgo/micheline"
 	"github.com/anchorageoss/tezosprotocol/v2"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/nft"

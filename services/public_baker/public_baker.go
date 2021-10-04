@@ -1,8 +1,9 @@
 package public_baker
 
 import (
-	script "blockwatch.cc/tzindex/micheline"
 	"context"
+
+	script "blockwatch.cc/tzgo/micheline"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/baker"
 	"github.com/everstake/teztracker/repos/operation"
@@ -114,7 +115,7 @@ func GetPublicBakerInfo(ctx context.Context, rpc BakesProvider, container michel
 	//Find required operation
 	var index int
 	for i := range op.Contents {
-		if op.Contents[i].Kind != operationKindTransaction || op.Contents[i].Parameters.Value == nil {
+		if op.Contents[i].Kind != operationKindTransaction {
 			continue
 		}
 		index = i
@@ -129,9 +130,9 @@ func GetPublicBakerInfo(ctx context.Context, rpc BakesProvider, container michel
 		}
 
 		//For txs where missed highest level of tree
-		v = &script.Prim{
+		v = script.Prim{
 			OpCode: script.D_LEFT,
-			Args:   []*script.Prim{op.Contents[index].Parameters.Value},
+			Args:   []script.Prim{op.Contents[index].Parameters.Value},
 		}
 	}
 

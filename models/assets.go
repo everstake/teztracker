@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"blockwatch.cc/tzindex/chain"
-	script "blockwatch.cc/tzindex/micheline"
+	script "blockwatch.cc/tzgo/micheline"
+	chain "blockwatch.cc/tzgo/tezos"
 )
 
 type AssetInfo struct {

@@ -62,7 +62,7 @@ func SaveNewBakingRights(ctx context.Context, unit UnitOfWork, provider RightsPr
 	}
 
 	for nextBlockToScan <= lastKnownRightsBlock {
-		endRange := nextBlockToScan + (BlocksRangeSize * 2) - 1
+		endRange := nextBlockToScan + BlocksRangeSize - 1
 		if endRange > lastKnownRightsBlock {
 			endRange = lastKnownRightsBlock
 		}
@@ -125,7 +125,7 @@ func SaveNewEndorsementRights(ctx context.Context, unit UnitOfWork, provider Rig
 		nextBlockToScan = lastRight.BlockLevel + 1
 	}
 	for nextBlockToScan <= lastKnownRightsBlock {
-		endRange := nextBlockToScan + (BlocksRangeSize * 2) - 1
+		endRange := nextBlockToScan + BlocksRangeSize - 1
 		if endRange > lastKnownRightsBlock {
 			endRange = lastKnownRightsBlock
 		}

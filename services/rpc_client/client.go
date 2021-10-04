@@ -13,7 +13,7 @@ import (
 	"github.com/everstake/teztracker/services/rpc_client/client/operations"
 	"github.com/everstake/teztracker/services/rpc_client/client/voting"
 
-	script "blockwatch.cc/tzindex/micheline"
+	script "blockwatch.cc/tzgo/micheline"
 	tzblock "github.com/bullblock-io/go-tezos/v2/block"
 	tzc "github.com/bullblock-io/go-tezos/v2/client"
 	"github.com/everstake/teztracker/models"
@@ -71,6 +71,7 @@ func New(cfg client.TransportConfig, network string, isTestNetwork bool) *Tezos 
 		isTestNetwork: isTestNetwork,
 	}
 }
+
 func (t *Tezos) RightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.FutureBakingRight, error) {
 	//TODO check baking rights without all
 	//all := true
@@ -321,8 +322,8 @@ func (t *Tezos) DoubleOperationEvidence(ctx context.Context, blockLevel int, ope
 //Todo move models somewhere
 //Block parse
 type Parameters struct {
-	Entrypoint string       `json:"entrypoint"`
-	Value      *script.Prim `json:"value"`
+	Entrypoint string      `json:"entrypoint"`
+	Value      script.Prim `json:"value"`
 }
 
 type Contents struct {

@@ -53,6 +53,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 	} else {
 		log.Infof("no sheduling counter due to missing CounterIntervalHours in config")
 	}
+
 	if cfg.SnapshotCheckIntervalMinutes > 0 {
 		var jobIsRunning uint32
 
@@ -83,7 +84,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 		var jobIsRunning uint32
 
 		dur := time.Duration(cfg.FutureRightsIntervalMinutes) * time.Minute
-		log.Infof("Sheduling future rights parser saver every %s", dur)
+		log.Infof("Sheduling future baking rights parser saver every %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
 			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
@@ -102,7 +103,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 			}
 		})
 	} else {
-		log.Infof("no sheduling future rights parser due to missing FutureRightsIntervalMinutes in config")
+		log.Infof("no sheduling future baking rights parser due to missing FutureRightsIntervalMinutes in config")
 	}
 
 	if cfg.FutureRightsIntervalMinutes > 0 {
@@ -110,7 +111,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 
 		dur := time.Duration(cfg.FutureRightsIntervalMinutes) * time.Minute
 
-		log.Infof("Sheduling future rights parser saver every %s", dur)
+		log.Infof("Sheduling future endorsement rights parser saver every %s", dur)
 		cron.AddFunc(gron.Every(dur), func() {
 			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
 			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
@@ -120,7 +121,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				rpc := rpc_client.New(rpcConfig, string(network), isTestNetwork)
 				count, err := future_rights.SaveNewEndorsementRights(context.TODO(), unitOfWork, rpc)
 				if err != nil {
-					log.Errorf("BakingRights saver failed: %s", err.Error())
+					log.Errorf("EndorsementRights saver failed: %s", err.Error())
 					return
 				}
 				log.Tracef("EndorsementRights saved %d rights", count)
@@ -129,7 +130,7 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 			}
 		})
 	} else {
-		log.Infof("no sheduling future rights parser due to missing FutureRightsIntervalMinutes in config")
+		log.Infof("no sheduling future endorsement rights parser due to missing FutureRightsIntervalMinutes in config")
 	}
 
 	if cfg.VotingRollsIntervalMinutes > 0 {
