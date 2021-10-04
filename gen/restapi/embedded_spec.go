@@ -4477,6 +4477,90 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/whale/movers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getWhaleMovers",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "C",
+              "D",
+              "W",
+              "M"
+            ],
+            "type": "string",
+            "default": "D",
+            "name": "period",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "sender",
+              "receiver"
+            ],
+            "type": "string",
+            "default": "sender",
+            "name": "side",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of biggest senders/receivers",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WhaleAccount"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/whale/transfers": {
       "get": {
         "produces": [
@@ -6127,6 +6211,17 @@ func init() {
         },
         "votesCast": {
           "type": "integer"
+        }
+      }
+    },
+    "WhaleAccount": {
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -10660,6 +10755,91 @@ func init() {
         }
       }
     },
+    "/v2/data/{platform}/{network}/whale/movers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getWhaleMovers",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "description": "Offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "C",
+              "D",
+              "W",
+              "M"
+            ],
+            "type": "string",
+            "default": "D",
+            "name": "period",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "sender",
+              "receiver"
+            ],
+            "type": "string",
+            "default": "sender",
+            "name": "side",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of biggest senders/receivers",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WhaleAccount"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{platform}/{network}/whale/transfers": {
       "get": {
         "produces": [
@@ -12312,6 +12492,17 @@ func init() {
         },
         "votesCast": {
           "type": "integer"
+        }
+      }
+    },
+    "WhaleAccount": {
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

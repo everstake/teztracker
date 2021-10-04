@@ -245,6 +245,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		AccountsGetWhaleAccountsHandler: accounts.GetWhaleAccountsHandlerFunc(func(params accounts.GetWhaleAccountsParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetWhaleAccounts has not yet been implemented")
 		}),
+		AccountsGetWhaleMoversHandler: accounts.GetWhaleMoversHandlerFunc(func(params accounts.GetWhaleMoversParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetWhaleMovers has not yet been implemented")
+		}),
 		OperationsListGetWhaleTranfersHandler: operations_list.GetWhaleTranfersHandlerFunc(func(params operations_list.GetWhaleTranfersParams) middleware.Responder {
 			return middleware.NotImplemented("operation OperationsListGetWhaleTranfers has not yet been implemented")
 		}),
@@ -412,6 +415,8 @@ type TezTrackerAPI struct {
 	ProfileGetUserProfileHandler profile.GetUserProfileHandler
 	// AccountsGetWhaleAccountsHandler sets the operation handler for the get whale accounts operation
 	AccountsGetWhaleAccountsHandler accounts.GetWhaleAccountsHandler
+	// AccountsGetWhaleMoversHandler sets the operation handler for the get whale movers operation
+	AccountsGetWhaleMoversHandler accounts.GetWhaleMoversHandler
 	// OperationsListGetWhaleTranfersHandler sets the operation handler for the get whale tranfers operation
 	OperationsListGetWhaleTranfersHandler operations_list.GetWhaleTranfersHandler
 	// ProfileUpdateProfileHandler sets the operation handler for the update profile operation
@@ -737,6 +742,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetWhaleAccountsHandler == nil {
 		unregistered = append(unregistered, "accounts.GetWhaleAccountsHandler")
+	}
+
+	if o.AccountsGetWhaleMoversHandler == nil {
+		unregistered = append(unregistered, "accounts.GetWhaleMoversHandler")
 	}
 
 	if o.OperationsListGetWhaleTranfersHandler == nil {
@@ -1167,6 +1176,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/whale/accounts"] = accounts.NewGetWhaleAccounts(o.context, o.AccountsGetWhaleAccountsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/whale/movers"] = accounts.NewGetWhaleMovers(o.context, o.AccountsGetWhaleMoversHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

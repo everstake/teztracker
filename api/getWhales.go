@@ -48,3 +48,32 @@ func (h *getWhaleTransfersHandler) Handle(params operations_list.GetWhaleTranfer
 
 	return operations_list.NewGetWhaleTranfersOK().WithPayload(render.Operations(ops))
 }
+
+type getWhaleSourcesHandler struct {
+	provider DbProvider
+}
+
+func (h *getWhaleSourcesHandler) Handle(params accounts.GetWhaleMoversParams) middleware.Responder {
+
+	net, err := ToNetwork(params.Network)
+	if err != nil {
+		return accounts.NewGetWhaleMoversBadRequest()
+	}
+
+	db, err := h.provider.GetDb(net)
+	if err != nil {
+		return accounts.NewGetWhaleMoversBadRequest()
+	}
+
+	service := services.New(repos.New(db), net)
+
+	limiter := NewLimiter(params.Limit, params.Offset)
+
+	acs, err := service.LargestSources(limiter, *params.Period, *params.Side)
+	if err != nil {
+		logrus.Errorf("failed to get whale sources: %s", err.Error())
+		return accounts.NewGetWhaleMoversInternalServerError()
+	}
+
+	return accounts.NewGetWhaleMoversOK().WithPayload(render.WhaleAccountList(acs))
+}
