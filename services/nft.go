@@ -36,7 +36,7 @@ func (t *TezTracker) GetNFTContractOperationsChart(contractID, period string, fr
 		return nil, ErrNotFound
 	}
 
-	chart, err = t.repoProvider.GetChart().OperationsNumber(from, to, period, nftContracts[0].AccountId, []string{"transaction"}, []string{"buy", "list_token", "delist_token", "register_auction", "end_auction", "swap"})
+	chart, err = t.repoProvider.GetChart().OperationsNumber(from, to, period, nftContracts[0].AccountId, []string{"transaction"}, []string{"buy", "list_token", "delist_token", "register_auction", "end_auction", "swap", "mint", "transfer"})
 	if err != nil {
 		return nil, err
 	}
