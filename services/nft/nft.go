@@ -153,7 +153,11 @@ func ProcessNFTOperations(ctx context.Context, unit UnitOfWork) (err error) {
 
 			case "end_auction":
 				isForSale = false
-				tokenID = p.Args[0].Int.Uint64()
+				if len(p.Args) == 2 {
+					tokenID = p.Args[1].Int.Uint64()
+				} else {
+					tokenID = p.Args[0].Int.Uint64()
+				}
 
 				lastPrice = new(int64)
 				*lastPrice = operations[j].Amount
