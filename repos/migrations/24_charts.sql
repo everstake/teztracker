@@ -20,7 +20,7 @@ select
        CASE WHEN priority >= 3 THEN 1 ELSE 0 END as third_priority
 from tezos.blocks;
 
-CREATE VIEW block_priority_cycle_chart_view as
+CREATE VIEW tezos.block_priority_cycle_chart_view as
 SELECT meta_cycle as cycle, count(1) blocks, sum(zero_priority) zero_priority, sum(first_priority) first_priority, sum(second_priority) second_priority, sum(third_priority) third_priority
  FROM "tezos"."block_priority_counter_view"
  WHERE meta_cycle IS NOT NULL
@@ -34,7 +34,7 @@ CREATE TABLE tezos.whale_accounts_periods
   PRIMARY KEY (day)
 );
 
-CREATE OR REPLACE FUNCTION insert_whale_stat(data integer) RETURNS integer AS
+CREATE OR REPLACE FUNCTION tezos.insert_whale_stat(data integer) RETURNS integer AS
 $$
 BEGIN
   INSERT INTO tezos.whale_accounts_periods

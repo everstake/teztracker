@@ -13,7 +13,9 @@ import (
 	"github.com/everstake/teztracker/repos/endorsing"
 	"github.com/everstake/teztracker/repos/future_baking_rights"
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
+	"github.com/everstake/teztracker/repos/nft"
 	"github.com/everstake/teztracker/repos/operation"
+	"github.com/everstake/teztracker/repos/operation_counter"
 	"github.com/everstake/teztracker/repos/operation_groups"
 	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/snapshots"
@@ -36,6 +38,7 @@ type (
 		GetBlock() block.Repo
 		GetOperationGroup() operation_groups.Repo
 		GetOperation() operation.Repo
+		GetOperationCounter() operation_counter.Repo
 		GetAccount() account.Repo
 		GetBaker() baker.Repo
 		GetBaking() baking.Repo
@@ -51,6 +54,7 @@ type (
 		GetAssets() assets.Repo
 		GetThirdPartyBakers() thirdparty_bakers.Repo
 		GetUserProfile() user_profile.Repo
+		GetNFT() nft.Repo
 	}
 
 	Limiter interface {

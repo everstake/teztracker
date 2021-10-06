@@ -16,9 +16,9 @@ const (
 	DelegatorDelegationMsg = "delegator_delegation"
 )
 const (
-	InTransferMsg    = "in_transfer"
-	OutTransferMsg   = "out_transfer"
-	VerificationMsg  = "verification"
+	InTransferMsg   = "in_transfer"
+	OutTransferMsg  = "out_transfer"
+	VerificationMsg = "verification"
 )
 
 var templatesPath = map[string]string{

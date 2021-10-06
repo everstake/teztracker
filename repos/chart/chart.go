@@ -15,7 +15,7 @@ type (
 	Repo interface {
 		BlocksNumber(from, to int64, period string) ([]models.ChartData, error)
 		TransactionsVolume(from, to int64, period string) (data []models.ChartData, err error)
-		OperationsNumber(from, to int64, period string) (data []models.ChartData, err error)
+		OperationsNumber(from, to int64, period, destination string, operationKinds, entrypoints []string) (data []models.ChartData, err error)
 		FeesVolume(from, to int64, period string) (data []models.ChartData, err error)
 		ActivationsNumber(from, to int64, period string) (data []models.ChartData, err error)
 		AvgBlockDelay(from, to int64, period string) (data []models.ChartData, err error)
@@ -71,13 +71,26 @@ func (r *Repository) TransactionsVolume(from, to int64, period string) (data []m
 	return data, nil
 }
 
-func (r *Repository) OperationsNumber(from, to int64, period string) (data []models.ChartData, err error) {
+func (r *Repository) OperationsNumber(from, to int64, period, destination string, operationKinds, entrypoints []string) (data []models.ChartData, err error) {
 	db := r.getDB(from, to, period)
 
-	err = db.Select(fmt.Sprintf("date_trunc('%s', timestamp) as timestamp, count(1) operations", period)).
+	db = db.Select(fmt.Sprintf("date_trunc('%s', timestamp) as timestamp, count(1) operations", period)).
 		Table("tezos.operations").
-		Where("status = 'applied'").
-		Find(&data).Error
+		Where("status = 'applied'")
+
+	if destination != "" {
+		db = db.Where("destination = ?", destination)
+	}
+
+	if len(operationKinds) > 0 {
+		db = db.Where("kind IN (?)", operationKinds)
+	}
+
+	if len(entrypoints) > 0 {
+		db = db.Where("parameters_entrypoints IN (?)", entrypoints)
+	}
+
+	err = db.Find(&data).Error
 	if err != nil {
 		return nil, err
 	}

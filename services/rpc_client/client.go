@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/everstake/teztracker/services/michelson"
-	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
-	"github.com/everstake/teztracker/services/rpc_client/client/operations"
-	"github.com/everstake/teztracker/services/rpc_client/client/voting"
 	"strconv"
 	"strings"
 	"time"
 
-	script "blockwatch.cc/tzindex/micheline"
+	"github.com/everstake/teztracker/services/michelson"
+	"github.com/everstake/teztracker/services/rpc_client/client/contracts"
+	"github.com/everstake/teztracker/services/rpc_client/client/operations"
+	"github.com/everstake/teztracker/services/rpc_client/client/voting"
+
+	script "blockwatch.cc/tzgo/micheline"
 	tzblock "github.com/bullblock-io/go-tezos/v2/block"
 	tzc "github.com/bullblock-io/go-tezos/v2/client"
 	"github.com/everstake/teztracker/models"
@@ -24,8 +25,14 @@ import (
 )
 
 const headBlock = "head"
-const BlocksInCycle = 4096 * 2
-const BlocksPerRollSnapshot = 256 * 2
+const (
+	GranadaBlocksInCycle  int64 = 4096 * 2
+	GranadaCycle                = 388
+	BlocksPerRollSnapshot       = 256 * 2
+	EndorsementNum              = 256
+
+	defaultForkID = "leader"
+)
 
 type Tezos struct {
 	client        *client.Tezosrpc
@@ -34,11 +41,18 @@ type Tezos struct {
 	tzcClient     *tzblock.BlockService
 }
 
-func (t *Tezos) BlocksInCycle() int64 {
-	if t.isTestNetwork {
-		return BlocksInCycle / 2
+func (t *Tezos) BlocksInCycle(cycle int64) int64 {
+	blocksInCycle := GranadaBlocksInCycle
+
+	if cycle < GranadaCycle {
+		blocksInCycle = blocksInCycle / 2
 	}
-	return BlocksInCycle
+
+	if t.isTestNetwork {
+		blocksInCycle = blocksInCycle / 2
+	}
+
+	return blocksInCycle
 }
 
 func New(cfg client.TransportConfig, network string, isTestNetwork bool) *Tezos {
@@ -57,8 +71,10 @@ func New(cfg client.TransportConfig, network string, isTestNetwork bool) *Tezos 
 		isTestNetwork: isTestNetwork,
 	}
 }
+
 func (t *Tezos) RightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.FutureBakingRight, error) {
-	all := true
+	//TODO check baking rights without all
+	//all := true
 	blockToUse := headBlock
 	if currentHead >= blockFrom {
 		blockToUse = strconv.FormatInt(blockFrom, 10)
@@ -66,8 +82,8 @@ func (t *Tezos) RightsFor(ctx context.Context, blockFrom, blockTo, currentHead i
 
 	params := baking_rights.NewGetBakingRightsParamsWithContext(ctx).
 		WithNetwork(t.network).
-		WithBlock(blockToUse).
-		WithAll(&all)
+		WithBlock(blockToUse)
+		//WithAll(&all)
 
 	levels := []string{}
 	for b := blockFrom; b <= blockTo; b++ {
@@ -89,14 +105,15 @@ func (t *Tezos) RightsFor(ctx context.Context, blockFrom, blockTo, currentHead i
 
 func genRightToModel(m genmodels.BakingRight) models.FutureBakingRight {
 	return models.FutureBakingRight{
-		Level:         m.Level,
+		BlockLevel:    m.Level,
 		Priority:      int(m.Priority),
 		Delegate:      m.Delegate,
+		ForkId:        defaultForkID,
 		EstimatedTime: time.Time(m.EstimatedTime),
 	}
 }
 
-func (t *Tezos) EndorsementRightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.FutureEndorsementRight, error) {
+func (t *Tezos) EndorsementRightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.EndorsementRight, error) {
 	blockToUse := headBlock
 	if currentHead >= blockFrom {
 		blockToUse = strconv.FormatInt(blockFrom, 10)
@@ -115,22 +132,31 @@ func (t *Tezos) EndorsementRightsFor(ctx context.Context, blockFrom, blockTo, cu
 	if err != nil {
 		return nil, err
 	}
-	rights := make([]models.FutureEndorsementRight, len(resp.Payload))
+	rights := make([]models.EndorsementRight, 0, len(resp.Payload)*EndorsementNum)
+
 	for i := range resp.Payload {
 		if resp.Payload[i] != nil {
-			rights[i] = genEndorsementRightToModel(*resp.Payload[i])
+			rights = append(rights, genEndorsementRightToModels(*resp.Payload[i])...)
 		}
 	}
+
 	return rights, nil
 }
 
-func genEndorsementRightToModel(m genmodels.EndorsementRight) models.FutureEndorsementRight {
-	return models.FutureEndorsementRight{
-		Level:         m.Level,
-		Slots:         m.Slots,
-		Delegate:      m.Delegate,
-		EstimatedTime: time.Time(m.EstimatedTime),
+func genEndorsementRightToModels(m genmodels.EndorsementRight) (rights []models.EndorsementRight) {
+	rights = make([]models.EndorsementRight, len(m.Slots))
+
+	for i := range m.Slots {
+		rights[i] = models.EndorsementRight{
+			BlockLevel:    m.Level,
+			Slot:          m.Slots[i],
+			Delegate:      m.Delegate,
+			EstimatedTime: time.Time(m.EstimatedTime),
+			ForkId:        defaultForkID,
+		}
 	}
+
+	return rights
 }
 
 func genVotingRollsToModel(r genmodels.VotingRolls) models.Roll {
@@ -143,10 +169,19 @@ func genVotingRollsToModel(r genmodels.VotingRolls) models.Roll {
 	}
 }
 
+//Blocks count till cycle end
+func (t *Tezos) CyclesBlocksCount(cycle int64) int64 {
+	if cycle < GranadaCycle {
+		return cycle * t.BlocksInCycle(cycle)
+	}
+
+	return (GranadaCycle)*t.BlocksInCycle(GranadaCycle-1) + (cycle-GranadaCycle)*t.BlocksInCycle(cycle)
+}
+
 func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool) (snap models.Snapshot, err error) {
 	blockToUse := headBlock
 	if !useHead {
-		level := cycle*t.BlocksInCycle() + 1
+		level := cycle*t.BlocksInCycle(cycle) + 1
 		blockToUse = strconv.FormatInt(level, 10)
 	}
 
@@ -160,7 +195,10 @@ func (t *Tezos) SnapshotForCycle(ctx context.Context, cycle int64, useHead bool)
 	}
 	snapshot := resp.Payload
 	snap.Cycle = cycle
-	snap.BlockLevel = ((cycle-7)*t.BlocksInCycle() + 1) + (snapshot+1)*BlocksPerRollSnapshot - 1
+
+	//TODO check BlocksPerRollSnapshot
+	snap.BlockLevel = (t.CyclesBlocksCount(cycle-7) + 1) + (snapshot+1)*BlocksPerRollSnapshot - 1
+
 	rollParams := snapshots.NewGetRollsParamsWithContext(ctx).
 		WithCycle(cycle).
 		WithNetwork(t.network).
@@ -284,8 +322,8 @@ func (t *Tezos) DoubleOperationEvidence(ctx context.Context, blockLevel int, ope
 //Todo move models somewhere
 //Block parse
 type Parameters struct {
-	Entrypoint string       `json:"entrypoint"`
-	Value      *script.Prim `json:"value"`
+	Entrypoint string      `json:"entrypoint"`
+	Value      script.Prim `json:"value"`
 }
 
 type Contents struct {

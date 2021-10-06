@@ -716,6 +716,522 @@ func init() {
         }
       }
     },
+    "/v2/data/{network}/nft_contracts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contracts list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NFTContractRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContract",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/distribution": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractDistribution",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractDistribution"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/operations": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOperations",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/operations/chart": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOperationsChart",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": [
+              "D"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract operations chart",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ChartsData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/ownership": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOwnership",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractOwnership"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractTokensList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT tokens",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NFTTokenRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractToken",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT token",
+            "schema": {
+              "$ref": "#/definitions/NFTTokenRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}/holders": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractTokenHolders",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT token holders",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenHolderRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
     "/v2/data/{network}/non_voters/{id}": {
       "get": {
         "produces": [
@@ -5764,6 +6280,125 @@ func init() {
         }
       }
     },
+    "NFTContractDistribution": {
+      "required": [
+        "total_token_num",
+        "unique_holders_num",
+        "distribution"
+      ],
+      "properties": {
+        "distribution": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TokenHolderRow"
+          }
+        },
+        "total_token_num": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unique_holders_num": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTContractOwnership": {
+      "required": [
+        "unique_holders_num",
+        "whales_count",
+        "single_owners",
+        "multi_owners"
+      ],
+      "properties": {
+        "multi_owners": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "single_owners": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unique_holders_num": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "whales_count": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTContractRow": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "nfts_number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "operations_number": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTTokenRow": {
+      "required": [
+        "decimals"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "category": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "decimals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ipfs_source": {
+          "type": "string"
+        },
+        "is_for_sale": {
+          "type": "boolean"
+        },
+        "issued_by": {
+          "type": "string"
+        },
+        "last_active_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_price": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "NonVoter": {
       "properties": {
         "name": {
@@ -5903,6 +6538,9 @@ func init() {
         "endorsementReward": {
           "type": "integer",
           "format": "int64"
+        },
+        "entrypoint": {
+          "type": "string"
         },
         "fee": {
           "type": "integer",
@@ -7100,6 +7738,527 @@ func init() {
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contracts list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NFTContractRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContract",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/distribution": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractDistribution",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractDistribution"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/operations": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOperations",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/operations/chart": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOperationsChart",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": [
+              "D"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract operations chart",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ChartsData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/ownership": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOwnership",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractOwnership"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractTokensList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT tokens",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NFTTokenRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractToken",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT token",
+            "schema": {
+              "$ref": "#/definitions/NFTTokenRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}/holders": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractTokenHolders",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT token holders",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenHolderRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
           }
         }
       }
@@ -12181,6 +13340,125 @@ func init() {
         }
       }
     },
+    "NFTContractDistribution": {
+      "required": [
+        "total_token_num",
+        "unique_holders_num",
+        "distribution"
+      ],
+      "properties": {
+        "distribution": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TokenHolderRow"
+          }
+        },
+        "total_token_num": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unique_holders_num": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTContractOwnership": {
+      "required": [
+        "unique_holders_num",
+        "whales_count",
+        "single_owners",
+        "multi_owners"
+      ],
+      "properties": {
+        "multi_owners": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "single_owners": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unique_holders_num": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "whales_count": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTContractRow": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "nfts_number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "operations_number": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTTokenRow": {
+      "required": [
+        "decimals"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "category": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "decimals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ipfs_source": {
+          "type": "string"
+        },
+        "is_for_sale": {
+          "type": "boolean"
+        },
+        "issued_by": {
+          "type": "string"
+        },
+        "last_active_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_price": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "NonVoter": {
       "properties": {
         "name": {
@@ -12320,6 +13598,9 @@ func init() {
         "endorsementReward": {
           "type": "integer",
           "format": "int64"
+        },
+        "entrypoint": {
+          "type": "string"
         },
         "fee": {
           "type": "integer",

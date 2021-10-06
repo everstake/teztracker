@@ -1,11 +1,12 @@
 package services
 
 import (
-	"blockwatch.cc/tzindex/chain"
 	"encoding/hex"
+	"time"
+
+	chain "blockwatch.cc/tzgo/tezos"
 	"github.com/everstake/teztracker/models"
 	"github.com/guregu/null"
-	"time"
 )
 
 // AccountList retrives up to limit of account before the specified id.

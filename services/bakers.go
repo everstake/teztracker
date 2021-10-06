@@ -3,9 +3,10 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/everstake/teztracker/models"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/everstake/teztracker/models"
 )
 
 const (
@@ -20,17 +21,18 @@ const (
 
 	GranadaBlockReward  = 20 * XTZ
 	FlorenceBlockReward = 40 * XTZ
+	BabylonBlockReward  = 24 * XTZ
 
 	GradanaLowPriorityBlockReward  = 3 * XTZ
 	FlorenceLowPriorityBlockReward = 6 * XTZ
 
-	BabylonBlockReward = 24 * XTZ
-
-	GranadaEndorsementReward  = 1.25 * XTZ
+	GranadaEndorsementReward  = 0.078125 * XTZ
 	FlorenceEndorsementReward = 1.25 * XTZ
+
 	BabylonEndorsementRewards = 1.75 * XTZ
-	CarthageCycle             = 208
-	GranadaCycle              = 388
+
+	CarthageCycle = 208
+	GranadaCycle  = 388
 
 	GranadaBlockEndorsers  = 256
 	FlorenceBlockEndorsers = 32
@@ -119,7 +121,7 @@ func getFirstPreservedBlock(currentCycle, blocksInCycle int64) (fpb int64) {
 	fpc := currentCycle - PreservedCycles
 
 	if fpc > 0 {
-		fpb = fpc*blocksInCycle + 1
+		fpb = (GranadaCycle)*blocksInCycle/2 + (fpc-GranadaCycle)*blocksInCycle + 1
 	}
 	return fpb
 }
