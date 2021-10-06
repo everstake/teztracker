@@ -91,7 +91,7 @@ func (t *TezTracker) GetLostRewards(period string) (items []models.AggTimeInt, e
 		return items, fmt.Errorf("ValidatePeriod: %s", err.Error())
 	}
 	storageKey := fmt.Sprintf("%s_%s", lostRewardsCacheKey, period)
-	err = t.repoProvider.GetStorage().Get(storageKey, &items)
+	_, err = t.repoProvider.GetStorage().Get(storageKey, &items)
 	if err != nil {
 		return items, fmt.Errorf("GetStorage: Set: %s", err.Error())
 	}

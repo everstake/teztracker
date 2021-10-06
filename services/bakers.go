@@ -79,10 +79,15 @@ func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (public
 
 	// insert bakers changes
 	var changes map[string]models.BakerChanges
-	err = t.repoProvider.GetStorage().Get(models.BakersChangesStorageKey, &changes)
+	isFound, err := t.repoProvider.GetStorage().Get(models.BakersChangesStorageKey, &changes)
 	if err != nil {
 		return nil, 0, fmt.Errorf("GetStorage: Get: %s", err.Error())
 	}
+
+	if !isFound {
+		return nil, 0, fmt.Errorf("Baker changes not found")
+	}
+
 	publicBakers = make([]models.PublicBaker, len(bakers))
 	for i, baker := range bakers {
 		pb := models.PublicBaker{
@@ -378,7 +383,7 @@ func (t *TezTracker) SaveHoldingPoints() error {
 	for _, baker := range bakers {
 		total += baker.StakingBalance
 	}
-	fmt.Println(total)
+
 	var holdingPoints []models.HoldingPoint
 	for _, point := range points {
 		var amount int64
@@ -405,6 +410,6 @@ func (t *TezTracker) SaveHoldingPoints() error {
 }
 
 func (t *TezTracker) GetHoldingPoints() (items []models.HoldingPoint, err error) {
-	err = t.repoProvider.GetStorage().Get(holdingPointStorageKey, &items)
+	_, err = t.repoProvider.GetStorage().Get(holdingPointStorageKey, &items)
 	return items, err
 }

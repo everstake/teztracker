@@ -3,6 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
 )
@@ -17,7 +18,7 @@ type (
 
 	Repo interface {
 		Set(key string, value interface{}) error
-		Get(key string, dst interface{}) error
+		Get(key string, dst interface{}) (bool, error)
 	}
 )
 
@@ -56,21 +57,25 @@ func (r *Repository) Set(key string, value interface{}) error {
 	return r.getDb().Where("key = ?", key).Updates(&storage).Error
 }
 
-func (r *Repository) Get(key string, dst interface{}) error {
+func (r *Repository) Get(key string, dst interface{}) (bool, error) {
 	if dst == nil || key == "" {
-		return fmt.Errorf("invalid key or data")
+		return false, fmt.Errorf("invalid key or data")
 	}
 	var model models.Storage
 	res := r.getDb().Select("value").Where("key = ?", key).First(&model)
-	if res.Error != nil {
-		return res.Error
-	}
+
 	if res.RecordNotFound() {
-		return fmt.Errorf("not found by key: %s", key)
+		return false, nil
 	}
+
+	if res.Error != nil {
+		return false, res.Error
+	}
+
 	err := json.Unmarshal([]byte(model.Value), dst)
 	if err != nil {
-		return fmt.Errorf("json.Unmarshal: %s", err.Error())
+		return false, fmt.Errorf("json.Unmarshal: %s", err.Error())
 	}
-	return nil
+
+	return true, nil
 }

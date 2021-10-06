@@ -79,6 +79,7 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 	}
 	stats := daily_stats.NewDailyStats(serviceProviders)
 	go stats.Run()
+
 	return provider, nil
 }
 

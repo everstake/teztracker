@@ -238,7 +238,8 @@ func (t *TezTracker) GetActiveAccounts(period string) (items []models.AggTimeInt
 		return items, fmt.Errorf("ValidatePeriod: %s", err.Error())
 	}
 	storageKey := fmt.Sprintf("%s_%s", activeBalanceCacheKey, period)
-	err = t.repoProvider.GetStorage().Get(storageKey, &items)
+	//Return only if storage error
+	_, err = t.repoProvider.GetStorage().Get(storageKey, &items)
 	if err != nil {
 		return items, fmt.Errorf("GetStorage: Set: %s", err.Error())
 	}
