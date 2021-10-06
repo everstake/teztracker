@@ -169,7 +169,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, delphinet]
+          enum: [mainnet, florencenet]
         - in: query
           name: currency
           type: string
@@ -203,7 +203,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, delphinet]
+          enum: [mainnet, florencenet]
       produces:
         - application/json
       responses:
@@ -232,7 +232,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, delphinet]
+          enum: [mainnet, florencenet]
         - in: query
           name: from
           type: integer
@@ -284,7 +284,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, delphinet]
+          enum: [mainnet, florencenet]
         - in: query
           name: limit
           type: integer
@@ -320,7 +320,7 @@ paths:
           description: Not used
           required: true
           type: string
-          enum: [mainnet, delphinet]
+          enum: [mainnet, florencenet]
         - in: query
           name: limit
           type: integer
@@ -3662,7 +3662,443 @@ paths:
           description: Internal error
       tags:
         - Profile
+  '/v2/data/{network}/nft_contracts':
+    get:
+      operationId: getNFTContractsList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT contracts list
+          schema:
+            items:
+              $ref: >-
+                #/definitions/NFTContractRow
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
+  '/v2/data/{network}/nft_contracts/{contract_id}':
+    get:
+      operationId: getNFTContract
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: contract_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT contract
+          schema:
+            $ref: >-
+              #/definitions/NFTContractRow
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
+  '/v2/data/{network}/nft_contracts/{contract_id}/distribution':
+    get:
+      operationId: getNFTContractDistribution
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: contract_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT contract
+          schema:
+            $ref: >-
+              #/definitions/NFTContractDistribution
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
+  '/v2/data/{network}/nft_contracts/{contract_id}/ownership':
+    get:
+      operationId: getNFTContractOwnership
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: contract_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT contract
+          schema:
+            $ref: >-
+              #/definitions/NFTContractOwnership
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
+  '/v2/data/{network}/nft_contracts/{contract_id}/operations':
+    get:
+      operationId: getNFTContractOperations
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: contract_id
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT contract operations
+          schema:
+            items:
+              $ref: >-
+                #/definitions/OperationsRow
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
+  '/v2/data/{network}/nft_contracts/{contract_id}/operations/chart':
+    get:
+      operationId: getNFTContractOperationsChart
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: contract_id
+          required: true
+          type: string
+        - in: query
+          name: from
+          type: integer
+          format: int64
+          required: true
+        - in: query
+          name: to
+          type: integer
+          format: int64
+          required: true
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [D]
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT contract operations chart
+          schema:
+            items:
+              $ref: >-
+                #/definitions/ChartsData
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
+  '/v2/data/{network}/nft_contracts/{contract_id}/tokens':
+    get:
+      operationId: getNFTContractTokensList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: contract_id
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT tokens
+          schema:
+            items:
+              $ref: >-
+                #/definitions/NFTTokenRow
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
+  '/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}':
+    get:
+      operationId: getNFTContractToken
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: contract_id
+          required: true
+          type: string
+        - in: path
+          name: token_id
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT token
+          schema:
+            $ref: >-
+              #/definitions/NFTTokenRow
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
+  '/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}/holders':
+    get:
+      operationId: getNFTContractTokenHolders
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: path
+          name: contract_id
+          required: true
+          type: string
+        - in: path
+          name: token_id
+          required: true
+          type: string
+        - in: query
+          name: limit
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 300
+        - in: query
+          name: offset
+          type: integer
+          default: 0
+          minimum: 0
+      responses:
+        '200':
+          description: Query compatibility endpoint for NFT token holders
+          schema:
+            items:
+              $ref: >-
+                #/definitions/TokenHolderRow
+            type: array
+          headers:
+            X-Total-Count:
+              description: The total number of data entries.
+              type: integer
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - NFT
 definitions:
+  NFTTokenRow:
+    properties:
+      name:
+        type: string
+      token_id:
+        format: int64
+        type: integer
+      category:
+        type: string
+      decimals:
+        format: int64
+        type: integer
+      description:
+        type: string
+      amount:
+        format: int64
+        type: integer
+      issued_by:
+        type: string
+      is_for_sale:
+        type: boolean
+      last_price:
+        format: int64
+        type: integer
+      ipfs_source:
+        type: string
+      created_at:
+        format: int64
+        type: integer
+      last_active_at:
+        format: int64
+        type: integer
+    required:
+      - decimals
+  NFTContractRow:
+    properties:
+      name:
+        type: string
+      address:
+        type: string
+      description:
+        type: string
+      nfts_number:
+        format: int64
+        type: integer
+      operations_number:
+        format: int64
+        type: integer
+  NFTContractDistribution:
+    properties:
+      total_token_num:
+        format: int64
+        type: integer
+      unique_holders_num:
+        format: int64
+        type: integer
+      distribution:
+        items:
+          $ref: >-
+            #/definitions/TokenHolderRow
+        type: array
+    required:
+      - total_token_num
+      - unique_holders_num
+      - distribution
+  NFTContractOwnership:
+    properties:
+      unique_holders_num:
+        format: int64
+        type: integer
+      whales_count:
+        format: int64
+        type: integer
+      single_owners:
+        format: int64
+        type: integer
+      multi_owners:
+        format: int64
+        type: integer
+    required:
+      - unique_holders_num
+      - whales_count
+      - single_owners
+      - multi_owners
   Info:
     properties:
       currency:
@@ -4115,6 +4551,8 @@ definitions:
       endorsementReward:
         type: integer
         format: int64
+      entrypoint:
+        type: string
       fee:
         type: integer
         format: int64

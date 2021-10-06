@@ -15,6 +15,7 @@ type (
 
 	Repo interface {
 		RollsAndBakersInBlock(block int64) (int64, int64, error)
+		LastVotingPeriod() (int64, error)
 		CreateBulk(rolls []models.Roll) error
 	}
 )
@@ -40,6 +41,16 @@ func (r *Repository) RollsAndBakersInBlock(block int64) (int64, int64, error) {
 		Where("block_level = ?", block).
 		Select("sum(rolls) as s, count(1) as c").Scan(&result).Error
 	return result.S, result.C, err
+}
+
+func (r *Repository) LastVotingPeriod() (int64, error) {
+	result := struct {
+		S int64
+	}{}
+
+	err := r.db.Model(&models.Roll{}).
+		Select("max(voting_period) as s").Scan(&result).Error
+	return result.S, err
 }
 
 func (r *Repository) CreateBulk(rolls []models.Roll) error {

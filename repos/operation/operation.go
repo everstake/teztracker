@@ -2,6 +2,7 @@ package operation
 
 import (
 	"fmt"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/go-openapi/validate"
 	"github.com/jinzhu/gorm"
@@ -17,6 +18,7 @@ type (
 	Repo interface {
 		List(ids, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error)
 		ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error)
+		ContractOperationsList(contractID string, kinds, entrypoints []string, lastBlock int64, offset, limit uint, orderSide string) (operations []models.Operation, count int64, err error)
 		Count(ids, kinds, inBlocks, accountIDs []string, maxOperationID int64) (count int64, err error)
 		EndorsementsFor(blockLevel int64) (operations []models.Operation, err error)
 		Last() (operation models.Operation, err error)
@@ -28,9 +30,10 @@ type (
 )
 
 const (
-	endorsementKind = "endorsement"
-	delegationKind  = "delegation"
-	activationKind  = "activate_account"
+	endorsementKind     = "endorsement"
+	endorsementWithSlot = "endorsement_with_slot"
+	delegationKind      = "delegation"
+	activationKind      = "activate_account"
 )
 
 // New creates an instance of repository using the provided db.
@@ -97,7 +100,7 @@ func (r *Repository) getFilteredDB(hashes, kinds, inBlocks, accountIDs []string,
 				switch kind {
 				case delegationKind:
 					db = db.Joins("left join tezos.accounts_history as ah on (ah.block_level=operations.block_level and account_id=source and operations.kind='delegation')")
-				case endorsementKind:
+				case endorsementKind, endorsementWithSlot:
 					selectQ = fmt.Sprintf("%s, %s", selectQ, "bur.change endorsement_reward, bud.change endorsement_deposit")
 					db = db.Joins("left join tezos.balance_updates as bur on (operations.operation_group_hash = bur.operation_group_hash and bur.category='rewards')").
 						Joins("left join tezos.balance_updates as bud on (operations.operation_group_hash = bud.operation_group_hash and bud.category='deposits')")
@@ -146,7 +149,7 @@ func (r *Repository) getFilteredDB(hashes, kinds, inBlocks, accountIDs []string,
 // limit defines the limit for the maximum number of operations returned.
 // since is used to paginate results based on the operation id.
 // As the result is ordered descendingly the operations with operation_id < since will be returned.
-func (r *Repository) List(hashes, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error) {
+func (r *Repository) List(hashes, kinds, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error) {
 	db := r.getFilteredDB(hashes, kinds, inBlocks, accountIDs, operationsIDs, false)
 
 	if since > 0 {
@@ -158,13 +161,42 @@ func (r *Repository) List(hashes, kinds []string, inBlocks, accountIDs []string,
 		Offset(offset)
 
 	//TODO Join with baker_endorsements
-	if len(inBlocks) == 1 && len(kinds) == 1 && kinds[0] == endorsementKind {
+	if len(inBlocks) == 1 && len(kinds) == 1 && (kinds[0] == endorsementKind || kinds[0] == endorsementWithSlot) {
 		db = r.db.Raw("SELECT * from (?) as s left join tezos.balance_updates on (s.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')", db.SubQuery())
 	}
 
 	err = db.Find(&operations).Error
 
 	return operations, err
+}
+
+func (r *Repository) ContractOperationsList(contractID string, kinds, entrypoints []string, lastBlock int64, offset, limit uint, orderSide string) (operations []models.Operation, count int64, err error) {
+	db := r.db.Model(&models.Operation{}).
+		Where("destination = ? and kind IN (?)", contractID, kinds).
+		Where("status = 'applied'")
+
+	if len(entrypoints) > 0 {
+		db = db.Where(" parameters_entrypoints IN (?)", entrypoints)
+	}
+
+	if lastBlock > 0 {
+		db = db.Where("block_level > ?", lastBlock)
+	}
+
+	err = db.Count(&count).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = db.Order(fmt.Sprint("block_level ", orderSide)).
+		Offset(offset).
+		Limit(limit).
+		Find(&operations).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return operations, count, nil
 }
 
 func (r *Repository) ListDoubleEndorsementsWithoutLevel(limit, offset uint) (operations []models.Operation, err error) {
@@ -198,7 +230,7 @@ func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (o
 func (r *Repository) EndorsementsFor(blockLevel int64) (operations []models.Operation, err error) {
 	err = r.db.Select("*").Model(&models.Operation{}).
 		Joins("left join tezos.balance_updates on (operations.operation_group_hash = balance_updates.operation_group_hash and category = 'rewards')").
-		Where("operations.kind = ?", endorsementKind).
+		Where("operations.kind = ? OR operations.kind = ?", endorsementKind, endorsementWithSlot).
 		// the endorsements of the block with blockLevel can only be in a block with level (blockLevel + 1)
 		Where("operations.block_level = ?", blockLevel+1).
 		Order("operation_id DESC").
@@ -229,7 +261,7 @@ func (r *Repository) AccountOperationCount(acc string) (counts []models.Operatio
 func (r *Repository) AccountEndorsements(accountID string, cycle int64, limit uint, offset uint) (count int64, operations []models.Operation, err error) {
 	db := r.db.Model(&models.Operation{}).
 		Where("delegate = ?", accountID).
-		Where("kind = ?", endorsementKind).
+		Where("kind = ? OR kind = ?", endorsementKind, endorsementWithSlot).
 		Where("cycle = ?", cycle)
 
 	err = db.Count(&count).Error

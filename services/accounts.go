@@ -1,12 +1,14 @@
 package services
 
 import (
-	"blockwatch.cc/tzindex/chain"
 	"encoding/hex"
+	"time"
+
 	"fmt"
+
+	chain "blockwatch.cc/tzgo/tezos"
 	"github.com/everstake/teztracker/models"
 	"github.com/guregu/null"
-	"time"
 )
 
 const activeBalanceCacheKey = "active_balance"

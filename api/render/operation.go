@@ -17,6 +17,7 @@ func Operation(b models.Operation, dbe *models.DoubleOperationEvidenceExtended) 
 		Delegate:            b.Delegate,
 		DelegateName:        b.DelegateName,
 		Slots:               b.Slots,
+		Entrypoint:          b.ParametersEntrypoints,
 		Nonce:               b.Nonce,
 		Pkh:                 b.Pkh,
 		Secret:              b.Secret,

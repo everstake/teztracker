@@ -113,7 +113,7 @@ func BakingRights(br []models.FutureBakingRight) []*genModels.BakingRightsRow {
 func BakingRight(r models.FutureBakingRight) *genModels.BakingRightsRow {
 	priority := int64(r.Priority)
 	return &genModels.BakingRightsRow{
-		Level:         r.Level,
+		Level:         r.BlockLevel,
 		Delegate:      r.Delegate,
 		DelegateName:  r.DelegateName,
 		Priority:      &priority,
@@ -154,8 +154,8 @@ func FutureEndorsementRights(br []models.FutureEndorsementRight) []*genModels.En
 
 func FutureEndorsementRight(r models.FutureEndorsementRight) *genModels.EndorsementRightsRow {
 	return &genModels.EndorsementRightsRow{
-		BlockLevel:   r.Level,
-		Cycle:        r.Cycle,
+		BlockLevel:   r.BlockLevel,
+		Cycle:        r.Cycle.Int64,
 		Delegate:     r.Delegate,
 		DelegateName: r.DelegateName,
 		Timestamp:    r.EstimatedTime.Unix(),

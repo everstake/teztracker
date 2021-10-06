@@ -103,4 +103,3 @@ func (w Watcher) Start() {
 		}
 	}
 }
-

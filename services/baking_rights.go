@@ -11,6 +11,7 @@ import (
 func (t *TezTracker) BakingRightsList(blockLevelOrHash []string, priorityTo int, limiter Limiter) (count int64, blocksWithRights []models.Block, err error) {
 	filter := models.RightFilter{
 		PriorityTo: priorityTo,
+		IsFuture:   false,
 	}
 	count = int64(len(blockLevelOrHash))
 
@@ -58,12 +59,13 @@ func (t *TezTracker) BakingRightsList(blockLevelOrHash []string, priorityTo int,
 	if err != nil {
 		return count, nil, err
 	}
+
 	blockMap := map[int64]*models.Block{}
 	for i := range blocks {
 		blockMap[blocks[i].Level.Int64] = &blocks[i]
 	}
 	for i := range rights {
-		blockMap[rights[i].Level].BakingRights = append(blockMap[rights[i].Level].BakingRights, rights[i])
+		blockMap[rights[i].BlockLevel].BakingRights = append(blockMap[rights[i].BlockLevel].BakingRights, rights[i])
 	}
 	return count, blocks, nil
 }
@@ -89,6 +91,7 @@ func (t *TezTracker) FutureBakingRightsList(priorityTo int, limiter Limiter) (co
 	}
 	filter := models.RightFilter{
 		PriorityTo: priorityTo,
+		IsFuture:   true,
 	}
 	for ; rangeStart <= rangeEnd; rangeStart++ {
 		filter.BlockLevels = append(filter.BlockLevels, rangeStart)
@@ -101,8 +104,8 @@ func (t *TezTracker) FutureBakingRightsList(priorityTo int, limiter Limiter) (co
 	}
 	curBlock := int64(-1)
 	for i := range rights {
-		if curBlock < rights[i].Level {
-			curBlock = rights[i].Level
+		if curBlock < rights[i].BlockLevel {
+			curBlock = rights[i].BlockLevel
 			blockRights := models.FutureBlockBakingRight{
 				Level: curBlock,
 			}
@@ -133,7 +136,9 @@ func (t *TezTracker) GetBlockBakingRights(hashOrLevel string) (rights []models.F
 		}
 		level = block.Level.Int64
 	}
-	filter := models.RightFilter{}
+	filter := models.RightFilter{
+		IsFuture: true,
+	}
 	filter.BlockLevels = []int64{level}
 	repo := t.repoProvider.GetFutureBakingRight()
 	rights, err = repo.ListDesc(filter)
@@ -160,6 +165,7 @@ func (t *TezTracker) GetAccountFutureBakingRights(accountID string, cycle int64,
 		},
 		PriorityTo: 10,
 		Delegates:  []string{accountID},
+		IsFuture:   true,
 	}
 
 	count, err = repo.Count(filter)
@@ -173,13 +179,8 @@ func (t *TezTracker) GetAccountFutureBakingRights(accountID string, cycle int64,
 	}
 
 	for i := range futureRights {
-		reward := BlockReward
-		if futureRights[i].Priority > 0 {
-			reward = LowPriorityBlockReward
-		}
-
-		futureRights[i].Reward = int64(reward)
-		futureRights[i].Deposit = BlockSecurityDeposit
+		futureRights[i].Reward = getBlockRewardByCycle(futureRights[i].Cycle.Int64, int64(futureRights[i].Priority))
+		futureRights[i].Deposit = getBlockSecurityDepositByCycle(futureRights[i].Cycle.Int64)
 	}
 
 	return count, futureRights, nil

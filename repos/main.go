@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/everstake/teztracker/repos/assets"
 	"github.com/everstake/teztracker/repos/baking"
 	"github.com/everstake/teztracker/repos/chart"
@@ -11,6 +12,7 @@ import (
 	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
+	"github.com/everstake/teztracker/repos/nft"
 	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/storage"
 	"github.com/everstake/teztracker/repos/thirdparty_bakers"
@@ -146,6 +148,10 @@ func (u *Provider) GetStorage() storage.Repo {
 
 func (u *Provider) GetDailyStats() daily_stats.Repo {
 	return daily_stats.New(u.getDB())
+}
+
+func (u *Provider) GetNFT() nft.Repo {
+	return nft.New(u.getDB())
 }
 
 func (u *Provider) Start(ctx context.Context) {

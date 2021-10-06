@@ -26,6 +26,7 @@ import (
 	"github.com/everstake/teztracker/gen/restapi/operations/blocks"
 	"github.com/everstake/teztracker/gen/restapi/operations/fees"
 	"github.com/everstake/teztracker/gen/restapi/operations/mempool"
+	"github.com/everstake/teztracker/gen/restapi/operations/n_f_t"
 	"github.com/everstake/teztracker/gen/restapi/operations/operation_groups"
 	"github.com/everstake/teztracker/gen/restapi/operations/operations_list"
 	"github.com/everstake/teztracker/gen/restapi/operations/profile"
@@ -241,6 +242,33 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		MempoolGetMempoolOperationsHandler: mempool.GetMempoolOperationsHandlerFunc(func(params mempool.GetMempoolOperationsParams) middleware.Responder {
 			return middleware.NotImplemented("operation MempoolGetMempoolOperations has not yet been implemented")
+		}),
+		NftGetNFTContractHandler: n_f_t.GetNFTContractHandlerFunc(func(params n_f_t.GetNFTContractParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContract has not yet been implemented")
+		}),
+		NftGetNFTContractDistributionHandler: n_f_t.GetNFTContractDistributionHandlerFunc(func(params n_f_t.GetNFTContractDistributionParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractDistribution has not yet been implemented")
+		}),
+		NftGetNFTContractOperationsHandler: n_f_t.GetNFTContractOperationsHandlerFunc(func(params n_f_t.GetNFTContractOperationsParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractOperations has not yet been implemented")
+		}),
+		NftGetNFTContractOperationsChartHandler: n_f_t.GetNFTContractOperationsChartHandlerFunc(func(params n_f_t.GetNFTContractOperationsChartParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractOperationsChart has not yet been implemented")
+		}),
+		NftGetNFTContractOwnershipHandler: n_f_t.GetNFTContractOwnershipHandlerFunc(func(params n_f_t.GetNFTContractOwnershipParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractOwnership has not yet been implemented")
+		}),
+		NftGetNFTContractTokenHandler: n_f_t.GetNFTContractTokenHandlerFunc(func(params n_f_t.GetNFTContractTokenParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractToken has not yet been implemented")
+		}),
+		NftGetNFTContractTokenHoldersHandler: n_f_t.GetNFTContractTokenHoldersHandlerFunc(func(params n_f_t.GetNFTContractTokenHoldersParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractTokenHolders has not yet been implemented")
+		}),
+		NftGetNFTContractTokensListHandler: n_f_t.GetNFTContractTokensListHandlerFunc(func(params n_f_t.GetNFTContractTokensListParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractTokensList has not yet been implemented")
+		}),
+		NftGetNFTContractsListHandler: n_f_t.GetNFTContractsListHandlerFunc(func(params n_f_t.GetNFTContractsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractsList has not yet been implemented")
 		}),
 		VotingGetNonVotersByPeriodIDHandler: voting.GetNonVotersByPeriodIDHandlerFunc(func(params voting.GetNonVotersByPeriodIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation VotingGetNonVotersByPeriodID has not yet been implemented")
@@ -458,6 +486,24 @@ type TezTrackerAPI struct {
 	AccountsGetLowBalanceTotalAggCountHandler accounts.GetLowBalanceTotalAggCountHandler
 	// MempoolGetMempoolOperationsHandler sets the operation handler for the get mempool operations operation
 	MempoolGetMempoolOperationsHandler mempool.GetMempoolOperationsHandler
+	// NftGetNFTContractHandler sets the operation handler for the get n f t contract operation
+	NftGetNFTContractHandler n_f_t.GetNFTContractHandler
+	// NftGetNFTContractDistributionHandler sets the operation handler for the get n f t contract distribution operation
+	NftGetNFTContractDistributionHandler n_f_t.GetNFTContractDistributionHandler
+	// NftGetNFTContractOperationsHandler sets the operation handler for the get n f t contract operations operation
+	NftGetNFTContractOperationsHandler n_f_t.GetNFTContractOperationsHandler
+	// NftGetNFTContractOperationsChartHandler sets the operation handler for the get n f t contract operations chart operation
+	NftGetNFTContractOperationsChartHandler n_f_t.GetNFTContractOperationsChartHandler
+	// NftGetNFTContractOwnershipHandler sets the operation handler for the get n f t contract ownership operation
+	NftGetNFTContractOwnershipHandler n_f_t.GetNFTContractOwnershipHandler
+	// NftGetNFTContractTokenHandler sets the operation handler for the get n f t contract token operation
+	NftGetNFTContractTokenHandler n_f_t.GetNFTContractTokenHandler
+	// NftGetNFTContractTokenHoldersHandler sets the operation handler for the get n f t contract token holders operation
+	NftGetNFTContractTokenHoldersHandler n_f_t.GetNFTContractTokenHoldersHandler
+	// NftGetNFTContractTokensListHandler sets the operation handler for the get n f t contract tokens list operation
+	NftGetNFTContractTokensListHandler n_f_t.GetNFTContractTokensListHandler
+	// NftGetNFTContractsListHandler sets the operation handler for the get n f t contracts list operation
+	NftGetNFTContractsListHandler n_f_t.GetNFTContractsListHandler
 	// VotingGetNonVotersByPeriodIDHandler sets the operation handler for the get non voters by period ID operation
 	VotingGetNonVotersByPeriodIDHandler voting.GetNonVotersByPeriodIDHandler
 	// OperationGroupsGetOperationGroupHandler sets the operation handler for the get operation group operation
@@ -813,6 +859,42 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.MempoolGetMempoolOperationsHandler == nil {
 		unregistered = append(unregistered, "mempool.GetMempoolOperationsHandler")
+	}
+
+	if o.NftGetNFTContractHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractHandler")
+	}
+
+	if o.NftGetNFTContractDistributionHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractDistributionHandler")
+	}
+
+	if o.NftGetNFTContractOperationsHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractOperationsHandler")
+	}
+
+	if o.NftGetNFTContractOperationsChartHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractOperationsChartHandler")
+	}
+
+	if o.NftGetNFTContractOwnershipHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractOwnershipHandler")
+	}
+
+	if o.NftGetNFTContractTokenHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractTokenHandler")
+	}
+
+	if o.NftGetNFTContractTokenHoldersHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractTokenHoldersHandler")
+	}
+
+	if o.NftGetNFTContractTokensListHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractTokensListHandler")
+	}
+
+	if o.NftGetNFTContractsListHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractsListHandler")
 	}
 
 	if o.VotingGetNonVotersByPeriodIDHandler == nil {
@@ -1306,6 +1388,51 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/mempool"] = mempool.NewGetMempoolOperations(o.context, o.MempoolGetMempoolOperationsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}"] = n_f_t.NewGetNFTContract(o.context, o.NftGetNFTContractHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/distribution"] = n_f_t.NewGetNFTContractDistribution(o.context, o.NftGetNFTContractDistributionHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/operations"] = n_f_t.NewGetNFTContractOperations(o.context, o.NftGetNFTContractOperationsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/operations/chart"] = n_f_t.NewGetNFTContractOperationsChart(o.context, o.NftGetNFTContractOperationsChartHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/ownership"] = n_f_t.NewGetNFTContractOwnership(o.context, o.NftGetNFTContractOwnershipHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}"] = n_f_t.NewGetNFTContractToken(o.context, o.NftGetNFTContractTokenHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}/holders"] = n_f_t.NewGetNFTContractTokenHolders(o.context, o.NftGetNFTContractTokenHoldersHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/tokens"] = n_f_t.NewGetNFTContractTokensList(o.context, o.NftGetNFTContractTokensListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts"] = n_f_t.NewGetNFTContractsList(o.context, o.NftGetNFTContractsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

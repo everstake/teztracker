@@ -12,17 +12,19 @@ import (
 type Config struct {
 	Port                                  int
 	Mainnet                               NetworkConfig
-	Delphinet                             NetworkConfig
+	Florencenet                           NetworkConfig
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
 	Production                            bool
-	CounterIntervalHours                  int
-	FutureRightsIntervalMinutes           int
+	CounterIntervalSeconds                int
 	SnapshotCheckIntervalMinutes          int
+	FutureRightsIntervalMinutes           int
 	VotingRollsIntervalMinutes            int
 	DoubleBakingCheckIntervalMinutes      int
 	DoubleEndorsementCheckIntervalMinutes int
 	BakerRegistryCheckIntervalMinutes     int
 	AssetsParseIntervalMinutes            int
+	IPFSClient                            string
+	NFTTokensParseIntervalSeconds         int
 	InfoWSEventsIntervalMinutes           int
 	SmtpHost                              string
 	SmtpPort                              int

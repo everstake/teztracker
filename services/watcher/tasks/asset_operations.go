@@ -39,4 +39,3 @@ func (ao AssetOperation) GetEventData(data interface{}) (interface{}, error) {
 
 	return operations[0], nil
 }
-

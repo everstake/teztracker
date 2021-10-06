@@ -75,13 +75,22 @@ func (t *TezTracker) TokenHolders(assetID string) (holders []models.AssetHolder,
 		return nil, err
 	}
 
+	return orderAndTruncateHoldersList(holders), nil
+}
+
+func orderAndTruncateHoldersList(holders []models.AssetHolder) []models.AssetHolder {
+
+	if len(holders) == 0 {
+		return nil
+	}
+
 	//Desc order
 	sort.Slice(holders, func(i, j int) bool { return holders[i].Balance > holders[j].Balance })
 
 	//Remove excess records from bigmap
 	for i := len(holders) - 1; holders[i].Balance == 0; i-- {
-		holders = holders[:i]
+		return holders[:i]
 	}
 
-	return holders, nil
+	return holders
 }

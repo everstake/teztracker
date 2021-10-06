@@ -34,6 +34,9 @@ CREATE TRIGGER baker_baking_since
   FOR EACH ROW
 EXECUTE PROCEDURE insert_baker_baking_since();
 
+INSERT INTO tezos.baker_baking_since(pkh, baking_since)
+SELECT pkh, min(asof)  from tezos.bakers_history group by pkh;
+
 CREATE OR REPLACE VIEW tezos.baker_endorsement_view as
 SELECT delegate,
        count(1) AS endorsements
@@ -57,9 +60,9 @@ SELECT b.pkh account_id,
        COALESCE(bcv.blocks, (0)::bigint)       AS blocks,
        baking_since
 FROM tezos.bakers b
-LEFT JOIN baker_endorsement_view bev on b.pkh = bev.delegate
+LEFT JOIN tezos.baker_endorsement_view bev on b.pkh = bev.delegate
 LEFT JOIN tezos.blocks_counter_view bcv on b.pkh = bcv.baker
-LEFT JOIN baker_baking_since bbs on b.pkh = bbs.pkh
+LEFT JOIN tezos.baker_baking_since bbs on b.pkh = bbs.pkh
 LEFT JOIN tezos.baker_delegations_view as bdv on b.pkh = bdv.baker
 LEFT JOIN tezos.frozen_baking_rewards as fbr on b.pkh = fbr.delegate
 LEFT JOIN tezos.frozen_endorsement_rewards as fer on b.pkh = fer.delegate
