@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/everstake/teztracker/api/render"
@@ -167,8 +166,6 @@ func (h *getNFTContractOwnershipHandler) Handle(params nft.GetNFTContractOwnersh
 		logrus.Errorf("failed to get NFT contract ownership: %s", err.Error())
 		return nft.NewGetNFTContractOwnershipInternalServerError()
 	}
-
-	log.Print("ownership ", ownership)
 
 	return nft.NewGetNFTContractOwnershipOK().WithPayload(render.NFTOwnership(ownership))
 }
