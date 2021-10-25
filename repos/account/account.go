@@ -1,9 +1,11 @@
 package account
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
 //go:generate mockgen -source ./account.go -destination ./mock_account/main.go Repo
@@ -25,8 +27,8 @@ type (
 		RewardsCountList(accountID string, limit uint) (rewards []models.AccountRewardsCount, err error)
 		CycleDelegatorsTotal(accountID string, cycleID int64) (reward models.AccountReward, err error)
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
-		GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
-		GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error)
+		GetReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error)
+		GetBakingReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error)
 		RichAccounts(limit uint) (accounts []models.Account, err error)
 	}
 )
@@ -69,6 +71,15 @@ func (r *Repository) List(limit, offset uint, filter models.AccountFilter) (coun
 	}
 
 	db = db.Model(models.AccountListView{})
+
+	if len(filter.Favorites) != 0 {
+		q := "CASE account_id"
+		for i, favorite := range filter.Favorites {
+			q = fmt.Sprintf("%s WHEN '%s' THEN %d", q, favorite, i)
+		}
+		q = fmt.Sprintf("%s ELSE %d END", q, len(filter.Favorites))
+		db = db.Order(q)
+	}
 
 	if filter.OrderBy == models.AccountOrderFieldCreatedAt {
 		db = db.Order("created_at desc")
@@ -218,8 +229,8 @@ func (r *Repository) CycleDelegators(accountID string, cycle int64, limit uint, 
 	return delegators, nil
 }
 
-func (r *Repository) GetReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
-	columns := []string{"operations.block_level", "timestamp", "operations.kind", "operations.operation_group_hash", "'XTZ' coin", "amount", "operations.status", "operations.source", "destination", "0 loss", "fee"}
+func (r *Repository) GetReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error) {
+	columns := []string{"operations.block_level", "timestamp", "operations.kind", "operations.operation_group_hash", "'XTZ' coin", "amount :: decimal / 10 ^ 6 amount", "operations.status", "operations.source", "destination", "0 loss", "fee :: decimal / 10 ^ 6 fee"}
 
 	db := r.db
 	req := r.db.Select(columns).
@@ -238,7 +249,7 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 		subQ := req.Select(columns).Joins("left join tezos.balance_updates bu on (operations.operation_group_hash = bu.operation_group_hash and category = 'rewards')").SubQuery()
 
 		missedEndorsementsSubQ := r.db.
-			Select("baker_endorsements.level block_level, timestamp, 'endorsement' kind,'' operation_group_hash, 'XTZ' coin, 0 amount, '' status, '' source, '' destination, case when missed = 1 then 1.25 ELSE 0 END loss, 0 fee, reward").
+			Select("baker_endorsements.level block_level, timestamp, 'endorsement' kind,'' operation_group_hash, 'XTZ' coin, 0 amount, '' status, '' source, '' destination, case when missed = 1 then 1.25 ELSE 0 END loss, 0 fee, reward :: decimal / 10 ^ 6 reward").
 			Table("tezos.baker_endorsements").
 			Joins("left join tezos.blocks on blocks.level+1 = baker_endorsements.level").
 			Where("delegate = ?", accountID).
@@ -250,6 +261,21 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 		db = r.db.Raw("SELECT * FROM ? op UNION ? ORDER BY block_level desc", subQ, missedEndorsementsSubQ)
 	}
 
+	if params.AssetsReq {
+
+		subQ := db.SubQuery()
+		assetsSubQ := r.db.
+			Select("block_level, timestamp, type kind, operation_group_hash, ticker coin, amount :: decimal / (10 ^ scale) amount, 'applied' status, sender source, receiver destination, 0 fee").
+			Table("tezos.asset_operations").
+			Joins("left join tezos.registered_tokens on token_id = id").
+			Where("sender = ? OR receiver = ?", accountID, accountID).
+			Where("timestamp >= to_timestamp(?) :: timestamp without time zone", params.From).
+			Where("timestamp <= to_timestamp(?) :: timestamp without time zone", params.To).
+			Order("timestamp desc").SubQuery()
+
+		db = r.db.Raw("SELECT * FROM ? ops UNION ? ORDER BY block_level desc", subQ, assetsSubQ)
+	}
+
 	err = db.Limit(params.Limit).Find(&report).Error
 	if err != nil {
 		return nil, err
@@ -258,9 +284,9 @@ func (r *Repository) GetReport(accountID string, params models.AccountReportFilt
 	return report, nil
 }
 
-func (r *Repository) GetBakingReport(accountID string, params models.AccountReportFilter) (report []models.BakerReport, err error) {
+func (r *Repository) GetBakingReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error) {
 
-	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward, case when missed = 1 then 40 ELSE 0 END loss, 0 fee, '' status").
+	err = r.db.Select("blocks.level block_level, timestamp, 'baking' kind, '' operation_group_hash, 'XTZ' coin, 0 amount, '' source, '' destination, reward :: decimal / 10 ^ 6 reward, case when missed = 1 then 40 ELSE 0 END loss, 0 fee, '' status").
 		Table("tezos.baker_bakings").
 		Joins("left join tezos.blocks on blocks.level = baker_bakings.level").
 		Where("delegate = ?", accountID).

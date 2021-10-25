@@ -1,36 +1,60 @@
 package services
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+
 	"github.com/everstake/teztracker/models"
 )
 
 const (
-	PreservedCycles            = 5
-	Precision                  = 6
-	XTZ                        = 1000000
-	BlockSecurityDeposit       = 512 * XTZ
-	EndorsementSecurityDeposit = 64 * XTZ
-	BlockReward                = 40 * XTZ
-	LowPriorityBlockReward     = 6 * XTZ
-	BabylonBlockReward         = 24 * XTZ
-	EndorsementReward          = 1.25 * XTZ
-	BabylonEndorsementRewards  = 1.75 * XTZ
-	CarthageCycle              = 208
-	BlockEndorsers             = 32
-	TokensPerRoll              = 8000
-	TotalLocked                = (BlockSecurityDeposit + EndorsementSecurityDeposit*BlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
-	BlockLockEstimate          = BlockReward + BlockSecurityDeposit + BlockEndorsers*(EndorsementReward+EndorsementSecurityDeposit)
+	PreservedCycles = 5
+	XTZ             = 1000000
+
+	GranadaBlockSecurityDeposit  = 640 * XTZ
+	FlorenceBlockSecurityDeposit = 512 * XTZ
+
+	GranadaEndorsementSecurityDeposit  = 2.5 * XTZ
+	FlorenceEndorsementSecurityDeposit = 64 * XTZ
+
+	GranadaBlockReward  = 20 * XTZ
+	FlorenceBlockReward = 40 * XTZ
+	BabylonBlockReward  = 24 * XTZ
+
+	GradanaLowPriorityBlockReward  = 3 * XTZ
+	FlorenceLowPriorityBlockReward = 6 * XTZ
+
+	GranadaEndorsementReward  = 0.078125 * XTZ
+	FlorenceEndorsementReward = 1.25 * XTZ
+
+	BabylonEndorsementRewards = 1.75 * XTZ
+
+	CarthageCycle = 208
+	GranadaCycle  = 388
+
+	GranadaBlockEndorsers  = 256
+	FlorenceBlockEndorsers = 32
+
+	TokensPerRoll = 8000
+
+	TotalLocked = (GranadaBlockSecurityDeposit + GranadaEndorsementSecurityDeposit*GranadaBlockEndorsers) * BlocksInMainnetCycle * (PreservedCycles + 1)
+
+	BlockLockEstimate = GranadaBlockReward + GranadaBlockSecurityDeposit + GranadaBlockEndorsers*(GranadaEndorsementReward+GranadaEndorsementSecurityDeposit)
+
+	bakerMediaSource = "https://api.tzkt.io/v1/accounts/%s?metadata=true"
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
-func (t *TezTracker) PublicBakerList(limits Limiter) (bakers []models.Baker, count int64, err error) {
+func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (bakers []models.Baker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.PublicBakersCount()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	bakers, err = r.PublicBakersList(limits.Limit(), limits.Offset())
+	bakers, err = r.PublicBakersList(limits.Limit(), limits.Offset(), favorites)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -62,14 +86,14 @@ func (t *TezTracker) PublicBakersSearchList() (list []models.PublicBakerSearch, 
 	return list, nil
 }
 
-func (t *TezTracker) BakerList(limits Limiter) (bakers []models.Baker, count int64, err error) {
+func (t *TezTracker) BakerList(limits Limiter, favorites []string) (bakers []models.Baker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.Count()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	bakers, err = r.List(limits.Limit(), limits.Offset())
+	bakers, err = r.List(limits.Limit(), limits.Offset(), favorites)
 	return bakers, count, err
 }
 
@@ -97,7 +121,7 @@ func getFirstPreservedBlock(currentCycle, blocksInCycle int64) (fpb int64) {
 	fpc := currentCycle - PreservedCycles
 
 	if fpc > 0 {
-		fpb = fpc*blocksInCycle + 1
+		fpb = (GranadaCycle)*blocksInCycle/2 + (fpc-GranadaCycle)*blocksInCycle + 1
 	}
 	return fpb
 }
@@ -136,10 +160,10 @@ func (t *TezTracker) GetBakerInfo(accountID string) (bi *models.Baker, err error
 
 func (t *TezTracker) calcDepositRewards(bi *models.BakerStats, accountID string) (err error) {
 
-	bi.BakingDeposits = bi.BakingCount * BlockSecurityDeposit
+	bi.BakingDeposits = bi.BakingCount * GranadaBlockSecurityDeposit
 	bi.BakingRewards = bi.FrozenBakingRewards
 
-	bi.EndorsementDeposits = bi.EndorsementCount * EndorsementSecurityDeposit
+	bi.EndorsementDeposits = bi.EndorsementCount * GranadaBlockSecurityDeposit
 	bi.EndorsementRewards = bi.FrozenEndorsementRewards
 
 	return nil
@@ -202,4 +226,60 @@ func (t *TezTracker) GetStakingRatio() (float64, error) {
 	ratio := float64(stakedBalance) / float64(supply)
 
 	return ratio, nil
+}
+
+func (t *TezTracker) GetThirdPartyBakers() (bakers []models.ThirdPartyBakerAgg, err error) {
+	tpbRepo := t.repoProvider.GetThirdPartyBakers()
+	return tpbRepo.GetAggregatedBakers()
+}
+
+func (t *TezTracker) UpdateBakersSocialMedia() error {
+	bakersRepo := t.repoProvider.GetBaker()
+	bakers, err := bakersRepo.PublicBakersList(10000, 0, nil)
+	if err != nil {
+		return fmt.Errorf("bakersRepo.PublicBakersList: %s", err.Error())
+	}
+	for _, baker := range bakers {
+		media, err := getBakerMediaData(baker.AccountID)
+		if err != nil {
+			return fmt.Errorf("getBakerMediaData: %s", err.Error())
+		}
+		baker.Media = string(media)
+		err = bakersRepo.UpdateBaker(baker)
+		if err != nil {
+			return fmt.Errorf("bakersRepo.UpdateBaker: %s", err.Error())
+		}
+	}
+	return nil
+}
+
+type bakerInfo struct {
+	Metadata struct {
+		Site     string `json:"site,omitempty"`
+		Twitter  string `json:"twitter,omitempty"`
+		Telegram string `json:"telegram,omitempty"`
+		Reddit   string `json:"reddit,omitempty"`
+	} `json:"metadata"`
+}
+
+func getBakerMediaData(address string) (media []byte, err error) {
+	resp, err := http.Get(fmt.Sprintf(bakerMediaSource, address))
+	if err != nil {
+		return media, fmt.Errorf("http.Get: %s", err.Error())
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return media, fmt.Errorf("ioutil.ReadAll: %s", err.Error())
+	}
+	if resp.StatusCode != http.StatusOK {
+		return media, fmt.Errorf("bad request status: %d", resp.StatusCode)
+	}
+	var info bakerInfo
+	err = json.Unmarshal(data, &info)
+	if err != nil {
+		return media, fmt.Errorf("json.Unmarshal: %s", err.Error())
+	}
+	media, _ = json.Marshal(info.Metadata)
+	return media, nil
 }

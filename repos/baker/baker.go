@@ -15,7 +15,7 @@ type (
 
 	Repo interface {
 		Find(accountID string) (bool, models.Baker, error)
-		List(limit, offset uint) ([]models.Baker, error)
+		List(limit, offset uint, favorites []string) ([]models.Baker, error)
 		Count() (int64, error)
 		BlocksCountBakedBy(ids []string, startingLevel int64) (counter []BakerCounter, err error)
 		EndorsementsCountBy(ids []string, startingLevel int64) (counter []BakerWeightedCounter, err error)
@@ -25,10 +25,11 @@ type (
 
 		//New
 		PublicBakersCount() (int64, error)
-		PublicBakersList(limit, offset uint) (bakers []models.Baker, err error)
+		PublicBakersList(limit, offset uint, favorites []string) (bakers []models.Baker, err error)
 		BakerRegistryList() ([]models.BakerRegistry, error)
 		SavePublicBaker(models.BakerRegistry) error
 		PublicBakersSearchList() ([]models.PublicBakerSearch, error)
+		UpdateBaker(baker models.Baker) error
 
 		TotalBakingRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
 		TotalEndorsementRewards(accountId string, fromCycle, toCycle int64) (rewards int64, err error)
@@ -58,7 +59,7 @@ func New(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err error) {
-	if res := r.db.Select("tezos.baker_view.*, baker_name as name, (10000 - split)/100 as fee").
+	if res := r.db.Select("tezos.baker_view.*, baker_name as name, public_bakers.media, (10000 - split)/100 as fee").
 		Table(bakerMaterializedView).
 		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
 		Where("account_id = ?", accountID).
@@ -75,10 +76,20 @@ func (r *Repository) Find(accountID string) (found bool, baker models.Baker, err
 // List returns a list of bakers(accounts which have at least 1 endorsement operation) ordered by their staking balance.
 // limit defines the limit for the maximum number of bakers returned,
 // offset sets the offset for thenumber of rows returned.
-func (r *Repository) List(limit, offset uint) (bakers []models.Baker, err error) {
-	err = r.db.Select("tezos.baker_view.*,baker_name as name").Table(bakerMaterializedView).
-		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate").
-		Order("staking_balance desc").
+func (r *Repository) List(limit, offset uint, favorites []string) (bakers []models.Baker, err error) {
+	db := r.db.Select("tezos.baker_view.*,baker_name as name, public_bakers.media").Table(bakerMaterializedView).
+		Joins("left join tezos.public_bakers on baker_view.account_id = public_bakers.delegate")
+
+	if len(favorites) != 0 {
+		q := "CASE account_id"
+		for i, favorite := range favorites {
+			q = fmt.Sprintf("%s WHEN '%s' THEN %d", q, favorite, i)
+		}
+		q = fmt.Sprintf("%s ELSE %d END", q, len(favorites))
+		db = db.Order(q)
+	}
+
+	err = db.Order("staking_balance desc").
 		Limit(limit).
 		Offset(offset).
 		Find(&bakers).Error
@@ -114,7 +125,7 @@ func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (cou
 		db = db.Where("block_level >= ?", startingLevel)
 	}
 
-	err = db.Select("SUM(count) as count, SUM(count*trunc(1/priority,6)) as weight, baker").
+	err = db.Select("SUM(number_of_slots) as count, SUM(count*trunc(1/priority,6)) as weight, baker").
 		Group("baker").Scan(&counter).Error
 	if err != nil {
 		return nil, err
@@ -229,11 +240,21 @@ func (r *Repository) PublicBakersCount() (count int64, err error) {
 	return count, nil
 }
 
-func (r *Repository) PublicBakersList(limit, offset uint) (bakers []models.Baker, err error) {
-	err = r.db.Select("pb.baker_name as name,delegate as account_id, bw.*, (10000 - split)/100 as fee ").Table("tezos.public_bakers as pb").
+func (r *Repository) PublicBakersList(limit, offset uint, favorites []string) (bakers []models.Baker, err error) {
+	db := r.db.Select("pb.baker_name as name, pb.media,delegate as account_id, bw.*, (10000 - split)/100 as fee ").Table("tezos.public_bakers as pb").
 		Joins(fmt.Sprintf("left join %s as bw on bw.account_id = pb.delegate", bakerMaterializedView)).
-		Where("is_hidden IS false").
-		Order("COALESCE(staking_balance,0) desc").
+		Where("is_hidden IS false")
+
+	if len(favorites) != 0 {
+		q := "CASE account_id"
+		for i, favorite := range favorites {
+			q = fmt.Sprintf("%s WHEN '%s' THEN %d", q, favorite, i)
+		}
+		q = fmt.Sprintf("%s ELSE %d END", q, len(favorites))
+		db = db.Order(q)
+	}
+
+	err = db.Order("COALESCE(staking_balance,0) desc").
 		Limit(limit).
 		Offset(offset).
 		Find(&bakers).Error
@@ -263,4 +284,12 @@ func (r *Repository) SavePublicBaker(baker models.BakerRegistry) (err error) {
 	}
 
 	return nil
+}
+
+func (r *Repository) UpdateBaker(baker models.Baker) error {
+	return r.db.Table("tezos.public_bakers").
+		Where("delegate = ?", baker.AccountID).
+		Updates(map[string]interface{}{
+			"media": baker.Media,
+		}).Error
 }

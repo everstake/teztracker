@@ -12,17 +12,26 @@ import (
 type Config struct {
 	Port                                  int
 	Mainnet                               NetworkConfig
-	Carthagenet                           NetworkConfig
+	Florencenet                           NetworkConfig
 	LogLevel                              string `envconfig:"LOG_LEVEL"`
-	CounterIntervalHours                  int
-	FutureRightsIntervalMinutes           int
+	Production                            bool
+	CounterIntervalSeconds                int
 	SnapshotCheckIntervalMinutes          int
+	FutureRightsIntervalMinutes           int
 	VotingRollsIntervalMinutes            int
 	DoubleBakingCheckIntervalMinutes      int
 	DoubleEndorsementCheckIntervalMinutes int
 	BakerRegistryCheckIntervalMinutes     int
 	AssetsParseIntervalMinutes            int
+	IPFSClient                            string
+	NFTTokensParseIntervalSeconds         int
 	InfoWSEventsIntervalMinutes           int
+	SmtpHost                              string
+	SmtpPort                              int
+	SmtpUser                              string
+	SmtpPassword                          string
+	ThirdPartyBakersIntervalMinutes       int
+	BakersSocialMediaHours                int
 	WhalesUpdatesIntervalMinutes          int
 }
 

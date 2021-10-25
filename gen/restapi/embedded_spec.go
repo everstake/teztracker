@@ -117,7 +117,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/UserAddress"
+                "$ref": "#/definitions/UserAddressWithBalance"
               }
             }
           },
@@ -131,7 +131,7 @@ func init() {
       }
     },
     "/v2/data/profile/delete/address": {
-      "delete": {
+      "post": {
         "consumes": [
           "application/json"
         ],
@@ -168,7 +168,7 @@ func init() {
       }
     },
     "/v2/data/profile/delete/note": {
-      "delete": {
+      "post": {
         "consumes": [
           "application/json"
         ],
@@ -264,7 +264,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/UserNote"
+                "$ref": "#/definitions/UserNoteWithBalance"
               }
             }
           },
@@ -297,13 +297,102 @@ func init() {
             "name": "data",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/UserProfile"
+              "$ref": "#/definitions/RequestUserProfile"
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Update user profile"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmail",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email/token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmailToken",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EmailToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email token"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/thirdparty/bakers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getThirdPartyBakersHandler",
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ThirdPartyBakers"
+              }
+            }
           },
           "400": {
             "description": "Bad request"
@@ -352,6 +441,95 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/TokenAssetRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/assets/operations": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetOperationsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "name": "asset_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "name": "account_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi",
+            "name": "block_level",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for token operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AssetOperation"
               }
             },
             "headers": {
@@ -479,73 +657,6 @@ func init() {
         }
       }
     },
-    "/v2/data/{network}/assets/{asset_id}/operations": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "operationId": "getAssetOperationsList",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "asset_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 300,
-            "minimum": 1,
-            "type": "integer",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "name": "type",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for token operations",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/AssetOperation"
-              }
-            },
-            "headers": {
-              "X-Total-Count": {
-                "type": "integer",
-                "description": "The total number of data entries."
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
     "/v2/data/{network}/ballots/{id}": {
       "get": {
         "produces": [
@@ -601,6 +712,522 @@ func init() {
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contracts list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NFTContractRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContract",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/distribution": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractDistribution",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractDistribution"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/operations": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOperations",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/operations/chart": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOperationsChart",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": [
+              "D"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract operations chart",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ChartsData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/ownership": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOwnership",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractOwnership"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractTokensList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT tokens",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NFTTokenRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractToken",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT token",
+            "schema": {
+              "$ref": "#/definitions/NFTTokenRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}/holders": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractTokenHolders",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT token holders",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenHolderRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
           }
         }
       }
@@ -1995,6 +2622,16 @@ func init() {
             "type": "string",
             "name": "after_id",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2058,6 +2695,59 @@ func init() {
             "description": "Query compatibility endpoint for account",
             "schema": {
               "$ref": "#/definitions/AccountsRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/{accountId}/assets": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountAssetsBalancesList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountAssetBalanceRow"
+              }
             }
           },
           "400": {
@@ -2410,6 +3100,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -2947,7 +3647,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3030,7 +3730,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3088,7 +3788,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3207,6 +3907,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -3537,7 +4247,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -3585,7 +4295,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -4297,6 +5007,16 @@ func init() {
             "description": "Offset",
             "name": "offset",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -4665,6 +5385,20 @@ func init() {
     }
   },
   "definitions": {
+    "AccountAssetBalanceRow": {
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "token_info": {
+          "$ref": "#/definitions/TokenAssetRow"
+        }
+      }
+    },
     "AccountBakingRow": {
       "required": [
         "avgPriority",
@@ -5124,6 +5858,23 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "media": {
+          "type": "object",
+          "properties": {
+            "reddit": {
+              "format": "string"
+            },
+            "site": {
+              "format": "string"
+            },
+            "telegram": {
+              "format": "string"
+            },
+            "twitter": {
+              "format": "string"
+            }
+          }
+        },
         "name": {
           "type": "string"
         },
@@ -5557,7 +6308,7 @@ func init() {
     },
     "DeleteUserNote": {
       "properties": {
-        "text": {
+        "address": {
           "type": "string"
         }
       }
@@ -5599,6 +6350,13 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "EmailToken": {
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -5718,6 +6476,125 @@ func init() {
         },
         "signature": {
           "type": "string"
+        }
+      }
+    },
+    "NFTContractDistribution": {
+      "required": [
+        "total_token_num",
+        "unique_holders_num",
+        "distribution"
+      ],
+      "properties": {
+        "distribution": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TokenHolderRow"
+          }
+        },
+        "total_token_num": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unique_holders_num": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTContractOwnership": {
+      "required": [
+        "unique_holders_num",
+        "whales_count",
+        "single_owners",
+        "multi_owners"
+      ],
+      "properties": {
+        "multi_owners": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "single_owners": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unique_holders_num": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "whales_count": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTContractRow": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "nfts_number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "operations_number": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTTokenRow": {
+      "required": [
+        "decimals"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "category": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "decimals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ipfs_source": {
+          "type": "string"
+        },
+        "is_for_sale": {
+          "type": "boolean"
+        },
+        "issued_by": {
+          "type": "string"
+        },
+        "last_active_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_price": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token_id": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -5860,6 +6737,9 @@ func init() {
         "endorsementReward": {
           "type": "integer",
           "format": "int64"
+        },
+        "entrypoint": {
+          "type": "string"
         },
         "fee": {
           "type": "integer",
@@ -6100,6 +6980,16 @@ func init() {
         }
       }
     },
+    "RequestUserProfile": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -6121,18 +7011,66 @@ func init() {
         }
       }
     },
+    "ThirdPartyBakers": {
+      "properties": {
+        "alias": {
+          "type": "string"
+        },
+        "baker": {
+          "type": "string"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ThirdPartyProvider"
+          }
+        }
+      }
+    },
+    "ThirdPartyProvider": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "available_capacity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "efficiency": {
+          "type": "number"
+        },
+        "fee": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "payout_accuracy": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "staking_balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "yield": {
+          "type": "number"
+        }
+      }
+    },
     "TokenAssetRow": {
       "required": [
-        "balance",
         "precision"
       ],
       "properties": {
         "account_id": {
           "type": "string"
-        },
-        "balance": {
-          "type": "integer",
-          "format": "int64"
         },
         "created_at": {
           "type": "integer",
@@ -6147,6 +7085,9 @@ func init() {
         "precision": {
           "type": "integer",
           "format": "int64"
+        },
+        "ticker": {
+          "type": "string"
         },
         "total_supply": {
           "type": "integer",
@@ -6169,32 +7110,112 @@ func init() {
       }
     },
     "UserAddress": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled"
+      ],
       "properties": {
         "address": {
           "type": "string"
         },
-        "delegations:enabled": {
+        "delegations_enabled": {
           "type": "boolean"
         },
-        "transfers_enabled": {
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserAddressWithBalance": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegations_enabled": {
+          "type": "boolean"
+        },
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
           "type": "boolean"
         }
       }
     },
     "UserNote": {
       "properties": {
+        "address": {
+          "type": "string"
+        },
         "alias": {
           "type": "string"
         },
-        "text": {
+        "description": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "UserNoteWithBalance": {
+      "required": [
+        "address",
+        "alias",
+        "tag",
+        "description",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
           "type": "string"
         }
       }
     },
     "UserProfile": {
+      "required": [
+        "email",
+        "username",
+        "verified"
+      ],
       "properties": {
         "email": {
           "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
         }
       }
     },
@@ -6362,7 +7383,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/UserAddress"
+                "$ref": "#/definitions/UserAddressWithBalance"
               }
             }
           },
@@ -6376,7 +7397,7 @@ func init() {
       }
     },
     "/v2/data/profile/delete/address": {
-      "delete": {
+      "post": {
         "consumes": [
           "application/json"
         ],
@@ -6413,7 +7434,7 @@ func init() {
       }
     },
     "/v2/data/profile/delete/note": {
-      "delete": {
+      "post": {
         "consumes": [
           "application/json"
         ],
@@ -6509,7 +7530,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/UserNote"
+                "$ref": "#/definitions/UserNoteWithBalance"
               }
             }
           },
@@ -6542,13 +7563,102 @@ func init() {
             "name": "data",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/UserProfile"
+              "$ref": "#/definitions/RequestUserProfile"
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Update user profile"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmail",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "address",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/profile/verify/email/token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "Profile"
+        ],
+        "operationId": "verifyEmailToken",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EmailToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified user email token"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/thirdparty/bakers": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "App Info"
+        ],
+        "operationId": "getThirdPartyBakersHandler",
+        "responses": {
+          "200": {
+            "description": "Application info endpoint",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ThirdPartyBakers"
+              }
+            }
           },
           "400": {
             "description": "Bad request"
@@ -6598,6 +7708,96 @@ func init() {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/TokenAssetRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/assets/operations": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "operationId": "getAssetOperationsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "name": "asset_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "name": "account_id",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "collectionFormat": "multi",
+            "name": "block_level",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for token operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AssetOperation"
               }
             },
             "headers": {
@@ -6727,74 +7927,6 @@ func init() {
         }
       }
     },
-    "/v2/data/{network}/assets/{asset_id}/operations": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "operationId": "getAssetOperationsList",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "asset_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "network",
-            "in": "path",
-            "required": true
-          },
-          {
-            "maximum": 300,
-            "minimum": 1,
-            "type": "integer",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "minimum": 0,
-            "type": "integer",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "name": "type",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Query compatibility endpoint for token operations",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/AssetOperation"
-              }
-            },
-            "headers": {
-              "X-Total-Count": {
-                "type": "integer",
-                "description": "The total number of data entries."
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
     "/v2/data/{network}/ballots/{id}": {
       "get": {
         "produces": [
@@ -6851,6 +7983,527 @@ func init() {
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractsList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contracts list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NFTContractRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContract",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/distribution": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractDistribution",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractDistribution"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/operations": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOperations",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OperationsRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/operations/chart": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOperationsChart",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "name": "to",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": [
+              "D"
+            ],
+            "type": "string",
+            "name": "period",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract operations chart",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ChartsData"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/ownership": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractOwnership",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT contract",
+            "schema": {
+              "$ref": "#/definitions/NFTContractOwnership"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractTokensList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT tokens",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NFTTokenRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractToken",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT token",
+            "schema": {
+              "$ref": "#/definitions/NFTTokenRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}/holders": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "NFT"
+        ],
+        "operationId": "getNFTContractTokenHolders",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "contract_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maximum": 300,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "minimum": 0,
+            "type": "integer",
+            "default": 0,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for NFT token holders",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TokenHolderRow"
+              }
+            },
+            "headers": {
+              "X-Total-Count": {
+                "type": "integer",
+                "description": "The total number of data entries."
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
           }
         }
       }
@@ -8258,6 +9911,16 @@ func init() {
             "type": "string",
             "name": "after_id",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8321,6 +9984,59 @@ func init() {
             "description": "Query compatibility endpoint for account",
             "schema": {
               "$ref": "#/definitions/AccountsRow"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/v2/data/{platform}/{network}/accounts/{accountId}/assets": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getAccountAssetsBalancesList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "platform",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Not used",
+            "name": "network",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "accountId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query compatibility endpoint for account",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountAssetBalanceRow"
+              }
             }
           },
           "400": {
@@ -8676,6 +10392,16 @@ func init() {
             "default": 0,
             "description": "Offset",
             "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -9216,7 +10942,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9299,7 +11025,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9357,7 +11083,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9477,6 +11203,16 @@ func init() {
             "type": "string",
             "description": "Not used",
             "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
             "in": "query"
           }
         ],
@@ -9810,7 +11546,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -9858,7 +11594,7 @@ func init() {
           {
             "enum": [
               "mainnet",
-              "carthagenet"
+              "florencenet"
             ],
             "type": "string",
             "description": "Not used",
@@ -10574,6 +12310,16 @@ func init() {
             "description": "Offset",
             "name": "offset",
             "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "favorites accounts",
+            "name": "favorites",
+            "in": "query"
           }
         ],
         "responses": {
@@ -10945,6 +12691,20 @@ func init() {
     }
   },
   "definitions": {
+    "AccountAssetBalanceRow": {
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "token_info": {
+          "$ref": "#/definitions/TokenAssetRow"
+        }
+      }
+    },
     "AccountBakingRow": {
       "required": [
         "avgPriority",
@@ -11404,6 +13164,23 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "media": {
+          "type": "object",
+          "properties": {
+            "reddit": {
+              "format": "string"
+            },
+            "site": {
+              "format": "string"
+            },
+            "telegram": {
+              "format": "string"
+            },
+            "twitter": {
+              "format": "string"
+            }
+          }
+        },
         "name": {
           "type": "string"
         },
@@ -11837,7 +13614,7 @@ func init() {
     },
     "DeleteUserNote": {
       "properties": {
-        "text": {
+        "address": {
           "type": "string"
         }
       }
@@ -11879,6 +13656,13 @@ func init() {
         "priority": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "EmailToken": {
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -11999,6 +13783,125 @@ func init() {
         },
         "signature": {
           "type": "string"
+        }
+      }
+    },
+    "NFTContractDistribution": {
+      "required": [
+        "total_token_num",
+        "unique_holders_num",
+        "distribution"
+      ],
+      "properties": {
+        "distribution": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TokenHolderRow"
+          }
+        },
+        "total_token_num": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unique_holders_num": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTContractOwnership": {
+      "required": [
+        "unique_holders_num",
+        "whales_count",
+        "single_owners",
+        "multi_owners"
+      ],
+      "properties": {
+        "multi_owners": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "single_owners": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unique_holders_num": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "whales_count": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTContractRow": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "nfts_number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "operations_number": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "NFTTokenRow": {
+      "required": [
+        "decimals"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "category": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "decimals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ipfs_source": {
+          "type": "string"
+        },
+        "is_for_sale": {
+          "type": "boolean"
+        },
+        "issued_by": {
+          "type": "string"
+        },
+        "last_active_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_price": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token_id": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -12141,6 +14044,9 @@ func init() {
         "endorsementReward": {
           "type": "integer",
           "format": "int64"
+        },
+        "entrypoint": {
+          "type": "string"
         },
         "fee": {
           "type": "integer",
@@ -12381,6 +14287,16 @@ func init() {
         }
       }
     },
+    "RequestUserProfile": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "Snapshots": {
       "properties": {
         "cycle": {
@@ -12402,18 +14318,66 @@ func init() {
         }
       }
     },
+    "ThirdPartyBakers": {
+      "properties": {
+        "alias": {
+          "type": "string"
+        },
+        "baker": {
+          "type": "string"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ThirdPartyProvider"
+          }
+        }
+      }
+    },
+    "ThirdPartyProvider": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "available_capacity": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "efficiency": {
+          "type": "number"
+        },
+        "fee": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "payout_accuracy": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "staking_balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "yield": {
+          "type": "number"
+        }
+      }
+    },
     "TokenAssetRow": {
       "required": [
-        "balance",
         "precision"
       ],
       "properties": {
         "account_id": {
           "type": "string"
-        },
-        "balance": {
-          "type": "integer",
-          "format": "int64"
         },
         "created_at": {
           "type": "integer",
@@ -12428,6 +14392,9 @@ func init() {
         "precision": {
           "type": "integer",
           "format": "int64"
+        },
+        "ticker": {
+          "type": "string"
         },
         "total_supply": {
           "type": "integer",
@@ -12450,32 +14417,112 @@ func init() {
       }
     },
     "UserAddress": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled"
+      ],
       "properties": {
         "address": {
           "type": "string"
         },
-        "delegations:enabled": {
+        "delegations_enabled": {
           "type": "boolean"
         },
-        "transfers_enabled": {
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UserAddressWithBalance": {
+      "required": [
+        "address",
+        "delegations_enabled",
+        "in_transfers_enabled",
+        "out_transfers_enabled",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delegations_enabled": {
+          "type": "boolean"
+        },
+        "in_transfers_enabled": {
+          "type": "boolean"
+        },
+        "out_transfers_enabled": {
           "type": "boolean"
         }
       }
     },
     "UserNote": {
       "properties": {
+        "address": {
+          "type": "string"
+        },
         "alias": {
           "type": "string"
         },
-        "text": {
+        "description": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "UserNoteWithBalance": {
+      "required": [
+        "address",
+        "alias",
+        "tag",
+        "description",
+        "balance"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tag": {
           "type": "string"
         }
       }
     },
     "UserProfile": {
+      "required": [
+        "email",
+        "username",
+        "verified"
+      ],
       "properties": {
         "email": {
           "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
         }
       }
     },

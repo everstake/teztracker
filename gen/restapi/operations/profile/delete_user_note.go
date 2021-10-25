@@ -29,7 +29,7 @@ func NewDeleteUserNote(ctx *middleware.Context, handler DeleteUserNoteHandler) *
 	return &DeleteUserNote{Context: ctx, Handler: handler}
 }
 
-/*DeleteUserNote swagger:route DELETE /v2/data/profile/delete/note Profile deleteUserNote
+/*DeleteUserNote swagger:route POST /v2/data/profile/delete/note Profile deleteUserNote
 
 DeleteUserNote delete user note API
 

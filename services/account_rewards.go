@@ -18,13 +18,13 @@ func (t *TezTracker) GetAccountRewardsList(accountID string, limits Limiter) (co
 	var blockReward, endorsementReward int64
 	for i := range rewards {
 		//Use FutureBakingRewards for future cycles
-		rewards[i].BakingRewards += rewards[i].FutureBakingCount * BlockReward
-		rewards[i].EndorsementRewards += rewards[i].FutureEndorsementCount * EndorsementReward
+		rewards[i].BakingRewards += rewards[i].FutureBakingCount * getBlockRewardByCycle(rewards[i].Cycle, 0)
+		rewards[i].EndorsementRewards += rewards[i].FutureEndorsementCount * getEndorsementRewardByCycle(rewards[i].Cycle)
 
 		rewards[i].Status = getRewardStatus(rewards[i].Cycle, lastBlock.MetaCycle)
 
-		blockReward = BlockReward
-		endorsementReward = EndorsementReward
+		blockReward = getBlockRewardByCycle(rewards[i].Cycle, 0)
+		endorsementReward = getEndorsementRewardByCycle(rewards[i].Cycle)
 
 		if rewards[i].Cycle < CarthageCycle {
 			blockReward = BabylonBlockReward
@@ -56,15 +56,19 @@ func (t *TezTracker) GetAccountSecurityDepositList(accountID string) (rewards []
 	availableBond := bal.Balance - int64(bal.FrozenBalance)
 	unfrozenCycle := PreservedCycles + 1
 	var futureEndorsementDeposit, futureBakingDeposit int64
+	cycles := PreservedCycles
+	if cycles > len(rewards) {
+		cycles = len(rewards)
+	}
 	//Start from active cycle
-	for i := PreservedCycles; i >= 0; i-- {
+	for i := cycles; i >= 0; i-- {
 		//Calc future deposit
-		futureEndorsementDeposit = rewards[i].FutureEndorsementCount * EndorsementSecurityDeposit
-		futureBakingDeposit = rewards[i].FutureBakingCount * BlockSecurityDeposit
+		futureEndorsementDeposit = rewards[i].FutureEndorsementCount * getEndorsementSecurityDepositByCycle(rewards[i].Cycle)
+		futureBakingDeposit = rewards[i].FutureBakingCount * getBlockSecurityDepositByCycle(rewards[i].Cycle)
 
 		//Calc actual deposit
-		rewards[i].ActualBakingSecurityDeposit = (rewards[i].BakingCount + rewards[i].StolenBaking) * BlockSecurityDeposit
-		rewards[i].ActualEndorsementSecurityDeposit = rewards[i].EndorsementsCount * EndorsementSecurityDeposit
+		rewards[i].ActualBakingSecurityDeposit = (rewards[i].BakingCount + rewards[i].StolenBaking) * getBlockSecurityDepositByCycle(rewards[i].Cycle)
+		rewards[i].ActualEndorsementSecurityDeposit = rewards[i].EndorsementsCount * getEndorsementSecurityDepositByCycle(rewards[i].Cycle)
 
 		//Calc expected deposit
 		rewards[i].ExpectedBakingSecurityDeposit = futureBakingDeposit + rewards[i].ActualBakingSecurityDeposit
@@ -79,7 +83,7 @@ func (t *TezTracker) GetAccountSecurityDepositList(accountID string) (rewards []
 
 		//Unfroze deposit + unfroze rewards
 		if len(rewards)-i > unfrozenCycle {
-			availableBond += (rewards[i+unfrozenCycle].BakingCount+rewards[i+unfrozenCycle].StolenBaking)*BlockSecurityDeposit + rewards[i+unfrozenCycle].EndorsementsCount*EndorsementSecurityDeposit
+			availableBond += (rewards[i+unfrozenCycle].BakingCount+rewards[i+unfrozenCycle].StolenBaking)*getBlockSecurityDepositByCycle(rewards[i].Cycle) + rewards[i+unfrozenCycle].EndorsementsCount*getEndorsementSecurityDepositByCycle(rewards[i].Cycle)
 			availableBond += rewards[i+unfrozenCycle].BakingReward + rewards[i+unfrozenCycle].EndorsementsReward
 		}
 

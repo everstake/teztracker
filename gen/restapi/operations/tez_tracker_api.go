@@ -26,6 +26,7 @@ import (
 	"github.com/everstake/teztracker/gen/restapi/operations/blocks"
 	"github.com/everstake/teztracker/gen/restapi/operations/fees"
 	"github.com/everstake/teztracker/gen/restapi/operations/mempool"
+	"github.com/everstake/teztracker/gen/restapi/operations/n_f_t"
 	"github.com/everstake/teztracker/gen/restapi/operations/operation_groups"
 	"github.com/everstake/teztracker/gen/restapi/operations/operations_list"
 	"github.com/everstake/teztracker/gen/restapi/operations/profile"
@@ -70,6 +71,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		AccountsGetAccountHandler: accounts.GetAccountHandlerFunc(func(params accounts.GetAccountParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccount has not yet been implemented")
+		}),
+		AccountsGetAccountAssetsBalancesListHandler: accounts.GetAccountAssetsBalancesListHandlerFunc(func(params accounts.GetAccountAssetsBalancesListParams) middleware.Responder {
+			return middleware.NotImplemented("operation AccountsGetAccountAssetsBalancesList has not yet been implemented")
 		}),
 		AccountsGetAccountBakedBlocksListHandler: accounts.GetAccountBakedBlocksListHandlerFunc(func(params accounts.GetAccountBakedBlocksListParams) middleware.Responder {
 			return middleware.NotImplemented("operation AccountsGetAccountBakedBlocksList has not yet been implemented")
@@ -197,6 +201,33 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		MempoolGetMempoolOperationsHandler: mempool.GetMempoolOperationsHandlerFunc(func(params mempool.GetMempoolOperationsParams) middleware.Responder {
 			return middleware.NotImplemented("operation MempoolGetMempoolOperations has not yet been implemented")
 		}),
+		NftGetNFTContractHandler: n_f_t.GetNFTContractHandlerFunc(func(params n_f_t.GetNFTContractParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContract has not yet been implemented")
+		}),
+		NftGetNFTContractDistributionHandler: n_f_t.GetNFTContractDistributionHandlerFunc(func(params n_f_t.GetNFTContractDistributionParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractDistribution has not yet been implemented")
+		}),
+		NftGetNFTContractOperationsHandler: n_f_t.GetNFTContractOperationsHandlerFunc(func(params n_f_t.GetNFTContractOperationsParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractOperations has not yet been implemented")
+		}),
+		NftGetNFTContractOperationsChartHandler: n_f_t.GetNFTContractOperationsChartHandlerFunc(func(params n_f_t.GetNFTContractOperationsChartParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractOperationsChart has not yet been implemented")
+		}),
+		NftGetNFTContractOwnershipHandler: n_f_t.GetNFTContractOwnershipHandlerFunc(func(params n_f_t.GetNFTContractOwnershipParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractOwnership has not yet been implemented")
+		}),
+		NftGetNFTContractTokenHandler: n_f_t.GetNFTContractTokenHandlerFunc(func(params n_f_t.GetNFTContractTokenParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractToken has not yet been implemented")
+		}),
+		NftGetNFTContractTokenHoldersHandler: n_f_t.GetNFTContractTokenHoldersHandlerFunc(func(params n_f_t.GetNFTContractTokenHoldersParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractTokenHolders has not yet been implemented")
+		}),
+		NftGetNFTContractTokensListHandler: n_f_t.GetNFTContractTokensListHandlerFunc(func(params n_f_t.GetNFTContractTokensListParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractTokensList has not yet been implemented")
+		}),
+		NftGetNFTContractsListHandler: n_f_t.GetNFTContractsListHandlerFunc(func(params n_f_t.GetNFTContractsListParams) middleware.Responder {
+			return middleware.NotImplemented("operation NftGetNFTContractsList has not yet been implemented")
+		}),
 		VotingGetNonVotersByPeriodIDHandler: voting.GetNonVotersByPeriodIDHandlerFunc(func(params voting.GetNonVotersByPeriodIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation VotingGetNonVotersByPeriodID has not yet been implemented")
 		}),
@@ -233,6 +264,9 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		GetSnapshotsHandler: GetSnapshotsHandlerFunc(func(params GetSnapshotsParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetSnapshots has not yet been implemented")
 		}),
+		AppInfoGetThirdPartyBakersHandlerHandler: app_info.GetThirdPartyBakersHandlerHandlerFunc(func(params app_info.GetThirdPartyBakersHandlerParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppInfoGetThirdPartyBakersHandler has not yet been implemented")
+		}),
 		ProfileGetUserAddressesHandler: profile.GetUserAddressesHandlerFunc(func(params profile.GetUserAddressesParams) middleware.Responder {
 			return middleware.NotImplemented("operation ProfileGetUserAddresses has not yet been implemented")
 		}),
@@ -253,6 +287,12 @@ func NewTezTrackerAPI(spec *loads.Document) *TezTrackerAPI {
 		}),
 		ProfileUpdateProfileHandler: profile.UpdateProfileHandlerFunc(func(params profile.UpdateProfileParams) middleware.Responder {
 			return middleware.NotImplemented("operation ProfileUpdateProfile has not yet been implemented")
+		}),
+		ProfileVerifyEmailHandler: profile.VerifyEmailHandlerFunc(func(params profile.VerifyEmailParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileVerifyEmail has not yet been implemented")
+		}),
+		ProfileVerifyEmailTokenHandler: profile.VerifyEmailTokenHandlerFunc(func(params profile.VerifyEmailTokenParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProfileVerifyEmailToken has not yet been implemented")
 		}),
 	}
 }
@@ -299,6 +339,8 @@ type TezTrackerAPI struct {
 	ProfileDeleteUserNoteHandler profile.DeleteUserNoteHandler
 	// AccountsGetAccountHandler sets the operation handler for the get account operation
 	AccountsGetAccountHandler accounts.GetAccountHandler
+	// AccountsGetAccountAssetsBalancesListHandler sets the operation handler for the get account assets balances list operation
+	AccountsGetAccountAssetsBalancesListHandler accounts.GetAccountAssetsBalancesListHandler
 	// AccountsGetAccountBakedBlocksListHandler sets the operation handler for the get account baked blocks list operation
 	AccountsGetAccountBakedBlocksListHandler accounts.GetAccountBakedBlocksListHandler
 	// AccountsGetAccountBakingListHandler sets the operation handler for the get account baking list operation
@@ -383,6 +425,24 @@ type TezTrackerAPI struct {
 	AppInfoGetInfoHandler app_info.GetInfoHandler
 	// MempoolGetMempoolOperationsHandler sets the operation handler for the get mempool operations operation
 	MempoolGetMempoolOperationsHandler mempool.GetMempoolOperationsHandler
+	// NftGetNFTContractHandler sets the operation handler for the get n f t contract operation
+	NftGetNFTContractHandler n_f_t.GetNFTContractHandler
+	// NftGetNFTContractDistributionHandler sets the operation handler for the get n f t contract distribution operation
+	NftGetNFTContractDistributionHandler n_f_t.GetNFTContractDistributionHandler
+	// NftGetNFTContractOperationsHandler sets the operation handler for the get n f t contract operations operation
+	NftGetNFTContractOperationsHandler n_f_t.GetNFTContractOperationsHandler
+	// NftGetNFTContractOperationsChartHandler sets the operation handler for the get n f t contract operations chart operation
+	NftGetNFTContractOperationsChartHandler n_f_t.GetNFTContractOperationsChartHandler
+	// NftGetNFTContractOwnershipHandler sets the operation handler for the get n f t contract ownership operation
+	NftGetNFTContractOwnershipHandler n_f_t.GetNFTContractOwnershipHandler
+	// NftGetNFTContractTokenHandler sets the operation handler for the get n f t contract token operation
+	NftGetNFTContractTokenHandler n_f_t.GetNFTContractTokenHandler
+	// NftGetNFTContractTokenHoldersHandler sets the operation handler for the get n f t contract token holders operation
+	NftGetNFTContractTokenHoldersHandler n_f_t.GetNFTContractTokenHoldersHandler
+	// NftGetNFTContractTokensListHandler sets the operation handler for the get n f t contract tokens list operation
+	NftGetNFTContractTokensListHandler n_f_t.GetNFTContractTokensListHandler
+	// NftGetNFTContractsListHandler sets the operation handler for the get n f t contracts list operation
+	NftGetNFTContractsListHandler n_f_t.GetNFTContractsListHandler
 	// VotingGetNonVotersByPeriodIDHandler sets the operation handler for the get non voters by period ID operation
 	VotingGetNonVotersByPeriodIDHandler voting.GetNonVotersByPeriodIDHandler
 	// OperationGroupsGetOperationGroupHandler sets the operation handler for the get operation group operation
@@ -407,6 +467,8 @@ type TezTrackerAPI struct {
 	AccountsGetPublicBakersListForSearchHandler accounts.GetPublicBakersListForSearchHandler
 	// GetSnapshotsHandler sets the operation handler for the get snapshots operation
 	GetSnapshotsHandler GetSnapshotsHandler
+	// AppInfoGetThirdPartyBakersHandlerHandler sets the operation handler for the get third party bakers handler operation
+	AppInfoGetThirdPartyBakersHandlerHandler app_info.GetThirdPartyBakersHandlerHandler
 	// ProfileGetUserAddressesHandler sets the operation handler for the get user addresses operation
 	ProfileGetUserAddressesHandler profile.GetUserAddressesHandler
 	// ProfileGetUserNotesHandler sets the operation handler for the get user notes operation
@@ -421,6 +483,10 @@ type TezTrackerAPI struct {
 	OperationsListGetWhaleTranfersHandler operations_list.GetWhaleTranfersHandler
 	// ProfileUpdateProfileHandler sets the operation handler for the update profile operation
 	ProfileUpdateProfileHandler profile.UpdateProfileHandler
+	// ProfileVerifyEmailHandler sets the operation handler for the verify email operation
+	ProfileVerifyEmailHandler profile.VerifyEmailHandler
+	// ProfileVerifyEmailTokenHandler sets the operation handler for the verify email token operation
+	ProfileVerifyEmailTokenHandler profile.VerifyEmailTokenHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -510,6 +576,10 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.AccountsGetAccountHandler == nil {
 		unregistered = append(unregistered, "accounts.GetAccountHandler")
+	}
+
+	if o.AccountsGetAccountAssetsBalancesListHandler == nil {
+		unregistered = append(unregistered, "accounts.GetAccountAssetsBalancesListHandler")
 	}
 
 	if o.AccountsGetAccountBakedBlocksListHandler == nil {
@@ -680,6 +750,42 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "mempool.GetMempoolOperationsHandler")
 	}
 
+	if o.NftGetNFTContractHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractHandler")
+	}
+
+	if o.NftGetNFTContractDistributionHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractDistributionHandler")
+	}
+
+	if o.NftGetNFTContractOperationsHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractOperationsHandler")
+	}
+
+	if o.NftGetNFTContractOperationsChartHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractOperationsChartHandler")
+	}
+
+	if o.NftGetNFTContractOwnershipHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractOwnershipHandler")
+	}
+
+	if o.NftGetNFTContractTokenHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractTokenHandler")
+	}
+
+	if o.NftGetNFTContractTokenHoldersHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractTokenHoldersHandler")
+	}
+
+	if o.NftGetNFTContractTokensListHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractTokensListHandler")
+	}
+
+	if o.NftGetNFTContractsListHandler == nil {
+		unregistered = append(unregistered, "n_f_t.GetNFTContractsListHandler")
+	}
+
 	if o.VotingGetNonVotersByPeriodIDHandler == nil {
 		unregistered = append(unregistered, "voting.GetNonVotersByPeriodIDHandler")
 	}
@@ -728,6 +834,10 @@ func (o *TezTrackerAPI) Validate() error {
 		unregistered = append(unregistered, "GetSnapshotsHandler")
 	}
 
+	if o.AppInfoGetThirdPartyBakersHandlerHandler == nil {
+		unregistered = append(unregistered, "app_info.GetThirdPartyBakersHandlerHandler")
+	}
+
 	if o.ProfileGetUserAddressesHandler == nil {
 		unregistered = append(unregistered, "profile.GetUserAddressesHandler")
 	}
@@ -754,6 +864,14 @@ func (o *TezTrackerAPI) Validate() error {
 
 	if o.ProfileUpdateProfileHandler == nil {
 		unregistered = append(unregistered, "profile.UpdateProfileHandler")
+	}
+
+	if o.ProfileVerifyEmailHandler == nil {
+		unregistered = append(unregistered, "profile.VerifyEmailHandler")
+	}
+
+	if o.ProfileVerifyEmailTokenHandler == nil {
+		unregistered = append(unregistered, "profile.VerifyEmailTokenHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -872,20 +990,25 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/v2/data/profile/address"] = profile.NewCreateOrUpdateUserAddress(o.context, o.ProfileCreateOrUpdateUserAddressHandler)
 
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/v2/data/profile/delete/address"] = profile.NewDeleteUserAddress(o.context, o.ProfileDeleteUserAddressHandler)
+	o.handlers["POST"]["/v2/data/profile/delete/address"] = profile.NewDeleteUserAddress(o.context, o.ProfileDeleteUserAddressHandler)
 
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/v2/data/profile/delete/note"] = profile.NewDeleteUserNote(o.context, o.ProfileDeleteUserNoteHandler)
+	o.handlers["POST"]["/v2/data/profile/delete/note"] = profile.NewDeleteUserNote(o.context, o.ProfileDeleteUserNoteHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}"] = accounts.NewGetAccount(o.context, o.AccountsGetAccountHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{platform}/{network}/accounts/{accountId}/assets"] = accounts.NewGetAccountAssetsBalancesList(o.context, o.AccountsGetAccountAssetsBalancesListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -980,7 +1103,7 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v2/data/{network}/assets/{asset_id}/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
+	o.handlers["GET"]["/v2/data/{network}/assets/operations"] = assets.NewGetAssetOperationsList(o.context, o.AssetsGetAssetOperationsListHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1100,6 +1223,51 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}"] = n_f_t.NewGetNFTContract(o.context, o.NftGetNFTContractHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/distribution"] = n_f_t.NewGetNFTContractDistribution(o.context, o.NftGetNFTContractDistributionHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/operations"] = n_f_t.NewGetNFTContractOperations(o.context, o.NftGetNFTContractOperationsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/operations/chart"] = n_f_t.NewGetNFTContractOperationsChart(o.context, o.NftGetNFTContractOperationsChartHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/ownership"] = n_f_t.NewGetNFTContractOwnership(o.context, o.NftGetNFTContractOwnershipHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}"] = n_f_t.NewGetNFTContractToken(o.context, o.NftGetNFTContractTokenHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/tokens/{token_id}/holders"] = n_f_t.NewGetNFTContractTokenHolders(o.context, o.NftGetNFTContractTokenHoldersHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts/{contract_id}/tokens"] = n_f_t.NewGetNFTContractTokensList(o.context, o.NftGetNFTContractTokensListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v2/data/{network}/nft_contracts"] = n_f_t.NewGetNFTContractsList(o.context, o.NftGetNFTContractsListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/{network}/non_voters/{id}"] = voting.NewGetNonVotersByPeriodID(o.context, o.VotingGetNonVotersByPeriodIDHandler)
 
 	if o.handlers["GET"] == nil {
@@ -1160,6 +1328,11 @@ func (o *TezTrackerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/v2/data/thirdparty/bakers"] = app_info.NewGetThirdPartyBakersHandler(o.context, o.AppInfoGetThirdPartyBakersHandlerHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/v2/data/profile/addresses"] = profile.NewGetUserAddresses(o.context, o.ProfileGetUserAddressesHandler)
 
 	if o.handlers["GET"] == nil {
@@ -1191,6 +1364,16 @@ func (o *TezTrackerAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/v2/data/profile/update"] = profile.NewUpdateProfile(o.context, o.ProfileUpdateProfileHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v2/data/profile/verify/email"] = profile.NewVerifyEmail(o.context, o.ProfileVerifyEmailHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v2/data/profile/verify/email/token"] = profile.NewVerifyEmailToken(o.context, o.ProfileVerifyEmailTokenHandler)
 
 }
 

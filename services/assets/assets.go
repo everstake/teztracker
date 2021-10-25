@@ -1,18 +1,19 @@
 package assets
 
 import (
-	"blockwatch.cc/tzindex/chain"
 	"context"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
+
+	chain "blockwatch.cc/tzgo/tezos"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/assets"
 	"github.com/everstake/teztracker/repos/operation"
 	"github.com/everstake/teztracker/services/michelson"
 	"github.com/everstake/teztracker/services/rpc_client"
-	"strconv"
-	"strings"
 )
 
 type AssetRepo interface {
@@ -207,6 +208,7 @@ func ProcessAssetOperations(ctx context.Context, unit UnitOfWork, provider Asset
 			}
 
 			err = repo.CreateAssetOperations(models.AssetOperation{
+				BlockLevel:         groupHashOperations[0].BlockLevel.Int64,
 				TokenId:            tokens[tI].ID,
 				OperationId:        groupHashOperations[0].OperationID.Int64,
 				OperationGroupHash: op.Hash,

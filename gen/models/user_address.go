@@ -8,7 +8,9 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // UserAddress user address
@@ -16,17 +18,81 @@ import (
 type UserAddress struct {
 
 	// address
-	Address string `json:"address,omitempty"`
+	// Required: true
+	Address *string `json:"address"`
 
 	// delegations enabled
-	DelegationsEnabled bool `json:"delegations:enabled,omitempty"`
+	// Required: true
+	DelegationsEnabled *bool `json:"delegations_enabled"`
 
-	// transfers enabled
-	TransfersEnabled bool `json:"transfers_enabled,omitempty"`
+	// in transfers enabled
+	// Required: true
+	InTransfersEnabled *bool `json:"in_transfers_enabled"`
+
+	// out transfers enabled
+	// Required: true
+	OutTransfersEnabled *bool `json:"out_transfers_enabled"`
 }
 
 // Validate validates this user address
 func (m *UserAddress) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateAddress(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDelegationsEnabled(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInTransfersEnabled(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateOutTransfersEnabled(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UserAddress) validateAddress(formats strfmt.Registry) error {
+
+	if err := validate.Required("address", "body", m.Address); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserAddress) validateDelegationsEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("delegations_enabled", "body", m.DelegationsEnabled); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserAddress) validateInTransfersEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("in_transfers_enabled", "body", m.InTransfersEnabled); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserAddress) validateOutTransfersEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("out_transfers_enabled", "body", m.OutTransfersEnabled); err != nil {
+		return err
+	}
+
 	return nil
 }
 

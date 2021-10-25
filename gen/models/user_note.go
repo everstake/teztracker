@@ -15,11 +15,17 @@ import (
 // swagger:model UserNote
 type UserNote struct {
 
+	// address
+	Address string `json:"address,omitempty"`
+
 	// alias
 	Alias string `json:"alias,omitempty"`
 
-	// text
-	Text string `json:"text,omitempty"`
+	// description
+	Description string `json:"description,omitempty"`
+
+	// tag
+	Tag string `json:"tag,omitempty"`
 }
 
 // Validate validates this user note

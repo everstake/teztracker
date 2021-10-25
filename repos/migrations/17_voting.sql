@@ -6,7 +6,9 @@ CREATE TABLE tezos.rolls (
     voting_period  int not null
 );
 
-CREATE VIEW tezos.voting_view AS
+--TODO Add indexes
+
+CREATE OR REPLACE VIEW tezos.voting_view AS
 SELECT period, proposal, source, rolls, kind, ballot, s.block_level AS block_level
 FROM (SELECT period,
              unnest(regexp_split_to_array(replace(replace(proposal :: text, '[', ''), ']', ''), ',')) AS proposal,
@@ -20,22 +22,58 @@ FROM (SELECT period,
       GROUP BY proposal, source, kind, period) AS s
        inner join tezos.rolls on (s.source = rolls.pkh and rolls.voting_period = s.period);
 
-CREATE VIEW tezos.proposal_stat_view AS
+CREATE TABLE tezos.baker_voting AS SELECT * from tezos.voting_view;
+
+CREATE OR REPLACE FUNCTION tezos.baker_voting()
+RETURNS trigger
+LANGUAGE plpgsql
+AS
+$$
+    DECLARE
+    rollsN integer;
+    BEGIN
+    --     Skip non endorsement operations
+        IF (NEW.kind != 'proposals' AND NEW.kind != 'ballot' ) THEN
+            RETURN NEW;
+        END IF;
+
+        select rolls into rollsN from tezos.rolls where (rolls.pkh = NEW.source AND rolls.voting_period = NEW.period);
+
+        INSERT INTO tezos.baker_voting(period, proposal, kind, source, block_level, ballot, rolls)
+        VALUES(
+               NEW.period,
+               unnest(regexp_split_to_array(replace(replace(NEW.proposal :: text, '[', ''), ']', ''), ',')),
+               NEW.kind,
+               NEW.source,
+               NEW.block_level,
+               coalesce(NEW.ballot, 'yay'),
+               rollsN
+               );
+    RETURN NEW;
+    END
+$$;
+
+CREATE TRIGGER baker_voting_insert
+  AFTER INSERT
+  ON tezos.operations
+  FOR EACH ROW
+EXECUTE PROCEDURE tezos.baker_voting();
+
+CREATE OR REPLACE VIEW tezos.proposal_stat_view AS
 SELECT sum(rolls) AS rolls, count(1) AS bakers, min(block_level) AS block_level, proposal, period, kind, ballot
-FROM tezos.voting_view
+FROM tezos.baker_voting
 GROUP BY proposal, period, kind, ballot;
 
-CREATE VIEW tezos.double_voting_by_period AS
-SELECT  p.period, sum(p.rolls)/2 AS rolls, count(1)/2 AS bakers
-FROM tezos.voting_view AS p inner join tezos.voting_view AS w on (p.period=w.period and p.source=w.source and p.proposal<>w.proposal)
-GROUP BY p.period;
+CREATE OR REPLACE VIEW tezos.voting_participation AS
+select period, count(1) bakers, sum(rolls) rolls FROM
+(select  DISTINCT period, source, rolls  from tezos.baker_voting) s GROUP BY period;
 
-CREATE VIEW tezos.period_stat_view AS
-SELECT s.rolls - coalesce(v.rolls, 0) AS rolls, s.bakers - coalesce(v.bakers, 0) AS bakers, block_level, s.period, kind
-FROM (SELECT sum(rolls) AS rolls, sum(bakers) AS bakers, min(block_level) AS block_level, period, kind
+CREATE OR REPLACE VIEW tezos.period_stat_view AS
+SELECT vp.rolls AS rolls, vp.bakers AS bakers, block_level, s.period, kind
+FROM (SELECT min(block_level) AS block_level, period, kind
       FROM tezos.proposal_stat_view
       GROUP BY period, kind) AS s
-       left join tezos.double_voting_by_period AS v on s.period = v.period;
+       left join tezos.voting_participation AS vp on s.period = vp.period;
 
 CREATE TABLE tezos.voting_period
 (
@@ -59,5 +97,7 @@ CREATE TABLE tezos.voting_proposal
   title        varchar,
   short_description varchar,
   proposal_file varchar,
-  proposer varchar
+  proposer varchar,
+  is_main bool default false not null,
+  period integer not null
 );

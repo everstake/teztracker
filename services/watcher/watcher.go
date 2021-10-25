@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/everstake/teztracker/services"
+	"github.com/everstake/teztracker/services/mailer"
+	"github.com/everstake/teztracker/services/watcher/pusher"
 	"github.com/everstake/teztracker/services/watcher/tasks"
 	"github.com/everstake/teztracker/ws"
 	"github.com/everstake/teztracker/ws/models"
@@ -18,12 +20,17 @@ type Watcher struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	hub   *ws.Hub
 	l     *pq.Listener
 	tasks map[models.EventType]tasks.EventExecutor
+
+	pushers []eventPusher
 }
 
-func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Watcher {
+type eventPusher interface {
+	Push(event models.EventType, data interface{}) error
+}
+
+func NewWatcher(connection string, hub *ws.Hub, provider services.Provider, mail mailer.Mail) *Watcher {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -42,14 +49,14 @@ func NewWatcher(connection string, hub *ws.Hub, provider services.Provider) *Wat
 	return &Watcher{
 		ctx:    ctx,
 		cancel: cancel,
-		hub:    hub,
 		l:      listener,
 		tasks: map[models.EventType]tasks.EventExecutor{
-			//Todo Add factory
 			models.EventTypeBlock:          tasks.NewBlockTask(provider),
 			models.EventTypeOperation:      tasks.NewOperationTask(provider),
 			models.EventTypeAccountCreated: tasks.NewAccountTask(provider),
+			models.EventTypeAssetOperation: tasks.NewAssetOperation(provider),
 		},
+		pushers: []eventPusher{pusher.NewWSPusher(hub), pusher.NewEmailPusher(mail, provider)},
 	}
 }
 
@@ -81,18 +88,17 @@ func (w Watcher) Start() {
 				continue
 			}
 
-			channels, wsData, err := handler.GetEventData(ev.Data)
+			data, err := handler.GetEventData(ev.Data)
 			if err != nil {
 				log.Errorf("GetEventData error: %s", err)
 				continue
 			}
 
-			//Publish to all channels
-			for i := range channels {
-				w.hub.Broadcast(models.BasicMessage{
-					Event: channels[i],
-					Data:  wsData,
-				})
+			for _, p := range w.pushers {
+				err = p.Push(models.EventType(ev.Table), data)
+				if err != nil {
+					log.Errorf("Watcher: push: %s", err)
+				}
 			}
 		}
 	}

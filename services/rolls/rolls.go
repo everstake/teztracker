@@ -29,9 +29,14 @@ func SaveRolls(ctx context.Context, unit UnitOfWork, provider RollProvider) (cou
 		return count, err
 	}
 
+	lastProcessedPeriod, err := rollsRepo.LastVotingPeriod()
+	if err != nil {
+		return count, err
+	}
+
 	for i := range periods {
 
-		if periods[i].ID < 10 {
+		if periods[i].ID < 10 || periods[i].ID <= lastProcessedPeriod {
 			continue
 		}
 
@@ -40,14 +45,15 @@ func SaveRolls(ctx context.Context, unit UnitOfWork, provider RollProvider) (cou
 			continue
 		}
 
-		rolls, err := provider.RollsForBlock(ctx, periods[i].StartBlock-1)
+		rolls, err := provider.RollsForBlock(ctx, periods[i].StartBlock)
 		if err != nil {
 			return count, err
 		}
 
-		//Todo add cycle
 		for j := range rolls {
 			rolls[j].VotingPeriod = periods[i].ID
+			rolls[j].BlockLevel = periods[i].StartBlock
+			rolls[j].Cycle = (periods[i].StartBlock - 1)
 		}
 
 		err = rollsRepo.CreateBulk(rolls)

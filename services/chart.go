@@ -20,7 +20,7 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 		case "volume":
 			data, err = repo.TransactionsVolume(from, to, period)
 		case "operations":
-			data, err = repo.OperationsNumber(from, to, period)
+			data, err = repo.OperationsNumber(from, to, period, "", nil, nil)
 		case "avg_block_delay":
 			data, err = repo.AvgBlockDelay(from, to, period)
 		case "fees":
@@ -51,7 +51,7 @@ func (t *TezTracker) GetBakerChartInfo(limits Limiter) (data []models.BakerChart
 
 	totalRolls := stakedBalance / TokensPerRoll / XTZ
 
-	bakers, err := br.List(limits.Limit(), 0)
+	bakers, err := br.List(limits.Limit(), 0, nil)
 	if err != nil {
 		return nil, err
 	}

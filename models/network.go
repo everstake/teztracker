@@ -4,5 +4,5 @@ type Network string
 
 const (
 	NetworkMain     Network = "main"
-	NetworkCarthage Network = "carthage"
+	NetworkFlorence Network = "florence"
 )

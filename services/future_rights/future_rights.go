@@ -2,6 +2,7 @@ package future_rights
 
 import (
 	"context"
+
 	"github.com/everstake/teztracker/repos/future_endorsement_rights"
 
 	"github.com/everstake/teztracker/models"
@@ -20,8 +21,8 @@ type RightsRepo interface {
 
 type RightsProvider interface {
 	RightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.FutureBakingRight, error)
-	EndorsementRightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.FutureEndorsementRight, error)
-	BlocksInCycle() int64
+	EndorsementRightsFor(ctx context.Context, blockFrom, blockTo, currentHead int64) ([]models.EndorsementRight, error)
+	CyclesBlocksCount(cycle int64) int64
 }
 
 type UnitOfWork interface {
@@ -42,22 +43,24 @@ func SaveNewBakingRights(ctx context.Context, unit UnitOfWork, provider RightsPr
 		return 0, err
 	}
 	lastCycle := lastBlock.MetaCycle
-	lastKnownRightsBlock := (lastCycle + 6) * provider.BlocksInCycle()
+	lastKnownRightsBlock := provider.CyclesBlocksCount(lastCycle + 6)
 
 	rightsRepo := unit.GetFutureBakingRight()
-	found, lastRight, err := rightsRepo.Last()
+	found, lastRight, err := rightsRepo.LastFuture()
 	if err != nil {
 		return 0, err
 	}
+
 	var nextBlockToScan int64
 	if !found {
 		nextBlockToScan = 1
 	} else {
-		if lastRight.Level >= lastKnownRightsBlock {
+		if lastRight.BlockLevel >= lastKnownRightsBlock {
 			return 0, nil
 		}
-		nextBlockToScan = lastRight.Level + 1
+		nextBlockToScan = lastRight.BlockLevel + 1
 	}
+
 	for nextBlockToScan <= lastKnownRightsBlock {
 		endRange := nextBlockToScan + BlocksRangeSize - 1
 		if endRange > lastKnownRightsBlock {
@@ -80,9 +83,7 @@ func SaveFutureRightsForBlockRange(ctx context.Context, blockFrom, blockTo, head
 		return 0, err
 	}
 
-	for i := range rights {
-		rights[i].Cycle = (rights[i].Level - 1) / provider.BlocksInCycle()
-	}
+	//Cycle count by db
 
 	unit.Start(ctx)
 	defer unit.RollbackUnlessCommitted()
@@ -107,7 +108,7 @@ func SaveNewEndorsementRights(ctx context.Context, unit UnitOfWork, provider Rig
 		return 0, err
 	}
 	lastCycle := lastBlock.MetaCycle
-	lastKnownRightsBlock := (lastCycle + 6) * provider.BlocksInCycle()
+	lastKnownRightsBlock := provider.CyclesBlocksCount(lastCycle + 6)
 
 	rightsRepo := unit.GetFutureEndorsementRight()
 	found, lastRight, err := rightsRepo.Last()
@@ -118,10 +119,10 @@ func SaveNewEndorsementRights(ctx context.Context, unit UnitOfWork, provider Rig
 	if !found {
 		nextBlockToScan = 1
 	} else {
-		if lastRight.Level >= lastKnownRightsBlock {
+		if lastRight.BlockLevel >= lastKnownRightsBlock {
 			return 0, nil
 		}
-		nextBlockToScan = lastRight.Level + 1
+		nextBlockToScan = lastRight.BlockLevel + 1
 	}
 	for nextBlockToScan <= lastKnownRightsBlock {
 		endRange := nextBlockToScan + BlocksRangeSize - 1
@@ -144,9 +145,7 @@ func SaveFutureEndorsementRightsForBlockRange(ctx context.Context, blockFrom, bl
 		return 0, err
 	}
 
-	for i := range rights {
-		rights[i].Cycle = (rights[i].Level - 1) / provider.BlocksInCycle()
-	}
+	//Cycle count by db
 
 	unit.Start(ctx)
 	defer unit.RollbackUnlessCommitted()

@@ -45,6 +45,11 @@ type GetBakersListParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
+	/*favorites accounts
+	  In: query
+	  Collection Format: multi
+	*/
+	Favorites []string
 	/*
 	  Maximum: 500
 	  Minimum: 1
@@ -81,6 +86,11 @@ func (o *GetBakersListParams) BindRequest(r *http.Request, route *middleware.Mat
 
 	qs := runtime.Values(r.URL.Query())
 
+	qFavorites, qhkFavorites, _ := qs.GetOK("favorites")
+	if err := o.bindFavorites(qFavorites, qhkFavorites, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	qLimit, qhkLimit, _ := qs.GetOK("limit")
 	if err := o.bindLimit(qLimit, qhkLimit, route.Formats); err != nil {
 		res = append(res, err)
@@ -104,6 +114,30 @@ func (o *GetBakersListParams) BindRequest(r *http.Request, route *middleware.Mat
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindFavorites binds and validates array parameter Favorites from query.
+//
+// Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
+func (o *GetBakersListParams) bindFavorites(rawData []string, hasKey bool, formats strfmt.Registry) error {
+
+	// CollectionFormat: multi
+	favoritesIC := rawData
+
+	if len(favoritesIC) == 0 {
+		return nil
+	}
+
+	var favoritesIR []string
+	for _, favoritesIV := range favoritesIC {
+		favoritesI := favoritesIV
+
+		favoritesIR = append(favoritesIR, favoritesI)
+	}
+
+	o.Favorites = favoritesIR
+
 	return nil
 }
 

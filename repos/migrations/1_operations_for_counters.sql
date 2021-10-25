@@ -2,7 +2,7 @@ CREATE OR REPLACE VIEW tezos.operations_for_counters AS
 select block_level,
        amount,
        fee,
-       case when operations.kind = 'endorsement' then 1 else 0 end                 as isendorsement,
+       case when operations.kind = 'endorsement' or operations.kind = 'endorsement_with_slot' then 1 else 0 end                 as isendorsement,
        case when operations.kind = 'proposals' then 1 else 0 end                   as isproposals,
        case when operations.kind = 'seed_nonce_revelation' then 1 else 0 end       as isseed_nonce_revelation,
        case when operations.kind = 'delegation' then 1 else 0 end                  as isdelegation,
@@ -16,6 +16,9 @@ select block_level,
        consumed_gas
 from tezos.operations;
 
+create unique index operations_operation_id
+	on tezos.operations (operation_id);
+
 CREATE TABLE tezos.operation_counters(
     cnt_id SERIAL PRIMARY KEY,
     cnt_last_op_id int not null,
@@ -24,3 +27,7 @@ CREATE TABLE tezos.operation_counters(
     cnt_created_at timestamp with time zone NULL DEFAULT NULL,
     CONSTRAINT operation_counters_last_op_foreign FOREIGN KEY (cnt_last_op_id) REFERENCES tezos.operations (operation_id)
 );
+
+CREATE OR REPLACE VIEW tezos.last_operation_counters AS
+SELECT * FROM tezos.operation_counters
+WHERE cnt_last_op_id = (SELECT max(cnt_last_op_id) FROM tezos.operation_counters);
