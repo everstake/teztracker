@@ -2,6 +2,7 @@ package nft
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -131,6 +132,13 @@ func ProcessNFTOperations(ctx context.Context, unit UnitOfWork) (err error) {
 				return err
 			}
 
+			//Try to compress EDO pair format
+			err = compressEDOPair(p)
+			if err != nil {
+				logrus.Errorf("failed to compressEDOPair: %s", err.Error())
+				return err
+			}
+
 			switch operations[j].ParametersEntrypoints {
 
 			case "list_token":
@@ -187,6 +195,46 @@ func ProcessNFTOperations(ctx context.Context, unit UnitOfWork) (err error) {
 	}
 
 	return nil
+}
+
+func compressEDOPair(prim *micheline.Prim) error {
+
+	if prim.OpCode != micheline.D_PAIR || len(prim.Args) <= 2 {
+		return nil
+	}
+
+	pairsCount := len(prim.Args) / 2
+
+	for i := 0; i < pairsCount; i++ {
+
+		pair, err := compressPair(prim.Args[len(prim.Args)-2:])
+		if err != nil {
+			return err
+		}
+
+		//Remove last elem
+		prim.Args = prim.Args[:len(prim.Args)-1]
+
+		//Replace last element
+		prim.Args[len(prim.Args)-1] = pair
+	}
+
+	return nil
+}
+
+func compressPair(param []micheline.Prim) (pair micheline.Prim, err error) {
+	if len(param) != 2 {
+		return pair, errors.New("wrong args num")
+	}
+
+	args := make([]micheline.Prim, len(param))
+	copy(args, param)
+
+	return micheline.Prim{
+		Type:   micheline.PrimBinary,
+		OpCode: micheline.D_PAIR,
+		Args:   args,
+	}, nil
 }
 
 func processNunMintOperation(contract models.NFTContract, p *micheline.Prim, ipfs IPFSClient) (tokens []models.NFTToken, err error) {
