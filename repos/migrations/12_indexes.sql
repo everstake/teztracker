@@ -49,6 +49,10 @@ CREATE INDEX ix_operations_voting_proposal_source_kind_period_ballot
 create index operations_destination_index
 	on tezos.operations (destination);
 
+CREATE INDEX operations_kind_status_amount_index
+	ON tezos.operations (kind ASC, status ASC, amount DESC)
+    WHERE kind='transaction' AND status = 'applied';
+
 -- accounts
 
 CREATE INDEX ix_accounts_balance

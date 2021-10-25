@@ -2,6 +2,7 @@ package operation
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/everstake/teztracker/models"
 	"github.com/go-openapi/validate"
@@ -26,12 +27,16 @@ type (
 		UpdateLevel(operation models.Operation) error
 		AccountOperationCount(string) ([]models.OperationCount, error)
 		AccountEndorsements(accountID string, cycle int64, limit uint, offset uint) (count int64, operations []models.Operation, err error)
+		LargeTransfers(minAmount, cycle int64, limit, offset uint, sinceDate time.Time) (operations []models.Operation, err error)
+
+		LargestSources(cycle int64, limit, offset uint, sinceDate time.Time, isSource bool) (account []models.Account, err error)
 	}
 )
 
 const (
 	endorsementKind     = "endorsement"
 	endorsementWithSlot = "endorsement_with_slot"
+	transactionKind     = "transaction"
 	delegationKind      = "delegation"
 	activationKind      = "activate_account"
 )
@@ -276,4 +281,49 @@ func (r *Repository) AccountEndorsements(accountID string, cycle int64, limit ui
 	err = db.Find(&operations).Error
 
 	return count, operations, nil
+}
+
+func (r *Repository) LargeTransfers(minAmount, cycle int64, limit, offset uint, sinceDate time.Time) (operations []models.Operation, err error) {
+	db := r.db.Model(&models.Operation{}).Where("kind = ? and status = ?", transactionKind, "applied")
+	if minAmount > 0 {
+		db = db.Where("amount > ?", minAmount)
+	}
+
+	if cycle > 0 {
+		db = db.Where("cycle = ?", cycle)
+	}
+	if !sinceDate.IsZero() {
+		db = db.Where("timestamp > ?", sinceDate)
+	}
+
+	err = db.Limit(limit).Offset(offset).Order("amount desc").Find(&operations).Error
+	if err != nil {
+		return operations, err
+	}
+	return operations, nil
+}
+
+func (r *Repository) LargestSources(cycle int64, limit, offset uint, sinceDate time.Time, isSource bool) (whaleSources []models.Account, err error) {
+	groupField := "destination"
+	if isSource {
+		groupField = "source"
+	}
+
+	db := r.db.Select(fmt.Sprintf("%s account_id, sum(amount) balance", groupField)).
+		Table("tezos.operations").
+		Where("kind = ? and status = ?", transactionKind, "applied")
+
+	if cycle > 0 {
+		db = db.Where("cycle = ?", cycle)
+	}
+	if !sinceDate.IsZero() {
+		db = db.Where("timestamp > ?", sinceDate)
+	}
+
+	err = db.Group(groupField).Limit(limit).Offset(offset).Order("balance desc").Find(&whaleSources).Error
+	if err != nil {
+		return whaleSources, err
+	}
+
+	return whaleSources, nil
 }

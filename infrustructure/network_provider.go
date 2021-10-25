@@ -13,6 +13,7 @@ import (
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/services/rpc_client/client"
 	"github.com/everstake/teztracker/services/watcher"
+	"github.com/everstake/teztracker/services/whales"
 	"github.com/everstake/teztracker/ws"
 	"github.com/jinzhu/gorm"
 )
@@ -47,6 +48,8 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 		}
 		serviceProviders = append(serviceProviders, repos.New(db))
 
+		whales.Service.AddNetwork(k, db)
+
 		hub := ws.NewHub()
 		//Start hub
 		go hub.Run()
@@ -77,8 +80,11 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 			ClientConfig: v.NodeRpc,
 		}
 	}
+
 	stats := daily_stats.NewDailyStats(serviceProviders)
 	go stats.Run()
+	whales.Service.Update()
+
 	return provider, nil
 }
 

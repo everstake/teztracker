@@ -94,6 +94,9 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, ma
 	serv.BlocksGetLostEndorsermentsAggCountHandler = &getLostEndorsementsAggCount{db}
 	serv.BlocksGetLostRewardsAggHandler = &getLostRewardsAggCount{db}
 	serv.AccountsGetBakersHoldingHandler = &getBakersHolding{db}
+	serv.AccountsGetWhaleAccountsHandler = &getWhaleAccountsHandler{}
+	serv.OperationsListGetWhaleTranfersHandler = &getWhaleTransfersHandler{db}
+	serv.AccountsGetWhaleMoversHandler = &getWhaleSourcesHandler{db}
 	//	Assets
 	serv.AssetsGetAssetTokenHoldersListHandler = &getAssetHoldersHandler{db}
 	serv.AssetsGetAssetTokenInfoHandler = &getAssetInfoHandler{db}
