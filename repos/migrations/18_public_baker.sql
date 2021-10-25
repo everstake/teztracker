@@ -16,5 +16,6 @@ CREATE TABLE tezos.public_bakers(
 	subtract_payouts_less_than_min boolean,
 	subtract_rewards_from_uninvited_delegation boolean,
 	last_update_id integer,
-	is_hidden boolean default false
+	is_hidden boolean default false,
+	media text
 );

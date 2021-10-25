@@ -12,7 +12,6 @@ import (
 	"time"
 )
 
-
 type getLostBlocksAggCount struct {
 	provider DbProvider
 }
@@ -77,7 +76,6 @@ func (h *getLostEndorsementsAggCount) Handle(params blocks.GetLostEndorsermentsA
 	return blocks.NewGetLostEndorsermentsAggCountOK().WithPayload(render.AggTimeInt(resp))
 }
 
-
 type getLostRewardsAggCount struct {
 	provider DbProvider
 }
@@ -102,4 +100,3 @@ func (h *getLostRewardsAggCount) Handle(params blocks.GetLostRewardsAggParams) m
 
 	return blocks.NewGetLostRewardsAggOK().WithPayload(render.AggTimeInt(resp))
 }
-

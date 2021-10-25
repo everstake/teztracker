@@ -20,7 +20,7 @@ func (t *TezTracker) GetChartsInfo(from, to int64, period string, columns []stri
 		case "volume":
 			data, err = repo.TransactionsVolume(from, to, period)
 		case "operations":
-			data, err = repo.OperationsNumber(from, to, period)
+			data, err = repo.OperationsNumber(from, to, period, "", nil, nil)
 		case "avg_block_delay":
 			data, err = repo.AvgBlockDelay(from, to, period)
 		case "fees":

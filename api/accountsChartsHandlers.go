@@ -168,7 +168,6 @@ func (h *getActiveAccountsAggCount) Handle(params accounts.GetActiveAccountsAggC
 	return accounts.NewGetActiveAccountsAggCountOK().WithPayload(render.AggTimeInt(resp))
 }
 
-
 type getInactiveAccountsAggCount struct {
 	provider DbProvider
 }
@@ -201,7 +200,6 @@ func (h *getInactiveAccountsAggCount) Handle(params accounts.GetInactiveAccounts
 	return accounts.NewGetInactiveAccountsAggCountOK().WithPayload(render.AggTimeInt(resp))
 }
 
-
 type getLowBalanceTotalAggCount struct {
 	provider DbProvider
 }
@@ -233,7 +231,6 @@ func (h *getLowBalanceTotalAggCount) Handle(params accounts.GetLowBalanceTotalAg
 
 	return accounts.NewGetLowBalanceTotalAggCountOK().WithPayload(render.AggTimeInt(resp))
 }
-
 
 type getBakersHolding struct {
 	provider DbProvider

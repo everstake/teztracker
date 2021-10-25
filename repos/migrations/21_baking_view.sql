@@ -23,7 +23,7 @@ from tezos.baker_bakings
 group by cycle, delegate;
 
 CREATE TABLE tezos.baker_cycle_bakings
- AS (SELECT * FROM baker_cycle_bakings_view);
+ AS (SELECT * FROM tezos.baker_cycle_bakings_view);
 
 alter table tezos.baker_cycle_bakings
 	add constraint baker_cycle_bakings_pk
@@ -44,7 +44,7 @@ BEGIN
 insert into tezos.baker_bakings (cycle,delegate,level,priority,baked,reward,fees,missed,stolen)
        select meta_cycle,
        br.delegate,
-       br.level,
+       br.block_level,
        CASE WHEN baker = br.delegate THEN bl.priority ELSE NULL END        as priority,
        CASE WHEN baker = br.delegate THEN 1 ELSE 0 END                     as baked,
        CASE WHEN baker = br.delegate THEN bu.change ELSE 0 END             as reward,
@@ -52,7 +52,8 @@ insert into tezos.baker_bakings (cycle,delegate,level,priority,baked,reward,fees
        CASE WHEN bl.priority > br.priority THEN 1 ELSE 0 END               as missed,
        CASE WHEN br.priority > 0 and baker = br.delegate THEN 1 ELSE 0 END as stolen
 from tezos.baking_rights br
-       left join tezos.blocks bl on (br.level = bl.meta_level)
+       left join tezos.blocks bl on (br.block_level = bl.meta_level)
+--        TODO check Subsidy
        left join tezos.balance_updates bu on (source_hash = hash and source = 'block' and category = 'rewards' and change > 0)
        left join tezos.block_aggregation_view bav on bav.level = bl.level
 where bl.level = NEW.meta_level-5

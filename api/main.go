@@ -115,4 +115,15 @@ func SetHandlers(serv *operations.TezTrackerAPI, db *infrustructure.Provider, ma
 	serv.ProfileDeleteUserNoteHandler = &deleteUserNoteHandler{db}
 	serv.ProfileVerifyEmailHandler = &verifyEmailHandler{db}
 	serv.ProfileVerifyEmailTokenHandler = &verifyEmailTokenHandler{db}
+
+	//NFT
+	serv.NftGetNFTContractsListHandler = &getNFTContractsListHandler{db}
+	serv.NftGetNFTContractHandler = &getNFTContractHandler{db}
+	serv.NftGetNFTContractOperationsHandler = &getNFTContractOperationsListHandler{db}
+	serv.NftGetNFTContractOperationsChartHandler = &getNFTContractOperationsChartHandler{db}
+	serv.NftGetNFTContractTokensListHandler = &getNFTContractTokensListHandler{db}
+	serv.NftGetNFTContractDistributionHandler = &getNFTContractDistributionHandler{db}
+	serv.NftGetNFTContractOwnershipHandler = &getNFTContractOwnershipHandler{db}
+	serv.NftGetNFTContractTokenHandler = &getNFTContractTokenHandler{db}
+	serv.NftGetNFTContractTokenHoldersHandler = &getNFTContractTokenHoldersHandler{db}
 }

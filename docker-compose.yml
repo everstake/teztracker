@@ -2,16 +2,28 @@ version: "3.1"
 
 services:
   conseil-lorre:
-    image: cryptonomictech/conseil:july
-    command: conseil-lorre
+    image: cryptonomictech/conseil:latest
     environment:
-      DB_Host: "${DB_HOST}"
-      DB_User: "${DB_USER}"
-      DB_Password: "${DB_PASSWORD}"
-      DB_Database: "${DB_DATABASE}"
-      XTZ_Host: "${XTZ_HOST}"
-      XTZ_Scheme: "${XTZ_SCHEME}"
-      XTZ_Port: "${XTZ_PORT}"
+
+      CONSEIL_LORRE_DB_URL: "jdbc:postgresql://${DB_HOST}:5432/${DB_DATABASE}"
+      CONSEIL_LORRE_DB_USER: "${DB_USER}"
+      CONSEIL_LORRE_DB_PASSWORD: "${DB_PASSWORD}"
+
+      CONSEIL_XTZ_NETWORK: "mainnet"
+      CONSEIL_XTZ_ENABLED: "true"
+      CONSEIL_XTZ_NODE_HOSTNAME: "${XTZ_HOST}"
+      CONSEIL_XTZ_NODE_PROTOCOL: "${XTZ_SCHEME}"
+      CONSEIL_XTZ_NODE_PORT: "${XTZ_PORT}"
+      CONSEIL_XTZ_NODE_PATH_PREFIX: ""
+
+      LORRE_RUNNER_PLATFORM: "tezos"
+      LORRE_RUNNER_NETWORK: "mainnet"
+
+      # Feature-Flag: set to false to disable the concurrent computation of future endorsement/baking rights
+      CONSEIL_LORRE_BLOCK_RIGHTS_FETCHING_ENABLED: "true"
+
+      JVM_XMX: "4G"
+    entrypoint: ["/root/entrypoint.sh", "conseil-lorre"]
     # If using localhost db you may want to use the host network
     network_mode: "host"
     restart: on-failure
@@ -19,18 +31,28 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-  conseil-edonet-lorre:
-    image: cryptonomictech/conseil:july
-    command: conseil-lorre
+  conseil-florence-lorre:
+    image: cryptonomictech/conseil:latest
     environment:
-      DB_Host: ${DB_HOST}
-      DB_User: ${DB_USER}
-      DB_Password: ${DB_PASSWORD}
-      DB_Database: ${EDONET_DB_DATABASE}
-      XTZ_Host: ${EDONET_XTZ_HOST}
-      XTZ_Scheme: "${EDONET_XTZ_SCHEME}"
-      XTZ_Port: "${EDONET_XTZ_PORT}"
-      XTZ_Network: "carthagenet"
+      CONSEIL_LORRE_DB_URL: "jdbc:postgresql://${DB_HOST}:5432/${FLORENCENET_DB_DATABASE}"
+      CONSEIL_LORRE_DB_USER: "${DB_USER}"
+      CONSEIL_LORRE_DB_PASSWORD: "${DB_PASSWORD}"
+
+      CONSEIL_XTZ_NETWORK: "florencenet"
+      CONSEIL_XTZ_ENABLED: "true"
+      CONSEIL_XTZ_NODE_HOSTNAME: "${FLORENCENET_XTZ_HOST}"
+      CONSEIL_XTZ_NODE_PROTOCOL: "${FLORENCENET_XTZ_SCHEME}"
+      CONSEIL_XTZ_NODE_PORT: "${FLORENCENET_XTZ_PORT}"
+      CONSEIL_XTZ_NODE_PATH_PREFIX: ""
+
+      LORRE_RUNNER_PLATFORM: "tezos"
+      LORRE_RUNNER_NETWORK: "florencenet"
+
+      # Feature-Flag: set to false to disable the concurrent computation of future endorsement/baking rights
+      CONSEIL_LORRE_BLOCK_RIGHTS_FETCHING_ENABLED: "true"
+
+      JVM_XMX: "4G"
+    entrypoint: ["/root/entrypoint.sh", "conseil-lorre"]
     # If using localhost db you may want to use the host network
     network_mode: "host"
     restart: on-failure
@@ -55,18 +77,21 @@ services:
     environment:
       TEZTRACKER_PORT: ${TEZTRACKER_PORT}
       TEZTRACKER_MAINNET_SQLCONNECTIONSTRING: ${TEZTRACKER_MAINNET_SQLCONNECTIONSTRING}
-      TEZTRACKER_EDONET_SQLCONNECTIONSTRING: ${TEZTRACKER_EDONET_SQLCONNECTIONSTRING}
+      TEZTRACKER_FLORENCENET_SQLCONNECTIONSTRING: ${TEZTRACKER_FLORENCENET_SQLCONNECTIONSTRING}
       TEZTRACKER_LOG_LEVEL: ${TEZTRACKER_LOG_LEVEL}
       TEZTRACKER_PRODUCTION: ${TEZTRACKER_PRODUCTION}
-      TEZTRACKER_COUNTERINTERVALHOURS: ${TEZTRACKER_COUNTERINTERVALHOURS}
-      TEZTRACKER_FUTURERIGHTSINTERVALMINUTES: ${TEZTRACKER_FUTURERIGHTSINTERVALMINUTES}
+      TEZTRACKER_COUNTERINTERVALSECONDS: ${TEZTRACKER_COUNTERINTERVALSECONDS}
       TEZTRACKER_SNAPSHOTCHECKINTERVALMINUTES: ${TEZTRACKER_SNAPSHOTCHECKINTERVALMINUTES}
+      TEZTRACKER_FUTURERIGHTSINTERVALMINUTES: ${TEZTRACKER_FUTURERIGHTSINTERVALMINUTES}
       TEZTRACKER_DOUBLEBAKINGCHECKINTERVALMINUTES: ${TEZTRACKER_DOUBLEBAKINGCHECKINTERVALMINUTES}
       TEZTRACKER_DOUBLEENDORSEMENTCHECKINTERVALMINUTES: ${TEZTRACKER_DOUBLEENDORSEMENTCHECKINTERVALMINUTES}
       TEZTRACKER_ASSETSPARSEINTERVALMINUTES: ${TEZTRACKER_ASSETSPARSEINTERVALMINUTES}
       TEZTRACKER_VOTINGROLLSINTERVALMINUTES : ${TEZTRACKER_VOTINGROLLSINTERVALMINUTES}
       TEZTRACKER_THIRDPARTYBAKERSINTERVALMINUTES : ${TEZTRACKER_THIRDPARTYBAKERSINTERVALMINUTES}
       TEZTRACKER_BAKERSSOCIALMEDIAHOURS : ${TEZTRACKER_BAKERSSOCIALMEDIAHOURS}
+
+      TEZTRACKER_NFTTOKENSPARSEINTERVALSECONDS : ${TEZTRACKER_NFTTOKENSPARSEINTERVALSECONDS}
+      TEZTRACKER_IPFSCLIENT: ${TEZTRACKER_IPFSCLIENT}
 
       TEZTRACKER_SMTPHOST : ${TEZTRACKER_SMTPHOST}
       TEZTRACKER_SMTPPORT : ${TEZTRACKER_SMTPPORT}
@@ -76,8 +101,9 @@ services:
       #todo: if the scheme is not http or host/port are different then for lorry - pass it through
       TEZTRACKER_MAINNET_NODERPC_HOST: "${XTZ_HOST}:${XTZ_PORT}"
       TEZTRACKER_MAINNET_NODERPC_SCHEMES: "${XTZ_SCHEME}"
-      TEZTRACKER_EDONET_NODERPC_HOST: "${EDONET_XTZ_HOST}:${EDONET_XTZ_PORT}"
-      TEZTRACKER_EDONET_NODERPC_SCHEMES: "${EDONET_XTZ_SCHEME}"
+
+      TEZTRACKER_FLORENCENET_NODERPC_HOST: "${FLORENCENET_XTZ_HOST}:${FLORENCENET_XTZ_PORT}"
+      TEZTRACKER_FLORENCENET_NODERPC_SCHEMES: "${FLORENCENET_XTZ_SCHEME}"
     # If using localhost db you may want to use the host network
     network_mode: "host"
     restart: on-failure

@@ -99,15 +99,19 @@ func (r *Repository) BallotsList(id int64) (periodBallots []models.PeriodBallot,
 
 func (r *Repository) ProposalsList(id *int64, limit uint) (periodProposals []models.VotingProposal, err error) {
 	db := r.db.Select("*, address as pkh").Table("tezos.proposal_stat_view").
-		Joins("left join tezos.voting_proposal on proposal = hash").
-		Joins("left join tezos.known_addresses on proposer = address").
 		Where("kind = 'proposals'")
 
 	if id != nil {
-		db = db.Where("period = ?", &id)
+		db = db.Joins("left join tezos.voting_proposal on proposal = hash").
+			Where("proposal_stat_view.period = ?", &id)
+	} else {
+		db = db.Joins("left join tezos.voting_proposal on (proposal = hash and voting_proposal.period = proposal_stat_view.period)").
+			Where("voting_proposal.is_main IS TRUE")
 	}
 
-	err = db.Limit(limit).Scan(&periodProposals).Error
+	db = db.Joins("left join tezos.known_addresses on proposer = address")
+
+	err = db.Order("voting_proposal.period desc").Limit(limit).Scan(&periodProposals).Error
 	if err != nil {
 		return periodProposals, err
 	}
@@ -116,7 +120,7 @@ func (r *Repository) ProposalsList(id *int64, limit uint) (periodProposals []mod
 }
 
 func (r *Repository) VotersList(id int64, kind string, limit uint, offset uint) (periodProposals []models.ProposalVoter, err error) {
-	err = r.db.Select("v.*, v.source as pkh, operation_group_hash as operation, timestamp, baker_name as name").Table("tezos.voting_view as v").
+	err = r.db.Select("v.*, v.source as pkh, operation_group_hash as operation, timestamp, baker_name as name").Table("tezos.baker_voting as v").
 		Joins("left join tezos.operations as o on o.block_level = v.block_level and v.source = o.source and v.kind = o.kind").
 		Joins("left join tezos.public_bakers as pb on pb.delegate = v.source").
 		Where("v.period = ? and v.kind = ?", id, kind).
@@ -132,7 +136,7 @@ func (r *Repository) VotersList(id int64, kind string, limit uint, offset uint) 
 }
 
 func (r *Repository) VotersCount(id int64, kind string) (count int64, err error) {
-	err = r.db.Table("tezos.voting_view as v").
+	err = r.db.Table("tezos.baker_voting as v").
 		Where("v.period = ? and v.kind = ?", id, kind).
 		Count(&count).
 		Error
@@ -146,7 +150,7 @@ func (r *Repository) VotersCount(id int64, kind string) (count int64, err error)
 func (r *Repository) PeriodNonVotersList(id int64, limit uint, offset uint) (periodProposals []models.Voter, err error) {
 	err = r.db.Select("pkh,r.rolls,baker_name as name").
 		Table("tezos.rolls as r").
-		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
+		Joins("left join tezos.baker_voting as vv on (vv.source = r.pkh and period = ?)", id).
 		Joins("left join tezos.public_bakers on pkh = delegate").
 		Where("r.voting_period = ? and period is null", id).
 		Order("r.rolls desc").
@@ -163,7 +167,7 @@ func (r *Repository) PeriodNonVotersList(id int64, limit uint, offset uint) (per
 func (r *Repository) PeriodNonVotersCount(id int64) (count int64, err error) {
 	err = r.db.
 		Table("tezos.rolls as r").
-		Joins("left join tezos.voting_view as vv on (vv.source = r.pkh and period = ?)", id).
+		Joins("left join tezos.baker_voting as vv on (vv.source = r.pkh and period = ?)", id).
 		Where("r.voting_period = ? and period is null", id).Count(&count).Error
 	if err != nil {
 		return 0, err

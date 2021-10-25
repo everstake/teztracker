@@ -1,9 +1,10 @@
 package michelson
 
 import (
-	script "blockwatch.cc/tzindex/micheline"
 	"encoding/json"
 	"fmt"
+
+	script "blockwatch.cc/tzgo/micheline"
 )
 
 func NewBigMapContainer() BigMapContainer {
@@ -21,7 +22,7 @@ type BigMapContainer struct {
 	searchFunc  searchFunc
 }
 
-type searchFunc func(prim *script.Prim, path string)
+type searchFunc func(prim script.Prim, path string)
 
 type contractElement struct {
 	Name string
@@ -30,14 +31,11 @@ type contractElement struct {
 
 type vertex struct {
 	visited    bool
-	value      *script.Prim
-	neighbours []*script.Prim
+	value      script.Prim
+	neighbours []script.Prim
 }
 
-func newVertex(prim *script.Prim) *vertex {
-	if prim == nil {
-		return nil
-	}
+func newVertex(prim script.Prim) *vertex {
 
 	return &vertex{
 		visited:    false,
@@ -50,21 +48,21 @@ func (v *vertex) Value() interface{} {
 	return v.value.Value(0)
 }
 
-func (g *BigMapContainer) pathInit(prim *script.Prim, path string) {
+func (g *BigMapContainer) pathInit(prim script.Prim, path string) {
 	//For now process only values with annotation
-	if prim == nil || prim.GetAnno() == "" {
+	if prim.GetVarAnnoAny() == "" {
 		return
 	}
 
 	g.pathMap[path] = contractElement{
-		Name: prim.GetAnno(),
+		Name: prim.GetVarAnnoAny(),
 		Type: prim.Type,
 	}
 
-	g.namePathMap[prim.GetAnno()] = path
+	g.namePathMap[prim.GetVarAnnoAny()] = path
 }
 
-func (g *BigMapContainer) searchByPath(prim *script.Prim, path string) {
+func (g *BigMapContainer) searchByPath(prim script.Prim, path string) {
 	if elem, ok := g.pathMap[path]; ok {
 		var data interface{}
 		switch elem.Type {
@@ -103,7 +101,7 @@ func (g *BigMapContainer) searchByPath(prim *script.Prim, path string) {
 	}
 }
 
-func (g *BigMapContainer) InitPath(prim *script.Prim) {
+func (g *BigMapContainer) InitPath(prim script.Prim) {
 	g.searchFunc = g.pathInit
 	g.dfs(newVertex(prim), "")
 }
@@ -112,10 +110,8 @@ func (g *BigMapContainer) FlushValues() {
 	g.finalMap = map[string]interface{}{}
 }
 
-func (g *BigMapContainer) ParseValues(entrypoint string, prim *script.Prim) {
-	if prim == nil {
-		return
-	}
+func (g *BigMapContainer) ParseValues(entrypoint string, prim script.Prim) {
+
 	g.searchFunc = g.searchByPath
 	path := ""
 	if prim.OpCode == script.D_RIGHT {

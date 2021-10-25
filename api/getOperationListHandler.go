@@ -41,7 +41,7 @@ func (h *getOperationListHandler) Handle(params ops.GetOperationsListParams) mid
 	}
 
 	for key := range kinds {
-		if err := validate.Enum(fmt.Sprintf("%s.%v", "operation_kind", key), "query", kinds[key], []interface{}{"endorsement", "proposals", "seed_nonce_revelation", "delegation", "transaction", "activate_account", "ballot", "origination", "reveal", "double_baking_evidence", "double_endorsement_evidence"}); err != nil {
+		if err := validate.Enum(fmt.Sprintf("%s.%v", "operation_kind", key), "query", kinds[key], []interface{}{"endorsement", "endorsement_with_slot", "proposals", "seed_nonce_revelation", "delegation", "transaction", "activate_account", "ballot", "origination", "reveal", "double_baking_evidence", "double_endorsement_evidence"}); err != nil {
 			return ops.NewGetOperationsListBadRequest()
 		}
 	}

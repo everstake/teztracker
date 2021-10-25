@@ -2,6 +2,7 @@ package snapshots
 
 import (
 	"context"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/block"
 	"github.com/everstake/teztracker/repos/rolls"

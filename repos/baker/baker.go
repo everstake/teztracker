@@ -129,7 +129,7 @@ func (r *Repository) EndorsementsCountBy(ids []string, startingLevel int64) (cou
 		db = db.Where("block_level >= ?", startingLevel)
 	}
 
-	err = db.Select("SUM(count) as count, SUM(count*trunc(1/priority,6)) as weight, baker").
+	err = db.Select("SUM(number_of_slots) as count, SUM(count*trunc(1/priority,6)) as weight, baker").
 		Group("baker").Scan(&counter).Error
 	if err != nil {
 		return nil, err
@@ -305,7 +305,7 @@ func (r *Repository) UpdateBaker(baker models.Baker) error {
 }
 
 func (r *Repository) NumberOfDelegators(cycle uint64) (numbers []models.BakerDelegators, err error) {
-	q := fmt.Sprintf("SELECT count(delegators_by_cycle.*) as value, delegators_by_cycle.delegate_value as address " +
+	q := fmt.Sprintf("SELECT count(delegators_by_cycle.*) as value, delegators_by_cycle.delegate_value as address "+
 		"from tezos.delegators_by_cycle WHERE cycle = %d GROUP BY delegate_value", cycle)
 	err = r.db.Table(fmt.Sprintf("(%s) as delegators", q)).Select("delegators.*, known_addresses.alias as baker").
 		Joins("left join tezos.known_addresses ON delegators.address = known_addresses.address").
@@ -318,7 +318,7 @@ func (r *Repository) NumberOfDelegators(cycle uint64) (numbers []models.BakerDel
 }
 
 func (r *Repository) GetBakersStake(cycle uint64) (stakes []models.BakerDelegators, err error) {
-	q := fmt.Sprintf("SELECT sum(delegators_by_cycle.balance) as value, delegators_by_cycle.delegate_value as address " +
+	q := fmt.Sprintf("SELECT sum(delegators_by_cycle.balance) as value, delegators_by_cycle.delegate_value as address "+
 		"from tezos.delegators_by_cycle WHERE cycle = %d GROUP BY delegate_value", cycle)
 	err = r.db.Table(fmt.Sprintf("(%s) as delegators", q)).Select("delegators.*, known_addresses.alias as baker").
 		Joins("left join tezos.known_addresses ON delegators.address = known_addresses.address").

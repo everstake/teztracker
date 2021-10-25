@@ -16,10 +16,14 @@ import (
 	endorsing "github.com/everstake/teztracker/repos/endorsing"
 	future_baking_rights "github.com/everstake/teztracker/repos/future_baking_rights"
 	future_endorsement_rights "github.com/everstake/teztracker/repos/future_endorsement_rights"
+	nft "github.com/everstake/teztracker/repos/nft"
 	operation "github.com/everstake/teztracker/repos/operation"
+	operation_counter "github.com/everstake/teztracker/repos/operation_counter"
 	operation_groups "github.com/everstake/teztracker/repos/operation_groups"
 	rolls "github.com/everstake/teztracker/repos/rolls"
 	snapshots "github.com/everstake/teztracker/repos/snapshots"
+	thirdparty_bakers "github.com/everstake/teztracker/repos/thirdparty_bakers"
+	user_profile "github.com/everstake/teztracker/repos/user_profile"
 	voting_periods "github.com/everstake/teztracker/repos/voting_periods"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
@@ -94,6 +98,18 @@ func (m *MockProvider) GetOperation() operation.Repo {
 // GetOperation indicates an expected call of GetOperation
 func (mr *MockProviderMockRecorder) GetOperation() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperation", reflect.TypeOf((*MockProvider)(nil).GetOperation))
+}
+
+// GetOperationCounter mocks base method
+func (m *MockProvider) GetOperationCounter() operation_counter.Repo {
+	ret := m.ctrl.Call(m, "GetOperationCounter")
+	ret0, _ := ret[0].(operation_counter.Repo)
+	return ret0
+}
+
+// GetOperationCounter indicates an expected call of GetOperationCounter
+func (mr *MockProviderMockRecorder) GetOperationCounter() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperationCounter", reflect.TypeOf((*MockProvider)(nil).GetOperationCounter))
 }
 
 // GetAccount mocks base method
@@ -250,6 +266,42 @@ func (m *MockProvider) GetAssets() assets.Repo {
 // GetAssets indicates an expected call of GetAssets
 func (mr *MockProviderMockRecorder) GetAssets() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAssets", reflect.TypeOf((*MockProvider)(nil).GetAssets))
+}
+
+// GetThirdPartyBakers mocks base method
+func (m *MockProvider) GetThirdPartyBakers() thirdparty_bakers.Repo {
+	ret := m.ctrl.Call(m, "GetThirdPartyBakers")
+	ret0, _ := ret[0].(thirdparty_bakers.Repo)
+	return ret0
+}
+
+// GetThirdPartyBakers indicates an expected call of GetThirdPartyBakers
+func (mr *MockProviderMockRecorder) GetThirdPartyBakers() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetThirdPartyBakers", reflect.TypeOf((*MockProvider)(nil).GetThirdPartyBakers))
+}
+
+// GetUserProfile mocks base method
+func (m *MockProvider) GetUserProfile() user_profile.Repo {
+	ret := m.ctrl.Call(m, "GetUserProfile")
+	ret0, _ := ret[0].(user_profile.Repo)
+	return ret0
+}
+
+// GetUserProfile indicates an expected call of GetUserProfile
+func (mr *MockProviderMockRecorder) GetUserProfile() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserProfile", reflect.TypeOf((*MockProvider)(nil).GetUserProfile))
+}
+
+// GetNFT mocks base method
+func (m *MockProvider) GetNFT() nft.Repo {
+	ret := m.ctrl.Call(m, "GetNFT")
+	ret0, _ := ret[0].(nft.Repo)
+	return ret0
+}
+
+// GetNFT indicates an expected call of GetNFT
+func (mr *MockProviderMockRecorder) GetNFT() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNFT", reflect.TypeOf((*MockProvider)(nil).GetNFT))
 }
 
 // MockLimiter is a mock of Limiter interface

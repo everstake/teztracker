@@ -15,9 +15,21 @@ func (t *TezTracker) GetOperations(ids, kinds, inBlocks, accountIDs []string, li
 	}
 
 	r := t.repoProvider.GetOperation()
-	count, err = r.Count(ids, kinds, inBlocks, accountIDs, 0)
-	if err != nil {
-		return nil, 0, err
+
+	if len(ids) == 0 && len(inBlocks) == 0 && len(accountIDs) == 0 {
+
+		repo := t.repoProvider.GetOperationCounter()
+		count, err = repo.OperationsCount(kinds)
+		if err != nil {
+			return nil, 0, err
+		}
+
+	} else {
+
+		count, err = r.Count(ids, kinds, inBlocks, accountIDs, 0)
+		if err != nil {
+			return nil, 0, err
+		}
 	}
 
 	operations, err = r.List(ids, kinds, inBlocks, accountIDs, limits.Limit(), limits.Offset(), before, nil)

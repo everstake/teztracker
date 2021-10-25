@@ -25,12 +25,11 @@ func (h *getBlockBakingRightsHandler) Handle(params blocks.GetBlockBakingRightsP
 	}
 	service := services.New(repos.New(db), net)
 	rights, count, err := service.GetBlockBakingRights(params.Hash)
-
 	if err != nil {
 		if err == services.ErrNotFound {
 			return blocks.NewGetBlockBakingRightsNotFound()
 		}
-		logrus.Errorf("failed to get block: %s", err.Error())
+		logrus.Errorf("failed to get block baking rights: %s", err.Error())
 		return blocks.NewGetBlockBakingRightsInternalServerError()
 	}
 

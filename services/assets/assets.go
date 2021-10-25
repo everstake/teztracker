@@ -1,18 +1,19 @@
 package assets
 
 import (
-	"blockwatch.cc/tzindex/chain"
 	"context"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
+
+	chain "blockwatch.cc/tzgo/tezos"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/assets"
 	"github.com/everstake/teztracker/repos/operation"
 	"github.com/everstake/teztracker/services/michelson"
 	"github.com/everstake/teztracker/services/rpc_client"
-	"strconv"
-	"strings"
 )
 
 type AssetRepo interface {
