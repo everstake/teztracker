@@ -80,7 +80,7 @@ func (w *Whales) updateWhaleAccounts() error {
 		}
 		operationsRepo := reposProvider.GetOperation()
 		kind := []string{"transaction"}
-		transfers, err := operationsRepo.List(nil, kind, nil, accountsIDs, 10000, 0, 0, nil)
+		transfers, err := operationsRepo.ListAsc(kind, accountsIDs, 10000, 0, 0)
 		if err != nil {
 			return fmt.Errorf("operationsRepo.List: %s", err.Error())
 		}
