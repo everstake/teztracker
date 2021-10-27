@@ -18,7 +18,7 @@ type (
 
 	Repo interface {
 		List(ids, kinds []string, inBlocks, accountIDs []string, limit, offset uint, since int64, operationsIDs []int64) (operations []models.Operation, err error)
-		ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error)
+		ListAsc(kinds, accountIDs []string, limit, offset uint, after int64) (operations []models.Operation, err error)
 		ContractOperationsList(contractID string, kinds, entrypoints []string, lastBlock int64, offset, limit uint, orderSide string) (operations []models.Operation, count int64, err error)
 		Count(ids, kinds, inBlocks, accountIDs []string, maxOperationID int64) (count int64, err error)
 		EndorsementsFor(blockLevel int64) (operations []models.Operation, err error)
@@ -215,8 +215,8 @@ func (r *Repository) UpdateLevel(operation models.Operation) error {
 	return r.db.Select("level").Save(&operation).Error
 }
 
-func (r *Repository) ListAsc(kinds []string, limit, offset uint, after int64) (operations []models.Operation, err error) {
-	db := r.getFilteredDB(nil, kinds, nil, nil, nil, false)
+func (r *Repository) ListAsc(kinds, accountIDs []string, limit, offset uint, after int64) (operations []models.Operation, err error) {
+	db := r.getFilteredDB(nil, kinds, nil, accountIDs, nil, false)
 
 	if after > 0 {
 		db = db.Where("operation_id > ?", after)

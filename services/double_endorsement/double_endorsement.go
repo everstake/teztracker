@@ -2,6 +2,7 @@ package double_endorsement
 
 import (
 	"context"
+
 	"github.com/everstake/teztracker/repos/double_endorsement"
 
 	"github.com/everstake/teztracker/models"
@@ -35,7 +36,7 @@ func SaveUnprocessedDoubleEndorsementEvidences(ctx context.Context, unit UnitOfW
 		lastKnownOperationID = lastEvidence.OperationID
 	}
 
-	newDoubleBakes, err := unit.GetOperation().ListAsc([]string{"double_endorsement_evidence"}, limit, 0, lastKnownOperationID)
+	newDoubleBakes, err := unit.GetOperation().ListAsc([]string{"double_endorsement_evidence"}, nil, limit, 0, lastKnownOperationID)
 	if err != nil {
 		return err
 	}

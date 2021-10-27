@@ -2,6 +2,7 @@ package double_baking
 
 import (
 	"context"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos/double_baking"
 	"github.com/everstake/teztracker/repos/operation"
@@ -34,7 +35,7 @@ func SaveUnprocessedDoubleBakingEvidences(ctx context.Context, unit UnitOfWork, 
 		lastKnownOperationID = lastEvidence.OperationID
 	}
 
-	newDoubleBakes, err := unit.GetOperation().ListAsc([]string{"double_baking_evidence"}, limit, 0, lastKnownOperationID)
+	newDoubleBakes, err := unit.GetOperation().ListAsc([]string{"double_baking_evidence"}, nil, limit, 0, lastKnownOperationID)
 	if err != nil {
 		return err
 	}
