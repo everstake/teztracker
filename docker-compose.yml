@@ -2,14 +2,20 @@ version: "3.1"
 
 services:
   conseil-lorre:
-    image: cryptonomictech/conseil:latest
+    image: cryptonomictech/conseil:master
     environment:
 
       CONSEIL_LORRE_DB_URL: "jdbc:postgresql://${DB_HOST}:5432/${DB_DATABASE}"
       CONSEIL_LORRE_DB_USER: "${DB_USER}"
       CONSEIL_LORRE_DB_PASSWORD: "${DB_PASSWORD}"
 
-      CONSEIL_XTZ_NETWORK: "mainnet"
+      CONFIG_PATH: "/root/reference.conf"
+
+      CONSEIL_XTZ_DB_URL: "jdbc:postgresql://${DB_HOST}:5432/${DB_DATABASE}"
+      CONSEIL_XTZ_DB_PASSWORD: "${DB_PASSWORD}"
+      CONSEIL_XTZ_DB_USER: "${DB_USER}"
+
+      CONSEIL_XTZ_NETWORK: "granadanet"
       CONSEIL_XTZ_ENABLED: "true"
       CONSEIL_XTZ_NODE_HOSTNAME: "${XTZ_HOST}"
       CONSEIL_XTZ_NODE_PROTOCOL: "${XTZ_SCHEME}"
@@ -17,7 +23,7 @@ services:
       CONSEIL_XTZ_NODE_PATH_PREFIX: ""
 
       LORRE_RUNNER_PLATFORM: "tezos"
-      LORRE_RUNNER_NETWORK: "mainnet"
+      LORRE_RUNNER_NETWORK: "granadanet"
 
       # Feature-Flag: set to false to disable the concurrent computation of future endorsement/baking rights
       CONSEIL_LORRE_BLOCK_RIGHTS_FETCHING_ENABLED: "true"
@@ -97,6 +103,7 @@ services:
       TEZTRACKER_SMTPPORT : ${TEZTRACKER_SMTPPORT}
       TEZTRACKER_SMTPUSER : ${TEZTRACKER_SMTPUSER}
       TEZTRACKER_SMTPPASSWORD : ${TEZTRACKER_SMTPPASSWORD}
+      TEZTRACKER_WHALESUPDATESINTERVALMINUTES: ${TEZTRACKER_WHALESUPDATESINTERVALMINUTES}
 
       #todo: if the scheme is not http or host/port are different then for lorry - pass it through
       TEZTRACKER_MAINNET_NODERPC_HOST: "${XTZ_HOST}:${XTZ_PORT}"

@@ -2,9 +2,10 @@ package account
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
 //go:generate mockgen -source ./account.go -destination ./mock_account/main.go Repo
@@ -36,6 +37,7 @@ type (
 		GetCountActiveByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
 		GetContractsCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
 		GetContractsCount(from time.Time, to time.Time) (count int64, err error)
+		RichAccounts(limit uint) (accounts []models.Account, err error)
 	}
 )
 
@@ -407,4 +409,9 @@ func (r *Repository) GetContractsCount(from time.Time, to time.Time) (count int6
 	}
 	err = q.Count(&count).Error
 	return count, err
+}
+
+func (r *Repository) RichAccounts(limit uint) (accounts []models.Account, err error) {
+	err = r.db.Model(&models.Account{}).Order("balance desc").Limit(limit).Find(&accounts).Error
+	return accounts, err
 }
