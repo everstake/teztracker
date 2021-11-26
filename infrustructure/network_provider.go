@@ -7,6 +7,8 @@ import (
 	"github.com/everstake/teztracker/config"
 	"github.com/everstake/teztracker/models"
 	"github.com/everstake/teztracker/repos"
+	"github.com/everstake/teztracker/services"
+	"github.com/everstake/teztracker/services/daily_stats"
 	"github.com/everstake/teztracker/services/mailer"
 	"github.com/everstake/teztracker/services/mempool"
 	"github.com/everstake/teztracker/services/rpc_client/client"
@@ -31,6 +33,7 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 	provider := &Provider{
 		networks: make(map[models.Network]NetworkContext),
 	}
+	var serviceProviders []services.Provider
 	for k, v := range configs {
 		db, err := gorm.Open("postgres", v.SqlConnectionString)
 		if err != nil {
@@ -43,6 +46,7 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 			}
 			return "tezos." + defaultTableName
 		}
+		serviceProviders = append(serviceProviders, repos.New(db))
 
 		whales.Service.AddNetwork(k, db)
 
@@ -76,6 +80,9 @@ func New(configs map[models.Network]config.NetworkConfig, cfg config.Config) (*P
 			ClientConfig: v.NodeRpc,
 		}
 	}
+	stats := daily_stats.NewDailyStats(serviceProviders)
+	go stats.Run()
+
 	whales.Service.Update()
 	return provider, nil
 }

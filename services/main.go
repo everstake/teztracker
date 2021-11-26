@@ -8,6 +8,7 @@ import (
 	"github.com/everstake/teztracker/repos/baking"
 	"github.com/everstake/teztracker/repos/block"
 	"github.com/everstake/teztracker/repos/chart"
+	"github.com/everstake/teztracker/repos/daily_stats"
 	"github.com/everstake/teztracker/repos/double_baking"
 	"github.com/everstake/teztracker/repos/double_endorsement"
 	"github.com/everstake/teztracker/repos/endorsing"
@@ -19,6 +20,7 @@ import (
 	"github.com/everstake/teztracker/repos/operation_groups"
 	"github.com/everstake/teztracker/repos/rolls"
 	"github.com/everstake/teztracker/repos/snapshots"
+	"github.com/everstake/teztracker/repos/storage"
 	"github.com/everstake/teztracker/repos/thirdparty_bakers"
 	"github.com/everstake/teztracker/repos/user_profile"
 	"github.com/everstake/teztracker/repos/voting_periods"
@@ -54,6 +56,8 @@ type (
 		GetAssets() assets.Repo
 		GetThirdPartyBakers() thirdparty_bakers.Repo
 		GetUserProfile() user_profile.Repo
+		GetStorage() storage.Repo
+		GetDailyStats() daily_stats.Repo
 		GetNFT() nft.Repo
 	}
 

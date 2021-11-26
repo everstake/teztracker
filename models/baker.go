@@ -13,6 +13,12 @@ type Baker struct {
 	BakerStats
 }
 
+type PublicBaker struct {
+	Baker
+	DelegatorsChange int64 `json:"delegators"`
+	StakeChange      int64 `json:"stake_change"`
+}
+
 type PublicBakerSearch struct {
 	Delegate  string
 	BakerName string
@@ -132,4 +138,15 @@ func (v *ThirdPartyProviders) Scan(value interface{}) (err error) {
 	}
 	*v = bakers
 	return nil
+}
+
+type BakerDelegators struct {
+	Baker   string
+	Address string
+	Value   int64
+}
+
+type BakersVoting struct {
+	ProposalsCount int64
+	Bakers         []BakerDelegators
 }

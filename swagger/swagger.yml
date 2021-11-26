@@ -1973,6 +1973,128 @@ paths:
           description: Internal error
       tags:
         - Blocks
+  '/v2/data/{platform}/{network}/lost/blocks/agg':
+    get:
+      operationId: getLostBlocksAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get count of lost blocks agg by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Blocks
+  '/v2/data/{platform}/{network}/lost/endorsements/agg':
+    get:
+      operationId: getLostEndorsermentsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get count of lost endorserments agg by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Blocks
+  '/v2/data/{platform}/{network}/lost/rewards/agg':
+    get:
+      operationId: getLostRewardsAgg
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get amount of lost rewards agg by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Blocks
   '/v2/data/{platform}/{network}/operation_groups':
     get:
       operationId: getOperationGroups
@@ -3017,6 +3139,420 @@ paths:
           description: Internal error
       tags:
         - Mempool
+  '/v2/data/{platform}/{network}/bakers/delegators':
+    get:
+      operationId: getBakersDelegators
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Get number of baker delegators
+          schema:
+            items:
+              $ref: >-
+                #/definitions/BakerDelegators
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/bakers/stake/change':
+    get:
+      operationId: getBakersStakeChange
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Get bakers stake change
+          schema:
+            items:
+              $ref: >-
+                #/definitions/BakerDelegators
+            type: array
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/bakers/voting':
+    get:
+      operationId: getBakersVoting
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Get bakers voting data
+          schema:
+            $ref: '#/definitions/BakersVoting'
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/agg':
+    get:
+      operationId: getAccountsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/accounts/total/agg':
+    get:
+      operationId: getAccountsTotalAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/contracts/agg':
+    get:
+      operationId: getContractsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get contracts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/contracts/total/agg':
+    get:
+      operationId: getContractsTotalAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get contracts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/low/balance/total/agg':
+    get:
+      operationId: getLowBalanceTotalAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get low balance accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/active/accounts/agg':
+    get:
+      operationId: getActiveAccountsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get active accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/inactive/accounts/agg':
+    get:
+      operationId: getInactiveAccountsAggCount
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+        - in: query
+          name: period
+          required: true
+          type: string
+          enum: [day, week, month]
+        - in: query
+          name: from
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: to
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AggTimeInt"
+          description: Get inactive accounts count by period
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
+  '/v2/data/{platform}/{network}/bakers/holding':
+    get:
+      operationId: getBakersHolding
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: platform
+          required: true
+          type: string
+        - in: path
+          name: network
+          required: true
+          type: string
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/HoldingPoint"
+          description: Get bakers holding points
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal error
+      tags:
+        - Accounts
   '/v2/{network}/ws':
     get:
       schemes: ["ws"]
@@ -3819,6 +4355,12 @@ definitions:
     properties:
       accountId:
         type: string
+      stake_change:
+        format: int64
+        type: integer
+      delegators_change:
+        format: int64
+        type: integer
       bakerInfo:
         $ref: >-
           #/definitions/BakerInfo
@@ -4905,6 +5447,45 @@ definitions:
     properties:
       token:
         type: string
+  BakerDelegators:
+    properties:
+      baker:
+        type: string
+      address:
+        type: string
+      value:
+        type: integer
+        format: int64
+    required:
+      - baker
+      - address
+      - value
+  BakersVoting:
+    properties:
+      bakers:
+        type: array
+        items:
+          $ref: '#/definitions/BakerDelegators'
+      proposals_count:
+        type: integer
+  AggTimeInt:
+    properties:
+      date:
+        type: integer
+        format: int64
+      value:
+        type: integer
+        format: int64
+  HoldingPoint:
+    properties:
+      count:
+        type: integer
+        format: int64
+      amount:
+        type: integer
+        format: int64
+      percent:
+        type: number
   WhaleAccounts:
     properties:
       accounts:

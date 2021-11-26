@@ -444,6 +444,69 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 		})
 	}
 
+	{
+		var jobIsRunning uint32
+
+		dur := time.Hour
+		log.Infof("Sheduling update public bakers changes %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := repos.New(db)
+				bakers, err := unitOfWork.GetAccount().GetBakerChangesByLastCycle()
+				if err != nil {
+					log.Errorf("GetBakerChangesByLastCycle: %s", err.Error())
+					return
+				}
+				bakersMap := make(map[string]models.BakerChanges)
+				for _, baker := range bakers {
+					bakersMap[baker.Baker] = baker
+				}
+				err = unitOfWork.GetStorage().Set(models.BakersChangesStorageKey, bakersMap)
+				if err != nil {
+					log.Errorf("update bakers changes: Storage: Set: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("updating public bakers changes as the previous job is still running")
+			}
+		})
+	}
+
+	{
+		var jobIsRunning uint32
+
+		dur := time.Hour
+		log.Infof("Sheduling charts cache in cache %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				unitOfWork := New(repos.New(db), network)
+				err := unitOfWork.SaveActiveAccountsInCache()
+				if err != nil {
+					log.Errorf("update charts cache: SaveActiveAccountsInCache: %s", err.Error())
+					return
+				}
+				err = unitOfWork.SaveLostRewardsInCache()
+				if err != nil {
+					log.Errorf("update charts cache: SaveLostRewardsInCache: %s", err.Error())
+					return
+				}
+				err = unitOfWork.SaveHoldingPoints()
+				if err != nil {
+					log.Errorf("update charts cache: SaveHoldingPoints: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("charts cache as the previous job is still running")
+			}
+		})
+	}
+
 	//Info cron
 	func() {
 		var jobIsRunning uint32

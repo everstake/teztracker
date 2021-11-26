@@ -28,6 +28,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/roylee0704/gron v0.0.0-20160621042432-e78485adab46
 	github.com/rs/cors v1.6.0
+	github.com/shopspring/decimal v1.2.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/superoo7/go-gecko v0.0.0-20190607060444-a448b0c99969
 	github.com/t-tiger/gorm-bulk-insert v0.0.0-20191014134946-beb77b81825f

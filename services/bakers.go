@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sort"
 
 	"github.com/everstake/teztracker/models"
+	"github.com/shopspring/decimal"
 )
 
 const (
@@ -43,18 +45,19 @@ const (
 
 	BlockLockEstimate = GranadaBlockReward + GranadaBlockSecurityDeposit + GranadaBlockEndorsers*(GranadaEndorsementReward+GranadaEndorsementSecurityDeposit)
 
-	bakerMediaSource = "https://api.tzkt.io/v1/accounts/%s?metadata=true"
+	bakerMediaSource       = "https://api.tzkt.io/v1/accounts/%s?metadata=true"
+	holdingPointStorageKey = "holding_points"
 )
 
 // BakerList retrives up to limit of bakers after the specified id.
-func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (bakers []models.Baker, count int64, err error) {
+func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (publicBakers []models.PublicBaker, count int64, err error) {
 	r := t.repoProvider.GetBaker()
 	count, err = r.PublicBakersCount()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	bakers, err = r.PublicBakersList(limits.Limit(), limits.Offset(), favorites)
+	bakers, err := r.PublicBakersList(limits.Limit(), limits.Offset(), favorites)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -74,7 +77,30 @@ func (t *TezTracker) PublicBakerList(limits Limiter, favorites []string) (bakers
 		bakers[i].StakingCapacity = t.calcBakerCapacity(bakers[i], snap.Rolls)
 	}
 
-	return bakers, count, nil
+	// insert bakers changes
+	var changes map[string]models.BakerChanges
+	isFound, err := t.repoProvider.GetStorage().Get(models.BakersChangesStorageKey, &changes)
+	if err != nil {
+		return nil, 0, fmt.Errorf("GetStorage: Get: %s", err.Error())
+	}
+
+	if !isFound {
+		return nil, 0, fmt.Errorf("Baker changes not found")
+	}
+
+	publicBakers = make([]models.PublicBaker, len(bakers))
+	for i, baker := range bakers {
+		pb := models.PublicBaker{
+			Baker: baker,
+		}
+		change, ok := changes[baker.AccountID]
+		if ok {
+			pb.StakeChange = change.Balance
+			pb.DelegatorsChange = change.Delegators
+		}
+		publicBakers[i] = pb
+	}
+	return publicBakers, count, nil
 }
 
 func (t *TezTracker) PublicBakersSearchList() (list []models.PublicBakerSearch, err error) {
@@ -282,4 +308,108 @@ func getBakerMediaData(address string) (media []byte, err error) {
 	}
 	media, _ = json.Marshal(info.Metadata)
 	return media, nil
+}
+
+func (t *TezTracker) GetNumberOfDelegators() (items []models.BakerDelegators, err error) {
+	block, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return nil, fmt.Errorf("get LastBlock: %s", err.Error())
+	}
+	items, err = t.repoProvider.GetBaker().NumberOfDelegators(uint64(block.MetaCycle))
+	if err != nil {
+		return nil, fmt.Errorf("NumberOfDelegators: %s", err.Error())
+	}
+	return items, nil
+}
+
+func (t *TezTracker) GetBakersStakeChange() (items []models.BakerDelegators, err error) {
+	block, err := t.repoProvider.GetBlock().Last()
+	if err != nil {
+		return nil, fmt.Errorf("get LastBlock: %s", err.Error())
+	}
+	prevStakes, err := t.repoProvider.GetBaker().GetBakersStake(uint64(block.MetaCycle - 1))
+	if err != nil {
+		return nil, fmt.Errorf("BakersStake: %s", err.Error())
+	}
+	prevStakesMap := make(map[string]int64)
+	for _, stake := range prevStakes {
+		prevStakesMap[stake.Address] = stake.Value
+	}
+	lastStakes, err := t.repoProvider.GetBaker().GetBakersStake(uint64(block.MetaCycle))
+	if err != nil {
+		return nil, fmt.Errorf("BakersStake: %s", err.Error())
+	}
+	items = make([]models.BakerDelegators, len(lastStakes))
+	for i := range lastStakes {
+		var diff int64
+		p, ok := prevStakesMap[lastStakes[i].Address]
+		if ok {
+			diff = lastStakes[i].Value - p
+		}
+		items[i] = models.BakerDelegators{
+			Baker:   lastStakes[i].Baker,
+			Address: lastStakes[i].Address,
+			Value:   diff,
+		}
+	}
+	return items, nil
+}
+
+func (t *TezTracker) GetBakersVoting() (voting models.BakersVoting, err error) {
+	bakers, err := t.repoProvider.GetBaker().GetBakersVoting()
+	if err != nil {
+		return voting, fmt.Errorf("GetBakersVoting: %s", err.Error())
+	}
+	count, err := t.repoProvider.GetVotingPeriod().ProposalsCount()
+	if err != nil {
+		return voting, fmt.Errorf("ProposalsCount: %s", err.Error())
+	}
+	return models.BakersVoting{
+		ProposalsCount: count,
+		Bakers:         bakers,
+	}, nil
+}
+
+func (t *TezTracker) SaveHoldingPoints() error {
+	points := []float64{0.05, 0.33, 0.51, 0.8}
+	bakers, err := t.repoProvider.GetBaker().List(100000, 0, nil)
+	if err != nil {
+		return fmt.Errorf("repoProvider.Baker: List: %s", err.Error())
+	}
+	sort.Slice(bakers, func(i, j int) bool {
+		return bakers[i].StakingBalance > bakers[j].StakingBalance
+	})
+	var total int64
+	for _, baker := range bakers {
+		total += baker.StakingBalance
+	}
+
+	var holdingPoints []models.HoldingPoint
+	for _, point := range points {
+		var amount int64
+		var count int64
+		for _, baker := range bakers {
+			amount += baker.StakingBalance
+			count++
+			p, _ := decimal.NewFromInt(amount).Div(decimal.NewFromInt(total)).Float64()
+			if p >= point {
+				break
+			}
+		}
+		holdingPoints = append(holdingPoints, models.HoldingPoint{
+			Percent: point,
+			Amount:  amount,
+			Count:   count,
+		})
+	}
+	err = t.repoProvider.GetStorage().Set(holdingPointStorageKey, holdingPoints)
+	if err != nil {
+		return fmt.Errorf("GetStorage: Set: %s", err.Error())
+	}
+	return nil
+}
+
+func (t *TezTracker) GetHoldingPoints() (items []models.HoldingPoint, err error) {
+	_, err = t.repoProvider.GetStorage().Get(holdingPointStorageKey, &items)
+	return items, err
 }

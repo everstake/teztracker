@@ -199,3 +199,9 @@ type AccountAssetBalance struct {
 	AssetHolder
 	AssetInfo
 }
+
+type BakerChanges struct {
+	Baker      string
+	Balance    int64
+	Delegators int64
+}

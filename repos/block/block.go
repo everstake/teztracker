@@ -22,6 +22,8 @@ type (
 		ListExtended(limit, offset uint, since uint64) (blocks []models.Block, err error)
 		BakedBlocksList(accountID string, cycle int64, limit uint, offset uint) (int64, []models.Block, error)
 		BlocksPriority(limit uint) ([]models.BlockPriority, error)
+		GetLostBlocksCountAgg(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
+		GetLostRewardsAgg(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
 	}
 )
 
@@ -169,4 +171,45 @@ func (r *Repository) BlocksPriority(limit uint) (data []models.BlockPriority, er
 	}
 
 	return data, nil
+}
+
+func (r *Repository) GetLostBlocksCountAgg(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	err = filter.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
+	}
+	q := r.db.Select(fmt.Sprintf("sum(priority) as value, date_trunc('%s', timestamp) as date", filter.Period)).
+		Table("tezos.blocks").Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("timestamp >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("timestamp <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
+}
+
+func (r *Repository) GetLostRewardsAgg(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	var condition string
+	if !filter.From.IsZero() {
+		condition += fmt.Sprintf("AND blocks.timestamp > '%s' ", filter.From.Format("2006-01-02 15:04:05"))
+	}
+	if !filter.To.IsZero() {
+		condition += fmt.Sprintf("AND blocks.timestamp < '%s' ", filter.To.Format("2006-01-02 15:04:05"))
+	}
+	q := `SELECT t1.amount + t2.amount as value, t1.date as date
+    FROM (select sum(case when cycle < 208 then 16 else 40 end) as amount, date_trunc('%s', blocks.timestamp) as date
+	from tezos.baker_bakings
+	left join tezos.blocks ON baker_bakings.level = blocks.level
+	WHERE missed != 0 %s
+	GROUP BY date) as t1
+	FULL OUTER JOIN (select sum(case when cycle < 208 then 16 else 40 end) as amount, date_trunc('%s', blocks.timestamp) as date
+	from tezos.baker_endorsements
+	left join tezos.blocks ON baker_endorsements.level = blocks.level
+	WHERE missed != 0 %s
+	GROUP BY date) as t2 ON t1.date = t2.date order by date;`
+	q = fmt.Sprintf(q, filter.Period, condition, filter.Period, condition)
+	err = r.db.Raw(q).Find(&items).Error
+	return items, err
 }

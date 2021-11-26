@@ -4,10 +4,14 @@ import (
 	"encoding/hex"
 	"time"
 
+	"fmt"
+
 	chain "blockwatch.cc/tzgo/tezos"
 	"github.com/everstake/teztracker/models"
 	"github.com/guregu/null"
 )
+
+const activeBalanceCacheKey = "active_balance"
 
 // AccountList retrives up to limit of account before the specified id.
 func (t *TezTracker) AccountList(before string, limits Limiter, favorites []string) (accs []models.AccountListView, count int64, err error) {
@@ -161,4 +165,91 @@ func base58ToHexAddress(address string) (string, error) {
 	}
 
 	return hex.EncodeToString(bt), nil
+}
+
+func (t *TezTracker) GetAccountCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	repo := t.repoProvider.GetAccount()
+	return repo.GetCountByPeriod(filter)
+}
+
+func (t *TezTracker) GetTotalAccountCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	repo := t.repoProvider.GetAccount()
+	items, err = repo.GetCountByPeriod(filter)
+	if err != nil {
+		return nil, fmt.Errorf("GetCountByPeriod: %s", err.Error())
+	}
+	total, err := repo.GetCount(time.Time{}, filter.To)
+	if err != nil {
+		return nil, fmt.Errorf("GetCount: %s", err.Error())
+	}
+	for i := 0; i < len(items); i++ {
+		v := items[i]
+		v.Value += total
+		items[i] = v
+	}
+	return items, nil
+}
+
+func (t *TezTracker) GetContractCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	repo := t.repoProvider.GetAccount()
+	return repo.GetContractsCountByPeriod(filter)
+}
+
+func (t *TezTracker) GetTotalContractCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	repo := t.repoProvider.GetAccount()
+	items, err = repo.GetContractsCountByPeriod(filter)
+	if err != nil {
+		return nil, fmt.Errorf("GetContractsCountByPeriod: %s", err.Error())
+	}
+	total, err := repo.GetContractsCount(time.Time{}, filter.To)
+	if err != nil {
+		return nil, fmt.Errorf("GetContractsCount: %s", err.Error())
+	}
+	for i := 0; i < len(items); i++ {
+		v := items[i]
+		v.Value += total
+		items[i] = v
+	}
+	return items, nil
+}
+
+func (t *TezTracker) SaveActiveAccountsInCache() error {
+	repo := t.repoProvider.GetAccount()
+	for period, duration := range models.GetChartPeriods() {
+		items, err := repo.GetCountActiveByPeriod(models.AggTimeFilter{
+			From:   time.Now().Add(-duration),
+			Period: period,
+		})
+		if err != nil {
+			return fmt.Errorf("repo.GetCountActiveByPeriod: %s", err.Error())
+		}
+		storageKey := fmt.Sprintf("%s_%s", activeBalanceCacheKey, period)
+		err = t.repoProvider.GetStorage().Set(storageKey, items)
+		if err != nil {
+			return fmt.Errorf("GetStorage: Set: %s", err.Error())
+		}
+	}
+	return nil
+}
+
+func (t *TezTracker) GetActiveAccounts(period string) (items []models.AggTimeInt, err error) {
+	err = models.ValidatePeriod(period)
+	if err != nil {
+		return items, fmt.Errorf("ValidatePeriod: %s", err.Error())
+	}
+	storageKey := fmt.Sprintf("%s_%s", activeBalanceCacheKey, period)
+	//Return only if storage error
+	_, err = t.repoProvider.GetStorage().Get(storageKey, &items)
+	if err != nil {
+		return items, fmt.Errorf("GetStorage: Set: %s", err.Error())
+	}
+	return items, nil
+}
+
+func (t *TezTracker) GetAccountsWithLowBalance(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	return t.repoProvider.GetDailyStats().GetDailyStats(models.LowBalanceAccountsStatKey, "avg", filter)
+}
+
+func (t *TezTracker) GetInactiveAccounts(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	return t.repoProvider.GetDailyStats().GetDailyStats(models.InactiveAccountsStatKey, "avg", filter)
 }

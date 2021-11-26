@@ -29,6 +29,14 @@ type (
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
 		GetReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error)
 		GetBakingReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error)
+		GetBakerChangesByLastCycle() (bakers []models.BakerChanges, err error)
+		GetCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
+		GetCount(from time.Time, to time.Time) (count int64, err error)
+		GetCountWhereBalance(lessThen int64) (count int64, err error)
+		GetCountActive(from time.Time) (count int64, err error)
+		GetCountActiveByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
+		GetContractsCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error)
+		GetContractsCount(from time.Time, to time.Time) (count int64, err error)
 		RichAccounts(limit uint) (accounts []models.Account, err error)
 	}
 )
@@ -299,6 +307,108 @@ func (r *Repository) GetBakingReport(accountID string, params models.ReportFilte
 	}
 
 	return report, nil
+}
+
+func (r *Repository) GetBakerChangesByLastCycle() (bakers []models.BakerChanges, err error) {
+	q := `SELECT t1.baker as baker, t1.balance - t2.balance as balance, t1.delegators - t2.delegators as delegators
+	from (
+         select delegate_value as baker, sum(balance) as balance, count(account_id) as delegators
+         from tezos.delegators_by_cycle
+         where cycle = (select max(cycle) from tezos.delegators_by_cycle)
+         group by delegate_value) as t1
+         left join (
+    select delegate_value as baker, sum(balance) as balance, count(account_id) as delegators
+    from tezos.delegators_by_cycle
+    where cycle = (select max(cycle) from tezos.delegators_by_cycle) - 1
+    group by delegate_value) as t2 ON t1.baker = t2.baker;`
+	err = r.db.Raw(q).Find(&bakers).Error
+	return bakers, nil
+}
+
+func (r *Repository) GetCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	err = filter.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
+	}
+	q := r.db.Select(fmt.Sprintf("count(*) as value, date_trunc('%s', created_at) as date", filter.Period)).
+		Table("tezos.account_created_at").Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("created_at >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("created_at <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
+}
+
+func (r *Repository) GetCount(from time.Time, to time.Time) (count int64, err error) {
+	q := r.db.Select("count(*) as value").Table("tezos.account_created_at")
+	if !from.IsZero() {
+		q = q.Where("created_at >= ?", from)
+	}
+	if !to.IsZero() {
+		q = q.Where("created_at <= ?", to)
+	}
+	err = q.Count(&count).Error
+	return count, err
+}
+
+func (r *Repository) GetCountWhereBalance(lessThen int64) (count int64, err error) {
+	err = r.db.Table("tezos.accounts").
+		Where("balance < ?", lessThen).
+		Count(&count).Error
+	return count, err
+}
+
+func (r *Repository) GetCountActive(from time.Time) (count int64, err error) {
+	err = r.db.Table("tezos.operations").
+		Select("count(DISTINCT source)").
+		Where("timestamp > ?", from).
+		Count(&count).Error
+	return count, err
+}
+
+func (r *Repository) GetCountActiveByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	q := r.db.Select(fmt.Sprintf("count(DISTINCT source) as value, date_trunc('%s', timestamp) as date", filter.Period)).
+		Table("tezos.operations").Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("timestamp >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("timestamp <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
+}
+
+func (r *Repository) GetContractsCountByPeriod(filter models.AggTimeFilter) (items []models.AggTimeInt, err error) {
+	err = filter.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("filter.Validate: %s", err.Error())
+	}
+	q := r.db.Select(fmt.Sprintf("count(*) as value, date_trunc('%s', created_at) as date", filter.Period)).
+		Table("tezos.account_created_at").Where("account_id LIKE 'KT%'").Group("date")
+	if !filter.From.IsZero() {
+		q = q.Where("created_at >= ?", filter.From)
+	}
+	if !filter.To.IsZero() {
+		q = q.Where("created_at <= ?", filter.To)
+	}
+	err = q.Order("date").Find(&items).Error
+	return items, err
+}
+
+func (r *Repository) GetContractsCount(from time.Time, to time.Time) (count int64, err error) {
+	q := r.db.Select("count(*) as value").Table("tezos.account_created_at").Where("account_id LIKE 'KT%'")
+	if !from.IsZero() {
+		q = q.Where("created_at >= ?", from)
+	}
+	if !to.IsZero() {
+		q = q.Where("created_at <= ?", to)
+	}
+	err = q.Count(&count).Error
+	return count, err
 }
 
 func (r *Repository) RichAccounts(limit uint) (accounts []models.Account, err error) {
