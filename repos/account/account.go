@@ -2,9 +2,10 @@ package account
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/everstake/teztracker/models"
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
 //go:generate mockgen -source ./account.go -destination ./mock_account/main.go Repo
@@ -28,6 +29,7 @@ type (
 		CycleDelegators(accountID string, cycle int64, limit uint, offset uint) (delegators []models.AccountDelegator, err error)
 		GetReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error)
 		GetBakingReport(accountID string, params models.ReportFilter) (report []models.ExtendReport, err error)
+		RichAccounts(limit uint) (accounts []models.Account, err error)
 	}
 )
 
@@ -297,4 +299,9 @@ func (r *Repository) GetBakingReport(accountID string, params models.ReportFilte
 	}
 
 	return report, nil
+}
+
+func (r *Repository) RichAccounts(limit uint) (accounts []models.Account, err error) {
+	err = r.db.Model(&models.Account{}).Order("balance desc").Limit(limit).Find(&accounts).Error
+	return accounts, err
 }

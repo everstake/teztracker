@@ -19,6 +19,7 @@ import (
 	"github.com/everstake/teztracker/services/thirdparty_bakers"
 
 	"github.com/everstake/teztracker/services/rolls"
+	"github.com/everstake/teztracker/services/whales"
 
 	"github.com/everstake/teztracker/services/cmc"
 	"github.com/everstake/teztracker/services/mailer"
@@ -298,6 +299,27 @@ func AddToCron(cron *gron.Cron, cfg config.Config, db *gorm.DB, ws *ws.Hub, mail
 				}
 			} else {
 				log.Tracef("skipping assets operations parse as the previous job is still running")
+			}
+		})
+	}
+
+	if cfg.WhalesUpdatesIntervalMinutes > 0 {
+		var jobIsRunning uint32
+
+		dur := time.Duration(cfg.WhalesUpdatesIntervalMinutes) * time.Minute
+		log.Infof("Sheduling parse whale accounts operations %s", dur)
+		cron.AddFunc(gron.Every(dur), func() {
+			// Ensure jobs are not stacking up. If the previous job is still running - skip this run.
+			if atomic.CompareAndSwapUint32(&jobIsRunning, 0, 1) {
+				defer atomic.StoreUint32(&jobIsRunning, 0)
+
+				err := whales.Service.Update()
+				if err != nil {
+					log.Errorf("whales Update: %s", err.Error())
+					return
+				}
+			} else {
+				log.Tracef("skipping whales as the previous job is still running")
 			}
 		})
 	}
